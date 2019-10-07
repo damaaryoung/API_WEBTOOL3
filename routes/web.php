@@ -12,5 +12,18 @@
 */
 
 $router->get('/', function () use ($router) {
-    return $router->app->version();
+    return 'API - WEEBTOOL' ;
+});
+
+$router->get('/api', function () use ($router) {
+    return redirect('/') ;
+});
+
+$router->get('/user', function () use ($router){return redirect('/user/login');});
+$router->post('/user/login', 'UserController@login');
+
+$router->group(['middleware' => 'jwt.auth'], function () use ($router) {
+    $router->group(['prefix' => '/api'], function () use ($router) {
+    	$router->get('/something', 'ApiController@devME');
+    });
 });
