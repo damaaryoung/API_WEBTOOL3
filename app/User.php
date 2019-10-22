@@ -17,13 +17,13 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      *
      * @var array
      */
-    // protected $connection = 'ids';
-    
-    protected $table = '';
-    protected $primaryKey = '';
+    protected $connection = 'dpm';
+
+    protected $table = 'user';
+    protected $primaryKey = 'user_id';
 
     protected $fillable = [
-        'name', 'email',
+        'user', 'nik', 'level', 'kd_cabang', 'nama', 'divisi_id', 'kode_jabatan', 'jabatan', 'tgl_expired', 'flg_block', 'session', 'session_date', 'user_id', 'user_id_induk', 'user_code', 'ip_address', 'flag', 'kode_perk_kas', 'kode_perk_kas_utama', 'penerimaan', 'pengeluaran', 'penerimaan_ob', 'pengeluaran_ob', 'plafon_caa', 'group_menu', 'group_menu_webtool', 'email', 'no_hp', 'imei', 'reg_id_gcm', 'fcm_token', 'flg_busy', 'sound', 'kode_group3', 'kode_area', 'ip_public', 'flg_survey', 'min_survey', 'last_update', 'access_menu_asuransi'
     ];
 
     /**
@@ -32,7 +32,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      * @var array
      */
     protected $hidden = [
-        'password',
+        'password'
     ];
 
     // public $timestamps = false;

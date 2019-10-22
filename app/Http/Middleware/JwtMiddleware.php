@@ -17,7 +17,7 @@ class JwtMiddleware
         if(!$token) {
             // Unauthorized response if token not there
             return response()->json([
-                'code'    => '401',
+                'code'    => 401,
                 'status'  => 'Error',
                 'message' => 'Token required.'
             ], 401);
@@ -31,14 +31,14 @@ class JwtMiddleware
             } catch(ExpiredException $e) {
 
                 return response()->json([
-                    'code'    => '401',
+                    'code'    => 401,
                     'status'  => 'Error',
                     'message' => 'Provided token is expired.'
                 ], 401);
 
             } catch(Exception $e) {
                 return response()->json([
-                    'code'    => '401',
+                    'code'    => 401,
                     'status'  => 'Error',
                     'message' => 'An error while decoding token.'
                 ], 401);
@@ -55,7 +55,7 @@ class JwtMiddleware
             }else{
 
                 return response()->json([
-                    'code'    => '401',
+                    'code'    => 401,
                     'status'  => 'Error',
                     'message' => 'Provided token is invalid.'
                 ], 401);
@@ -65,7 +65,7 @@ class JwtMiddleware
 
         }else{
             return response()->json([
-                'code'    => '401',
+                'code'    => 401,
                 'status'  => 'Error',
                 'message' => 'Token wrong !!!.'
             ], 401);

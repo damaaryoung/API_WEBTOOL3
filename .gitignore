@@ -2,4 +2,5 @@
 Homestead.json
 Homestead.yaml
 .phpunit.result.cache
-.env
+.editorconfig
+documentasi

@@ -6,8 +6,8 @@
     "type": "project",
     "require": {
         "php": "^7.2",
-        "laravel/lumen-framework": "^6.0",
         "firebase/php-jwt": "^5.0",
+        "laravel/lumen-framework": "^6.0",
         "nesbot/carbon": "^2.22"
     },
     "require-dev": {
