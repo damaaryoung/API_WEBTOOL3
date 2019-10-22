@@ -194,4 +194,48 @@ class UserController extends BaseController
             }
         }
     }
+
+    public function changePassword(Request $req) {
+        $id = $req->auth->user_id;
+
+        $check = User::where('user_id', $id)->first();
+        $originalPass = $check->password;
+
+        // dd($originalPass);
+
+        $oldPass     = $req->input('password_lama');
+        $newPass     = $req->input('password_baru');
+        $confirmPass = $req->input('konfirmasi_password');
+
+        if (md5($oldPass) != $originalPass) {
+            return response()->json([
+                "code"    => 400,
+                "status"  => "bad request",
+                "message" => "wrong old password!!"
+            ], 400);
+        }
+
+        if ($newPass != $confirmPass) {
+            return response()->json([
+                "code"    => 400,
+                "status"  => "bad request",
+                "message" => "passwor is not the same!!"
+            ], 400);
+        }
+
+        try {
+            $query = User::where('user_id', $id)->update(['password' => md5($newPass)]);
+            return response()->json([
+                "code"    => 200,
+                "status"  => "success",
+                "message" => "The password was updated successfully"
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                "code"    => 403,
+                "status"  => "error",
+                "message" => "The password failed to update!!"
+            ], 403);
+        }
+    }
 }
