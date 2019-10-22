@@ -6,7 +6,7 @@
 	},
 	"item": [
 		{
-			"name": "master",
+			"name": "Master",
 			"item": [
 				{
 					"name": "Get Asal_Data",
@@ -87,7 +87,7 @@
 			"protocolProfileBehavior": {}
 		},
 		{
-			"name": "willayah",
+			"name": "Willayah",
 			"item": [
 				{
 					"name": "Get Provinsi",
@@ -165,6 +165,664 @@
 			"protocolProfileBehavior": {}
 		},
 		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "Reset Password",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJCUFIgS3JlZGl0IE1hbmRpcmkgSW5kb25lc2lhIiwiaWQiOjgxMiwibmlrIjoiMDIxODExMTEzIiwidXNlbmFtZSI6ImFiZHVsX2F6aXoiLCJrZF9jYWJhbmciOiIzOCIsImRpdmlzaV9pZCI6IkFPIiwiamFiYXRhbiI6Ik1BUktFVElORyIsImVtYWlsIjoibWFya2V0aW5nX2NpbGV1bmdzaUBrcmVkaXRtYW5kaXJpLmNvLmlkIiwibmFtYSI6IkFCRFVMIEFaSVoiLCJpYXQiOjE1NzE3MTE5NTcsImV4cCI6MTU3MjMxNjc1N30.XV0TZFUJmRCIkxklyIKEjzMJGjsLTRm7Pdk_nBaBj14",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "no_hp",
+									"value": "08989900272",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{URL}}/api/users/reset_password",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"reset_password"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Users",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJCUFIgS3JlZGl0IE1hbmRpcmkgSW5kb25lc2lhIiwiaWQiOjgxMiwibmlrIjoiMDIxODExMTEzIiwidXNlbmFtZSI6ImFiZHVsX2F6aXoiLCJrZF9jYWJhbmciOiIzOCIsImRpdmlzaV9pZCI6IkFPIiwiamFiYXRhbiI6Ik1BUktFVElORyIsImVtYWlsIjoibWFya2V0aW5nX2NpbGV1bmdzaUBrcmVkaXRtYW5kaXJpLmNvLmlkIiwibmFtYSI6IkFCRFVMIEFaSVoiLCJpYXQiOjE1NzE3MTE5NTcsImV4cCI6MTU3MjMxNjc1N30.XV0TZFUJmRCIkxklyIKEjzMJGjsLTRm7Pdk_nBaBj14",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{URL}}/api/users",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Change Password",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJCUFIgS3JlZGl0IE1hbmRpcmkgSW5kb25lc2lhIiwiaWQiOjExMzAsIm5payI6IjAyMTkwNzA4OSIsInVzZW5hbWUiOiJhZ2lmIiwia2RfY2FiYW5nIjoiMDAiLCJkaXZpc2lfaWQiOiJJVCIsImphYmF0YW4iOiJJVCBTVEFGRiIsImVtYWlsIjoiaXRAa3JlZGl0bWFuZGlyaS5jby5pZCIsIm5hbWEiOiJBUFJFTEEgQUdJRiBTT0ZZQU4iLCJpYXQiOjE1NzE3MTcyNjgsImV4cCI6MTU3MjMyMjA2OH0.LNG4o96V1KVoD1GeliE2pbW6zbIsSmjAo_zcRWSqcRE",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{URL}}/api/users/change_password",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"change_password"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Menu",
+			"item": [
+				{
+					"name": "MasterMenu",
+					"item": [
+						{
+							"name": "Show Menu Master",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJCUFIgS3JlZGl0IE1hbmRpcmkgSW5kb25lc2lhIiwiaWQiOjExMzAsIm5payI6IjAyMTkwNzA4OSIsInVzZW5hbWUiOiJhZ2lmIiwia2RfY2FiYW5nIjoiMDAiLCJkaXZpc2lfaWQiOiJJVCIsImphYmF0YW4iOiJJVCBTVEFGRiIsImVtYWlsIjoiaXRAa3JlZGl0bWFuZGlyaS5jby5pZCIsIm5hbWEiOiJBUFJFTEEgQUdJRiBTT0ZZQU4iLCJpYXQiOjE1NzE3MTcyNjgsImV4cCI6MTU3MjMyMjA2OH0.LNG4o96V1KVoD1GeliE2pbW6zbIsSmjAo_zcRWSqcRE",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{URL}}/api/menu/",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"api",
+										"menu",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Post Menu Master",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJCUFIgS3JlZGl0IE1hbmRpcmkgSW5kb25lc2lhIiwiaWQiOjExMzAsIm5payI6IjAyMTkwNzA4OSIsInVzZW5hbWUiOiJhZ2lmIiwia2RfY2FiYW5nIjoiMDAiLCJkaXZpc2lfaWQiOiJJVCIsImphYmF0YW4iOiJJVCBTVEFGRiIsImVtYWlsIjoiaXRAa3JlZGl0bWFuZGlyaS5jby5pZCIsIm5hbWEiOiJBUFJFTEEgQUdJRiBTT0ZZQU4iLCJpYXQiOjE1NzE3MTcyNjgsImV4cCI6MTU3MjMyMjA2OH0.LNG4o96V1KVoD1GeliE2pbW6zbIsSmjAo_zcRWSqcRE",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/x-www-form-urlencoded",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "nama",
+											"value": "Info",
+											"type": "text"
+										},
+										{
+											"key": "url",
+											"value": "",
+											"type": "text",
+											"disabled": true
+										},
+										{
+											"key": "icon",
+											"value": "fas fa-info",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{URL}}/api/menu",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"api",
+										"menu"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Menu Master / Main",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJCUFIgS3JlZGl0IE1hbmRpcmkgSW5kb25lc2lhIiwiaWQiOjExMzAsIm5payI6IjAyMTkwNzA4OSIsInVzZW5hbWUiOiJhZ2lmIiwia2RfY2FiYW5nIjoiMDAiLCJkaXZpc2lfaWQiOiJJVCIsImphYmF0YW4iOiJJVCBTVEFGRiIsImVtYWlsIjoiaXRAa3JlZGl0bWFuZGlyaS5jby5pZCIsIm5hbWEiOiJBUFJFTEEgQUdJRiBTT0ZZQU4iLCJpYXQiOjE1NzE3MTcyNjgsImV4cCI6MTU3MjMyMjA2OH0.LNG4o96V1KVoD1GeliE2pbW6zbIsSmjAo_zcRWSqcRE",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{URL}}/api/menu/master/detail",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"api",
+										"menu",
+										"master",
+										"detail"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Edit Menu Master",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJCUFIgS3JlZGl0IE1hbmRpcmkgSW5kb25lc2lhIiwiaWQiOjExMzAsIm5payI6IjAyMTkwNzA4OSIsInVzZW5hbWUiOiJhZ2lmIiwia2RfY2FiYW5nIjoiMDAiLCJkaXZpc2lfaWQiOiJJVCIsImphYmF0YW4iOiJJVCBTVEFGRiIsImVtYWlsIjoiaXRAa3JlZGl0bWFuZGlyaS5jby5pZCIsIm5hbWEiOiJBUFJFTEEgQUdJRiBTT0ZZQU4iLCJpYXQiOjE1NzE3MTcyNjgsImV4cCI6MTU3MjMyMjA2OH0.LNG4o96V1KVoD1GeliE2pbW6zbIsSmjAo_zcRWSqcRE",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/x-www-form-urlencoded",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "nama",
+											"value": "back door",
+											"type": "text"
+										},
+										{
+											"key": "icon",
+											"value": "info",
+											"type": "text"
+										},
+										{
+											"key": "id_menu_master",
+											"value": "1",
+											"type": "text",
+											"disabled": true
+										}
+									]
+								},
+								"url": {
+									"raw": "{{URL}}/api/menu/master/{slug}",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"api",
+										"menu",
+										"master",
+										"{slug}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Menu Master",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJCUFIgS3JlZGl0IE1hbmRpcmkgSW5kb25lc2lhIiwiaWQiOjExMzAsIm5payI6IjAyMTkwNzA4OSIsInVzZW5hbWUiOiJhZ2lmIiwia2RfY2FiYW5nIjoiMDAiLCJkaXZpc2lfaWQiOiJJVCIsImphYmF0YW4iOiJJVCBTVEFGRiIsImVtYWlsIjoiaXRAa3JlZGl0bWFuZGlyaS5jby5pZCIsIm5hbWEiOiJBUFJFTEEgQUdJRiBTT0ZZQU4iLCJpYXQiOjE1NzE3MTcyNjgsImV4cCI6MTU3MjMyMjA2OH0.LNG4o96V1KVoD1GeliE2pbW6zbIsSmjAo_zcRWSqcRE",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/x-www-form-urlencoded",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": []
+								},
+								"url": {
+									"raw": "{{URL}}/api/menu/master/back_doors",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"api",
+										"menu",
+										"master",
+										"back_doors"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "SubMenu",
+					"item": [
+						{
+							"name": "Show Menu Sub",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJCUFIgS3JlZGl0IE1hbmRpcmkgSW5kb25lc2lhIiwiaWQiOjExMzAsIm5payI6IjAyMTkwNzA4OSIsInVzZW5hbWUiOiJhZ2lmIiwia2RfY2FiYW5nIjoiMDAiLCJkaXZpc2lfaWQiOiJJVCIsImphYmF0YW4iOiJJVCBTVEFGRiIsImVtYWlsIjoiaXRAa3JlZGl0bWFuZGlyaS5jby5pZCIsIm5hbWEiOiJBUFJFTEEgQUdJRiBTT0ZZQU4iLCJpYXQiOjE1NzE3MTcyNjgsImV4cCI6MTU3MjMyMjA2OH0.LNG4o96V1KVoD1GeliE2pbW6zbIsSmjAo_zcRWSqcRE",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{URL}}/api/menu/sub",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"api",
+										"menu",
+										"sub"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Post Menu Sub",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJCUFIgS3JlZGl0IE1hbmRpcmkgSW5kb25lc2lhIiwiaWQiOjExMzAsIm5payI6IjAyMTkwNzA4OSIsInVzZW5hbWUiOiJhZ2lmIiwia2RfY2FiYW5nIjoiMDAiLCJkaXZpc2lfaWQiOiJJVCIsImphYmF0YW4iOiJJVCBTVEFGRiIsImVtYWlsIjoiaXRAa3JlZGl0bWFuZGlyaS5jby5pZCIsIm5hbWEiOiJBUFJFTEEgQUdJRiBTT0ZZQU4iLCJpYXQiOjE1NzE3MTcyNjgsImV4cCI6MTU3MjMyMjA2OH0.LNG4o96V1KVoD1GeliE2pbW6zbIsSmjAo_zcRWSqcRE",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/x-www-form-urlencoded",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "nama",
+											"value": "sidenav",
+											"type": "text"
+										},
+										{
+											"key": "id_menu_master",
+											"value": "1",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{URL}}/api/menu/sub",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"api",
+										"menu",
+										"sub"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Menu Sub / Main",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJCUFIgS3JlZGl0IE1hbmRpcmkgSW5kb25lc2lhIiwiaWQiOjExMzAsIm5payI6IjAyMTkwNzA4OSIsInVzZW5hbWUiOiJhZ2lmIiwia2RfY2FiYW5nIjoiMDAiLCJkaXZpc2lfaWQiOiJJVCIsImphYmF0YW4iOiJJVCBTVEFGRiIsImVtYWlsIjoiaXRAa3JlZGl0bWFuZGlyaS5jby5pZCIsIm5hbWEiOiJBUFJFTEEgQUdJRiBTT0ZZQU4iLCJpYXQiOjE1NzE3MTcyNjgsImV4cCI6MTU3MjMyMjA2OH0.LNG4o96V1KVoD1GeliE2pbW6zbIsSmjAo_zcRWSqcRE",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{URL}}/api/menu/sub/slide",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"api",
+										"menu",
+										"sub",
+										"slide"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Edit Menu Sub",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJCUFIgS3JlZGl0IE1hbmRpcmkgSW5kb25lc2lhIiwiaWQiOjExMzAsIm5payI6IjAyMTkwNzA4OSIsInVzZW5hbWUiOiJhZ2lmIiwia2RfY2FiYW5nIjoiMDAiLCJkaXZpc2lfaWQiOiJJVCIsImphYmF0YW4iOiJJVCBTVEFGRiIsImVtYWlsIjoiaXRAa3JlZGl0bWFuZGlyaS5jby5pZCIsIm5hbWEiOiJBUFJFTEEgQUdJRiBTT0ZZQU4iLCJpYXQiOjE1NzE3MTcyNjgsImV4cCI6MTU3MjMyMjA2OH0.LNG4o96V1KVoD1GeliE2pbW6zbIsSmjAo_zcRWSqcRE",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/x-www-form-urlencoded",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "nama",
+											"value": "back door",
+											"type": "text"
+										},
+										{
+											"key": "icon",
+											"value": "info",
+											"type": "text"
+										},
+										{
+											"key": "id_menu_master",
+											"value": "1",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{URL}}/api/menu/sub/{slug}",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"api",
+										"menu",
+										"sub",
+										"{slug}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Menu Sub",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJCUFIgS3JlZGl0IE1hbmRpcmkgSW5kb25lc2lhIiwiaWQiOjExMzAsIm5payI6IjAyMTkwNzA4OSIsInVzZW5hbWUiOiJhZ2lmIiwia2RfY2FiYW5nIjoiMDAiLCJkaXZpc2lfaWQiOiJJVCIsImphYmF0YW4iOiJJVCBTVEFGRiIsImVtYWlsIjoiaXRAa3JlZGl0bWFuZGlyaS5jby5pZCIsIm5hbWEiOiJBUFJFTEEgQUdJRiBTT0ZZQU4iLCJpYXQiOjE1NzE3MTcyNjgsImV4cCI6MTU3MjMyMjA2OH0.LNG4o96V1KVoD1GeliE2pbW6zbIsSmjAo_zcRWSqcRE",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/x-www-form-urlencoded",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": []
+								},
+								"url": {
+									"raw": "{{URL}}/api/menu/sub/back_door",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"api",
+										"menu",
+										"sub",
+										"back_door"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "AksesMenu",
+					"item": [
+						{
+							"name": "Create Data",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJCUFIgS3JlZGl0IE1hbmRpcmkgSW5kb25lc2lhIiwiaWQiOjExMzAsIm5payI6IjAyMTkwNzA4OSIsInVzZW5hbWUiOiJhZ2lmIiwia2RfY2FiYW5nIjoiMDAiLCJkaXZpc2lfaWQiOiJJVCIsImphYmF0YW4iOiJJVCBTVEFGRiIsImVtYWlsIjoiaXRAa3JlZGl0bWFuZGlyaS5jby5pZCIsIm5hbWEiOiJBUFJFTEEgQUdJRiBTT0ZZQU4iLCJpYXQiOjE1NzE3MTcyNjgsImV4cCI6MTU3MjMyMjA2OH0.LNG4o96V1KVoD1GeliE2pbW6zbIsSmjAo_zcRWSqcRE",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/x-www-form-urlencoded",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "id_user",
+											"value": "2",
+											"type": "text"
+										},
+										{
+											"key": "id_menu_master",
+											"value": "1",
+											"type": "text"
+										},
+										{
+											"key": "id_menu_sub",
+											"value": "1",
+											"type": "text"
+										},
+										{
+											"key": "print_access",
+											"value": "Y",
+											"type": "text"
+										},
+										{
+											"key": "add_access",
+											"value": "Y",
+											"type": "text"
+										},
+										{
+											"key": "edit_access",
+											"value": "N",
+											"type": "text"
+										},
+										{
+											"key": "delete_access",
+											"value": "Y",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{URL}}/api/menu/akses",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"api",
+										"menu",
+										"akses"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Show Data",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJCUFIgS3JlZGl0IE1hbmRpcmkgSW5kb25lc2lhIiwiaWQiOjExMzAsIm5payI6IjAyMTkwNzA4OSIsInVzZW5hbWUiOiJhZ2lmIiwia2RfY2FiYW5nIjoiMDAiLCJkaXZpc2lfaWQiOiJJVCIsImphYmF0YW4iOiJJVCBTVEFGRiIsImVtYWlsIjoiaXRAa3JlZGl0bWFuZGlyaS5jby5pZCIsIm5hbWEiOiJBUFJFTEEgQUdJRiBTT0ZZQU4iLCJpYXQiOjE1NzE3MTcyNjgsImV4cCI6MTU3MjMyMjA2OH0.LNG4o96V1KVoD1GeliE2pbW6zbIsSmjAo_zcRWSqcRE",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{URL}}/api/menu/akses",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"api",
+										"menu",
+										"akses"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Data Where User Id",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJCUFIgS3JlZGl0IE1hbmRpcmkgSW5kb25lc2lhIiwiaWQiOjExMzAsIm5payI6IjAyMTkwNzA4OSIsInVzZW5hbWUiOiJhZ2lmIiwia2RfY2FiYW5nIjoiMDAiLCJkaXZpc2lfaWQiOiJJVCIsImphYmF0YW4iOiJJVCBTVEFGRiIsImVtYWlsIjoiaXRAa3JlZGl0bWFuZGlyaS5jby5pZCIsIm5hbWEiOiJBUFJFTEEgQUdJRiBTT0ZZQU4iLCJpYXQiOjE1NzE3MTcyNjgsImV4cCI6MTU3MjMyMjA2OH0.LNG4o96V1KVoD1GeliE2pbW6zbIsSmjAo_zcRWSqcRE",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{URL}}/api/menu/akses/3",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"api",
+										"menu",
+										"akses",
+										"3"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Edit Data Where User Id",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": ""
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Data Where User Id",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJCUFIgS3JlZGl0IE1hbmRpcmkgSW5kb25lc2lhIiwiaWQiOjExMzAsIm5payI6IjAyMTkwNzA4OSIsInVzZW5hbWUiOiJhZ2lmIiwia2RfY2FiYW5nIjoiMDAiLCJkaXZpc2lfaWQiOiJJVCIsImphYmF0YW4iOiJJVCBTVEFGRiIsImVtYWlsIjoiaXRAa3JlZGl0bWFuZGlyaS5jby5pZCIsIm5hbWEiOiJBUFJFTEEgQUdJRiBTT0ZZQU4iLCJpYXQiOjE1NzE3MTcyNjgsImV4cCI6MTU3MjMyMjA2OH0.LNG4o96V1KVoD1GeliE2pbW6zbIsSmjAo_zcRWSqcRE",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{URL}}/api/menu/akses/2",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"api",
+										"menu",
+										"akses",
+										"2"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
 			"name": "Login",
 			"request": {
 				"method": "POST",
@@ -181,12 +839,12 @@
 					"urlencoded": [
 						{
 							"key": "user",
-							"value": "abdul_aziz",
+							"value": "agif",
 							"type": "text"
 						},
 						{
 							"key": "password",
-							"value": "123456",
+							"value": "Agif12345!",
 							"type": "text"
 						}
 					]
@@ -198,30 +856,6 @@
 					],
 					"path": [
 						"login"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Get User",
-			"request": {
-				"method": "GET",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJCUFIgS3JlZGl0IE1hbmRpcmkgSW5kb25lc2lhIiwiaWQiOjgxMiwibmlrIjoiMDIxODExMTEzIiwidXNlbmFtZSI6ImFiZHVsX2F6aXoiLCJrZF9jYWJhbmciOiIzOCIsImRpdmlzaV9pZCI6IkFPIiwiamFiYXRhbiI6Ik1BUktFVElORyIsImVtYWlsIjoibWFya2V0aW5nX2NpbGV1bmdzaUBrcmVkaXRtYW5kaXJpLmNvLmlkIiwibmFtYSI6IkFCRFVMIEFaSVoiLCJpYXQiOjE1NzE3MTE5NTcsImV4cCI6MTU3MjMxNjc1N30.XV0TZFUJmRCIkxklyIKEjzMJGjsLTRm7Pdk_nBaBj14",
-						"type": "text"
-					}
-				],
-				"url": {
-					"raw": "{{URL}}/api/users",
-					"host": [
-						"{{URL}}"
-					],
-					"path": [
-						"api",
-						"users"
 					]
 				}
 			},
@@ -276,7 +910,7 @@
 	],
 	"variable": [
 		{
-			"id": "a234f8fc-3a5b-4b42-927c-4fd39ac059d6",
+			"id": "760b1755-4cdb-421d-a7be-26bcfa2e979b",
 			"key": "URL",
 			"value": "",
 			"type": "string"
