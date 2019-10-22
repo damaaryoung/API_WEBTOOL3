@@ -1,0 +1,286 @@
+{
+	"info": {
+		"_postman_id": "e26ac8d6-cc88-479b-84fd-7bd709df52dc",
+		"name": "new_web_tool",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "master",
+			"item": [
+				{
+					"name": "Get Asal_Data",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJCUFIgS3JlZGl0IE1hbmRpcmkgSW5kb25lc2lhIiwiaWQiOjgxMiwibmlrIjoiMDIxODExMTEzIiwidXNlbmFtZSI6ImFiZHVsX2F6aXoiLCJrZF9jYWJhbmciOiIzOCIsImRpdmlzaV9pZCI6IkFPIiwiamFiYXRhbiI6Ik1BUktFVElORyIsImVtYWlsIjoibWFya2V0aW5nX2NpbGV1bmdzaUBrcmVkaXRtYW5kaXJpLmNvLmlkIiwibmFtYSI6IkFCRFVMIEFaSVoiLCJpYXQiOjE1NzE3MTE5NTcsImV4cCI6MTU3MjMxNjc1N30.XV0TZFUJmRCIkxklyIKEjzMJGjsLTRm7Pdk_nBaBj14",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{URL}}/api/master/asal_data",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"master",
+								"asal_data"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Area_SO",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJCUFIgS3JlZGl0IE1hbmRpcmkgSW5kb25lc2lhIiwiaWQiOjgxMiwibmlrIjoiMDIxODExMTEzIiwidXNlbmFtZSI6ImFiZHVsX2F6aXoiLCJrZF9jYWJhbmciOiIzOCIsImRpdmlzaV9pZCI6IkFPIiwiamFiYXRhbiI6Ik1BUktFVElORyIsImVtYWlsIjoibWFya2V0aW5nX2NpbGV1bmdzaUBrcmVkaXRtYW5kaXJpLmNvLmlkIiwibmFtYSI6IkFCRFVMIEFaSVoiLCJpYXQiOjE1NzE3MTE5NTcsImV4cCI6MTU3MjMxNjc1N30.XV0TZFUJmRCIkxklyIKEjzMJGjsLTRm7Pdk_nBaBj14",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{URL}}/api/master/area_so",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"master",
+								"area_so"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Area_AO",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJCUFIgS3JlZGl0IE1hbmRpcmkgSW5kb25lc2lhIiwiaWQiOjgxMiwibmlrIjoiMDIxODExMTEzIiwidXNlbmFtZSI6ImFiZHVsX2F6aXoiLCJrZF9jYWJhbmciOiIzOCIsImRpdmlzaV9pZCI6IkFPIiwiamFiYXRhbiI6Ik1BUktFVElORyIsImVtYWlsIjoibWFya2V0aW5nX2NpbGV1bmdzaUBrcmVkaXRtYW5kaXJpLmNvLmlkIiwibmFtYSI6IkFCRFVMIEFaSVoiLCJpYXQiOjE1NzE3MTE5NTcsImV4cCI6MTU3MjMxNjc1N30.XV0TZFUJmRCIkxklyIKEjzMJGjsLTRm7Pdk_nBaBj14",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{URL}}/api/master/area_so",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"master",
+								"area_so"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "willayah",
+			"item": [
+				{
+					"name": "Get Provinsi",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/wilayah/provinsi",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"wilayah",
+								"provinsi"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Kabupaten & Kota",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/wilayah/kabupaten",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"wilayah",
+								"kabupaten"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Kecamatan",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/wilayah/kecamatan",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"wilayah",
+								"kecamatan"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Kelurahan",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/wilayah/kelurahan",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"wilayah",
+								"kelurahan"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Login",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/x-www-form-urlencoded",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "user",
+							"value": "abdul_aziz",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "123456",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{URL}}/login",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get User",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJCUFIgS3JlZGl0IE1hbmRpcmkgSW5kb25lc2lhIiwiaWQiOjgxMiwibmlrIjoiMDIxODExMTEzIiwidXNlbmFtZSI6ImFiZHVsX2F6aXoiLCJrZF9jYWJhbmciOiIzOCIsImRpdmlzaV9pZCI6IkFPIiwiamFiYXRhbiI6Ik1BUktFVElORyIsImVtYWlsIjoibWFya2V0aW5nX2NpbGV1bmdzaUBrcmVkaXRtYW5kaXJpLmNvLmlkIiwibmFtYSI6IkFCRFVMIEFaSVoiLCJpYXQiOjE1NzE3MTE5NTcsImV4cCI6MTU3MjMxNjc1N30.XV0TZFUJmRCIkxklyIKEjzMJGjsLTRm7Pdk_nBaBj14",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{URL}}/api/users",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"api",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Flag Otorisasi",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJCUFIgS3JlZGl0IE1hbmRpcmkgSW5kb25lc2lhIiwiaWQiOjgxMiwibmlrIjoiMDIxODExMTEzIiwidXNlbmFtZSI6ImFiZHVsX2F6aXoiLCJrZF9jYWJhbmciOiIzOCIsImRpdmlzaV9pZCI6IkFPIiwiamFiYXRhbiI6Ik1BUktFVElORyIsImVtYWlsIjoibWFya2V0aW5nX2NpbGV1bmdzaUBrcmVkaXRtYW5kaXJpLmNvLmlkIiwibmFtYSI6IkFCRFVMIEFaSVoiLCJpYXQiOjE1NzE3MTE5NTcsImV4cCI6MTU3MjMxNjc1N30.XV0TZFUJmRCIkxklyIKEjzMJGjsLTRm7Pdk_nBaBj14",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{URL}}/api/flag",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"api",
+						"flag"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "a7ee6b9b-2eba-4d67-85f8-9e2b1b62e61a",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "3cefa88c-796f-45e0-ba7e-bd7a9cb4600e",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "a234f8fc-3a5b-4b42-927c-4fd39ac059d6",
+			"key": "URL",
+			"value": "",
+			"type": "string"
+		}
+	],
+	"protocolProfileBehavior": {}
+}
