@@ -59,7 +59,7 @@ class KabupatenController extends BaseController
         try {
             $query = DB::connection('web')->table('master_kabupaten')->insert([
                 'nama'        => $nama,
-                'id_provinsi' => $id_provinsi,
+                'id_provinsi' => $provinsi,
                 'flg_aktif'   => $flg_aktif
             ]);
 
@@ -129,7 +129,7 @@ class KabupatenController extends BaseController
         try {
             $query = DB::connection('web')->table('master_kabupaten')->where('id', $id)->update([
                 'nama'        => $nama,
-                'id_provinsi' => $id_provinsi,
+                'id_provinsi' => $provinsi,
                 'flg_aktif'   => $flg_aktif
             ]);
 
