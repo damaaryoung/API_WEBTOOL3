@@ -4,11 +4,13 @@
 
 2 import *Collection* __POSTMAN__ from link in [google sheet](https://docs.google.com/spreadsheets/d/1AGmod0OzPZA5B6D4CSoND3r0uRyzM7IXqRsulJcW-xw/edit?usp=sharing)
 
-3 **Login**
+3. My Local Base_URL: __192.168.1.38:4100__
+
+4 **Login**
 > with user from **dpm_online**
 
 > * user
 > * password
 
-4 get __token__ after login & insert to Header
+5 get __token__ after login & insert to Header
 > *Authorization* : _Bearer_ __{token}__

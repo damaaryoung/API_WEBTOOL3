@@ -182,7 +182,7 @@ class UserController extends BaseController
 
             if ($xData == 1) {
                 User::where('no_hp', $hp)
-                    ->update(['no_hp_verified' => 1, 'password' => md5($kode_otp)]);
+                    ->update(['password' => md5($kode_otp)]);
 
                 return response()->json([
                    'message' => 'Reset password sukses'
@@ -201,8 +201,6 @@ class UserController extends BaseController
         $check = User::where('user_id', $id)->first();
         $originalPass = $check->password;
 
-        // dd($originalPass);
-
         $oldPass     = $req->input('password_lama');
         $newPass     = $req->input('password_baru');
         $confirmPass = $req->input('konfirmasi_password');
@@ -219,7 +217,7 @@ class UserController extends BaseController
             return response()->json([
                 "code"    => 400,
                 "status"  => "bad request",
-                "message" => "passwor is not the same!!"
+                "message" => "password is not the same!!"
             ], 400);
         }
 

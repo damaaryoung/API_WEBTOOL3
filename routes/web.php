@@ -20,14 +20,29 @@ $router->get('/api', function () use ($router) {
 });
 
 $router->group(['prefix' => '/wilayah'], function () use ($router) {
-    $router->get('/provinsi', 'Wilayah@provinsi');
-    // $router->post('/provinsi', 'Wilayah@create_provinsi');
-    $router->get('/kabupaten', 'Wilayah@kabupaten');
-    // $router->post('/kabupaten', 'Wilayah@create_kabupaten');
-    $router->get('/kecamatan', 'Wilayah@kecamatan');
-    // $router->post('/kecamatan', 'Wilayah@create_kecamatan');
-    $router->get('/kelurahan', 'Wilayah@kelurahan');
-    // $router->post('/kelurahan', 'Wilayah@create_kelurahan');
+    $router->get('/provinsi', 'Wilayah\ProvinsiController@index');
+    $router->post('/provinsi', 'Wilayah\ProvinsiController@store');
+    $router->get('/provinsi/{id}', 'Wilayah\ProvinsiController@show');
+    $router->put('/provinsi/{id}', 'Wilayah\ProvinsiController@update');
+    $router->delete('/provinsi/{id}', 'Wilayah\ProvinsiController@delete');
+
+    $router->get('/kabupaten', 'Wilayah\KabupatenController@index');
+    $router->post('/kabupaten', 'Wilayah\KabupatenController@store');
+    $router->get('/kabupaten/{id}', 'Wilayah\KabupatenController@show');
+    $router->put('/kabupaten/{id}', 'Wilayah\KabupatenController@update');
+    $router->delete('/kabupaten/{id}', 'Wilayah\KabupatenController@delete');
+
+    $router->get('/kecamatan', 'Wilayah\KecamatanController@index');
+    $router->post('/kecamatan', 'Wilayah\KecamatanController@store');
+    $router->get('/kecamatan/{id}', 'Wilayah\KecamatanController@show');
+    $router->put('/kecamatan/{id}', 'Wilayah\KecamatanController@update');
+    $router->delete('/kecamatan/{id}', 'Wilayah\KecamatanController@delete');
+
+    $router->get('/kelurahan', 'Wilayah\KelurahanController@index');
+    $router->post('/kelurahan', 'Wilayah\KelurahanController@store');
+    $router->get('/kelurahan/{id}', 'Wilayah\KelurahanController@show');
+    $router->put('/kelurahan/{id}', 'Wilayah\KelurahanController@update');
+    $router->delete('/kelurahan/{id}', 'Wilayah\KelurahanController@delete');
 });
 
 $router->post('/login', 'AuthController@login');
@@ -72,5 +87,9 @@ $router->group(['middleware' => 'jwt.auth'], function () use ($router) {
             $router->put('/sub/{slug}', 'Menu\MenuSubController@edit');
             $router->delete('/sub/{slug}', 'Menu\MenuSubController@delete'); // Delete Data based on slug(URL)
         });
+
+        $router->get('/pinjaman', 'PinjamanController@index');
+        $router->post('/pinjaman', 'PinjamanController@store');
+        $router->get('/pinjaman/plus', 'PinjamanController@plus');
     });
 });
