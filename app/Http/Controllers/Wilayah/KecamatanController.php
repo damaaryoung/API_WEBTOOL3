@@ -44,7 +44,7 @@ class KecamatanController extends BaseController
             return response()->json([
                 "code"    => 400,
                 "status"  => "bad request",
-                "message" => "id kabupateb field is required !"
+                "message" => "id kabupaten field is required !"
             ], 400);
         }
 

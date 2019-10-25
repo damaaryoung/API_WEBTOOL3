@@ -9,79 +9,263 @@
 			"name": "Master",
 			"item": [
 				{
-					"name": "Get Asal_Data",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJCUFIgS3JlZGl0IE1hbmRpcmkgSW5kb25lc2lhIiwiaWQiOjgxMiwibmlrIjoiMDIxODExMTEzIiwidXNlbmFtZSI6ImFiZHVsX2F6aXoiLCJrZF9jYWJhbmciOiIzOCIsImRpdmlzaV9pZCI6IkFPIiwiamFiYXRhbiI6Ik1BUktFVElORyIsImVtYWlsIjoibWFya2V0aW5nX2NpbGV1bmdzaUBrcmVkaXRtYW5kaXJpLmNvLmlkIiwibmFtYSI6IkFCRFVMIEFaSVoiLCJpYXQiOjE1NzE3MTE5NTcsImV4cCI6MTU3MjMxNjc1N30.XV0TZFUJmRCIkxklyIKEjzMJGjsLTRm7Pdk_nBaBj14",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{URL}}/api/master/asal_data",
-							"host": [
-								"{{URL}}"
-							],
-							"path": [
-								"api",
-								"master",
-								"asal_data"
-							]
+					"name": "Asal_Data",
+					"item": [
+						{
+							"name": "Get All Asal_Data",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJCUFIgS3JlZGl0IE1hbmRpcmkgSW5kb25lc2lhIiwiaWQiOjgxMiwibmlrIjoiMDIxODExMTEzIiwidXNlbmFtZSI6ImFiZHVsX2F6aXoiLCJrZF9jYWJhbmciOiIzOCIsImRpdmlzaV9pZCI6IkFPIiwiamFiYXRhbiI6Ik1BUktFVElORyIsImVtYWlsIjoibWFya2V0aW5nX2NpbGV1bmdzaUBrcmVkaXRtYW5kaXJpLmNvLmlkIiwibmFtYSI6IkFCRFVMIEFaSVoiLCJpYXQiOjE1NzE3MTE5NTcsImV4cCI6MTU3MjMxNjc1N30.XV0TZFUJmRCIkxklyIKEjzMJGjsLTRm7Pdk_nBaBj14",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{URL}}/api/master/asal_data",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"api",
+										"master",
+										"asal_data"
+									]
+								}
+							},
+							"response": []
 						}
-					},
-					"response": []
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
 				},
 				{
-					"name": "Get Area_SO",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJCUFIgS3JlZGl0IE1hbmRpcmkgSW5kb25lc2lhIiwiaWQiOjgxMiwibmlrIjoiMDIxODExMTEzIiwidXNlbmFtZSI6ImFiZHVsX2F6aXoiLCJrZF9jYWJhbmciOiIzOCIsImRpdmlzaV9pZCI6IkFPIiwiamFiYXRhbiI6Ik1BUktFVElORyIsImVtYWlsIjoibWFya2V0aW5nX2NpbGV1bmdzaUBrcmVkaXRtYW5kaXJpLmNvLmlkIiwibmFtYSI6IkFCRFVMIEFaSVoiLCJpYXQiOjE1NzE3MTE5NTcsImV4cCI6MTU3MjMxNjc1N30.XV0TZFUJmRCIkxklyIKEjzMJGjsLTRm7Pdk_nBaBj14",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{URL}}/api/master/area_so",
-							"host": [
-								"{{URL}}"
-							],
-							"path": [
-								"api",
-								"master",
-								"area_so"
-							]
+					"name": "Area",
+					"item": [
+						{
+							"name": "Create Data",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJCUFIgS3JlZGl0IE1hbmRpcmkgSW5kb25lc2lhIiwiaWQiOjgxMiwibmlrIjoiMDIxODExMTEzIiwidXNlbmFtZSI6ImFiZHVsX2F6aXoiLCJrZF9jYWJhbmciOiIzOCIsImRpdmlzaV9pZCI6IkFPIiwiamFiYXRhbiI6Ik1BUktFVElORyIsImVtYWlsIjoibWFya2V0aW5nX2NpbGV1bmdzaUBrcmVkaXRtYW5kaXJpLmNvLmlkIiwibmFtYSI6IkFCRFVMIEFaSVoiLCJpYXQiOjE1NzE3MTE5NTcsImV4cCI6MTU3MjMxNjc1N30.XV0TZFUJmRCIkxklyIKEjzMJGjsLTRm7Pdk_nBaBj14",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/x-www-form-urlencoded",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "id_kelurahan",
+											"value": "2",
+											"type": "text"
+										},
+										{
+											"key": "kode_group2",
+											"value": "0.012",
+											"type": "text"
+										},
+										{
+											"key": "id_kre_kode_so",
+											"value": "12",
+											"type": "text"
+										},
+										{
+											"key": "jenis",
+											"value": "COLsd",
+											"description": "Value = (AO, SO, COLL, MB, CA)",
+											"type": "text"
+										},
+										{
+											"key": "flg_aktif",
+											"value": "1",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{URL}}/api/master/area",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"api",
+										"master",
+										"area"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get All Data",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJCUFIgS3JlZGl0IE1hbmRpcmkgSW5kb25lc2lhIiwiaWQiOjgxMiwibmlrIjoiMDIxODExMTEzIiwidXNlbmFtZSI6ImFiZHVsX2F6aXoiLCJrZF9jYWJhbmciOiIzOCIsImRpdmlzaV9pZCI6IkFPIiwiamFiYXRhbiI6Ik1BUktFVElORyIsImVtYWlsIjoibWFya2V0aW5nX2NpbGV1bmdzaUBrcmVkaXRtYW5kaXJpLmNvLmlkIiwibmFtYSI6IkFCRFVMIEFaSVoiLCJpYXQiOjE1NzE3MTE5NTcsImV4cCI6MTU3MjMxNjc1N30.XV0TZFUJmRCIkxklyIKEjzMJGjsLTRm7Pdk_nBaBj14",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/x-www-form-urlencoded",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{URL}}/api/master/area",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"api",
+										"master",
+										"area"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Data By ID",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJCUFIgS3JlZGl0IE1hbmRpcmkgSW5kb25lc2lhIiwiaWQiOjgxMiwibmlrIjoiMDIxODExMTEzIiwidXNlbmFtZSI6ImFiZHVsX2F6aXoiLCJrZF9jYWJhbmciOiIzOCIsImRpdmlzaV9pZCI6IkFPIiwiamFiYXRhbiI6Ik1BUktFVElORyIsImVtYWlsIjoibWFya2V0aW5nX2NpbGV1bmdzaUBrcmVkaXRtYW5kaXJpLmNvLmlkIiwibmFtYSI6IkFCRFVMIEFaSVoiLCJpYXQiOjE1NzE3MTE5NTcsImV4cCI6MTU3MjMxNjc1N30.XV0TZFUJmRCIkxklyIKEjzMJGjsLTRm7Pdk_nBaBj14",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/x-www-form-urlencoded",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{URL}}/api/master/area/{id}",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"api",
+										"master",
+										"area",
+										"{id}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Data By ID",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJCUFIgS3JlZGl0IE1hbmRpcmkgSW5kb25lc2lhIiwiaWQiOjgxMiwibmlrIjoiMDIxODExMTEzIiwidXNlbmFtZSI6ImFiZHVsX2F6aXoiLCJrZF9jYWJhbmciOiIzOCIsImRpdmlzaV9pZCI6IkFPIiwiamFiYXRhbiI6Ik1BUktFVElORyIsImVtYWlsIjoibWFya2V0aW5nX2NpbGV1bmdzaUBrcmVkaXRtYW5kaXJpLmNvLmlkIiwibmFtYSI6IkFCRFVMIEFaSVoiLCJpYXQiOjE1NzE3MTE5NTcsImV4cCI6MTU3MjMxNjc1N30.XV0TZFUJmRCIkxklyIKEjzMJGjsLTRm7Pdk_nBaBj14",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/x-www-form-urlencoded",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "id_kelurahan",
+											"value": "2",
+											"type": "text"
+										},
+										{
+											"key": "kode_group2",
+											"value": "0.012",
+											"type": "text"
+										},
+										{
+											"key": "id_kre_kode_so",
+											"value": "12",
+											"type": "text"
+										},
+										{
+											"key": "jenis",
+											"value": "COLsd",
+											"description": "Value = (AO, SO, COLL, MB, CA)",
+											"type": "text"
+										},
+										{
+											"key": "flg_aktif",
+											"value": "1",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{URL}}/api/master/area/{id}",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"api",
+										"master",
+										"area",
+										"{id}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Data By ID",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJCUFIgS3JlZGl0IE1hbmRpcmkgSW5kb25lc2lhIiwiaWQiOjgxMiwibmlrIjoiMDIxODExMTEzIiwidXNlbmFtZSI6ImFiZHVsX2F6aXoiLCJrZF9jYWJhbmciOiIzOCIsImRpdmlzaV9pZCI6IkFPIiwiamFiYXRhbiI6Ik1BUktFVElORyIsImVtYWlsIjoibWFya2V0aW5nX2NpbGV1bmdzaUBrcmVkaXRtYW5kaXJpLmNvLmlkIiwibmFtYSI6IkFCRFVMIEFaSVoiLCJpYXQiOjE1NzE3MTE5NTcsImV4cCI6MTU3MjMxNjc1N30.XV0TZFUJmRCIkxklyIKEjzMJGjsLTRm7Pdk_nBaBj14",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/x-www-form-urlencoded",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{URL}}/api/master/area/{id}",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"api",
+										"master",
+										"area",
+										"{id}"
+									]
+								}
+							},
+							"response": []
 						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get Area_AO",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJCUFIgS3JlZGl0IE1hbmRpcmkgSW5kb25lc2lhIiwiaWQiOjgxMiwibmlrIjoiMDIxODExMTEzIiwidXNlbmFtZSI6ImFiZHVsX2F6aXoiLCJrZF9jYWJhbmciOiIzOCIsImRpdmlzaV9pZCI6IkFPIiwiamFiYXRhbiI6Ik1BUktFVElORyIsImVtYWlsIjoibWFya2V0aW5nX2NpbGV1bmdzaUBrcmVkaXRtYW5kaXJpLmNvLmlkIiwibmFtYSI6IkFCRFVMIEFaSVoiLCJpYXQiOjE1NzE3MTE5NTcsImV4cCI6MTU3MjMxNjc1N30.XV0TZFUJmRCIkxklyIKEjzMJGjsLTRm7Pdk_nBaBj14",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{URL}}/api/master/area_so",
-							"host": [
-								"{{URL}}"
-							],
-							"path": [
-								"api",
-								"master",
-								"area_so"
-							]
-						}
-					},
-					"response": []
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
 				}
 			],
 			"protocolProfileBehavior": {}
@@ -90,76 +274,647 @@
 			"name": "Willayah",
 			"item": [
 				{
-					"name": "Get Provinsi",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{URL}}/wilayah/provinsi",
-							"host": [
-								"{{URL}}"
-							],
-							"path": [
-								"wilayah",
-								"provinsi"
-							]
+					"name": "Provinsi",
+					"item": [
+						{
+							"name": "Get All Provinsi",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}/wilayah/provinsi",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"wilayah",
+										"provinsi"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create Provinsi",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}/wilayah/provinsi",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"wilayah",
+										"provinsi"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Show Provinsi WHERE id",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}/wilayah/provinsi/1",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"wilayah",
+										"provinsi",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Provinsi",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/x-www-form-urlencoded",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "nama",
+											"value": "Aceh",
+											"type": "text"
+										},
+										{
+											"key": "flg_aktif",
+											"value": "1",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{URL}}/wilayah/provinsi/1",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"wilayah",
+										"provinsi",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Provinsi",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/x-www-form-urlencoded",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{URL}}/wilayah/provinsi/35",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"wilayah",
+										"provinsi",
+										"35"
+									]
+								}
+							},
+							"response": []
 						}
-					},
-					"response": []
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
 				},
 				{
-					"name": "Get Kabupaten & Kota",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{URL}}/wilayah/kabupaten",
-							"host": [
-								"{{URL}}"
-							],
-							"path": [
-								"wilayah",
-								"kabupaten"
-							]
+					"name": "Kabupaten",
+					"item": [
+						{
+							"name": "Get All Kabupaten & Kota",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}/wilayah/kabupaten",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"wilayah",
+										"kabupaten"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create Kabupaten & Kota",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/x-www-form-urlencoded",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "nama",
+											"value": "zeroxKab",
+											"type": "text"
+										},
+										{
+											"key": "id_provinsi",
+											"value": "35",
+											"type": "text"
+										},
+										{
+											"key": "flg_aktif",
+											"value": "1",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{URL}}/wilayah/kabupaten",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"wilayah",
+										"kabupaten"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Show Kabupaten & Kota by Id",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/x-www-form-urlencoded",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{URL}}/wilayah/kabupaten/77",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"wilayah",
+										"kabupaten",
+										"77"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Kabupaten & Kota by Id",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/x-www-form-urlencoded",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "nama",
+											"value": "zerox Kabupaten",
+											"type": "text"
+										},
+										{
+											"key": "id_provinsi",
+											"value": "350",
+											"type": "text"
+										},
+										{
+											"key": "flg_aktif",
+											"value": "1",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{URL}}/wilayah/kabupaten/77",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"wilayah",
+										"kabupaten",
+										"77"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Kabupaten & Kota by Id",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/x-www-form-urlencoded",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{URL}}/wilayah/kabupaten/77",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"wilayah",
+										"kabupaten",
+										"77"
+									]
+								}
+							},
+							"response": []
 						}
-					},
-					"response": []
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
 				},
 				{
-					"name": "Get Kecamatan",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{URL}}/wilayah/kecamatan",
-							"host": [
-								"{{URL}}"
-							],
-							"path": [
-								"wilayah",
-								"kecamatan"
-							]
+					"name": "Kecamatan",
+					"item": [
+						{
+							"name": "Get All Kecamatan",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}/wilayah/kecamatan",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"wilayah",
+										"kecamatan"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Createl Kecamatan",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/x-www-form-urlencoded",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "nama",
+											"value": "zroxstrong",
+											"type": "text"
+										},
+										{
+											"key": "id_kabupaten",
+											"value": "190",
+											"type": "text"
+										},
+										{
+											"key": "flg_aktif",
+											"value": "1",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{URL}}/wilayah/kecamatan",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"wilayah",
+										"kecamatan"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Show Kecamatan by ID",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/x-www-form-urlencoded",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{URL}}/wilayah/kecamatan/22",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"wilayah",
+										"kecamatan",
+										"22"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Kecamatan by ID",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/x-www-form-urlencoded",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "nama",
+											"value": "zrox strong",
+											"type": "text"
+										},
+										{
+											"key": "id_kabupaten",
+											"value": "19",
+											"type": "text"
+										},
+										{
+											"key": "flg_aktif",
+											"value": "1",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{URL}}/wilayah/kecamatan/22",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"wilayah",
+										"kecamatan",
+										"22"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Kecamatan by ID",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/x-www-form-urlencoded",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{URL}}/wilayah/kecamatan/22",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"wilayah",
+										"kecamatan",
+										"22"
+									]
+								}
+							},
+							"response": []
 						}
-					},
-					"response": []
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
 				},
 				{
-					"name": "Get Kelurahan",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{URL}}/wilayah/kelurahan",
-							"host": [
-								"{{URL}}"
-							],
-							"path": [
-								"wilayah",
-								"kelurahan"
-							]
+					"name": "Kelurahan",
+					"item": [
+						{
+							"name": "Get All Kelurahan",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}/wilayah/kelurahan",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"wilayah",
+										"kelurahan"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create Kelurahan",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/x-www-form-urlencoded",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "nama",
+											"value": "Zrox Strongest",
+											"type": "text"
+										},
+										{
+											"key": "kode_pos",
+											"value": "5738178",
+											"type": "text"
+										},
+										{
+											"key": "id_kecamatan",
+											"value": "134",
+											"type": "text"
+										},
+										{
+											"key": "flg_aktif",
+											"value": "1",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{URL}}/wilayah/kelurahan",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"wilayah",
+										"kelurahan"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Show Kelurahan by ID",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/x-www-form-urlencoded",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{URL}}/wilayah/kelurahan/53",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"wilayah",
+										"kelurahan",
+										"53"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Kelurahan by ID",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/x-www-form-urlencoded",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "nama",
+											"value": "Zrox-Strongest",
+											"type": "text"
+										},
+										{
+											"key": "kode_pos",
+											"value": "573810000",
+											"type": "text"
+										},
+										{
+											"key": "id_kecamatan",
+											"value": "134",
+											"type": "text"
+										},
+										{
+											"key": "flg_aktif",
+											"value": "1",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{URL}}/wilayah/kelurahan/53",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"wilayah",
+										"kelurahan",
+										"53"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Kelurahan by ID",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/x-www-form-urlencoded",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{URL}}/wilayah/kelurahan/53",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"wilayah",
+										"kelurahan",
+										"53"
+									]
+								}
+							},
+							"response": []
 						}
-					},
-					"response": []
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
 				}
 			],
 			"protocolProfileBehavior": {}
@@ -278,14 +1033,13 @@
 									}
 								],
 								"url": {
-									"raw": "{{URL}}/api/menu/",
+									"raw": "{{URL}}/api/menu",
 									"host": [
 										"{{URL}}"
 									],
 									"path": [
 										"api",
-										"menu",
-										""
+										"menu"
 									]
 								}
 							},
@@ -354,7 +1108,7 @@
 									}
 								],
 								"url": {
-									"raw": "{{URL}}/api/menu/master/detail",
+									"raw": "{{URL}}/api/menu/master/{slug}",
 									"host": [
 										"{{URL}}"
 									],
@@ -362,7 +1116,7 @@
 										"api",
 										"menu",
 										"master",
-										"detail"
+										"{slug}"
 									]
 								}
 							},
@@ -443,7 +1197,7 @@
 									"urlencoded": []
 								},
 								"url": {
-									"raw": "{{URL}}/api/menu/master/back_doors",
+									"raw": "{{URL}}/api/menu/master/{slug}",
 									"host": [
 										"{{URL}}"
 									],
@@ -451,7 +1205,7 @@
 										"api",
 										"menu",
 										"master",
-										"back_doors"
+										"{slug}"
 									]
 								}
 							},
@@ -547,7 +1301,7 @@
 									}
 								],
 								"url": {
-									"raw": "{{URL}}/api/menu/sub/slide",
+									"raw": "{{URL}}/api/menu/sub/{slug}",
 									"host": [
 										"{{URL}}"
 									],
@@ -555,7 +1309,7 @@
 										"api",
 										"menu",
 										"sub",
-										"slide"
+										"{slug}"
 									]
 								}
 							},
@@ -635,7 +1389,7 @@
 									"urlencoded": []
 								},
 								"url": {
-									"raw": "{{URL}}/api/menu/sub/back_door",
+									"raw": "{{URL}}/api/menu/sub/{slug}",
 									"host": [
 										"{{URL}}"
 									],
@@ -643,7 +1397,7 @@
 										"api",
 										"menu",
 										"sub",
-										"back_door"
+										"{slug}"
 									]
 								}
 							},
@@ -679,36 +1433,43 @@
 										{
 											"key": "id_user",
 											"value": "2",
+											"description": "Reference user_id in table user in  db:dpm_online",
 											"type": "text"
 										},
 										{
 											"key": "id_menu_master",
 											"value": "1",
+											"description": "Reference id in menu_master",
 											"type": "text"
 										},
 										{
 											"key": "id_menu_sub",
 											"value": "1",
+											"description": "Reference id in menu_sub",
 											"type": "text"
 										},
 										{
 											"key": "print_access",
 											"value": "Y",
+											"description": "Value => Y or N",
 											"type": "text"
 										},
 										{
 											"key": "add_access",
 											"value": "Y",
+											"description": "Value => Y or N",
 											"type": "text"
 										},
 										{
 											"key": "edit_access",
 											"value": "N",
+											"description": "Value => Y or N",
 											"type": "text"
 										},
 										{
 											"key": "delete_access",
 											"value": "Y",
+											"description": "Value => Y or N",
 											"type": "text"
 										}
 									]
@@ -840,6 +1601,7 @@
 						{
 							"key": "user",
 							"value": "agif",
+							"description": "User From dpm_online database",
 							"type": "text"
 						},
 						{
@@ -862,24 +1624,60 @@
 			"response": []
 		},
 		{
-			"name": "Update Flag Otorisasi",
+			"name": "Fasilitas Pinjaman",
 			"request": {
-				"method": "PUT",
+				"method": "POST",
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJCUFIgS3JlZGl0IE1hbmRpcmkgSW5kb25lc2lhIiwiaWQiOjgxMiwibmlrIjoiMDIxODExMTEzIiwidXNlbmFtZSI6ImFiZHVsX2F6aXoiLCJrZF9jYWJhbmciOiIzOCIsImRpdmlzaV9pZCI6IkFPIiwiamFiYXRhbiI6Ik1BUktFVElORyIsImVtYWlsIjoibWFya2V0aW5nX2NpbGV1bmdzaUBrcmVkaXRtYW5kaXJpLmNvLmlkIiwibmFtYSI6IkFCRFVMIEFaSVoiLCJpYXQiOjE1NzE3MTE5NTcsImV4cCI6MTU3MjMxNjc1N30.XV0TZFUJmRCIkxklyIKEjzMJGjsLTRm7Pdk_nBaBj14",
+						"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJCUFIgS3JlZGl0IE1hbmRpcmkgSW5kb25lc2lhIiwiaWQiOjExMzAsIm5payI6IjAyMTkwNzA4OSIsInVzZW5hbWUiOiJhZ2lmIiwia2RfY2FiYW5nIjoiMDAiLCJkaXZpc2lfaWQiOiJJVCIsImphYmF0YW4iOiJJVCBTVEFGRiIsImVtYWlsIjoiaXRAa3JlZGl0bWFuZGlyaS5jby5pZCIsIm5hbWEiOiJBUFJFTEEgQUdJRiBTT0ZZQU4iLCJpYXQiOjE1NzE3OTY1MzgsImV4cCI6MTU3MjQwMTMzOH0.e1b41GhzgWCNdNz-fDDoPzKEzQt9v1L4HHkdylGPs3o",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/x-www-form-urlencoded",
 						"type": "text"
 					}
 				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "nomor_so",
+							"value": "1",
+							"type": "text"
+						},
+						{
+							"key": "jenis_pinjaman",
+							"value": "Anomali",
+							"type": "text"
+						},
+						{
+							"key": "tujuan_pinjaman",
+							"value": "Pendidikan",
+							"type": "text"
+						},
+						{
+							"key": "plafon",
+							"value": "2.20",
+							"type": "text"
+						},
+						{
+							"key": "tenor",
+							"value": "4",
+							"type": "text"
+						}
+					]
+				},
 				"url": {
-					"raw": "{{URL}}/api/flag",
+					"raw": "{{URL}}/api/pinjaman",
 					"host": [
 						"{{URL}}"
 					],
 					"path": [
 						"api",
-						"flag"
+						"pinjaman"
 					]
 				}
 			},
@@ -910,7 +1708,7 @@
 	],
 	"variable": [
 		{
-			"id": "760b1755-4cdb-421d-a7be-26bcfa2e979b",
+			"id": "22c8246f-e375-4fd3-b19b-0e6e4c000416",
 			"key": "URL",
 			"value": "",
 			"type": "string"
