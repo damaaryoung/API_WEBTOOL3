@@ -38,7 +38,7 @@ $router->group(['prefix' => '/wilayah'], function () use ($router) {
     $router->delete('/kelurahan/{id}', 'Wilayah\KelurahanController@delete');
 });
 
-$router->put('/users/reset_password', 'UserController@resetPassword'); //Reset Password
+$router->put('/api/users/reset_password', 'UserController@resetPassword'); //Reset Password
 
 $router->get('/otorisasi', 'FlagAuthorController@updateOtorisasi');
 $router->get('/flag', 'FlagAuthorController@index');
