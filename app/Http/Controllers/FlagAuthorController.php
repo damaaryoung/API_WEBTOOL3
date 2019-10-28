@@ -57,7 +57,7 @@ class FlagAuthorController extends BaseController
 
     public function index() {
         try {
-            $query = DB::connection('web')->table('flg_otorisasi')->get();
+            $query = DB::connection('dpm')->table('flg_otorisasi')->get();
 
             return response()->json([
                 'code'    => 200,
@@ -183,7 +183,7 @@ class FlagAuthorController extends BaseController
         }
 
         try {
-            $query = DB::connection('web')->table('flg_otorisasi')->insert([
+            $query = DB::connection('dpm')->table('flg_otorisasi')->insert([
                 'user_id'         => $user_id,
                 'modul'           => $modul,
                 'id_modul'        => $id_modul,
@@ -217,7 +217,7 @@ class FlagAuthorController extends BaseController
 
     public function show($id) {
         try {
-            $query = DB::connection('web')->table('flg_otorisasi')->where('id', $id)->get();
+            $query = DB::connection('dpm')->table('flg_otorisasi')->where('id', $id)->get();
 
             return response()->json([
                 'code'    => 200,
@@ -234,7 +234,8 @@ class FlagAuthorController extends BaseController
     }
 
     public function update($id, Request $req) {
-        $check = DB::connection('web')->table('flg_otorisasi')->where('id', $id)->first();
+
+        $check = DB::connection('dpm')->table('flg_otorisasi')->where('id', $id)->first();
 
         $user_id         = empty($req->input('user_id')) ? $check->user_id : $req->input('user_id');
         $modul           = empty($req->input('modul')) ? $check->modul : $req->input('modul');
@@ -248,12 +249,12 @@ class FlagAuthorController extends BaseController
         $approval        = empty($req->input('approval')) ? $check->approval : $req->input('approval');
         $otorisasi       = empty($req->input('otorisasi')) ? $check->otorisasi : $req->input('otorisasi');
         $subject         = empty($req->input('subject')) ? $check->subject : $req->input('subject');
-        $keterangan      = empty($req->input('keterangan')) $check->keterangan : $req->input('keterangan');
-        $waktu_otorisasi = empty($req->input('waktu_otorisasi')) : $check->waktu_otorisasi : $req->input('waktu_otorisasi');
+        $keterangan      = empty($req->input('keterangan')) ? $check->keterangan : $req->input('keterangan');
+        $waktu_otorisasi = empty($req->input('waktu_otorisasi')) ? $check->waktu_otorisasi : $req->input('waktu_otorisasi');
         $sent_android    = empty($req->input('sent_android')) ? $check->sent_android : $req->input('sent_android');
 
         try {
-            $query = DB::connection('web')->table('flg_otorisasi')->where('id', $id)->update([
+            $query = DB::connection('dpm')->table('flg_otorisasi')->where('id', $id)->update([
                 'user_id'         => $user_id,
                 'modul'           => $modul,
                 'id_modul'        => $id_modul,
@@ -287,7 +288,7 @@ class FlagAuthorController extends BaseController
 
     public function delete($id) {
         try {
-            $query = DB::connection('web')->table('flg_otorisasi')->where('id', $id)->delete();
+            $query = DB::connection('dpm')->table('flg_otorisasi')->where('id', $id)->delete();
 
             return response()->json([
                 'code'    => 200,

@@ -121,7 +121,7 @@ class UserController extends BaseController
 
             $msg_otp = 'Your Password baru anda: '.$kode_otp;
 
-            $inData = $help->OTP($hp, $msg_otp);
+            $inData = $help->sendOTP($hp, $msg_otp);
             $outData = json_decode($inData, true);
             $xData = $outData['messages'][0]['smsCount'];
 

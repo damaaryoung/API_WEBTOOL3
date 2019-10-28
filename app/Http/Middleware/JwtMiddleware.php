@@ -13,6 +13,7 @@ class JwtMiddleware
     public function handle($request, Closure $next, $guard = null)
     {
         $token = $request->header('Authorization');
+        // $token = $request->get('token');
 
         if(!$token) {
             // Unauthorized response if token not there
@@ -21,6 +22,7 @@ class JwtMiddleware
                 'status'  => 'Error',
                 'message' => 'Token required.'
             ], 401);
+
         }elseif(preg_match("/Bearer /", $token)){
 
             $strToken = str_replace('Bearer ','', $token);

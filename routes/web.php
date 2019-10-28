@@ -1,18 +1,7 @@
 <?php
 
-/*
-|--------------------------------------------------------------------------
-| Application Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register all of the routes for an application.
-| It is a breeze. Simply tell Lumen the URIs it should respond to
-| and give it the Closure to call when that URI is requested.
-|
-*/
-
 $router->get('/', function () use ($router) {
-    return 'API - WEEBTOOL' ;
+    return 'API - WEBTOOL' ;
 });
 
 $router->get('/api', function () use ($router) {
@@ -49,6 +38,8 @@ $router->group(['prefix' => '/wilayah'], function () use ($router) {
     $router->delete('/kelurahan/{id}', 'Wilayah\KelurahanController@delete');
 });
 
+$router->put('/users/reset_password', 'UserController@resetPassword'); //Reset Password
+
 $router->get('/otorisasi', 'FlagAuthorController@updateOtorisasi');
 $router->get('/flag', 'FlagAuthorController@index');
 $router->post('/flag', 'FlagAuthorController@store');
@@ -61,7 +52,6 @@ $router->post('/login', 'AuthController@login');
 $router->group(['middleware' => 'jwt.auth'], function () use ($router) {
     $router->group(['prefix' => '/api'], function () use ($router) {
         $router->get('/users', 'UserController@index');
-        $router->put('/users/reset_password', 'UserController@resetPassword');
         $router->put('/users/change_password', 'UserController@changePassword');
         // $router->post('/users', 'UserController@create');
         // $router->get('/users/{id}', 'UserController@getId');
