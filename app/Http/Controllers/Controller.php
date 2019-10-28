@@ -6,8 +6,6 @@ use Laravel\Lumen\Routing\Controller as BaseController;
 
 class Controller extends BaseController
 {
-    private static $base_url = 'https://kreditmandiri.co.id/'; //OTP SMS Kredit Mandiri API
-
     public function push_notif($fcm_token, $title, $message){
         define('API_ACCESS_KEY','AAAAjrvLI_4:APA91bGI_urQhVNWgEMEReiqUG8Jz3o8pXX55T69mDGv9KW-BwphHdsk4E74UUkx4kb3XqUfA_QMu_QjWAJw3PLg2eovQtqD2hCfJhHFMdxfptKlvP0ZTW6hC9XgB06KBmuvi45LU9nA'); //Server Key on SERVER
 
@@ -51,10 +49,9 @@ class Controller extends BaseController
         }
     }
 
-    function OTP($hp, $msg_otp)
+    function sendOTP($hp, $msg_otp)
     {
-        $url_path = 'API_SMS/sms.php';
-        $url = OTP::$base_url.$url_path;
+        $url = 'https://kreditmandiri.co.id/API_SMS/sms.php';
 
         $data  = array(
             'username' => 'dasjhfsj12EDD',

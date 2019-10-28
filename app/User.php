@@ -35,5 +35,5 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         'password'
     ];
 
-    // public $timestamps = false;
+    public $timestamps = false;
 }

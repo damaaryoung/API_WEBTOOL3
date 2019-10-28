@@ -97,86 +97,31 @@ class UserController extends BaseController
     //     }
     // }
 
-    public function flagAuthor(Request $req, Helper $help) {
-        $id   = $req->auth->user_id; // 855 -> indra
-        $user = User::select('reg_id_gcm')->where('user_id', $id)->first();
-        // $fcm_token=$user->reg_id_gcm;
-
-        $Now = Carbon::now()->toDateTimeString();
-
-        $data = DB::connection('dpm')->table('flg_otorisasi')
-            ->where('user_id', $id)
-            ->where('otorisasi', 0)
-            ->orderBy('tgl','asc')
-            ->orderBy('jam', 'asc')
-            ->first(); // 167346
-
-        if($data == null){
-            return response()->json([
-                "code"    => 200,
-                'status'  => 'success',
-                'message' => 'Empty Data'
-            ], 200);
-        }
-
-        $update = DB::connection('dpm')->table('flg_otorisasi')
-        ->where('user_id', $id)
-        ->where('id', $data->id)
-        ->update([
-            'otorisasi' => 1,
-            'waktu_otorisasi' => $Now
-        ]);
-
-        // $title   = 'Permintaan otorisasi anda telah disetujui';
-        // $message = $data->pesan;
-
-        try {
-            // // $inData = $help->push_notif($fcm_token, $title, $message);
-            // // $outData = json_decode($inData, true);
-
-            // // if($outData['success'] == 1){
-            // //     $update = DB::table('flg_otorisasi')
-            // //     ->where('user_id', $id)
-            // //     ->where('id', $data->id)
-            // //     ->update([
-            // //         'sent_android' => 1
-            // //     ]);
-
-            //     return response()->json([
-            //         "code"    => 200,
-            //         'status'  => 'success',
-            //         'message' => 'authorization and sent android update to 1 succeeded'
-            //     ], 200);
-            // }
-
-            return response()->json([
-                "code"    => 200,
-                'status'  => 'success',
-                'message' => 'authorization update to 1 succeeded'
-            ], 200);
-        } catch (Exception $e) {
-            return response()->json([
-                "code"    => 403,
-                'status'  => 'error',
-                'message' => 'authorization update failed!!'
-            ], 403);
-        }
-    }
-
     public function resetPassword(Helper $help,Request $req){
         $hp = $req->input('no_hp');
+
+        if (!$hp) {
+            return response()->json([
+                "code"    => 400,
+                'status'  => 'bad request',
+                'message' => 'no_hp field is required!!'
+            ], 400);
+        }
+
         $check_hp = User::where('no_hp', $hp)->first();
 
         if ($check_hp == null) {
             return response()->json([
-               'message' => 'No HP salah atau belum terdaftar !'
+                "code"    => 400,
+                'status'  => 'bad request',
+                'message' => 'Your mobile number has not been registered!!'
             ], 400);
         }else{
             $kode_otp = rand(1000, 999999);
 
             $msg_otp = 'Your Password baru anda: '.$kode_otp;
 
-            $inData = $help->OTP($hp, $msg_otp);
+            $inData = $help->sendOTP($hp, $msg_otp);
             $outData = json_decode($inData, true);
             $xData = $outData['messages'][0]['smsCount'];
 
@@ -185,11 +130,15 @@ class UserController extends BaseController
                     ->update(['password' => md5($kode_otp)]);
 
                 return response()->json([
-                   'message' => 'Reset password sukses'
+                    'code'    => 200,
+                    'status'  => 'success',
+                    'message' => 'Reset password sukses'
                 ], 200);
             }else{
                 return response()->json([
-                    'message'=> 'Gagal mereset password via OTP, periksa jaringan anda dan silahkan coba kembali'
+                    "code"    => 400,
+                    'status'  => 'bad request',
+                    'message'=> 'check your cellular network'
                 ], 400);
             }
         }
@@ -205,6 +154,30 @@ class UserController extends BaseController
         $newPass     = $req->input('password_baru');
         $confirmPass = $req->input('konfirmasi_password');
 
+        if (!oldPass) {
+            return response()->json([
+                "code"    => 400,
+                'status'  => 'bad request',
+                'message' => 'Old Password field is required!!'
+            ], 400);
+        }
+
+        if (!newPass) {
+            return response()->json([
+                "code"    => 400,
+                'status'  => 'bad request',
+                'message' => 'New Password field is required!!'
+            ], 400);
+        }
+
+        if (!confirmPass) {
+            return response()->json([
+                "code"    => 400,
+                'status'  => 'bad request',
+                'message' => 'Confirm Password field is required!!'
+            ], 400);
+        }
+
         if (md5($oldPass) != $originalPass) {
             return response()->json([
                 "code"    => 400,
@@ -217,7 +190,7 @@ class UserController extends BaseController
             return response()->json([
                 "code"    => 400,
                 "status"  => "bad request",
-                "message" => "password is not the same!!"
+                "message" => "Confirm Password is not the same!!"
             ], 400);
         }
 

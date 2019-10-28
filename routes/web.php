@@ -1,18 +1,7 @@
 <?php
 
-/*
-|--------------------------------------------------------------------------
-| Application Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register all of the routes for an application.
-| It is a breeze. Simply tell Lumen the URIs it should respond to
-| and give it the Closure to call when that URI is requested.
-|
-*/
-
 $router->get('/', function () use ($router) {
-    return 'API - WEEBTOOL' ;
+    return 'API - WEBTOOL' ;
 });
 
 $router->get('/api', function () use ($router) {
@@ -20,6 +9,10 @@ $router->get('/api', function () use ($router) {
 });
 
 $router->group(['prefix' => '/wilayah'], function () use ($router) {
+    $router->get('/', function () use ($router) {
+        return 'add parameters after slash';
+    });
+
     $router->get('/provinsi', 'Wilayah\ProvinsiController@index');
     $router->post('/provinsi', 'Wilayah\ProvinsiController@store');
     $router->get('/provinsi/{id}', 'Wilayah\ProvinsiController@show');
@@ -45,26 +38,44 @@ $router->group(['prefix' => '/wilayah'], function () use ($router) {
     $router->delete('/kelurahan/{id}', 'Wilayah\KelurahanController@delete');
 });
 
+$router->put('/api/users/reset_password', 'UserController@resetPassword'); //Reset Password
+
+$router->get('/otorisasi', 'FlagAuthorController@updateOtorisasi');
+$router->get('/flag', 'FlagAuthorController@index');
+$router->post('/flag', 'FlagAuthorController@store');
+$router->get('/flag/{id}', 'FlagAuthorController@show');
+$router->put('/flag/{id}', 'FlagAuthorController@update');
+$router->delete('/flag/{id}', 'FlagAuthorController@delete');
+
 $router->post('/login', 'AuthController@login');
 
 $router->group(['middleware' => 'jwt.auth'], function () use ($router) {
     $router->group(['prefix' => '/api'], function () use ($router) {
         $router->get('/users', 'UserController@index');
-        $router->put('/users/reset_password', 'UserController@resetPassword');
         $router->put('/users/change_password', 'UserController@changePassword');
-        $router->put('/flag', 'UserController@flagAuthor');
         // $router->post('/users', 'UserController@create');
         // $router->get('/users/{id}', 'UserController@getId');
         // $router->put('/users', 'UserController@update');
         // $router->delete('/users', 'UserController@delete');
 
         $router->group(['prefix' => '/master'], function () use ($router) {
-            $router->get('/asal_data', 'Master\Asal_Data_Controller@index');
-            $router->post('/asal_data', 'Master\Asal_Data_Controller@create_data');
-            $router->get('/area_so', 'Master\Area_SO_Controller@index');
-            $router->post('/area_so', 'Master\Area_SO_Controller@create_data');
-            $router->get('/area_ao', 'Master\Area_AO_Controller@index');
-            $router->post('/area_ao', 'Master\Area_AO_Controller@create_data');
+            $router->get('/asal_data', 'Master\AsalDataController@index');
+            $router->post('/asal_data', 'Master\AsalDataController@store');
+            $router->get('/asal_data/{id}', 'Master\AsalDataController@show');
+            $router->put('/asal_data/{id}', 'Master\AsalDataController@update');
+            $router->delete('/asal_data/{id}', 'Master\AsalDataController@delete');
+
+            $router->get('/area', 'Master\AreaController@index');
+            $router->post('/area', 'Master\AreaController@store');
+            $router->get('/area/{id}', 'Master\AreaController@show');
+            $router->put('/area/{id}', 'Master\AreaController@update');
+            $router->delete('/area/{id}', 'Master\AreaController@delete');
+
+            $router->get('/jenis_area', 'Master\JenisAreaController@index');
+            $router->post('/jenis_area', 'Master\JenisAreaController@store');
+            $router->get('/jenis_area/{id}', 'Master\JenisAreaController@show');
+            $router->put('/jenis_area/{id}', 'Master\JenisAreaController@update');
+            $router->delete('/jenis_area/{id}', 'Master\JenisAreaController@delete');
         });
 
         $router->group(['prefix' => '/menu'], function () use ($router) {
@@ -76,8 +87,8 @@ $router->group(['middleware' => 'jwt.auth'], function () use ($router) {
 
             $router->get('/', ['as' => 'menu', 'uses' => 'Menu\MenuMasterController@index']); //Get Data
             $router->post('/', 'Menu\MenuMasterController@store'); // Create Data
-            $router->get('/master', function () use ($router) {return redirect('/api/menu');});
-            $router->get('/master/{slug}', ['as' => 'mastermenu', 'uses' => 'Menu\MenuMasterController@main']);
+            // $router->get('/master', function () use ($router) {return redirect('/api/menu');});
+            $router->get('/master/{slug}', ['as' => 'mastermenu', 'uses' => 'Menu\MenuMasterController@show']);
             $router->put('/master/{slug}', 'Menu\MenuMasterController@edit');
             $router->delete('/master/{slug}', 'Menu\MenuMasterController@delete'); // Delete Data based on slug (URL)
 

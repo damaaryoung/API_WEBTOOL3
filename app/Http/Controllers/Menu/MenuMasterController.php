@@ -58,7 +58,7 @@ class MenuMasterController extends BaseController
         }
     }
 
-    public function main($slug) {
+    public function show($slug) {
         try {
             $query = MenuMaster::where('url', $slug)->get();
 
