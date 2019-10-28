@@ -148,33 +148,20 @@ class UserController extends BaseController
         $id = $req->auth->user_id;
 
         $check = User::where('user_id', $id)->first();
+
+        // dd($check);
+
         $originalPass = $check->password;
 
         $oldPass     = $req->input('password_lama');
         $newPass     = $req->input('password_baru');
         $confirmPass = $req->input('konfirmasi_password');
 
-        if (!oldPass) {
+        if (!$oldPass) {
             return response()->json([
                 "code"    => 400,
                 'status'  => 'bad request',
-                'message' => 'Old Password field is required!!'
-            ], 400);
-        }
-
-        if (!newPass) {
-            return response()->json([
-                "code"    => 400,
-                'status'  => 'bad request',
-                'message' => 'New Password field is required!!'
-            ], 400);
-        }
-
-        if (!confirmPass) {
-            return response()->json([
-                "code"    => 400,
-                'status'  => 'bad request',
-                'message' => 'Confirm Password field is required!!'
+                'message' => 'password_lama field is required!!'
             ], 400);
         }
 
@@ -182,7 +169,23 @@ class UserController extends BaseController
             return response()->json([
                 "code"    => 400,
                 "status"  => "bad request",
-                "message" => "wrong old password!!"
+                "message" => "Password lama salah!!"
+            ], 400);
+        }
+
+        if (!$newPass) {
+            return response()->json([
+                "code"    => 400,
+                'status'  => 'bad request',
+                'message' => 'password_baru field is required!!'
+            ], 400);
+        }
+
+        if (!$confirmPass) {
+            return response()->json([
+                "code"    => 400,
+                'status'  => 'bad request',
+                'message' => 'konfirmasi_password field is required!!'
             ], 400);
         }
 
