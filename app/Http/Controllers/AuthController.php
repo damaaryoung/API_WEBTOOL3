@@ -48,10 +48,10 @@ class AuthController extends Controller
 
         if ($user == null) {
             return response()->json([
-                "code"    => 400,
+                "code"    => 404,
                 "status"  => "bad request",
-                "message" => "Your Account not valid or not found !"
-            ], 400);
+                "message" => "Akun tidak valid atau tidak ada !!"
+            ], 404);
         }
 
         $getNow = Carbon::now()->toDateTimeString();
@@ -65,7 +65,7 @@ class AuthController extends Controller
 			return response()->json([
                 "code"    => 400,
                 "status"  => "bad request",
-                "message" => "Email must be inputted"
+                "message" => "Nama user harus diinput!!"
             ], 400);
 		}
 
@@ -74,17 +74,8 @@ class AuthController extends Controller
 			return response()->json([
                 "code"    => 400,
                 "status"  => "bad request",
-                "message" => "Password must be inputted"
+                "message" => "Password harus diinput!!"
             ], 404);
-		}
-
-		// Check User
-		if ($user == null) {
-			return response()->json([
-                "code"    => 400,
-                "status"  => "bad request",
-                "message" => "Sorry you are not registered"
-            ], 400);
 		}
 
 		// Check request Password valid or no
@@ -92,7 +83,7 @@ class AuthController extends Controller
             return response()->json([
                 "code"    => 400,
                 "status"  => "bad request",
-                "message" => "Wrong Password !"
+                "message" => "Password salah!!"
             ], 400);
         }
 
@@ -101,7 +92,7 @@ class AuthController extends Controller
             return response()->json([
                 "code"    => 403,
                 "status"  => "Expired",
-                'message' => "Your account has expired"
+                'message' => "Akun anda telah kadaluarsa"
             ], 403);
         }
 

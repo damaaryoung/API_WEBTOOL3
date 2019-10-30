@@ -24,18 +24,21 @@ $router->group(['prefix' => '/wilayah'], function () use ($router) {
     $router->get('/kabupaten/{id}', 'Wilayah\KabupatenController@show');
     $router->put('/kabupaten/{id}', 'Wilayah\KabupatenController@update');
     $router->delete('/kabupaten/{id}', 'Wilayah\KabupatenController@delete');
+    $router->get('/kabupaten/prov/{id_prov}', 'Wilayah\KabupatenController@display'); // throwing data to frontend
 
     $router->get('/kecamatan', 'Wilayah\KecamatanController@index');
     $router->post('/kecamatan', 'Wilayah\KecamatanController@store');
     $router->get('/kecamatan/{id}', 'Wilayah\KecamatanController@show');
     $router->put('/kecamatan/{id}', 'Wilayah\KecamatanController@update');
     $router->delete('/kecamatan/{id}', 'Wilayah\KecamatanController@delete');
+    $router->get('/kabupaten/kab/{id_kab}', 'Wilayah\KabupatenController@display'); // throwing data to frontend
 
     $router->get('/kelurahan', 'Wilayah\KelurahanController@index');
     $router->post('/kelurahan', 'Wilayah\KelurahanController@store');
     $router->get('/kelurahan/{id}', 'Wilayah\KelurahanController@show');
     $router->put('/kelurahan/{id}', 'Wilayah\KelurahanController@update');
     $router->delete('/kelurahan/{id}', 'Wilayah\KelurahanController@delete');
+    $router->get('/kabupaten/kec/{id_kec}', 'Wilayah\KabupatenController@display'); // throwing data to frontend
 });
 
 $router->put('/api/users/reset_password', 'UserController@resetPassword'); //Reset Password
@@ -71,6 +74,18 @@ $router->group(['middleware' => 'jwt.auth'], function () use ($router) {
             $router->put('/area/{id}', 'Master\AreaController@update');
             $router->delete('/area/{id}', 'Master\AreaController@delete');
 
+            $router->get('/kode_area/ao', 'Master\CodeController@ao'); // AO -> dpm_online.kre_kode_group2
+            $router->get('/kode_area/so', 'Master\CodeController@so'); // SO -> dpm_online.kre_kode_so
+            $router->get('/kode_area/col', 'Master\CodeController@col'); // COL -> dpm_online.kre_kode_group3
+            $router->get('/kode_area/mb', 'Master\CodeController@mb'); // MB -> dpm_online.kre_kode_group5
+            $router->get('/kode_area/ca', 'Master\CodeController@ca'); // CA -> dpm_online.kre_kode_group6
+
+            $router->get('/kode_area/ao/{username}', 'Master\CodeController@ao_user'); // AO -> dpm_online.kre_kode_group2 - Berdasarkan Nama User
+            $router->get('/kode_area/so/{username}', 'Master\CodeController@so_user'); // SO -> dpm_online.kre_kode_so - Berdasarkan Nama User
+            $router->get('/kode_area/col/{username}', 'Master\CodeController@col_user'); // COL -> dpm_online.kre_kode_group3 - Berdasarkan Nama User
+            $router->get('/kode_area/mb/{username}', 'Master\CodeController@mb_user'); // MB -> dpm_online.kre_kode_group5 - Berdasarkan Nama User
+            $router->get('/kode_area/ca/{username}', 'Master\CodeController@ca_user'); // CA -> dpm_online.kre_kode_group6 - Berdasarkan Nama User
+
             $router->get('/jenis_area', 'Master\JenisAreaController@index');
             $router->post('/jenis_area', 'Master\JenisAreaController@store');
             $router->get('/jenis_area/{id}', 'Master\JenisAreaController@show');
@@ -94,7 +109,7 @@ $router->group(['middleware' => 'jwt.auth'], function () use ($router) {
 
             $router->get('/sub', 'Menu\MenuSubController@index');
             $router->post('/sub', 'Menu\MenuSubController@store');
-            $router->get('/sub/{slug}', ['as' => 'submenu', 'uses' => 'Menu\MenuSubController@main']);
+            $router->get('/sub/{slug}', ['as' => 'submenu', 'uses' => 'Menu\MenuSubController@show']);
             $router->put('/sub/{slug}', 'Menu\MenuSubController@edit');
             $router->delete('/sub/{slug}', 'Menu\MenuSubController@delete'); // Delete Data based on slug(URL)
         });

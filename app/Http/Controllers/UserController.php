@@ -104,8 +104,8 @@ class UserController extends BaseController
         if (!$hp) {
             return response()->json([
                 "code"    => 400,
-                'status'  => 'bad request',
-                'message' => 'no_hp field is required!!'
+                "status"  => "bad request",
+                "message" => "FIeld 'no_hp' harus diisi!!"
             ], 400);
         }
 
@@ -113,14 +113,14 @@ class UserController extends BaseController
 
         if ($check_hp == null) {
             return response()->json([
-                "code"    => 400,
-                'status'  => 'bad request',
-                'message' => 'Your mobile number has not been registered!!'
-            ], 400);
+                "code"    => 404,
+                'status'  => 'not found',
+                'message' => 'No. HP anda tidak terdaftar!!'
+            ], 404);
         }else{
             $kode_otp = rand(1000, 999999);
 
-            $msg_otp = 'Your Password baru anda: '.$kode_otp;
+            $msg_otp = 'Password baru anda adalah '.$kode_otp;
 
             $inData = $help->sendOTP($hp, $msg_otp);
             $outData = json_decode($inData, true);
@@ -133,13 +133,13 @@ class UserController extends BaseController
                 return response()->json([
                     'code'    => 200,
                     'status'  => 'success',
-                    'message' => 'Reset password sukses'
+                    'message' => 'Reset password berhasil'
                 ], 200);
             }else{
                 return response()->json([
                     "code"    => 400,
                     'status'  => 'bad request',
-                    'message'=> 'check your cellular network'
+                    'message' => 'cek koneksi seluler anda'
                 ], 400);
             }
         }
@@ -150,8 +150,6 @@ class UserController extends BaseController
 
         $check = User::where('user_id', $id)->first();
 
-        // dd($check);
-
         $originalPass = $check->password;
 
         $oldPass     = $req->input('password_lama');
@@ -161,8 +159,8 @@ class UserController extends BaseController
         if (!$oldPass) {
             return response()->json([
                 "code"    => 400,
-                'status'  => 'bad request',
-                'message' => 'password_lama field is required!!'
+                "status"  => "bad request",
+                "message" => "Field 'password_lama' harus diisi!!"
             ], 400);
         }
 
@@ -177,16 +175,16 @@ class UserController extends BaseController
         if (!$newPass) {
             return response()->json([
                 "code"    => 400,
-                'status'  => 'bad request',
-                'message' => 'password_baru field is required!!'
+                "status"  => "bad request",
+                "message" => "Field 'password_baru' harus diisi!!"
             ], 400);
         }
 
         if (!$confirmPass) {
             return response()->json([
                 "code"    => 400,
-                'status'  => 'bad request',
-                'message' => 'konfirmasi_password field is required!!'
+                "status"  => "bad request",
+                "message" => "Field 'konfirmasi_password' harus diisi!!"
             ], 400);
         }
 
@@ -194,7 +192,7 @@ class UserController extends BaseController
             return response()->json([
                 "code"    => 400,
                 "status"  => "bad request",
-                "message" => "Confirm Password is not the same!!"
+                "message" => "Konfirmasi password'tidak sama dengan password baru!!"
             ], 400);
         }
 
@@ -203,14 +201,14 @@ class UserController extends BaseController
             return response()->json([
                 "code"    => 200,
                 "status"  => "success",
-                "message" => "The password was updated successfully"
+                "message" => "Password berhasil perbarui"
             ], 200);
         } catch (Exception $e) {
             return response()->json([
-                "code"    => 403,
+                "code"    => 501,
                 "status"  => "error",
-                "message" => "The password failed to update!!"
-            ], 403);
+                "message" => $e
+            ], 501);
         }
     }
 }

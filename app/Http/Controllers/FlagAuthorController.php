@@ -26,10 +26,10 @@ class FlagAuthorController extends BaseController
 
         if($data == null){
             return response()->json([
-                "code"    => 200,
-                'status'  => 'success',
-                'message' => 'Empty Data'
-            ], 200);
+                "code"    => 404,
+                'status'  => 'not found',
+                'message' => 'Data kosong'
+            ], 404);
         }
 
         $update = DB::connection('dpm')->table('flg_otorisasi')
@@ -44,32 +44,40 @@ class FlagAuthorController extends BaseController
             return response()->json([
                 "code"    => 200,
                 'status'  => 'success',
-                'message' => 'authorization update to 1 succeeded'
+                'message' => 'Otorisasi berhasil di update ke 1'
             ], 200);
         } catch (Exception $e) {
             return response()->json([
-                "code"    => 403,
+                "code"    => 501,
                 'status'  => 'error',
-                'message' => 'authorization update failed!!'
-            ], 403);
+                'message' => $e
+            ], 501);
         }
     }
 
     public function index() {
         try {
-            $query = DB::connection('dpm')->table('flg_otorisasi')->get();
+            $query = DB::connection('dpm')->table('flg_otorisasi')->first();
 
-            return response()->json([
-                'code'    => 200,
-                'status'  => 'success',
-                'data'    => $query
-            ], 200);
+            if (!$query) {
+                return response()->json([
+                    'code'    => 404,
+                    'status'  => 'not found',
+                    'message' => 'Data kosong'
+                ], 404);
+            }else{
+                return response()->json([
+                    'code'    => 200,
+                    'status'  => 'success',
+                    'data'    => $query
+                ], 200);
+            }
         } catch (Exception $e) {
             return response()->json([
-                "code"    => 400,
+                "code"    => 501,
                 "status"  => "error",
-                "message" => "something error!"
-            ], 400);
+                "message" => $e
+            ], 501);
         }
     }
 
@@ -98,7 +106,7 @@ class FlagAuthorController extends BaseController
             return response()->json([
                 "code"    => 400,
                 "status"  => "bad request",
-                "message" => "User_id field is required !"
+                "message" => "Field 'user_id' harus diisi!!"
             ], 400);
         }
 
@@ -106,7 +114,7 @@ class FlagAuthorController extends BaseController
             return response()->json([
                 "code"    => 400,
                 "status"  => "bad request",
-                "message" => "Modul field is required !"
+                "message" => "Field 'modul' harus diisi!!"
             ], 400);
         }
 
@@ -114,7 +122,7 @@ class FlagAuthorController extends BaseController
             return response()->json([
                 "code"    => 400,
                 "status"  => "bad request",
-                "message" => "Id_modul field is required !"
+                "message" => "Field 'id_modul' harus diisi!!"
             ], 400);
         }
 
@@ -122,7 +130,7 @@ class FlagAuthorController extends BaseController
             return response()->json([
                 "code"    => 400,
                 "status"  => "bad request",
-                "message" => "IP field is required !"
+                "message" => "Field 'ip' harus diisi!!"
             ], 400);
         }
 
@@ -130,7 +138,7 @@ class FlagAuthorController extends BaseController
             return response()->json([
                 "code"    => 400,
                 "status"  => "bad request",
-                "message" => "Email field is required !"
+                "message" => "Field 'email' harus diisi!!"
             ], 400);
         }
 
@@ -138,7 +146,7 @@ class FlagAuthorController extends BaseController
             return response()->json([
                 "code"    => 400,
                 "status"  => "bad request",
-                "message" => "Tgl field is required !"
+                "message" => "Field 'tgl' harus diisi!!"
             ], 400);
         }
 
@@ -146,7 +154,7 @@ class FlagAuthorController extends BaseController
             return response()->json([
                 "code"    => 400,
                 "status"  => "bad request",
-                "message" => "Jam field is required !"
+                "message" => "Field 'jam' harus diisi!!"
             ], 400);
         }
 
@@ -154,7 +162,7 @@ class FlagAuthorController extends BaseController
             return response()->json([
                 "code"    => 400,
                 "status"  => "bad request",
-                "message" => "Approval field is required !"
+                "message" => "Field 'approval' harus diisi!!"
             ], 400);
         }
 
@@ -162,7 +170,7 @@ class FlagAuthorController extends BaseController
             return response()->json([
                 "code"    => 400,
                 "status"  => "bad request",
-                "message" => "Subject field is required !"
+                "message" => "Field 'subject' harus diisi!!"
             ], 400);
         }
 
@@ -170,7 +178,7 @@ class FlagAuthorController extends BaseController
             return response()->json([
                 "code"    => 400,
                 "status"  => "bad request",
-                "message" => "Keterangan field is required !"
+                "message" => "Field 'keterangan' harus diisi!!"
             ], 400);
         }
 
@@ -178,7 +186,7 @@ class FlagAuthorController extends BaseController
             return response()->json([
                 "code"    => 400,
                 "status"  => "bad request",
-                "message" => "Waktu_otorisasi field is required !"
+                "message" => "Field 'waktu_otorisasi' harus diisi!!"
             ], 400);
         }
 
@@ -204,38 +212,54 @@ class FlagAuthorController extends BaseController
             return response()->json([
                 'code'    => 200,
                 'status'  => 'success',
-                'message' => 'Data has been created'
+                'message' => 'Data berhasil dibuat'
             ], 200);
         } catch (Exception $e) {
             return response()->json([
-                "code"    => 400,
+                "code"    => 501,
                 "status"  => "error",
-                "message" => "something error!"
-            ], 400);
+                "message" => $e
+            ], 501);
         }
     }
 
     public function show($id) {
         try {
-            $query = DB::connection('dpm')->table('flg_otorisasi')->where('id', $id)->get();
+            $query = DB::connection('dpm')->table('flg_otorisasi')->where('id', $id)->first();
 
-            return response()->json([
-                'code'    => 200,
-                'status'  => 'success',
-                'data'    => $query
-            ], 200);
+            if (!$query) {
+                return response()->json([
+                    'code'    => 404,
+                    'status'  => 'not found',
+                    'message' => 'Data kosong'
+                ], 404);
+            }else{
+                return response()->json([
+                    'code'    => 200,
+                    'status'  => 'success',
+                    'data'    => $query
+                ], 200);
+            }
         } catch (Exception $e) {
             return response()->json([
-                "code"    => 400,
+                "code"    => 501,
                 "status"  => "error",
-                "message" => "something error!"
-            ], 400);
+                "message" => $e
+            ], 501);
         }
     }
 
     public function update($id, Request $req) {
 
         $check = DB::connection('dpm')->table('flg_otorisasi')->where('id', $id)->first();
+
+        if (!$check) {
+            return response()->json([
+                'code'    => 404,
+                'status'  => 'not found',
+                'message' => 'Data kosong'
+            ], 404);
+        }
 
         $user_id         = empty($req->input('user_id')) ? $check->user_id : $req->input('user_id');
         $modul           = empty($req->input('modul')) ? $check->modul : $req->input('modul');
@@ -275,32 +299,42 @@ class FlagAuthorController extends BaseController
             return response()->json([
                 'code'    => 200,
                 'status'  => 'success',
-                'message' => 'Data updated successfully'
+                'message' => 'Data berhasil diupdate'
             ], 200);
         } catch (Exception $e) {
             return response()->json([
-                "code"    => 400,
+                "code"    => 501,
                 "status"  => "error",
-                "message" => "something error!"
-            ], 400);
+                "message" => $e
+            ], 501);
         }
     }
 
     public function delete($id) {
+        $check = DB::connection('dpm')->table('flg_otorisasi')->where('id', $id)->first();
+
+        if (!$check) {
+            return response()->json([
+                'code'    => 404,
+                'status'  => 'not found',
+                'message' => 'Data kosong'
+            ], 404);
+        }
+
         try {
             $query = DB::connection('dpm')->table('flg_otorisasi')->where('id', $id)->delete();
 
             return response()->json([
                 'code'    => 200,
                 'status'  => 'success',
-                'message' => 'Data with ID '.$id.' was deleted successfully'
+                'message' => 'Data dengan ID '.$id.', berhasil dihapus'
             ], 200);
         } catch (Exception $e) {
             return response()->json([
-                "code"    => 400,
+                "code"    => 501,
                 "status"  => "error",
-                "message" => "something error!"
-            ], 400);
+                "message" => $e
+            ], 501);
         }
     }
 }
