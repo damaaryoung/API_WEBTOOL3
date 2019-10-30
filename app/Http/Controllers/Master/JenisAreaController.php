@@ -91,7 +91,6 @@ class JenisAreaController extends BaseController
         }
 
         $nama_jenis = empty($req->input('nama_jenis')) ? $check->nama_jenis : $req->input('nama_jenis');
-
         $keterangan = empty($req->input('keterangan')) ? $check->keterangan : $req->input('keterangan');
 
         try {
