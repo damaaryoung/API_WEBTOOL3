@@ -23,22 +23,38 @@ class MenuMasterController extends BaseController
             ], 200);
         } catch (Exception $e) {
             return response()->json([
-                'code'   => 400,
+                'code'   => 501,
                 'status' => 'error',
                 'message'=> $e
-            ], 400);
+            ], 501);
         }
     }
 
     public function store(Request $req) {
-        $nama = $req->input('nama');
-        $slugURL = strtolower($nama);
+        $reqNama = $req->input('nama');
+        $nama = strtolower($reqNama);
         $icon = $req->input('icon');
 
-        $url = preg_replace("/[- ]/", "_", $slugURL);
+        $url = preg_replace("/[- ]/", "_", $nama);
+
+        if (!$reqNama) {
+            return response()->json([
+                "code"    => 400,
+                "status"  => "bad request",
+                "message" => "Field 'nama' harus diisi"
+            ], 400);
+        }
+
+        if (!$icon) {
+            return response()->json([
+                "code"    => 400,
+                "status"  => "bad request",
+                "message" => "Field 'icon' harus diisi"
+            ], 400);
+        }
 
         $query = MenuMaster::create([
-            'nama' => strtolower($nama),
+            'nama' => $nama,
             'url'  => $url,
             'icon' => $icon
         ]);
@@ -51,10 +67,10 @@ class MenuMasterController extends BaseController
             ], 200);
         } catch (Exception $e) {
             return response()->json([
-                'code'   => 400,
+                'code'   => 501,
                 'status' => 'error',
                 'message'=> $e
-            ], 400);
+            ], 501);
         }
     }
 
@@ -69,23 +85,33 @@ class MenuMasterController extends BaseController
             ], 200);
         } catch (Exception $e) {
             return response()->json([
-                'code'   => 400,
+                'code'   => 501,
                 'status' => 'error',
                 'message'=> $e
-            ], 400);
+            ], 501);
         }
     }
 
     public function edit($slug, Request $req) {
-        $nama = $req->input('nama');
-        $slugURL = strtolower($nama);
-        $icon = $req->input('icon');
+        $check = MenuMaster::where('url', $slug)->first();
 
-        $url = preg_replace("/[- ]/", "_", $slugURL);
+        if (!$check) {
+            return response()->json([
+                'code'    => 404,
+                'status'  => 'not found',
+                'message' => 'Data Tidak Ada!!'
+            ], 404);
+        }
+
+        $reqNama = empty($req->input('nama')) ? $check->nama : $req->input('nama');
+
+        $nama    = strtolower($reqNama);
+        $icon    = empty($req->input('icon')) ? $check->icon : $req->input('icon');
+        $url     = preg_replace("/[- ]/", "_", $nama);
 
         try {
             $query = MenuMaster::where('url', $slug)->update([
-                'nama' => $slugURL,
+                'nama' => $nama,
                 'url'  => $url,
                 'icon' => $icon
             ]);
@@ -93,33 +119,43 @@ class MenuMasterController extends BaseController
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'message'=> 'data updated successfully'
+                'message'=> 'Data berhasil diupdate'
             ], 200);
         } catch (Exception $e) {
             return response()->json([
-                'code'   => 400,
+                'code'   => 501,
                 'status' => 'error',
                 'message'=> $e
-            ], 400);
+            ], 501);
         }
     }
 
     public function delete($slug) {
-        $query = MenuMaster::where('url', $slug);
-        $query->delete();
+        $check = MenuMaster::where('url', $slug)->first();
+
+        if (!$check) {
+            return response()->json([
+                'code'    => 404,
+                'status'  => 'Not Found',
+                'message' => 'Data tidak ada'
+            ], 404);
+        }
 
         try {
+            $query = MenuMaster::where('url', $slug);
+            $query->delete();
+
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'message'=> 'Data Deleted Successfuly'
+                'message'=> 'Data dengan URL(slug) '.$slug.', berhasil dihapus'
             ], 200);
         } catch (Exception $e) {
             return response()->json([
-                'code'   => 400,
-                'status' => 'error',
-                'message'   => $e
-            ], 400);
+                'code'    => 501,
+                'status'  => 'error',
+                'message' => $e
+            ], 501);
         }
     }
 }

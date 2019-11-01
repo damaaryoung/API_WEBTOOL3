@@ -20,7 +20,7 @@ class JwtMiddleware
             return response()->json([
                 'code'    => 401,
                 'status'  => 'Error',
-                'message' => 'Token required.'
+                'message' => 'Token dibutuhkan.'
             ], 401);
 
         }elseif(preg_match("/Bearer /", $token)){
@@ -35,14 +35,14 @@ class JwtMiddleware
                 return response()->json([
                     'code'    => 401,
                     'status'  => 'Error',
-                    'message' => 'Provided token is expired.'
+                    'message' => 'Token yang diberikan telah kedaluwarsa.'
                 ], 401);
 
             } catch(Exception $e) {
                 return response()->json([
                     'code'    => 401,
                     'status'  => 'Error',
-                    'message' => 'An error while decoding token.'
+                    'message' => 'Galat saat mendekode token.'
                 ], 401);
             }
 
@@ -59,7 +59,7 @@ class JwtMiddleware
                 return response()->json([
                     'code'    => 401,
                     'status'  => 'Error',
-                    'message' => 'Provided token is invalid.'
+                    'message' => 'Token yang diberikan tidak valid.'
                 ], 401);
             }
 
@@ -69,14 +69,12 @@ class JwtMiddleware
             return response()->json([
                 'code'    => 401,
                 'status'  => 'Error',
-                'message' => 'Token wrong !!!.'
+                'message' => 'Token salah !!!.'
             ], 401);
         }
     }
 
     protected $except = [
-        //'api/something/biller'
-        // 'user/verify/*'
         // 'stripe/*',
         // 'http://example.com/foo/bar',
         // 'http://example.com/foo/*',
