@@ -11,18 +11,58 @@ use DB;
 
 class FlagAuthorController extends BaseController
 {
-    public function updateOtorisasi(Request $req, Helper $help) {
-        $id   = $req->auth->user_id;
-        $user = User::select('reg_id_gcm')->where('user_id', $id)->first();
+    // public function updateOtorisasi(Request $req, Helper $help) {
+    //     $id   = $req->auth->user_id;
+    //     $user = User::select('reg_id_gcm')->where('user_id', $id)->first();
 
-        $Now = Carbon::now()->toDateTimeString();
+    //     $Now = Carbon::now()->toDateTimeString();
 
+    //     $data = DB::connection('dpm')->table('flg_otorisasi')
+    //         ->where('user_id', $id)
+    //         ->where('otorisasi', 0)
+    //         ->orderBy('tgl','asc')
+    //         ->orderBy('jam', 'asc')
+    //         ->first();
+
+    //     if($data == null){
+    //         return response()->json([
+    //             "code"    => 404,
+    //             'status'  => 'not found',
+    //             'message' => 'Data kosong'
+    //         ], 404);
+    //     }
+
+    //     $update = DB::connection('dpm')->table('flg_otorisasi')
+    //     ->where('user_id', $id)
+    //     ->where('id', $data->id)
+    //     ->update([
+    //         'otorisasi' => 1,
+    //         'waktu_otorisasi' => $Now
+    //     ]);
+
+    //     try {
+    //         return response()->json([
+    //             "code"    => 200,
+    //             'status'  => 'success',
+    //             'message' => 'Otorisasi berhasil di update ke 1'
+    //         ], 200);
+    //     } catch (Exception $e) {
+    //         return response()->json([
+    //             "code"    => 501,
+    //             'status'  => 'error',
+    //             'message' => $e
+    //         ], 501);
+    //     }
+    // }
+
+    public function setOtorisasi(Request $req) {
         $data = DB::connection('dpm')->table('flg_otorisasi')
-            ->where('user_id', $id)
             ->where('otorisasi', 0)
             ->orderBy('tgl','asc')
             ->orderBy('jam', 'asc')
             ->first();
+
+        $Now = Carbon::now()->toDateTimeString();
 
         if($data == null){
             return response()->json([
@@ -33,7 +73,6 @@ class FlagAuthorController extends BaseController
         }
 
         $update = DB::connection('dpm')->table('flg_otorisasi')
-        ->where('user_id', $id)
         ->where('id', $data->id)
         ->update([
             'otorisasi' => 1,
@@ -55,7 +94,7 @@ class FlagAuthorController extends BaseController
         }
     }
 
-    public function getOtorisasi(Request $req) {
+    public function getAllOtorisasi(Request $req) {
         $query = DB::connection('dpm')->table('flg_otorisasi')
             ->where('otorisasi', 0)
             ->orderBy('tgl','asc')
@@ -63,9 +102,41 @@ class FlagAuthorController extends BaseController
             ->get();
 
         if (!$query) {
-            "code"    => 404,
+            return response()->json([
+                "code"    => 404,
                 'status'  => 'not found',
-                'message' => 'Data sedang kosong'
+                'message' => 'Data kosong'
+            ], 404);
+        }
+
+        try {
+            return response()->json([
+                "code"   => 200,
+                'status' => 'success',
+                'data'   => $query
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                "code"    => 501,
+                'status'  => 'error',
+                'message' => $e
+            ], 501);
+        }
+    }
+
+    public function getIdOtorisasi($id, Request $req) {
+        $query = DB::connection('dpm')->table('flg_otorisasi')
+            ->where('id', $id)
+            ->where('otorisasi', 1)
+            ->orderBy('tgl','asc')
+            ->orderBy('jam', 'asc')
+            ->first();
+
+        if (!$query) {
+            return response()->json([
+                "code"    => 404,
+                'status'  => 'not found',
+                'message' => 'Data kosong'
             ], 404);
         }
 
