@@ -55,6 +55,35 @@ class FlagAuthorController extends BaseController
         }
     }
 
+    public function getOtorisasi(Request $req) {
+        $query = DB::connection('dpm')->table('flg_otorisasi')
+            ->where('otorisasi', 0)
+            ->orderBy('tgl','asc')
+            ->orderBy('jam', 'asc')
+            ->get();
+
+        if (!$query) {
+            "code"    => 404,
+                'status'  => 'not found',
+                'message' => 'Data sedang kosong'
+            ], 404);
+        }
+
+        try {
+            return response()->json([
+                "code"   => 200,
+                'status' => 'success',
+                'data'   => $query
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                "code"    => 501,
+                'status'  => 'error',
+                'message' => $e
+            ], 501);
+        }
+    }
+
     public function index() {
         try {
             $query = DB::connection('dpm')->table('flg_otorisasi')->first();

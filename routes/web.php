@@ -43,12 +43,15 @@ $router->group(['prefix' => '/wilayah'], function () use ($router) {
 
 $router->put('/api/users/reset_password', 'UserController@resetPassword'); //Reset Password
 
-$router->get('/otorisasi', 'FlagAuthorController@updateOtorisasi');
+$router->put('/otorisasi', 'FlagAuthorController@updateOtorisasi');
+$router->get('/otorisasi', 'FlagAuthorController@getOtorisasi');
+
 $router->get('/flag', 'FlagAuthorController@index');
 $router->post('/flag', 'FlagAuthorController@store');
 $router->get('/flag/{id}', 'FlagAuthorController@show');
 $router->put('/flag/{id}', 'FlagAuthorController@update');
 $router->delete('/flag/{id}', 'FlagAuthorController@delete');
+
 
 $router->post('/login', 'AuthController@login');
 
