@@ -43,18 +43,6 @@ $router->group(['prefix' => '/wilayah'], function () use ($router) {
 
 $router->put('/api/users/reset_password', 'UserController@resetPassword'); //Reset Password
 
-// $router->put('/set_otorisasi', 'FlagAuthorController@updateOtorisasi');
-
-$router->put('/otorisasi', 'FlagAuthorController@setOtorisasi');
-$router->get('/otorisasi', 'FlagAuthorController@getAllOtorisasi');
-$router->get('/otorisasi/{id}', 'FlagAuthorController@getIdOtorisasi');
-
-$router->get('/flag', 'FlagAuthorController@index');
-$router->post('/flag', 'FlagAuthorController@store');
-$router->get('/flag/{id}', 'FlagAuthorController@show');
-$router->put('/flag/{id}', 'FlagAuthorController@update');
-$router->delete('/flag/{id}', 'FlagAuthorController@delete');
-
 
 $router->post('/login', 'AuthController@login');
 
@@ -66,6 +54,19 @@ $router->group(['middleware' => 'jwt.auth'], function () use ($router) {
         // $router->get('/users/{id}', 'UserController@getId');
         // $router->put('/users', 'UserController@update');
         // $router->delete('/users', 'UserController@delete');
+
+
+        // $router->put('/set_otorisasi', 'FlagAuthorController@updateOtorisasi');
+
+        // $router->put('/otorisasi', 'FlagAuthorController@setOtorisasi');
+        // $router->get('/otorisasi', 'FlagAuthorController@getAllOtorisasi');
+        // $router->get('/otorisasi/{id}', 'FlagAuthorController@getIdOtorisasi');
+
+        $router->get('/oto', 'FlagAuthorController@index');
+        $router->post('/oto', 'FlagAuthorController@store');
+        $router->get('/oto/{id}', 'FlagAuthorController@show');
+        $router->put('/oto/{id}', 'FlagAuthorController@update');
+        $router->delete('/oto/{id}', 'FlagAuthorController@delete');
 
         $router->group(['prefix' => '/master'], function () use ($router) {
             $router->get('/asal_data', 'Master\AsalDataController@index');
