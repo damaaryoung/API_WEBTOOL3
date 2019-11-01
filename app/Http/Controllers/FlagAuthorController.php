@@ -450,7 +450,7 @@ class FlagAuthorController extends BaseController
         }
 
         $update = DB::connection('dpm')->table('flg_otorisasi')
-        ->where('user_id', $id)
+        ->where('user_id', $user_id)
         ->where('id', $data->id)
         ->update([
             'otorisasi' => 1,
