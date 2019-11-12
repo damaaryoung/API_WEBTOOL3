@@ -16,6 +16,14 @@ class MenuSubController extends BaseController
         try {
             $query = MenuSub::get();
 
+            if ($query == '[]') {
+                return response()->json([
+                    "code"    => 404,
+                    "status"  => "not found",
+                    "message" => "Data kosong"
+                ], 404);
+            }
+
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',

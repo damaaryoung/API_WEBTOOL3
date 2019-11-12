@@ -16,6 +16,14 @@ class MenuAccessController extends BaseController
         try {
             $query = MenuAccess::get();
 
+            if ($query == '[]') {
+                return response()->json([
+                    "code"    => 404,
+                    "status"  => "not found",
+                    "message" => "Data kosong"
+                ], 404);
+            }
+
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
@@ -30,9 +38,9 @@ class MenuAccessController extends BaseController
         }
     }
 
-    public function show($id_user) {
+    public function show($id) {
         try {
-            $query = MenuAccess::where('id_user', $id_user)->get();
+            $query = MenuAccess::where('id', $id)->first();
 
             return response()->json([
                 'code'   => 200,
@@ -49,13 +57,13 @@ class MenuAccessController extends BaseController
     }
 
     public function store(Request $req) {
-        $id_user        => $req->input('id_user');
-        $id_menu_master => $req->input('id_menu_master');
-        $id_menu_sub    => $req->input('id_menu_sub');
-        $print_access   => $req->input('print_access'); //Enum('Y','N')
-        $add_access     => $req->input('add_access');   //Enum('Y','N')
-        $edit_access    => $req->input('edit_access');  //Enum('Y','N')
-        $delete_access  => $req->input('delete_access'); //Enum('Y','N')
+        $id_user        = $req->input('id_user');
+        $id_menu_master = $req->input('id_menu_master');
+        $id_menu_sub    = $req->input('id_menu_sub');
+        $print_access   = $req->input('print_access'); //Enum('Y','N')
+        $add_access     = $req->input('add_access');   //Enum('Y','N')
+        $edit_access    = $req->input('edit_access');  //Enum('Y','N')
+        $delete_access  = $req->input('delete_access'); //Enum('Y','N')
 
         if (!$id_user) {
             return response()->json([
@@ -149,12 +157,12 @@ class MenuAccessController extends BaseController
             ], 404);
         }
 
-        $id_menu_master => empty($req->input('id_menu_master')) ? $check->id_menu_master : $req->input('id_menu_master');
-        $id_menu_sub    => empty($req->input('id_menu_sub')) ? $check->id_menu_sub : $req->input('id_menu_sub');
-        $print_access   => empty($req->input('print_access')) ? $check->print_access : $req->input('print_access'); //Enum('Y','N')
-        $add_access     => empty($req->input('add_access')) ? $check->add_access : $req->input('add_access');   //Enum('Y','N')
-        $edit_access    => empty($req->input('edit_access')) ? $check->edit_access : $req->input('edit_access');  //Enum('Y','N')
-        $delete_access  => empty($req->input('delete_access')) ? $check->delete_access : $req->input('delete_access'); //Enum('Y','N')
+        $id_menu_master = empty($req->input('id_menu_master')) ? $check->id_menu_master : $req->input('id_menu_master');
+        $id_menu_sub    = empty($req->input('id_menu_sub')) ? $check->id_menu_sub : $req->input('id_menu_sub');
+        $print_access   = empty($req->input('print_access')) ? $check->print_access : $req->input('print_access'); //Enum('Y','N')
+        $add_access     = empty($req->input('add_access')) ? $check->add_access : $req->input('add_access');   //Enum('Y','N')
+        $edit_access    = empty($req->input('edit_access')) ? $check->edit_access : $req->input('edit_access');  //Enum('Y','N')
+        $delete_access  = empty($req->input('delete_access')) ? $check->delete_access : $req->input('delete_access'); //Enum('Y','N')
 
         $query = MenuAccess::where('id_user', $id_user)->update([
             'id_menu_master'=> $id_menu_master,

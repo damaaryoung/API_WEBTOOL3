@@ -72,11 +72,40 @@ $router->group(['middleware' => 'jwt.auth'], function () use ($router) {
             $router->put('/asal_data/{id}', 'Master\AsalDataController@update');
             $router->delete('/asal_data/{id}', 'Master\AsalDataController@delete');
 
-            $router->get('/area', 'Master\AreaController@index');
-            $router->post('/area', 'Master\AreaController@store');
-            $router->get('/area/{id}', 'Master\AreaController@show');
-            $router->put('/area/{id}', 'Master\AreaController@update');
-            $router->delete('/area/{id}', 'Master\AreaController@delete');
+            //Area Kantor
+            $router->get('/area', 'Master\AreaKantor\AreaController@index');
+            $router->post('/area', 'Master\AreaKantor\AreaController@store');
+            $router->get('/area/{id}', 'Master\AreaKantor\AreaController@show');
+            $router->put('/area/{id}', 'Master\AreaKantor\AreaController@update');
+            $router->delete('/area/{id}', 'Master\AreaKantor\AreaController@delete');
+
+            //Cabang Kantor
+            $router->get('/cabang', 'Master\AreaKantor\CabangController@index');
+            $router->post('/cabang', 'Master\AreaKantor\CabangController@store');
+            $router->get('/cabang/{id}', 'Master\AreaKantor\CabangController@show');
+            $router->put('/cabang/{id}', 'Master\AreaKantor\CabangController@update');
+            $router->delete('/cabang/{id}', 'Master\AreaKantor\CabangController@delete');
+
+            //Kas Kantor
+            $router->get('/kas', 'Master\AreaKantor\KasController@index');
+            $router->post('/kas', 'Master\AreaKantor\KasController@store');
+            $router->get('/kas/{id}', 'Master\AreaKantor\KasController@show');
+            $router->put('/kas/{id}', 'Master\AreaKantor\KasController@update');
+            $router->delete('/kas/{id}', 'Master\AreaKantor\KasController@delete');
+
+            //PIC
+            $router->get('/pic', 'Master\AreaKantor\PICController@index');
+            $router->post('/pic', 'Master\AreaKantor\PICController@store');
+            $router->get('/pic/{id}', 'Master\AreaKantor\PICController@show');
+            $router->put('/pic/{id}', 'Master\AreaKantor\PICController@update');
+            $router->delete('/pic/{id}', 'Master\AreaKantor\PICController@delete');
+
+            //Jenis PIC
+            $router->get('/jenis_area', 'Master\JenisAreaController@index');
+            $router->post('/jenis_area', 'Master\JenisAreaController@store');
+            $router->get('/jenis_area/{id}', 'Master\JenisAreaController@show');
+            $router->put('/jenis_area/{id}', 'Master\JenisAreaController@update');
+            $router->delete('/jenis_area/{id}', 'Master\JenisAreaController@delete');
 
             $router->get('/kode_area/ao', 'Master\CodeController@ao'); // AO -> dpm_online.kre_kode_group2
             $router->get('/kode_area/so', 'Master\CodeController@so'); // SO -> dpm_online.kre_kode_so
@@ -89,20 +118,14 @@ $router->group(['middleware' => 'jwt.auth'], function () use ($router) {
             $router->get('/kode_area/col/{username}', 'Master\CodeController@col_user'); // COL -> dpm_online.kre_kode_group3 - Berdasarkan Nama User
             $router->get('/kode_area/mb/{username}', 'Master\CodeController@mb_user'); // MB -> dpm_online.kre_kode_group5 - Berdasarkan Nama User
             $router->get('/kode_area/ca/{username}', 'Master\CodeController@ca_user'); // CA -> dpm_online.kre_kode_group6 - Berdasarkan Nama User
-
-            $router->get('/jenis_area', 'Master\JenisAreaController@index');
-            $router->post('/jenis_area', 'Master\JenisAreaController@store');
-            $router->get('/jenis_area/{id}', 'Master\JenisAreaController@show');
-            $router->put('/jenis_area/{id}', 'Master\JenisAreaController@update');
-            $router->delete('/jenis_area/{id}', 'Master\JenisAreaController@delete');
         });
 
         $router->group(['prefix' => '/menu'], function () use ($router) {
             $router->get('/akses', 'Menu\MenuAccessController@index'); // Get All Data
             $router->post('/akses', 'Menu\MenuAccessController@store'); // Insert Data
-            $router->get('/akses/{id_user}', 'Menu\MenuAccessController@show'); // Get Data based on Id User
-            $router->put('/akses/{id_user}', 'Menu\MenuAccessController@update'); // Update Data based on Id User
-            $router->delete('/akses/{id_user}', 'Menu\MenuAccessController@delete'); // Delete Data based on Id User
+            $router->get('/akses/{id}', 'Menu\MenuAccessController@show'); // Get Data based on Id User
+            $router->put('/akses/{id}', 'Menu\MenuAccessController@update'); // Update Data based on Id User
+            $router->delete('/akses/{id}', 'Menu\MenuAccessController@delete'); // Delete Data based on Id User
 
             $router->get('/', ['as' => 'menu', 'uses' => 'Menu\MenuMasterController@index']); //Get Data
             $router->post('/', 'Menu\MenuMasterController@store'); // Create Data

@@ -1,20 +1,20 @@
 <?php
 
-namespace App\Http\Controllers\Master;
+namespace App\Http\Controllers\Master\AreaKantor;
 
 use Laravel\Lumen\Routing\Controller as BaseController;
 use App\Http\Controllers\Controller as Helper;
-use App\Http\Requests\AreaKantor\JenisPICReq;
-use App\Models\AreaKantor\JPIC;
+use App\Http\Requests\AreaKantor\PICRequest;
+use App\Models\AreaKantor\PIC;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Carbon\Carbon;
 use DB;
 
-class JenisAreaController extends BaseController
+class PICController extends BaseController
 {
     public function index() {
-        $query = JPIC::get();
+        $query = PIC::get();
 
         if ($query == '[]') {
             return response()->json([
@@ -39,19 +39,23 @@ class JenisAreaController extends BaseController
         }
     }
 
-    public function store(JenisPICReq $req) {
+    public function store(PICRequest $req) {
         $data = array(
-            'nama_jenis' => $req->input('nama_jenis'),
-            'keterangan' => $req->input('keterangan')
+            'user_id'       => $req->input('user_id'),
+            'id_m_k_area'   => $req->input('id_m_k_area'),
+            'id_m_k_cabang' => $req->input('id_m_k_cabang'),
+            'id_m_jenis_pic'=> $req->input('id_m_jenis_pic'),
+            'nama'          => $req->input('nama'),
+            'flg_aktif'     => $req->input('flg_aktif')
         );
 
-        JPIC::create($data);
+        PIC::create($data);
 
         try {
             return response()->json([
-                "code"    => 200,
-                "status"  => "success",
-                "message" => "Data berhasil dibuat"
+                'code'    => 200,
+                'status'  => 'success',
+                'message' => 'Data berhasil dibuat'
             ], 200);
         } catch (Exception $e) {
             return response()->json([
@@ -63,7 +67,7 @@ class JenisAreaController extends BaseController
     }
 
     public function show($id) {
-        $query = JPIC::where('id', $id)->first();
+        $query = PIC::where('id', $id)->first();
 
         if ($query == null) {
             return response()->json([
@@ -85,10 +89,11 @@ class JenisAreaController extends BaseController
                     'data'   => $e
                 ], 501);
             }
-        }    }
+        }
+    }
 
-    public function update($id, JenisPICReq $req) {
-        $check = JPIC::where('id', $id)->first();
+    public function update($id, PICRequest $req) {
+        $check = PIC::where('id', $id)->first();
 
         if (!$check) {
             return response()->json([
@@ -99,11 +104,15 @@ class JenisAreaController extends BaseController
         }
 
         $data = array(
-            'nama_jenis' => empty($req->input('nama_jenis')) ? $check->nama_jenis : $req->input('nama_jenis'),
-            'keterangan' => empty($req->input('keterangan')) ? $check->keterangan : $req->input('keterangan')
+            'user_id'       => empty($req->input('user_id')) ? $check->user_id : $req->input('user_id'),
+            'id_m_k_area'   => empty($req->input('id_m_k_area')) ? $check->id_m_k_area : $req->input('id_m_k_area'),
+            'id_m_k_cabang' => empty($req->input('id_m_k_cabang')) ? $check->id_m_k_cabang : $req->input('id_m_k_cabang'),
+            'id_m_jenis_pic'=> empty($req->input('id_m_jenis_pic')) ? $check->id_m_jenis_pic : $req->input('id_m_jenis_pic'),
+            'nama'         => empty($req->input('nama')) ? $check->nama : $req->input('nama'),
+            'flg_aktif'    => empty($req->input('flg_aktif')) ? $check->flg_aktif : $req->input('flg_aktif')
         );
 
-        JPIC::where('id', $id)->update($data);
+        PIC::where('id', $id)->update($data);
 
         try {
             return response()->json([
@@ -121,7 +130,7 @@ class JenisAreaController extends BaseController
     }
 
     public function delete($id) {
-        $check = JPIC::where('id', $id)->first();
+        $check = PIC::where('id', $id)->first();
 
         if (!$check) {
             return response()->json([
@@ -131,7 +140,7 @@ class JenisAreaController extends BaseController
             ], 404);
         }
 
-        JPIC::where('id', $id)->delete();
+        PIC::where('id', $id)->delete();
 
         try {
             return response()->json([
