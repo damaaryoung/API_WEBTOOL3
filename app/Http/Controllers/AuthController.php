@@ -6,8 +6,8 @@ use App\Http\Controllers\Controller;
 use Firebase\JWT\ExpiredException;
 use Illuminate\Http\Request;
 use Firebase\JWT\JWT;
+use App\Models\User;
 use Carbon\Carbon;
-use App\User;
 
 class AuthController extends Controller
 {

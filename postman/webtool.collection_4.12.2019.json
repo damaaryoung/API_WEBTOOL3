@@ -1,0 +1,2632 @@
+{
+	"info": {
+		"_postman_id": "e26ac8d6-cc88-479b-84fd-7bd709df52dc",
+		"name": "new_web_tool",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Master",
+			"item": [
+				{
+					"name": "Asal_Data",
+					"item": [
+						{
+							"name": "Get All Asal_Data",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{URL}}/api/master/asal_data",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"api",
+										"master",
+										"asal_data"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create Asal_Data",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/x-www-form-urlencoded",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "nama",
+											"value": "RO",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{URL}}/api/master/asal_data",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"api",
+										"master",
+										"asal_data"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Asal_Data by ID",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/x-www-form-urlencoded",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{URL}}/api/master/asal_data/2",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"api",
+										"master",
+										"asal_data",
+										"2"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Asal_Data by ID",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/x-www-form-urlencoded",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{URL}}/api/master/asal_data/2",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"api",
+										"master",
+										"asal_data",
+										"2"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Asal_Data by ID",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/x-www-form-urlencoded",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "id",
+											"value": "2",
+											"type": "text",
+											"disabled": true
+										},
+										{
+											"key": "nama",
+											"value": "Mitra Bisnis Agency",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{URL}}/api/master/asal_data/5",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"api",
+										"master",
+										"asal_data",
+										"5"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "Area",
+					"item": [
+						{
+							"name": "Kode Area",
+							"item": [
+								{
+									"name": "GET FULL KODE AREA",
+									"item": [
+										{
+											"name": "Get code for AO",
+											"request": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Authorization",
+														"value": "Bearer {{token}}",
+														"type": "text"
+													},
+													{
+														"key": "Content-Type",
+														"name": "Content-Type",
+														"value": "application/x-www-form-urlencoded",
+														"type": "text"
+													}
+												],
+												"url": {
+													"raw": "{{URL}}/api/master/kode_area/ao",
+													"host": [
+														"{{URL}}"
+													],
+													"path": [
+														"api",
+														"master",
+														"kode_area",
+														"ao"
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "Get code for SO",
+											"request": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Authorization",
+														"value": "Bearer {{token}}",
+														"type": "text"
+													},
+													{
+														"key": "Content-Type",
+														"name": "Content-Type",
+														"value": "application/x-www-form-urlencoded",
+														"type": "text"
+													}
+												],
+												"url": {
+													"raw": "{{URL}}/api/master/kode_area/so",
+													"host": [
+														"{{URL}}"
+													],
+													"path": [
+														"api",
+														"master",
+														"kode_area",
+														"so"
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "Get code for COL (Collection)",
+											"request": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Authorization",
+														"value": "Bearer {{token}}",
+														"type": "text"
+													},
+													{
+														"key": "Content-Type",
+														"name": "Content-Type",
+														"value": "application/x-www-form-urlencoded",
+														"type": "text"
+													}
+												],
+												"url": {
+													"raw": "{{URL}}/api/master/kode_area/col",
+													"host": [
+														"{{URL}}"
+													],
+													"path": [
+														"api",
+														"master",
+														"kode_area",
+														"col"
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "Get code for CA",
+											"request": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Authorization",
+														"value": "Bearer {{token}}",
+														"type": "text"
+													},
+													{
+														"key": "Content-Type",
+														"name": "Content-Type",
+														"value": "application/x-www-form-urlencoded",
+														"type": "text"
+													}
+												],
+												"url": {
+													"raw": "{{URL}}/api/master/kode_area/ca",
+													"host": [
+														"{{URL}}"
+													],
+													"path": [
+														"api",
+														"master",
+														"kode_area",
+														"ca"
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "Get code for MB",
+											"request": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Authorization",
+														"value": "Bearer {{token}}",
+														"type": "text"
+													},
+													{
+														"key": "Content-Type",
+														"name": "Content-Type",
+														"value": "application/x-www-form-urlencoded",
+														"type": "text"
+													}
+												],
+												"url": {
+													"raw": "{{URL}}/api/master/kode_area/mb",
+													"host": [
+														"{{URL}}"
+													],
+													"path": [
+														"api",
+														"master",
+														"kode_area",
+														"mb"
+													]
+												}
+											},
+											"response": []
+										}
+									],
+									"description": "Kode Area Tanpa Kondisi",
+									"protocolProfileBehavior": {},
+									"_postman_isSubFolder": true
+								},
+								{
+									"name": "GET KODE AREA BY Username",
+									"item": [
+										{
+											"name": "Get code for AO By Username",
+											"request": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Authorization",
+														"value": "Bearer {{token}}",
+														"type": "text"
+													},
+													{
+														"key": "Content-Type",
+														"name": "Content-Type",
+														"value": "application/x-www-form-urlencoded",
+														"type": "text"
+													}
+												],
+												"url": {
+													"raw": "{{URL}}/api/master/kode_area/ao/maulana",
+													"host": [
+														"{{URL}}"
+													],
+													"path": [
+														"api",
+														"master",
+														"kode_area",
+														"ao",
+														"maulana"
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "Get code for SO By Username",
+											"request": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Authorization",
+														"value": "Bearer {{token}}",
+														"type": "text"
+													},
+													{
+														"key": "Content-Type",
+														"name": "Content-Type",
+														"value": "application/x-www-form-urlencoded",
+														"type": "text"
+													}
+												],
+												"url": {
+													"raw": "{{URL}}/api/master/kode_area/so/maulana",
+													"host": [
+														"{{URL}}"
+													],
+													"path": [
+														"api",
+														"master",
+														"kode_area",
+														"so",
+														"maulana"
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "Get code for COL (Collection) By Username",
+											"request": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Authorization",
+														"value": "Bearer {{token}}",
+														"type": "text"
+													},
+													{
+														"key": "Content-Type",
+														"name": "Content-Type",
+														"value": "application/x-www-form-urlencoded",
+														"type": "text"
+													}
+												],
+												"url": {
+													"raw": "{{URL}}/api/master/kode_area/col/maulana",
+													"host": [
+														"{{URL}}"
+													],
+													"path": [
+														"api",
+														"master",
+														"kode_area",
+														"col",
+														"maulana"
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "Get code for CA By Username",
+											"request": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Authorization",
+														"value": "Bearer {{token}}",
+														"type": "text"
+													},
+													{
+														"key": "Content-Type",
+														"name": "Content-Type",
+														"value": "application/x-www-form-urlencoded",
+														"type": "text"
+													}
+												],
+												"url": {
+													"raw": "{{URL}}/api/master/kode_area/ca/maulana",
+													"host": [
+														"{{URL}}"
+													],
+													"path": [
+														"api",
+														"master",
+														"kode_area",
+														"ca",
+														"maulana"
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "Get code for MB By Username",
+											"request": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Authorization",
+														"value": "Bearer {{token}}",
+														"type": "text"
+													},
+													{
+														"key": "Content-Type",
+														"name": "Content-Type",
+														"value": "application/x-www-form-urlencoded",
+														"type": "text"
+													}
+												],
+												"url": {
+													"raw": "{{URL}}/api/master/kode_area/mb/maulana",
+													"host": [
+														"{{URL}}"
+													],
+													"path": [
+														"api",
+														"master",
+														"kode_area",
+														"mb",
+														"maulana"
+													]
+												}
+											},
+											"response": []
+										}
+									],
+									"description": "Kode Area Tanpa Kondisi",
+									"protocolProfileBehavior": {},
+									"_postman_isSubFolder": true
+								}
+							],
+							"protocolProfileBehavior": {},
+							"_postman_isSubFolder": true
+						},
+						{
+							"name": "Jenis Area",
+							"item": [
+								{
+									"name": "Get All Jenis Area Data",
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{token}}",
+												"type": "text"
+											},
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"value": "application/x-www-form-urlencoded",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "{{URL}}/api/master/jenis_area",
+											"host": [
+												"{{URL}}"
+											],
+											"path": [
+												"api",
+												"master",
+												"jenis_area"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Create New Data ' Jenis Area'",
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{token}}",
+												"type": "text"
+											},
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"value": "application/x-www-form-urlencoded",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "urlencoded",
+											"urlencoded": [
+												{
+													"key": "nama_jenis",
+													"value": "Indakiat 23",
+													"type": "text"
+												},
+												{
+													"key": "keterangan",
+													"value": "sample",
+													"type": "text"
+												}
+											]
+										},
+										"url": {
+											"raw": "{{URL}}/api/master/jenis_area",
+											"host": [
+												"{{URL}}"
+											],
+											"path": [
+												"api",
+												"master",
+												"jenis_area"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Get Data ' Jenis Area' By Id",
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{token}}",
+												"type": "text"
+											},
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"value": "application/x-www-form-urlencoded",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "{{URL}}/api/master/jenis_area/7",
+											"host": [
+												"{{URL}}"
+											],
+											"path": [
+												"api",
+												"master",
+												"jenis_area",
+												"7"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Update Data ' Jenis Area' By Id",
+									"request": {
+										"method": "PUT",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{token}}",
+												"type": "text"
+											},
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"value": "application/x-www-form-urlencoded",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "urlencoded",
+											"urlencoded": [
+												{
+													"key": "nama_jenis",
+													"value": "Indakiat 23",
+													"type": "text"
+												},
+												{
+													"key": "keterangan",
+													"value": "sample 445",
+													"type": "text"
+												}
+											]
+										},
+										"url": {
+											"raw": "{{URL}}/api/master/jenis_area/7",
+											"host": [
+												"{{URL}}"
+											],
+											"path": [
+												"api",
+												"master",
+												"jenis_area",
+												"7"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Delete Data ' Jenis Area' By Id",
+									"request": {
+										"method": "DELETE",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{token}}",
+												"type": "text"
+											},
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"value": "application/x-www-form-urlencoded",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "{{URL}}/api/master/jenis_area/7",
+											"host": [
+												"{{URL}}"
+											],
+											"path": [
+												"api",
+												"master",
+												"jenis_area",
+												"7"
+											]
+										}
+									},
+									"response": []
+								}
+							],
+							"protocolProfileBehavior": {},
+							"_postman_isSubFolder": true
+						},
+						{
+							"name": "Create Data",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/x-www-form-urlencoded",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "id_kelurahan",
+											"value": "19",
+											"type": "text"
+										},
+										{
+											"key": "id_master_jenis",
+											"value": "3",
+											"description": "Reference master_jenis",
+											"type": "text"
+										},
+										{
+											"key": "flg_aktif",
+											"value": "1",
+											"type": "text"
+										},
+										{
+											"key": "kode",
+											"value": "",
+											"description": "Reference db dpm_online",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{URL}}/api/master/area",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"api",
+										"master",
+										"area"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get All Data",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/x-www-form-urlencoded",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{URL}}/api/master/area",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"api",
+										"master",
+										"area"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Data By ID",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/x-www-form-urlencoded",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{URL}}/api/master/jenis_area",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"api",
+										"master",
+										"jenis_area"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Data By ID",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/x-www-form-urlencoded",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "id_kelurahan",
+											"value": "2",
+											"type": "text"
+										},
+										{
+											"key": "id_master_jenis",
+											"value": "2",
+											"description": "Reference master_jenis",
+											"type": "text"
+										},
+										{
+											"key": "flg_aktif",
+											"value": "1",
+											"type": "text"
+										},
+										{
+											"key": "kode",
+											"value": "",
+											"description": "Reference db dpm_online",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{URL}}/api/master/area/3",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"api",
+										"master",
+										"area",
+										"3"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Data By ID",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/x-www-form-urlencoded",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{URL}}/api/master/area/{id}",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"api",
+										"master",
+										"area",
+										"{id}"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Willayah",
+			"item": [
+				{
+					"name": "Provinsi",
+					"item": [
+						{
+							"name": "Get All Provinsi",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}/wilayah/provinsi",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"wilayah",
+										"provinsi"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create Provinsi",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}/wilayah/provinsi",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"wilayah",
+										"provinsi"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Show Provinsi WHERE id",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}/wilayah/provinsi/1",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"wilayah",
+										"provinsi",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Provinsi",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/x-www-form-urlencoded",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "nama",
+											"value": "Aceh",
+											"type": "text"
+										},
+										{
+											"key": "flg_aktif",
+											"value": "1",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{URL}}/wilayah/provinsi/1",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"wilayah",
+										"provinsi",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Provinsi",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/x-www-form-urlencoded",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{URL}}/wilayah/provinsi/35",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"wilayah",
+										"provinsi",
+										"35"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "Kabupaten",
+					"item": [
+						{
+							"name": "Get All Kabupaten & Kota",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}/wilayah/kabupaten",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"wilayah",
+										"kabupaten"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create Kabupaten & Kota",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/x-www-form-urlencoded",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "nama",
+											"value": "zeroxKab",
+											"type": "text"
+										},
+										{
+											"key": "id_provinsi",
+											"value": "35",
+											"type": "text"
+										},
+										{
+											"key": "flg_aktif",
+											"value": "1",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{URL}}/wilayah/kabupaten",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"wilayah",
+										"kabupaten"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Show Kabupaten & Kota by Id",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/x-www-form-urlencoded",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{URL}}/wilayah/kabupaten/77",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"wilayah",
+										"kabupaten",
+										"77"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Kabupaten & Kota by Id",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/x-www-form-urlencoded",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "nama",
+											"value": "zerox Kabupaten",
+											"type": "text"
+										},
+										{
+											"key": "id_provinsi",
+											"value": "350",
+											"type": "text"
+										},
+										{
+											"key": "flg_aktif",
+											"value": "1",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{URL}}/wilayah/kabupaten/77",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"wilayah",
+										"kabupaten",
+										"77"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Kabupaten & Kota by Id",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/x-www-form-urlencoded",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{URL}}/wilayah/kabupaten/77",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"wilayah",
+										"kabupaten",
+										"77"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "Kecamatan",
+					"item": [
+						{
+							"name": "Get All Kecamatan",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}/wilayah/kecamatan",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"wilayah",
+										"kecamatan"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Createl Kecamatan",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/x-www-form-urlencoded",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "nama",
+											"value": "zroxstrong",
+											"type": "text"
+										},
+										{
+											"key": "id_kabupaten",
+											"value": "190",
+											"type": "text"
+										},
+										{
+											"key": "flg_aktif",
+											"value": "1",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{URL}}/wilayah/kecamatan",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"wilayah",
+										"kecamatan"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Show Kecamatan by ID",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/x-www-form-urlencoded",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{URL}}/wilayah/kecamatan/22",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"wilayah",
+										"kecamatan",
+										"22"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Kecamatan by ID",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/x-www-form-urlencoded",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "nama",
+											"value": "zrox strong",
+											"type": "text"
+										},
+										{
+											"key": "id_kabupaten",
+											"value": "19",
+											"type": "text"
+										},
+										{
+											"key": "flg_aktif",
+											"value": "1",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{URL}}/wilayah/kecamatan/22",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"wilayah",
+										"kecamatan",
+										"22"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Kecamatan by ID",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/x-www-form-urlencoded",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{URL}}/wilayah/kecamatan/22",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"wilayah",
+										"kecamatan",
+										"22"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "Kelurahan",
+					"item": [
+						{
+							"name": "Get All Kelurahan",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}/wilayah/kelurahan",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"wilayah",
+										"kelurahan"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create Kelurahan",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/x-www-form-urlencoded",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "nama",
+											"value": "Zrox Strongest",
+											"type": "text"
+										},
+										{
+											"key": "kode_pos",
+											"value": "5738178",
+											"type": "text"
+										},
+										{
+											"key": "id_kecamatan",
+											"value": "134",
+											"type": "text"
+										},
+										{
+											"key": "flg_aktif",
+											"value": "1",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{URL}}/wilayah/kelurahan",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"wilayah",
+										"kelurahan"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Show Kelurahan by ID",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/x-www-form-urlencoded",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{URL}}/wilayah/kelurahan/53",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"wilayah",
+										"kelurahan",
+										"53"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Kelurahan by ID",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/x-www-form-urlencoded",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "nama",
+											"value": "Zrox-Strongest",
+											"type": "text"
+										},
+										{
+											"key": "kode_pos",
+											"value": "573810000",
+											"type": "text"
+										},
+										{
+											"key": "id_kecamatan",
+											"value": "134",
+											"type": "text"
+										},
+										{
+											"key": "flg_aktif",
+											"value": "1",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{URL}}/wilayah/kelurahan/53",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"wilayah",
+										"kelurahan",
+										"53"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Kelurahan by ID",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/x-www-form-urlencoded",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{URL}}/wilayah/kelurahan/53",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"wilayah",
+										"kelurahan",
+										"53"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "Reset Password",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "no_hp",
+									"value": "08989900272",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{URL}}/api/users/reset_password",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"reset_password"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Users",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{URL}}/api/users",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Change Password",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{URL}}/api/users/change_password",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"change_password"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Menu",
+			"item": [
+				{
+					"name": "MasterMenu",
+					"item": [
+						{
+							"name": "Show Menu Master",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{URL}}/api/menu",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"api",
+										"menu"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Post Menu Master",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/x-www-form-urlencoded",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "nama",
+											"value": "Info",
+											"type": "text"
+										},
+										{
+											"key": "url",
+											"value": "",
+											"type": "text",
+											"disabled": true
+										},
+										{
+											"key": "icon",
+											"value": "fas fa-info",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{URL}}/api/menu",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"api",
+										"menu"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Menu Master / Main",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{URL}}/api/menu/master/{slug}",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"api",
+										"menu",
+										"master",
+										"{slug}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Edit Menu Master",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/x-www-form-urlencoded",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "nama",
+											"value": "back door",
+											"type": "text"
+										},
+										{
+											"key": "icon",
+											"value": "info",
+											"type": "text"
+										},
+										{
+											"key": "id_menu_master",
+											"value": "1",
+											"type": "text",
+											"disabled": true
+										}
+									]
+								},
+								"url": {
+									"raw": "{{URL}}/api/menu/master/{slug}",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"api",
+										"menu",
+										"master",
+										"{slug}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Menu Master",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/x-www-form-urlencoded",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": []
+								},
+								"url": {
+									"raw": "{{URL}}/api/menu/master/{slug}",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"api",
+										"menu",
+										"master",
+										"{slug}"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "SubMenu",
+					"item": [
+						{
+							"name": "Show Menu Sub",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{URL}}/api/menu/sub",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"api",
+										"menu",
+										"sub"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Post Menu Sub",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/x-www-form-urlencoded",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "nama",
+											"value": "sidenav",
+											"type": "text"
+										},
+										{
+											"key": "id_menu_master",
+											"value": "1",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{URL}}/api/menu/sub",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"api",
+										"menu",
+										"sub"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Menu Sub / Main",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{URL}}/api/menu/sub/{slug}",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"api",
+										"menu",
+										"sub",
+										"{slug}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Edit Menu Sub",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/x-www-form-urlencoded",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "nama",
+											"value": "back door",
+											"type": "text"
+										},
+										{
+											"key": "icon",
+											"value": "info",
+											"type": "text"
+										},
+										{
+											"key": "id_menu_master",
+											"value": "1",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{URL}}/api/menu/sub/{slug}",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"api",
+										"menu",
+										"sub",
+										"{slug}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Menu Sub",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/x-www-form-urlencoded",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": []
+								},
+								"url": {
+									"raw": "{{URL}}/api/menu/sub/{slug}",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"api",
+										"menu",
+										"sub",
+										"{slug}"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "AksesMenu",
+					"item": [
+						{
+							"name": "Create Data",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/x-www-form-urlencoded",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "id_user",
+											"value": "2",
+											"description": "Reference user_id in table user in  db:dpm_online",
+											"type": "text"
+										},
+										{
+											"key": "id_menu_master",
+											"value": "1",
+											"description": "Reference id in menu_master",
+											"type": "text"
+										},
+										{
+											"key": "id_menu_sub",
+											"value": "1",
+											"description": "Reference id in menu_sub",
+											"type": "text"
+										},
+										{
+											"key": "print_access",
+											"value": "Y",
+											"description": "Value => Y or N",
+											"type": "text"
+										},
+										{
+											"key": "add_access",
+											"value": "Y",
+											"description": "Value => Y or N",
+											"type": "text"
+										},
+										{
+											"key": "edit_access",
+											"value": "N",
+											"description": "Value => Y or N",
+											"type": "text"
+										},
+										{
+											"key": "delete_access",
+											"value": "Y",
+											"description": "Value => Y or N",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{URL}}/api/menu/akses",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"api",
+										"menu",
+										"akses"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Show Data",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{URL}}/api/menu/akses",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"api",
+										"menu",
+										"akses"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Data Where User Id",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{URL}}/api/menu/akses/3",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"api",
+										"menu",
+										"akses",
+										"3"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Data Where User Id",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{URL}}/api/menu/akses/2",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"api",
+										"menu",
+										"akses",
+										"2"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Data Where User Id",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{URL}}/api/menu/akses/3",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"api",
+										"menu",
+										"akses",
+										"3"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "otorisasi",
+			"item": [
+				{
+					"name": "Get All Data",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{URL}}/api/oto",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"oto"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create New Data",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "user_id",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "modul",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "id_modul",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "ip",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "email",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "no_hp",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "pesan",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "approval",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "otorisasi",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "subject",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "keterangan",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "waktu_otorisasi",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "sent_android",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{URL}}/api/oto",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"oto"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Single Data By ID Otorisasi",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{URL}}/api/oto/76590",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"oto",
+								"76590"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Otorisasi to give access",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{URL}}/api/oto/76590",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"oto",
+								"76590"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Data By ID Otorisasi",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{URL}}/api/oto/76590",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"oto",
+								"76590"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Login",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/x-www-form-urlencoded",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "user",
+							"value": "agif",
+							"description": "User From dpm_online database",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "password1",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{URL}}/login",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Fasilitas Pinjaman",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/x-www-form-urlencoded",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "nomor_so",
+							"value": "1",
+							"type": "text"
+						},
+						{
+							"key": "jenis_pinjaman",
+							"value": "Anomali",
+							"type": "text"
+						},
+						{
+							"key": "tujuan_pinjaman",
+							"value": "Pendidikan",
+							"type": "text"
+						},
+						{
+							"key": "plafon",
+							"value": "2.20",
+							"type": "text"
+						},
+						{
+							"key": "tenor",
+							"value": "4",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{URL}}/api/pinjaman",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"api",
+						"pinjaman"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "a7ee6b9b-2eba-4d67-85f8-9e2b1b62e61a",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "3cefa88c-796f-45e0-ba7e-bd7a9cb4600e",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "2604fcd0-5591-4ef6-87cb-89ab2b4528eb",
+			"key": "URL",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"id": "4502d083-a3d2-4e15-8f0d-3221fabcadee",
+			"key": "token",
+			"value": "",
+			"type": "string"
+		}
+	],
+	"protocolProfileBehavior": {}
+}

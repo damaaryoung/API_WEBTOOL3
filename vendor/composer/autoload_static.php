@@ -29,6 +29,10 @@ class ComposerStaticInitc001a60f02ccbcb1ce59b19fdba85d18
         array (
             'Webmozart\\Assert\\' => 17,
         ),
+        'U' => 
+        array (
+            'Urameshibr\\' => 11,
+        ),
         'S' => 
         array (
             'Symfony\\Polyfill\\Php73\\' => 23,
@@ -134,6 +138,10 @@ class ComposerStaticInitc001a60f02ccbcb1ce59b19fdba85d18
         'Webmozart\\Assert\\' => 
         array (
             0 => __DIR__ . '/..' . '/webmozart/assert/src',
+        ),
+        'Urameshibr\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/urameshibr/lumen-form-request/src',
         ),
         'Symfony\\Polyfill\\Php73\\' => 
         array (
@@ -396,14 +404,17 @@ class ComposerStaticInitc001a60f02ccbcb1ce59b19fdba85d18
 
     public static $classMap = array (
         'App\\Console\\Kernel' => __DIR__ . '/../..' . '/app/Console/Kernel.php',
+        'App\\Debitur' => __DIR__ . '/../..' . '/app/Models/Debt/Debitur.php',
         'App\\Events\\Event' => __DIR__ . '/../..' . '/app/Events/Event.php',
         'App\\Events\\ExampleEvent' => __DIR__ . '/../..' . '/app/Events/ExampleEvent.php',
         'App\\Exceptions\\Handler' => __DIR__ . '/../..' . '/app/Exceptions/Handler.php',
         'App\\Http\\Controllers\\AuthController' => __DIR__ . '/../..' . '/app/Http/Controllers/AuthController.php',
         'App\\Http\\Controllers\\Controller' => __DIR__ . '/../..' . '/app/Http/Controllers/Controller.php',
+        'App\\Http\\Controllers\\Debitur\\DebiturController' => __DIR__ . '/../..' . '/app/Http/Controllers/Debitur/DebiturController.php',
         'App\\Http\\Controllers\\FlagAuthorController' => __DIR__ . '/../..' . '/app/Http/Controllers/FlagAuthorController.php',
         'App\\Http\\Controllers\\Master\\AreaController' => __DIR__ . '/../..' . '/app/Http/Controllers/Master/AreaController.php',
         'App\\Http\\Controllers\\Master\\AsalDataController' => __DIR__ . '/../..' . '/app/Http/Controllers/Master/AsalDataController.php',
+        'App\\Http\\Controllers\\Master\\CodeController' => __DIR__ . '/../..' . '/app/Http/Controllers/Master/CodeController.php',
         'App\\Http\\Controllers\\Master\\JenisAreaController' => __DIR__ . '/../..' . '/app/Http/Controllers/Master/JenisAreaController.php',
         'App\\Http\\Controllers\\Menu\\MenuAccessController' => __DIR__ . '/../..' . '/app/Http/Controllers/Menu/MenuAccessController.php',
         'App\\Http\\Controllers\\Menu\\MenuMasterController' => __DIR__ . '/../..' . '/app/Http/Controllers/Menu/MenuMasterController.php',
@@ -417,16 +428,21 @@ class ComposerStaticInitc001a60f02ccbcb1ce59b19fdba85d18
         'App\\Http\\Middleware\\Authenticate' => __DIR__ . '/../..' . '/app/Http/Middleware/Authenticate.php',
         'App\\Http\\Middleware\\CorsMiddleware' => __DIR__ . '/../..' . '/app/Http/Middleware/CorsMiddleware.php',
         'App\\Http\\Middleware\\JwtMiddleware' => __DIR__ . '/../..' . '/app/Http/Middleware/JwtMiddleware.php',
+        'App\\Http\\Requests\\Debt\\DebtPasanganRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Debt/DebtPasanganRequest.php',
+        'App\\Http\\Requests\\Debt\\DebtPenjaminRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Debt/DebtPenjaminRequest.php',
+        'App\\Http\\Requests\\Debt\\DebtRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Debt/DebtRequest.php',
         'App\\Jobs\\ExampleJob' => __DIR__ . '/../..' . '/app/Jobs/ExampleJob.php',
         'App\\Jobs\\Job' => __DIR__ . '/../..' . '/app/Jobs/Job.php',
         'App\\Listeners\\ExampleListener' => __DIR__ . '/../..' . '/app/Listeners/ExampleListener.php',
-        'App\\MenuAccess' => __DIR__ . '/../..' . '/app/MenuAccess.php',
-        'App\\MenuMaster' => __DIR__ . '/../..' . '/app/MenuMaster.php',
-        'App\\MenuSub' => __DIR__ . '/../..' . '/app/MenuSub.php',
+        'App\\MenuAccess' => __DIR__ . '/../..' . '/app/Models/MenuAccess.php',
+        'App\\MenuMaster' => __DIR__ . '/../..' . '/app/Models/MenuMaster.php',
+        'App\\MenuSub' => __DIR__ . '/../..' . '/app/Models/MenuSub.php',
+        'App\\Pasangan' => __DIR__ . '/../..' . '/app/Models/Debt/Pasangan.php',
+        'App\\Penjamin' => __DIR__ . '/../..' . '/app/Models/Debt/Penjamin.php',
         'App\\Providers\\AppServiceProvider' => __DIR__ . '/../..' . '/app/Providers/AppServiceProvider.php',
         'App\\Providers\\AuthServiceProvider' => __DIR__ . '/../..' . '/app/Providers/AuthServiceProvider.php',
         'App\\Providers\\EventServiceProvider' => __DIR__ . '/../..' . '/app/Providers/EventServiceProvider.php',
-        'App\\User' => __DIR__ . '/../..' . '/app/User.php',
+        'App\\User' => __DIR__ . '/../..' . '/app/Models/User.php',
         'Carbon\\Carbon' => __DIR__ . '/..' . '/nesbot/carbon/src/Carbon/Carbon.php',
         'Carbon\\CarbonImmutable' => __DIR__ . '/..' . '/nesbot/carbon/src/Carbon/CarbonImmutable.php',
         'Carbon\\CarbonInterface' => __DIR__ . '/..' . '/nesbot/carbon/src/Carbon/CarbonInterface.php',
@@ -3232,6 +3248,8 @@ class ComposerStaticInitc001a60f02ccbcb1ce59b19fdba85d18
         'TheSeer\\Tokenizer\\TokenCollectionException' => __DIR__ . '/..' . '/theseer/tokenizer/src/TokenCollectionException.php',
         'TheSeer\\Tokenizer\\Tokenizer' => __DIR__ . '/..' . '/theseer/tokenizer/src/Tokenizer.php',
         'TheSeer\\Tokenizer\\XMLSerializer' => __DIR__ . '/..' . '/theseer/tokenizer/src/XMLSerializer.php',
+        'Urameshibr\\Providers\\FormRequestServiceProvider' => __DIR__ . '/..' . '/urameshibr/lumen-form-request/src/Providers/FormRequestServiceProvider.php',
+        'Urameshibr\\Requests\\FormRequest' => __DIR__ . '/..' . '/urameshibr/lumen-form-request/src/Requests/FormRequest.php',
         'Webmozart\\Assert\\Assert' => __DIR__ . '/..' . '/webmozart/assert/src/Assert.php',
         'phpDocumentor\\Reflection\\DocBlock' => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src/DocBlock.php',
         'phpDocumentor\\Reflection\\DocBlockFactory' => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src/DocBlockFactory.php',

@@ -5,8 +5,8 @@ namespace App\Http\Controllers;
 use Laravel\Lumen\Routing\Controller as BaseController;
 use App\Http\Controllers\Controller as Helper;
 use Illuminate\Http\Request;
+use App\Models\User;
 use Carbon\Carbon;
-use App\User;
 use DB;
 
 class UserController extends BaseController

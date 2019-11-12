@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace App\Models\CC;
 
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
@@ -8,7 +8,7 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Lumen\Auth\Authorizable;
 
-class MenuMaster extends Model implements AuthenticatableContract, AuthorizableContract
+class FasilitasPinjaman extends Model implements AuthenticatableContract, AuthorizableContract
 {
     use Authenticatable, Authorizable;
 
@@ -19,22 +19,21 @@ class MenuMaster extends Model implements AuthenticatableContract, AuthorizableC
      */
     protected $connection = 'web';
 
-    protected $table = 'menu_master';
+    protected $table = 'fasilitas_pinjaman';
     protected $primaryKey = 'id';
 
     protected $fillable = [
-       'nama', 'url', 'icon'
+        'id_calon_debitur', 'nomor_so', 'jenis_pinjaman', 'tujuan_pinjaman', 'plafon', 'tenor'
     ];
 
-    public function mAccess()
-    {
-        return $this->hasMany('App\MenuAccess', 'id');
-    }
+    /**
+     * The attributes excluded from the model's JSON form.
+     *
+     * @var array
+     */
+    // protected $hidden = [
 
-    public function mSub()
-    {
-        return $this->hasMany('App\MenuSub', 'id');
-    }
+    // ];
 
-    public $timestamps = false;
+    // public $timestamps = false;
 }

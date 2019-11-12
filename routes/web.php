@@ -44,29 +44,26 @@ $router->group(['prefix' => '/wilayah'], function () use ($router) {
 $router->put('/api/users/reset_password', 'UserController@resetPassword'); //Reset Password
 
 
-$router->post('/login', 'AuthController@login');
+$router->post('/login', 'AuthController@login'); // Login All Level
+$router->post('/cc', 'Pengajuan\MasterCC_Controller@store'); // Registration Debitur
 
 $router->group(['middleware' => 'jwt.auth'], function () use ($router) {
+    //For Non User (Debitur)
     $router->group(['prefix' => '/api'], function () use ($router) {
         $router->get('/users', 'UserController@index');
         $router->put('/users/change_password', 'UserController@changePassword');
-        // $router->post('/users', 'UserController@create');
-        // $router->get('/users/{id}', 'UserController@getId');
-        // $router->put('/users', 'UserController@update');
-        // $router->delete('/users', 'UserController@delete');
 
+        $router->get('/apro', 'FlagAuthorController@aproIndex'); // Approval
+        // $router->post('/apro', 'FlagAuthorController@aproStore');
+        $router->get('/apro/{id}', 'FlagAuthorController@aproShow');
+        $router->put('/apro/{id}', 'FlagAuthorController@aproUpdate');
+        // $router->delete('/apro/{id}', 'FlagAuthorController@aproDelete');
 
-        // $router->put('/set_otorisasi', 'FlagAuthorController@updateOtorisasi');
-
-        // $router->put('/otorisasi', 'FlagAuthorController@setOtorisasi');
-        // $router->get('/otorisasi', 'FlagAuthorController@getAllOtorisasi');
-        // $router->get('/otorisasi/{id}', 'FlagAuthorController@getIdOtorisasi');
-
-        $router->get('/oto', 'FlagAuthorController@index');
-        $router->post('/oto', 'FlagAuthorController@store');
-        $router->get('/oto/{id}', 'FlagAuthorController@show');
-        $router->put('/oto/{id}', 'FlagAuthorController@update');
-        $router->delete('/oto/{id}', 'FlagAuthorController@delete');
+        $router->get('/oto', 'FlagAuthorController@otoIndex'); // Otorisasi
+        $router->post('/oto', 'FlagAuthorController@otoStore');
+        $router->get('/oto/{id}', 'FlagAuthorController@otoShow');
+        $router->put('/oto/{id}', 'FlagAuthorController@otoUpdate');
+        $router->delete('/oto/{id}', 'FlagAuthorController@otoDelete');
 
         $router->group(['prefix' => '/master'], function () use ($router) {
             $router->get('/asal_data', 'Master\AsalDataController@index');
@@ -125,4 +122,9 @@ $router->group(['middleware' => 'jwt.auth'], function () use ($router) {
         $router->post('/pinjaman', 'PinjamanController@store');
         $router->get('/pinjaman/plus', 'PinjamanController@plus');
     });
+
+    //For User (Debitur)
+    // $router->group(['prefix' => '/debt'], function () use ($router) {
+
+    // }
 });
