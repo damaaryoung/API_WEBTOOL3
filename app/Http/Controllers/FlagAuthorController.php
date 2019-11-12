@@ -5,182 +5,67 @@ namespace App\Http\Controllers;
 use Laravel\Lumen\Routing\Controller as BaseController;
 use App\Http\Controllers\Controller as Helper;
 use Illuminate\Http\Request;
+use App\Models\User;
 use Carbon\Carbon;
-use App\User;
 use DB;
 
 class FlagAuthorController extends BaseController
 {
-    // public function updateOtorisasi(Request $req, Helper $help) {
-    //     $id   = $req->auth->user_id;
-    //     $user = User::select('reg_id_gcm')->where('user_id', $id)->first();
-
-    //     $Now = Carbon::now()->toDateTimeString();
-
-    //     $data = DB::connection('dpm')->table('flg_otorisasi')
-    //         ->where('user_id', $id)
-    //         ->where('otorisasi', 0)
-    //         ->orderBy('tgl','asc')
-    //         ->orderBy('jam', 'asc')
-    //         ->first();
-
-    //     if($data == null){
-    //         return response()->json([
-    //             "code"    => 404,
-    //             'status'  => 'not found',
-    //             'message' => 'Data kosong'
-    //         ], 404);
-    //     }
-
-    //     $update = DB::connection('dpm')->table('flg_otorisasi')
-    //     ->where('user_id', $id)
-    //     ->where('id', $data->id)
-    //     ->update([
-    //         'otorisasi' => 1,
-    //         'waktu_otorisasi' => $Now
-    //     ]);
-
-    //     try {
-    //         return response()->json([
-    //             "code"    => 200,
-    //             'status'  => 'success',
-    //             'message' => 'Otorisasi berhasil di update ke 1'
-    //         ], 200);
-    //     } catch (Exception $e) {
-    //         return response()->json([
-    //             "code"    => 501,
-    //             'status'  => 'error',
-    //             'message' => $e
-    //         ], 501);
-    //     }
-    // }
-
-    // public function setOtorisasi(Request $req) {
-    //     $data = DB::connection('dpm')->table('flg_otorisasi')
-    //         ->where('otorisasi', 0)
-    //         ->where('otorisasi', 0)
-    //         ->orderBy('tgl','asc')
-    //         ->orderBy('jam', 'asc')
-    //         ->first();
-
-    //     $Now = Carbon::now()->toDateTimeString();
-
-    //     if($data == null){
-    //         return response()->json([
-    //             "code"    => 404,
-    //             'status'  => 'not found',
-    //             'message' => 'Data kosong'
-    //         ], 404);
-    //     }
-
-    //     $update = DB::connection('dpm')->table('flg_otorisasi')
-    //     ->where('id', $data->id)
-    //     ->update([
-    //         'otorisasi' => 1,
-    //         'waktu_otorisasi' => $Now
-    //     ]);
-
-    //     try {
-    //         return response()->json([
-    //             "code"    => 200,
-    //             'status'  => 'success',
-    //             'message' => 'Otorisasi berhasil di update ke 1'
-    //         ], 200);
-    //     } catch (Exception $e) {
-    //         return response()->json([
-    //             "code"    => 501,
-    //             'status'  => 'error',
-    //             'message' => $e
-    //         ], 501);
-    //     }
-    // }
-
-    // public function getAllOtorisasi(Request $req) {
-    //     $query = DB::connection('dpm')->table('flg_otorisasi')
-    //         ->where('otorisasi', 0)
-    //         ->orderBy('tgl','asc')
-    //         ->orderBy('jam', 'asc')
-    //         ->get();
-
-    //     if (!$query) {
-    //         return response()->json([
-    //             "code"    => 404,
-    //             'status'  => 'not found',
-    //             'message' => 'Data kosong'
-    //         ], 404);
-    //     }
-
-    //     try {
-    //         return response()->json([
-    //             "code"   => 200,
-    //             'status' => 'success',
-    //             'data'   => $query
-    //         ], 200);
-    //     } catch (Exception $e) {
-    //         return response()->json([
-    //             "code"    => 501,
-    //             'status'  => 'error',
-    //             'message' => $e
-    //         ], 501);
-    //     }
-    // }
-
-    // public function getIdOtorisasi($id, Request $req) {
-    //     $query = DB::connection('dpm')->table('flg_otorisasi')
-    //         ->where('id', $id)
-    //         ->where('otorisasi', 1)
-    //         ->orderBy('tgl','asc')
-    //         ->orderBy('jam', 'asc')
-    //         ->first();
-
-    //     if (!$query) {
-    //         return response()->json([
-    //             "code"    => 404,
-    //             'status'  => 'not found',
-    //             'message' => 'Data kosong'
-    //         ], 404);
-    //     }
-
-    //     try {
-    //         return response()->json([
-    //             "code"   => 200,
-    //             'status' => 'success',
-    //             'data'   => $query
-    //         ], 200);
-    //     } catch (Exception $e) {
-    //         return response()->json([
-    //             "code"    => 501,
-    //             'status'  => 'error',
-    //             'message' => $e
-    //         ], 501);
-    //     }
-    // }
-
-
-
-
-    public function index(Request $req) {
+    // Otorisasi
+    public function otoIndex(Request $req) {
         $user_id = $req->auth->user_id;
+        // $user_id = '1131';
 
         try {
             $query = DB::connection('dpm')->table('flg_otorisasi')
+                ->select('id', 'email', 'no_hp', 'tgl', 'jam', 'keterangan', 'waktu_otorisasi')
+                ->where('id_modul',0)
                 ->where('user_id', $user_id)
                 ->where('otorisasi', 0)
                 ->orderBy('tgl','asc')
                 ->orderBy('jam', 'asc')
+                ->limit(5)
                 ->get();
 
-            if (!$query) {
+            if($query == '[]'){
                 return response()->json([
                     'code'    => 404,
                     'status'  => 'not found',
+                    // 'jenis'   => 'otorisasi',
                     'message' => 'Data kosong'
                 ], 404);
             }else{
+                $pesan = array(
+                    "transaksi"     => "Pengambilan Tabungan Tunai",
+                    "tgl_transaksi" => "17-10-2013",
+                    "no_rekening"   => "32-02-00066",
+                    "nama_nasabah"  => "PONIMIN",
+                    "alamat"        => "VILA MUTIARA GADING 2 BLOK F04 NO 18 RT/RW 007/016",
+                    "jumlah"        => "7,000,000.00",
+                    "keterangan"    => "Pengambilan Tabungan Tunai an: 32-02-00066 PONIMIN",
+                    "nama_teller"   => "GRIS"
+                );
+
+                $data = array();
+                $i = 0;
+                foreach ($query as $key => $val) {
+                    $data[$i]['id']              = $val->id;
+                    $data[$i]['email']           = $val->email;
+                    $data[$i]['no_hp']           = $val->no_hp;
+                    $data[$i]['subject']         = 'Pengambilan Tabungan Tunai';
+                    $data[$i]['pesan']           = $pesan;
+                    $data[$i]['tgl']             = $val->tgl;
+                    $data[$i]['jam']             = $val->jam;
+                    $data[$i]['keterangan']      = $val->keterangan;
+                    $data[$i]['waktu_otorisasi'] = $val->waktu_otorisasi;
+                    $i++;
+                }
+
                 return response()->json([
                     'code'    => 200,
                     'status'  => 'success',
-                    'data'    => $query
+                    // 'jenis'   => 'otorisasi',
+                    'data'    => $data
                 ], 200);
             }
         } catch (Exception $e) {
@@ -192,169 +77,58 @@ class FlagAuthorController extends BaseController
         }
     }
 
-    public function store(Request $req) {
-        $now   = Carbon::now()->toDateTimeString();
-        $date  = Carbon::parse($now)->format('Y-m-d');
-        $clock = Carbon::parse($now)->format('H:i:s a');
-
-        $user_id         = $req->input('user_id');
-        $modul           = $req->input('modul');
-        $id_modul        = $req->input('id_modul');
-        $ip              = $req->input('ip');
-        $email           = $req->input('email');
-        $no_hp           = $req->input('no_hp');
-        $pesan           = $req->input('pesan');
-        $tgl             = $date;
-        $jam             = $clock;
-        $approval        = $req->input('approval');
-        $otorisasi       = $req->input('otorisasi');
-        $subject         = $req->input('subject');
-        $keterangan      = $req->input('keterangan');
-        $waktu_otorisasi = $req->input('waktu_otorisasi');
-        $sent_android    = $req->input('sent_android');
-
-        if (!$user_id) {
-            return response()->json([
-                "code"    => 400,
-                "status"  => "bad request",
-                "message" => "Field 'user_id' harus diisi!!"
-            ], 400);
-        }
-
-        if (!$modul) {
-            return response()->json([
-                "code"    => 400,
-                "status"  => "bad request",
-                "message" => "Field 'modul' harus diisi!!"
-            ], 400);
-        }
-
-        if (!$id_modul) {
-            return response()->json([
-                "code"    => 400,
-                "status"  => "bad request",
-                "message" => "Field 'id_modul' harus diisi!!"
-            ], 400);
-        }
-
-        if (!$ip) {
-            return response()->json([
-                "code"    => 400,
-                "status"  => "bad request",
-                "message" => "Field 'ip' harus diisi!!"
-            ], 400);
-        }
-
-        if (!$email) {
-            return response()->json([
-                "code"    => 400,
-                "status"  => "bad request",
-                "message" => "Field 'email' harus diisi!!"
-            ], 400);
-        }
-
-        if (!$tgl) {
-            return response()->json([
-                "code"    => 400,
-                "status"  => "bad request",
-                "message" => "Field 'tgl' harus diisi!!"
-            ], 400);
-        }
-
-        if (!$jam) {
-            return response()->json([
-                "code"    => 400,
-                "status"  => "bad request",
-                "message" => "Field 'jam' harus diisi!!"
-            ], 400);
-        }
-
-        if (!$approval) {
-            return response()->json([
-                "code"    => 400,
-                "status"  => "bad request",
-                "message" => "Field 'approval' harus diisi!!"
-            ], 400);
-        }
-
-        if (!$subject) {
-            return response()->json([
-                "code"    => 400,
-                "status"  => "bad request",
-                "message" => "Field 'subject' harus diisi!!"
-            ], 400);
-        }
-
-        if (!$keterangan) {
-            return response()->json([
-                "code"    => 400,
-                "status"  => "bad request",
-                "message" => "Field 'keterangan' harus diisi!!"
-            ], 400);
-        }
-
-        if (!$waktu_otorisasi) {
-            return response()->json([
-                "code"    => 400,
-                "status"  => "bad request",
-                "message" => "Field 'waktu_otorisasi' harus diisi!!"
-            ], 400);
-        }
-
-        try {
-            $query = DB::connection('dpm')->table('flg_otorisasi')->insert([
-                'user_id'         => $user_id,
-                'modul'           => $modul,
-                'id_modul'        => $id_modul,
-                'ip'              => $ip,
-                'email'           => $email,
-                'no_hp'           => $no_hp,
-                'pesan'           => $pesan,
-                'tgl'             => $tgl,
-                'jam'             => $jam,
-                'approval'        => $approval,
-                'otorisasi'       => $otorisasi,
-                'subject'         => $subject,
-                'keterangan'      => $keterangan,
-                'waktu_otorisasi' => $waktu_otorisasi,
-                'sent_android'    => $sent_android
-            ]);
-
-            return response()->json([
-                'code'    => 200,
-                'status'  => 'success',
-                'message' => 'Data berhasil dibuat'
-            ], 200);
-        } catch (Exception $e) {
-            return response()->json([
-                "code"    => 501,
-                "status"  => "error",
-                "message" => $e
-            ], 501);
-        }
-    }
-
-    public function show($id, Request $req) {
+    public function otoShow($id, Request $req) {
         $user_id = $req->auth->user_id;
+        // $user_id = '1131';
 
         try {
             $query = DB::connection('dpm')->table('flg_otorisasi')
+                ->select('id', 'email', 'no_hp', 'tgl', 'jam', 'keterangan', 'waktu_otorisasi')
                 ->where('user_id', $user_id)
                 ->where('otorisasi', 0)
                 ->where('id', $id)
-                ->first();
+                ->get();
 
-            if (!$query) {
+            if ($query == '[]') {
                 return response()->json([
                     'code'    => 404,
                     'status'  => 'not found',
+                    // 'jenis'   => 'otorisasi',
                     'message' => 'Data kosong'
                 ], 404);
             }else{
+                $pesan = array(
+                    "transaksi"     => "Pengambilan Tabungan Tunai",
+                    "tgl_transaksi" => "17-10-2013",
+                    "no_rekening"   => "32-02-00066",
+                    "nama_nasabah"  => "PONIMIN",
+                    "alamat"        => "VILA MUTIARA GADING 2 BLOK F04 NO 18 RT/RW 007/016",
+                    "jumlah"        => "7,000,000.00",
+                    "keterangan"    => "Pengambilan Tabungan Tunai an: 32-02-00066 PONIMIN",
+                    "nama_teller"   => "GRIS"
+                );
+
+                $data = array();
+                $i = 0;
+
+                foreach ($query as $key => $val) {
+                    $data[$i]['id']              = $val->id;
+                    $data[$i]['email']           = $val->email;
+                    $data[$i]['no_hp']           = $val->no_hp;
+                    $data[$i]['subject']         = 'Pengambilan Tabungan Tunai';
+                    $data[$i]['pesan']           = $pesan;
+                    $data[$i]['tgl']             = $val->tgl;
+                    $data[$i]['jam']             = $val->jam;
+                    $data[$i]['keterangan']      = $val->keterangan;
+                    $data[$i]['waktu_otorisasi'] = $val->waktu_otorisasi;
+                    $i++;
+                }
+
                 return response()->json([
                     'code'    => 200,
                     'status'  => 'success',
-                    'data'    => $query
+                    // 'jenis'   => 'otorisasi',
+                    'data'    => $data
                 ], 200);
             }
         } catch (Exception $e) {
@@ -366,88 +140,11 @@ class FlagAuthorController extends BaseController
         }
     }
 
-    // public function update($id, Request $req) {
-    //     $user_id = $req->auth->user_id;
-
-    //     $now   = Carbon::now()->toDateTimeString();
-
-    //     if (!$check) {
-    //         return response()->json([
-    //             'code'    => 404,
-    //             'status'  => 'not found',
-    //             'message' => 'Data kosong'
-    //         ], 404);
-    //     }
-
-    //     $user_id         = empty($req->input('user_id')) ? $check->user_id : $req->input('user_id');
-    //     $modul           = empty($req->input('modul')) ? $check->modul : $req->input('modul');
-    //     $id_modul        = empty($req->input('id_modul')) ? $check->id_modul : $req->input('id_modul');
-    //     $ip              = empty($req->input('ip')) ? $check->ip : $req->input('ip');
-    //     $email           = empty($req->input('email')) ? $check->email : $req->input('email');
-    //     $no_hp           = empty($req->input('no_hp')) ? $check->no_hp : $req->input('no_hp');
-    //     $pesan           = empty($req->input('pesan')) ? $check->pesan : $req->input('pesan');
-    //     $tgl             = $date;
-    //     $jam             = $clock;
-    //     $approval        = empty($req->input('approval')) ? $check->approval : $req->input('approval');
-    //     $otorisasi       = empty($req->input('otorisasi')) ? $check->otorisasi : $req->input('otorisasi');
-    //     $subject         = empty($req->input('subject')) ? $check->subject : $req->input('subject');
-    //     $keterangan      = empty($req->input('keterangan')) ? $check->keterangan : $req->input('keterangan');
-    //     $waktu_otorisasi = empty($req->input('waktu_otorisasi')) ? $check->waktu_otorisasi : $req->input('waktu_otorisasi');
-    //     $sent_android    = empty($req->input('sent_android')) ? $check->sent_android : $req->input('sent_android');
-
-    //     try {
-    //         $query = DB::connection('dpm')->table('flg_otorisasi')->where('id', $id)->update([
-    //             'user_id'         => $user_id,
-    //             'modul'           => $modul,
-    //             'id_modul'        => $id_modul,
-    //             'ip'              => $ip,
-    //             'email'           => $email,
-    //             'no_hp'           => $no_hp,
-    //             'pesan'           => $pesan,
-    //             'tgl'             => $tgl,
-    //             'jam'             => $jam,
-    //             'approval'        => $approval,
-    //             'otorisasi'       => $otorisasi,
-    //             'subject'         => $subject,
-    //             'keterangan'      => $keterangan,
-    //             'waktu_otorisasi' => $waktu_otorisasi,
-    //             'sent_android'    => $sent_android
-    //         ]);
-
-    //         return response()->json([
-    //             'code'    => 200,
-    //             'status'  => 'success',
-    //             'message' => 'Data berhasil diupdate'
-    //         ], 200);
-    //     } catch (Exception $e) {
-    //         return response()->json([
-    //             "code"    => 501,
-    //             "status"  => "error",
-    //             "message" => $e
-    //         ], 501);
-    //     }
-    // }
-
-    public function update(Request $req, Helper $help) {
+    public function otoUpdate($id, Request $req) {
         $user_id = $req->auth->user_id;
-        // $user = User::select('reg_id_gcm')->where('user_id', $id)->first();
+        // $user_id = '1131';
 
         $Now = Carbon::now()->toDateTimeString();
-
-        $data = DB::connection('dpm')->table('flg_otorisasi')
-            ->where('user_id', $user_id)
-            ->where('otorisasi', 0)
-            ->orderBy('tgl','asc')
-            ->orderBy('jam', 'asc')
-            ->first();
-
-        if($data == null){
-            return response()->json([
-                "code"    => 404,
-                'status'  => 'not found',
-                'message' => 'Data kosong'
-            ], 404);
-        }
 
         $update = DB::connection('dpm')->table('flg_otorisasi')
         ->where('user_id', $user_id)
@@ -461,6 +158,7 @@ class FlagAuthorController extends BaseController
             return response()->json([
                 "code"    => 200,
                 'status'  => 'success',
+                // 'jenis'   => 'otorisasi',
                 'message' => 'Otorisasi berhasil di update ke 1'
             ], 200);
         } catch (Exception $e) {
@@ -472,30 +170,159 @@ class FlagAuthorController extends BaseController
         }
     }
 
-    public function delete($id) {
-        $check = DB::connection('dpm')->table('flg_otorisasi')->where('id', $id)->first();
-
-        if (!$check) {
-            return response()->json([
-                'code'    => 404,
-                'status'  => 'not found',
-                'message' => 'Data kosong'
-            ], 404);
-        }
+    // Approval
+    public function aproIndex(Request $req) {
+        $user_id = $req->auth->user_id;
+        // $user_id = '1131';
 
         try {
-            $query = DB::connection('dpm')->table('flg_otorisasi')->where('id', $id)->delete();
+            $query = DB::connection('dpm')->table('flg_otorisasi')
+                ->select('id', 'email', 'no_hp', 'tgl', 'jam', 'keterangan', 'waktu_otorisasi')
+                ->where('id_modul', '>',0)
+                ->where('user_id', $user_id)
+                ->where('approval', 0)
+                ->orderBy('tgl','asc')
+                ->orderBy('jam', 'asc')
+                ->limit(5)
+                ->get();
 
-            return response()->json([
-                'code'    => 200,
-                'status'  => 'success',
-                'message' => 'Data dengan ID '.$id.', berhasil dihapus'
-            ], 200);
+            if($query == '[]'){
+                return response()->json([
+                    'code'    => 404,
+                    'status'  => 'not found',
+                    'message' => 'Data kosong'
+                ], 404);
+            }else{
+                $pesan = array(
+                    "transaksi"     => "Pengambilan Tabungan Tunai",
+                    "tgl_transaksi" => "17-10-2013",
+                    "no_rekening"   => "32-02-00066",
+                    "nama_nasabah"  => "PONIMIN",
+                    "alamat"        => "VILA MUTIARA GADING 2 BLOK F04 NO 18 RT/RW 007/016",
+                    "jumlah"        => "7,000,000.00",
+                    "keterangan"    => "Pengambilan Tabungan Tunai an: 32-02-00066 PONIMIN",
+                    "nama_teller"   => "GRIS"
+                );
+
+                $data = array();
+                $i = 0;
+                foreach ($query as $key => $val) {
+                    $data[$i]['id']              = $val->id;
+                    $data[$i]['email']           = $val->email;
+                    $data[$i]['no_hp']           = $val->no_hp;
+                    $data[$i]['subject']         = 'Pengambilan Tabungan Tunai';
+                    $data[$i]['pesan']           = $pesan;
+                    $data[$i]['tgl']             = $val->tgl;
+                    $data[$i]['jam']             = $val->jam;
+                    $data[$i]['keterangan']      = $val->keterangan;
+                    $data[$i]['waktu_otorisasi'] = $val->waktu_otorisasi;
+                    $i++;
+                }
+
+                return response()->json([
+                    'code'    => 200,
+                    'status'  => 'success',
+                    // 'jenis'   => 'approval',
+                    'data'    => $data
+                ], 200);
+            }
         } catch (Exception $e) {
             return response()->json([
                 "code"    => 501,
                 "status"  => "error",
                 "message" => $e
+            ], 501);
+        }
+    }
+
+    public function aproShow($id, Request $req) {
+        $user_id = $req->auth->user_id;
+        // $user_id = '1131';
+
+        try {
+            $query = DB::connection('dpm')->table('flg_otorisasi')
+                ->where('user_id', $user_id)
+                ->where('approval', 0)
+                ->where('id', $id)
+                ->get();
+
+            if ($query == '[]') {
+                return response()->json([
+                    'code'    => 404,
+                    'status'  => 'not found',
+                    // 'jenis'   => 'approval',
+                    'message' => 'Data kosong'
+                ], 404);
+            }else{
+                $pesan = array(
+                    "transaksi"     => "Pengambilan Tabungan Tunai",
+                    "tgl_transaksi" => "17-10-2013",
+                    "no_rekening"   => "32-02-00066",
+                    "nama_nasabah"  => "PONIMIN",
+                    "alamat"        => "VILA MUTIARA GADING 2 BLOK F04 NO 18 RT/RW 007/016",
+                    "jumlah"        => "7,000,000.00",
+                    "keterangan"    => "Pengambilan Tabungan Tunai an: 32-02-00066 PONIMIN",
+                    "nama_teller"   => "GRIS"
+                );
+
+                $data = array();
+                $i = 0;
+
+                foreach ($query as $key => $val) {
+                    $data[$i]['id']              = $val->id;
+                    $data[$i]['email']           = $val->email;
+                    $data[$i]['no_hp']           = $val->no_hp;
+                    $data[$i]['subject']         = 'Pengambilan Tabungan Tunai';
+                    $data[$i]['pesan']           = $pesan;
+                    $data[$i]['tgl']             = $val->tgl;
+                    $data[$i]['jam']             = $val->jam;
+                    $data[$i]['keterangan']      = $val->keterangan;
+                    $data[$i]['waktu_otorisasi'] = $val->waktu_otorisasi;
+                    $i++;
+                }
+
+                return response()->json([
+                    'code'    => 200,
+                    'status'  => 'success',
+                    // 'jenis'   => 'approval',
+                    'data'    => $data
+                ], 200);
+            }
+        } catch (Exception $e) {
+            return response()->json([
+                "code"    => 501,
+                "status"  => "error",
+                "message" => $e
+            ], 501);
+        }
+    }
+
+    public function aproUpdate($id, Request $req) {
+        $user_id = $req->auth->user_id;
+        // $user_id = '1131';
+
+        $Now = Carbon::now()->toDateTimeString();
+
+        $update = DB::connection('dpm')->table('flg_otorisasi')
+        ->where('user_id', $user_id)
+        ->where('id', $id)
+        ->update([
+            'approval'        => 1,
+            'waktu_otorisasi' => $Now
+        ]);
+
+        try {
+            return response()->json([
+                "code"    => 200,
+                'status'  => 'success',
+                // 'jenis'   => 'approval',
+                'message' => 'Approval berhasil di update ke 1'
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                "code"    => 501,
+                'status'  => 'error',
+                'message' => $e
             ], 501);
         }
     }

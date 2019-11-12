@@ -5,9 +5,9 @@ namespace App\Http\Controllers\Menu;
 use Laravel\Lumen\Routing\Controller as BaseController;
 use App\Http\Controllers\Controller as Helper;
 use Illuminate\Http\Request;
-use App\MenuAccess;
+use App\Models\MenuAccess;
+use App\Models\User;
 use Carbon\Carbon;
-use App\User;
 use DB;
 
 class MenuAccessController extends BaseController
