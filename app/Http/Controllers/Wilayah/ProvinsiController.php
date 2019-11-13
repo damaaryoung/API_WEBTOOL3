@@ -13,6 +13,14 @@ class ProvinsiController extends BaseController
         try {
             $query = DB::connection('web')->table('master_provinsi')->get();
 
+            if ($query == '[]') {
+                return response()->json([
+                    "code"    => 404,
+                    "status"  => "not found",
+                    "message" => "Data kosong"
+                ], 404);
+            }
+
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
@@ -77,7 +85,7 @@ class ProvinsiController extends BaseController
 
     public function show($id) {
         try {
-            $query = DB::connection('web')->table('master_provinsi')->where('id', $id)->get();
+            $query = DB::connection('web')->table('master_provinsi')->where('id', $id)->first();
 
             if (!$query) {
                 return response()->json([

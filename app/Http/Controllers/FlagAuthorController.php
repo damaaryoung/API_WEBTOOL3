@@ -78,8 +78,8 @@ class FlagAuthorController extends BaseController
     }
 
     public function otoShow($id, Request $req) {
-        $user_id = $req->auth->user_id;
-        // $user_id = '1131';
+        // $user_id = $req->auth->user_id;
+        $user_id = '1131';
 
         try {
             $query = DB::connection('dpm')->table('flg_otorisasi')
@@ -128,7 +128,7 @@ class FlagAuthorController extends BaseController
                     'code'    => 200,
                     'status'  => 'success',
                     // 'jenis'   => 'otorisasi',
-                    'data'    => $data
+                    'data'    => $data[0]
                 ], 200);
             }
         } catch (Exception $e) {
@@ -148,7 +148,7 @@ class FlagAuthorController extends BaseController
 
         $update = DB::connection('dpm')->table('flg_otorisasi')
         ->where('user_id', $user_id)
-        ->where('id', $data->id)
+        ->where('id', $id)
         ->update([
             'otorisasi' => 1,
             'waktu_otorisasi' => $Now
@@ -285,7 +285,7 @@ class FlagAuthorController extends BaseController
                     'code'    => 200,
                     'status'  => 'success',
                     // 'jenis'   => 'approval',
-                    'data'    => $data
+                    'data'    => $data[0]
                 ], 200);
             }
         } catch (Exception $e) {

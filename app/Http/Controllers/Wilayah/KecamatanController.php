@@ -13,6 +13,14 @@ class KecamatanController extends BaseController
         try {
             $query = DB::connection('web')->table('master_kecamatan')->get();
 
+            if ($query == '[]') {
+                return response()->json([
+                    "code"    => 404,
+                    "status"  => "not found",
+                    "message" => "Data kosong"
+                ], 404);
+            }
+
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',

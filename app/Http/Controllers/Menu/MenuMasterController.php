@@ -16,6 +16,14 @@ class MenuMasterController extends BaseController
         try {
             $query = MenuMaster::get();
 
+            if ($query == '[]') {
+                return response()->json([
+                    "code"    => 404,
+                    "status"  => "not found",
+                    "message" => "Data kosong"
+                ], 404);
+            }
+
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
@@ -76,7 +84,7 @@ class MenuMasterController extends BaseController
 
     public function show($slug) {
         try {
-            $query = MenuMaster::where('url', $slug)->get();
+            $query = MenuMaster::where('url', $slug)->first();
 
             return response()->json([
                 'code'   => 200,
