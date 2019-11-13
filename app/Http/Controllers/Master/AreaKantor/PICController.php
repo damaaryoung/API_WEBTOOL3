@@ -49,8 +49,6 @@ class PICController extends BaseController
             'flg_aktif'     => $req->input('flg_aktif')
         );
 
-        PIC::create($data);
-
         try {
             return response()->json([
                 'code'    => 200,

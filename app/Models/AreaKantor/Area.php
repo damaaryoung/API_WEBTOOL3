@@ -23,7 +23,7 @@ class Area extends Model implements AuthenticatableContract, AuthorizableContrac
     protected $primaryKey = 'id';
 
     protected $fillable = [
-        'nama', 'id_provinsi', 'id_kabupaten', 'flg_aktif'
+        'nama', 'id_provinsi', 'id_kabupaten', 'jml_cabang', 'flg_aktif'
     ];
 
     /**

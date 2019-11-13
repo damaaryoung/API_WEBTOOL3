@@ -14,7 +14,23 @@ use DB;
 class AreaController extends BaseController
 {
     public function index() {
-        $query = Area::get();
+        // $query = Area::get();
+        $query = DB::connection('web')->table('m_k_area')
+            ->join('master_provinsi', 'master_provinsi.id', '=', 'm_k_area.id_provinsi')
+            ->join('master_kabupaten', 'master_kabupaten.id', '=', 'm_k_area.id_kabupaten')
+            ->select(
+                'm_k_area.id as id_area',
+                'm_k_area.nama as nama_area',
+                'm_k_area.id_provinsi',
+                'master_provinsi.nama as nama_provinsi',
+                'm_k_area.id_kabupaten',
+                'master_kabupaten.nama as nama_kabupaten',
+                'm_k_area.jml_cabang',
+                'm_k_area.flg_aktif',
+                'm_k_area.created_at',
+                'm_k_area.updated_at'
+            )
+            ->get();
 
         if ($query == '[]') {
             return response()->json([
@@ -71,15 +87,33 @@ class AreaController extends BaseController
     }
 
     public function show($id) {
-        $query = Area::where('id', $id)->first();
+        $check = Area::where('id', $id)->first();
 
-        if ($query == null) {
+        if ($check == null) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
                 'message' => 'Data tidak ada'
             ], 404);
         }else{
+            $query = DB::connection('web')->table('m_k_area')
+            ->join('master_provinsi', 'master_provinsi.id', '=', 'm_k_area.id_provinsi')
+            ->join('master_kabupaten', 'master_kabupaten.id', '=', 'm_k_area.id_kabupaten')
+            ->select(
+                'm_k_area.id as id_area',
+                'm_k_area.nama as nama_area',
+                'm_k_area.id_provinsi',
+                'master_provinsi.nama as nama_provinsi',
+                'm_k_area.id_kabupaten',
+                'master_kabupaten.nama as nama_kabupaten',
+                'm_k_area.jml_cabang',
+                'm_k_area.flg_aktif',
+                'm_k_area.created_at',
+                'm_k_area.updated_at'
+            )
+            ->where('m_k_area.id', $id)
+            ->first();
+
             try {
                 return response()->json([
                     'code'   => 200,

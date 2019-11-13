@@ -14,7 +14,35 @@ use DB;
 class KasController extends BaseController
 {
     public function index() {
-        $query = Kas::get();
+        // $query = Kas::get();
+        $query = DB::connection('web')->table('m_k_kas')
+            ->join('m_k_area', 'm_k_area.id',                 '=', 'm_k_kas.id_m_k_area')
+            ->join('m_k_cabang', 'm_k_cabang.id',             '=', 'm_k_kas.id_m_k_cabang')
+            ->join('master_provinsi', 'master_provinsi.id',   '=', 'm_k_kas.id_provinsi')
+            ->join('master_kabupaten', 'master_kabupaten.id', '=', 'm_k_kas.id_kabupaten')
+            ->join('master_kecamatan', 'master_kecamatan.id', '=', 'm_k_kas.id_kecamatan')
+            ->join('master_kelurahan', 'master_kelurahan.id', '=', 'm_k_kas.id_kelurahan')
+            ->select(
+                'm_k_kas.id_m_k_area as id_area',
+                'm_k_area.nama as nama_area',
+                'm_k_kas.id_m_k_cabang as id_cabang',
+                'm_k_cabang.nama as nama_cabang',
+                'm_k_kas.id as id_kantor_kas',
+                'm_k_kas.nama as nama_kantor_kas',
+                'm_k_kas.id_provinsi',
+                'master_provinsi.nama as nama_provinsi',
+                'm_k_kas.id_kabupaten',
+                'master_kabupaten.nama as nama_kabupaten',
+                'm_k_kas.id_kecamatan',
+                'master_kecamatan.nama as nama_kecamatan',
+                'm_k_kas.id_kelurahan',
+                'master_kelurahan.nama as nama_kelurahan',
+                'master_kelurahan.kode_pos as kode_pos',
+                'm_k_kas.flg_aktif',
+                'm_k_kas.created_at',
+                'm_k_kas.updated_at'
+            )
+            ->get();
 
         if ($query == '[]') {
             return response()->json([
@@ -48,7 +76,7 @@ class KasController extends BaseController
     public function store(KasRequest $req) {
         $data = array(
             'id_m_k_area'   => $req->input('id_m_k_area'),
-            'id_m_k_cabang' => $req->input('id_m_k_cabang'),
+            'id_m_k_kas' => $req->input('id_m_k_kas'),
             'nama'          => $req->input('nama'),
             'id_provinsi'   => $req->input('id_provinsi'),
             'id_kabupaten'  => $req->input('id_kabupaten'),
@@ -75,15 +103,45 @@ class KasController extends BaseController
     }
 
     public function show($id) {
-        $query = Kas::where('id', $id)->first();
+        $check = Kas::where('id', $id)->first();
 
-        if ($query == null) {
+        if ($check == null) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
                 'message' => 'Data tidak ada'
             ], 404);
         }else{
+            $query = DB::connection('web')->table('m_k_kas')
+            ->join('m_k_area', 'm_k_area.id',                 '=', 'm_k_kas.id_m_k_area')
+            ->join('m_k_cabang', 'm_k_cabang.id',             '=', 'm_k_kas.id_m_k_cabang')
+            ->join('master_provinsi', 'master_provinsi.id',   '=', 'm_k_kas.id_provinsi')
+            ->join('master_kabupaten', 'master_kabupaten.id', '=', 'm_k_kas.id_kabupaten')
+            ->join('master_kecamatan', 'master_kecamatan.id', '=', 'm_k_kas.id_kecamatan')
+            ->join('master_kelurahan', 'master_kelurahan.id', '=', 'm_k_kas.id_kelurahan')
+            ->select(
+                'm_k_kas.id_m_k_area as id_area',
+                'm_k_area.nama as nama_area',
+                'm_k_kas.id_m_k_cabang as id_cabang',
+                'm_k_cabang.nama as nama_cabang',
+                'm_k_kas.id as id_kantor_kas',
+                'm_k_kas.nama as nama_kantor_kas',
+                'm_k_kas.id_provinsi',
+                'master_provinsi.nama as nama_provinsi',
+                'm_k_kas.id_kabupaten',
+                'master_kabupaten.nama as nama_kabupaten',
+                'm_k_kas.id_kecamatan',
+                'master_kecamatan.nama as nama_kecamatan',
+                'm_k_kas.id_kelurahan',
+                'master_kelurahan.nama as nama_kelurahan',
+                'master_kelurahan.kode_pos as kode_pos',
+                'm_k_kas.flg_aktif',
+                'm_k_kas.created_at',
+                'm_k_kas.updated_at'
+            )
+            ->where('m_k_kas.id', $id)
+            ->first();
+
             try {
                 return response()->json([
                     'code'   => 200,
@@ -112,8 +170,8 @@ class KasController extends BaseController
         }
 
         $data = array(
-            'id_m_k_area'   => empty($req->input('id_m_k_area')) ? $check->id_m_k_area : $req->input('id_m_k_area'),
-            'id_m_k_cabang' => empty($req->input('id_m_k_cabang')) ? $check->id_m_k_cabang : $req->input('id_m_k_cabang'),
+            'id_m_k_area'  => empty($req->input('id_m_k_area')) ? $check->id_m_k_area : $req->input('id_m_k_area'),
+            'id_m_k_kas'   => empty($req->input('id_m_k_kas')) ? $check->id_m_k_kas : $req->input('id_m_k_kas'),
             'nama'         => empty($req->input('nama')) ? $check->nama : $req->input('nama'),
             'id_provinsi'  => empty($req->input('id_provinsi')) ? $check->id_provinsi : $req->input('id_provinsi'),
             'id_kabupaten' => empty($req->input('id_kabupaten')) ? $check->id_kabupaten : $req->input('id_kabupaten'),
