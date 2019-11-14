@@ -16,7 +16,6 @@ class FlagAuthorController extends BaseController
     // Otorisasi
     public function otoIndex(Request $req) {
         $user_id = $req->auth->user_id;
-        // $user_id = '1131';
 
         try {
             $query = DB::connection('dpm')->table('flg_otorisasi')
@@ -33,7 +32,7 @@ class FlagAuthorController extends BaseController
                 return response()->json([
                     'code'    => 404,
                     'status'  => 'not found',
-                    // 'jenis'   => 'otorisasi',
+
                     'message' => 'Data kosong'
                 ], 404);
             }else{
@@ -66,7 +65,7 @@ class FlagAuthorController extends BaseController
                 return response()->json([
                     'code'    => 200,
                     'status'  => 'success',
-                    // 'jenis'   => 'otorisasi',
+
                     'data'    => $data
                 ], 200);
             }
@@ -81,7 +80,6 @@ class FlagAuthorController extends BaseController
 
     public function otoShow($id, Request $req) {
         $user_id = $req->auth->user_id;
-        // $user_id = '1131';
 
         try {
             $query = DB::connection('dpm')->table('flg_otorisasi')
@@ -96,7 +94,7 @@ class FlagAuthorController extends BaseController
                 return response()->json([
                     'code'    => 404,
                     'status'  => 'not found',
-                    // 'jenis'   => 'otorisasi',
+
                     'message' => 'Data kosong'
                 ], 404);
             }else{
@@ -130,7 +128,7 @@ class FlagAuthorController extends BaseController
                 return response()->json([
                     'code'    => 200,
                     'status'  => 'success',
-                    // 'jenis'   => 'otorisasi',
+
                     'data'    => $data[0]
                 ], 200);
             }
@@ -145,7 +143,6 @@ class FlagAuthorController extends BaseController
 
     public function otoUpdate($id, Request $req) {
         $user_id = $req->auth->user_id;
-        // $user_id = '1131';
 
         $Now = Carbon::now()->toDateTimeString();
 
@@ -174,7 +171,6 @@ class FlagAuthorController extends BaseController
             return response()->json([
                 "code"    => 200,
                 'status'  => 'success',
-                // 'jenis'   => 'otorisasi',
                 'message' => 'Otorisasi berhasil di update ke 1'
             ], 200);
         } catch (Exception $e) {
@@ -189,7 +185,6 @@ class FlagAuthorController extends BaseController
     // Approval
     public function aproIndex(Request $req) {
         $user_id = $req->auth->user_id;
-        // $user_id = '1131';
 
         try {
             $query = DB::connection('dpm')->table('flg_otorisasi')
@@ -238,7 +233,6 @@ class FlagAuthorController extends BaseController
                 return response()->json([
                     'code'    => 200,
                     'status'  => 'success',
-                    // 'jenis'   => 'approval',
                     'data'    => $data
                 ], 200);
             }
@@ -253,7 +247,6 @@ class FlagAuthorController extends BaseController
 
     public function aproShow($id, Request $req) {
         $user_id = $req->auth->user_id;
-        // $user_id = '1131';
 
         try {
             $query = DB::connection('dpm')->table('flg_otorisasi')
@@ -267,7 +260,6 @@ class FlagAuthorController extends BaseController
                 return response()->json([
                     'code'    => 404,
                     'status'  => 'not found',
-                    // 'jenis'   => 'approval',
                     'message' => 'Data kosong'
                 ], 404);
             }else{
@@ -301,7 +293,6 @@ class FlagAuthorController extends BaseController
                 return response()->json([
                     'code'    => 200,
                     'status'  => 'success',
-                    // 'jenis'   => 'approval',
                     'data'    => $data[0]
                 ], 200);
             }
@@ -316,7 +307,6 @@ class FlagAuthorController extends BaseController
 
     public function aproUpdate($id, Request $req) {
         $user_id = $req->auth->user_id;
-        // $user_id = '1131';
 
         $Now = Carbon::now()->toDateTimeString();
 
@@ -344,8 +334,7 @@ class FlagAuthorController extends BaseController
         try {
             return response()->json([
                 "code"    => 200,
-                'status'  => 'success',
-                // 'jenis'   => 'approval',
+                'status'  => 'success'
                 'message' => 'Approval berhasil di update ke 1'
             ], 200);
         } catch (Exception $e) {
