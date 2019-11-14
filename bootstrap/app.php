@@ -63,7 +63,7 @@ $app->singleton(
 
 $app->routeMiddleware([
     // 'auth' => App\Http\Middleware\Authenticate::class,
-    'jwt.auth' => App\Http\Middleware\JwtMiddleware::class
+    'jwt.auth' => App\Http\Middleware\JwtMiddleware::class // JWT AUthenticator
     // 'cors' => App\Http\Middleware\CorsMiddleware::class
 ]);
 
@@ -83,6 +83,9 @@ $app->register(App\Providers\AuthServiceProvider::class);
 $app->register(App\Providers\EventServiceProvider::class);
 
 $app->register(Urameshibr\Providers\FormRequestServiceProvider::class); // Form-Request To Validator
+
+// $app->register(App\Helpers\LogActivity::class);
+// class_alias(App\Helpers\LogActivity::class, 'LogActivity'); // Aliases
 
 /*
 |--------------------------------------------------------------------------

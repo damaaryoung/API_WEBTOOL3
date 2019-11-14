@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller as Helper;
 use App\Http\Requests\AreaKantor\CabangRequest;
 use App\Models\AreaKantor\Cabang;
 use App\Models\AreaKantor\Area;
+use App\Models\AreaKantor\PIC;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Carbon\Carbon;
@@ -15,6 +16,10 @@ use DB;
 class CabangController extends BaseController
 {
     public function index() {
+        // $countAO = PIC::groupby('id_m_jenis_pic')->get()->count();
+
+        // dd($countAO);
+
         $query = DB::connection('web')->table('m_k_cabang')
             ->join('m_k_area', 'm_k_area.id', '=', 'm_k_cabang.id_m_k_area')
             ->join('master_provinsi', 'master_provinsi.id', '=', 'm_k_cabang.id_provinsi')
@@ -136,9 +141,6 @@ class CabangController extends BaseController
                 'm_k_cabang.id_kelurahan',
                 'master_kelurahan.nama as nama_kelurahan',
                 'master_kelurahan.kode_pos as kode_pos',
-                'm_k_cabang.jml_ao',
-                'm_k_cabang.jml_so',
-                'm_k_cabang.jml_col',
                 'm_k_cabang.flg_aktif',
                 'm_k_cabang.created_at',
                 'm_k_cabang.updated_at'

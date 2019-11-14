@@ -12,9 +12,9 @@ use DB;
 class UserController extends BaseController
 {
     public function index(Request $req){
-        $id = $req->auth->user_id;
+        $user_id = $req->auth->user_id;
 
-        $data = User::where('user_id', '=', $id)->first();
+        $data = User::where('user_id', '=', $user_id)->first();
 
         return response()->json([
             "code"   => 200,

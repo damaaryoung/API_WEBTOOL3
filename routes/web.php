@@ -1,7 +1,7 @@
 <?php
 
 $router->get('/', function () use ($router) {
-    return 'API - WEBTOOL' ;
+    return 'API - DEVIS' ;
 });
 
 $router->get('/api', function () use ($router) {
@@ -50,6 +50,11 @@ $router->post('/cc', 'Pengajuan\MasterCC_Controller@store'); // Registration Deb
 $router->group(['middleware' => 'jwt.auth'], function () use ($router) {
     //For Non User (Debitur)
     $router->group(['prefix' => '/api'], function () use ($router) {
+        $router->get('/logs', 'LogsController@index'); //Log History All
+        $router->get('/logs/{id}', 'LogsController@detail'); //Log History By ID
+        $router->get('/logs/limit/{limit}', 'LogsController@limit'); //Log History Limit
+        $router->get('/logs/search/{search}', 'LogsController@search'); //Log History Search
+
         $router->get('/users', 'UserController@index');
         $router->put('/users/change_password', 'UserController@changePassword');
 

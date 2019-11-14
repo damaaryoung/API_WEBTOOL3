@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Laravel\Lumen\Routing\Controller as BaseController;
 use App\Http\Controllers\Controller as Helper;
 use Illuminate\Http\Request;
+use App\Models\LogActivity;
+use App\Models\FlgOto;
 use App\Models\User;
 use Carbon\Carbon;
 use DB;
@@ -78,12 +80,13 @@ class FlagAuthorController extends BaseController
     }
 
     public function otoShow($id, Request $req) {
-        // $user_id = $req->auth->user_id;
-        $user_id = '1131';
+        $user_id = $req->auth->user_id;
+        // $user_id = '1131';
 
         try {
             $query = DB::connection('dpm')->table('flg_otorisasi')
                 ->select('id', 'email', 'no_hp', 'tgl', 'jam', 'keterangan', 'waktu_otorisasi')
+                ->where('id_modul',0)
                 ->where('user_id', $user_id)
                 ->where('otorisasi', 0)
                 ->where('id', $id)
@@ -146,13 +149,26 @@ class FlagAuthorController extends BaseController
 
         $Now = Carbon::now()->toDateTimeString();
 
-        $update = DB::connection('dpm')->table('flg_otorisasi')
-        ->where('user_id', $user_id)
-        ->where('id', $id)
-        ->update([
-            'otorisasi' => 1,
-            'waktu_otorisasi' => $Now
-        ]);
+        $logData = array(
+            'subject' => 'Update Otorisasi',
+            'url'     => $req->getPathInfo(),
+            'method'  => $req->getMethod(),
+            'ip'      => $req->getClientIp(),
+            'agent'   => $req->header('User-Agent'),
+            'user_id' => $user_id
+        );
+
+        DB::connection("web")->transaction(function() use ($id, $user_id, $Now, $logData) {
+            FlgOto::where([
+                    ['id', $id],
+                    ['user_id', $user_id],
+                    ['otorisasi', 0],
+                    ['id_modul',0]
+                ])
+                ->update(['otorisasi' => 1, 'waktu_otorisasi' => $Now]);
+
+            LogActivity::create($logData);
+        });
 
         try {
             return response()->json([
@@ -241,6 +257,7 @@ class FlagAuthorController extends BaseController
 
         try {
             $query = DB::connection('dpm')->table('flg_otorisasi')
+                ->where('id_modul', '>',0)
                 ->where('user_id', $user_id)
                 ->where('approval', 0)
                 ->where('id', $id)
@@ -303,13 +320,26 @@ class FlagAuthorController extends BaseController
 
         $Now = Carbon::now()->toDateTimeString();
 
-        $update = DB::connection('dpm')->table('flg_otorisasi')
-        ->where('user_id', $user_id)
-        ->where('id', $id)
-        ->update([
-            'approval'        => 1,
-            'waktu_otorisasi' => $Now
-        ]);
+        $logData = array(
+            'subject' => 'Update Approval',
+            'url'     => $req->getPathInfo(),
+            'method'  => $req->getMethod(),
+            'ip'      => $req->getClientIp(),
+            'agent'   => $req->header('User-Agent'),
+            'user_id' => $user_id
+        );
+
+        DB::connection("web")->transaction(function() use ($id, $user_id, $Now, $logData) {
+            FlgOto::where([
+                    ['id', $id],
+                    ['user_id', $user_id],
+                    ['id_modul', '>',0],
+                    ['approval', 0]
+                ])
+                ->update(['approval' => 1, 'waktu_otorisasi' => $Now]);
+
+            LogActivity::create($logData);
+        });
 
         try {
             return response()->json([
