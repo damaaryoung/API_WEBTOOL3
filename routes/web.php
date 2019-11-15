@@ -75,11 +75,11 @@ $router->group(['middleware' => 'jwt.auth'], function () use ($router) {
         // $router->delete('/apro/{id}', 'FlagAuthorController@aproDelete');
 
         $router->group(['prefix' => '/master'], function () use ($router) {
-            $router->get('/asal_data', 'Master\AsalDataController@index');
-            $router->post('/asal_data', 'Master\AsalDataController@store');
-            $router->get('/asal_data/{id}', 'Master\AsalDataController@show');
-            $router->put('/asal_data/{id}', 'Master\AsalDataController@update');
-            $router->delete('/asal_data/{id}', 'Master\AsalDataController@delete');
+            $router->get('/asal_data', 'Master\Bisnis\AsalDataController@index');
+            $router->post('/asal_data', 'Master\Bisnis\AsalDataController@store');
+            $router->get('/asal_data/{id}', 'Master\Bisnis\AsalDataController@show');
+            $router->put('/asal_data/{id}', 'Master\Bisnis\AsalDataController@update');
+            $router->delete('/asal_data/{id}', 'Master\Bisnis\AsalDataController@delete');
 
             //Area Kantor
             $router->get('/area_kerja', 'Master\AreaKantor\AreaController@index');
@@ -115,6 +115,13 @@ $router->group(['middleware' => 'jwt.auth'], function () use ($router) {
             $router->get('/jenis_pic/{id}', 'Master\AreaKantor\JPICController@show');
             $router->put('/jenis_pic/{id}', 'Master\AreaKantor\JPICController@update');
             $router->delete('/jenis_pic/{id}', 'Master\AreaKantor\JPICController@delete');
+
+            //Transaction SO
+            $router->get('/trans_so', 'Master\Bisnis\TrSoController@index');
+            $router->post('/trans_so', 'Master\Bisnis\TrSoController@store');
+            $router->get('/trans_so/{id}', 'Master\Bisnis\TrSoController@show');
+            $router->put('/trans_so/{id}', 'Master\Bisnis\TrSoController@update');
+            $router->delete('/trans_so/{id}', 'Master\Bisnis\TrSoController@delete');
 
             $router->get('/kode_area/ao', 'Master\CodeController@ao'); // AO -> dpm_online.kre_kode_group2
             $router->get('/kode_area/so', 'Master\CodeController@so'); // SO -> dpm_online.kre_kode_so
