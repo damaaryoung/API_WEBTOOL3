@@ -8,7 +8,7 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Lumen\Auth\Authorizable;
 
-class PIC extends Model implements AuthenticatableContract, AuthorizableContract
+class Sales extends Model implements AuthenticatableContract, AuthorizableContract
 {
     use Authenticatable, Authorizable;
 
@@ -19,11 +19,11 @@ class PIC extends Model implements AuthenticatableContract, AuthorizableContract
      */
     protected $connection = 'web';
 
-    protected $table = 'm_pic';
+    protected $table = 'mk_sales';
     protected $primaryKey = 'id';
 
     protected $fillable = [
-        'user_id', 'id_mk_area', 'id_mk_cabang', 'id_mj_pic', 'nama', 'flg_aktif'
+        'id_mk_area', 'id_mk_cabang', 'nama', 'id_provinsi', 'id_kabupaten', 'id_kecamatan', 'id_kelurahan', 'flg_aktif'
     ];
 
     /**

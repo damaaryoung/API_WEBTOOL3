@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\AreaKantor;
+namespace App\Models\Bisnis;
 
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
@@ -8,7 +8,7 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Lumen\Auth\Authorizable;
 
-class Kas extends Model implements AuthenticatableContract, AuthorizableContract
+class AsalData extends Model implements AuthenticatableContract, AuthorizableContract
 {
     use Authenticatable, Authorizable;
 
@@ -19,21 +19,10 @@ class Kas extends Model implements AuthenticatableContract, AuthorizableContract
      */
     protected $connection = 'web';
 
-    protected $table = 'm_k_kas';
+    protected $table = 'master_asal_data';
     protected $primaryKey = 'id';
 
     protected $fillable = [
-        'id_m_k_area', 'id_m_k_cabang', 'nama', 'id_provinsi', 'id_kabupaten', 'id_kecamatan', 'id_kelurahan', 'flg_aktif'
+        'nama', 'info'
     ];
-
-    /**
-     * The attributes excluded from the model's JSON form.
-     *
-     * @var array
-     */
-    // protected $hidden = [
-    //     'password'
-    // ];
-
-    // public $timestamps = false;
 }

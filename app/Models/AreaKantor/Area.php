@@ -19,11 +19,11 @@ class Area extends Model implements AuthenticatableContract, AuthorizableContrac
      */
     protected $connection = 'web';
 
-    protected $table = 'm_k_area';
+    protected $table = 'mk_area';
     protected $primaryKey = 'id';
 
     protected $fillable = [
-        'nama', 'id_provinsi', 'id_kabupaten', 'jml_cabang', 'flg_aktif'
+        'nama', 'id_provinsi', 'id_kabupaten', 'flg_aktif'
     ];
 
     /**

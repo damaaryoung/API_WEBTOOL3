@@ -42,9 +42,9 @@ class PICController extends BaseController
     public function store(PICRequest $req) {
         $data = array(
             'user_id'       => $req->input('user_id'),
-            'id_m_k_area'   => $req->input('id_m_k_area'),
-            'id_m_k_cabang' => $req->input('id_m_k_cabang'),
-            'id_m_jenis_pic'=> $req->input('id_m_jenis_pic'),
+            'id_mk_area'   => $req->input('id_mk_area'),
+            'id_mk_cabang' => $req->input('id_mk_cabang'),
+            'id_mj_pic'=> $req->input('id_mj_pic'),
             'nama'          => $req->input('nama'),
             'flg_aktif'     => $req->input('flg_aktif')
         );
@@ -102,10 +102,10 @@ class PICController extends BaseController
         }
 
         $data = array(
-            'user_id'       => empty($req->input('user_id')) ? $check->user_id : $req->input('user_id'),
-            'id_m_k_area'   => empty($req->input('id_m_k_area')) ? $check->id_m_k_area : $req->input('id_m_k_area'),
-            'id_m_k_cabang' => empty($req->input('id_m_k_cabang')) ? $check->id_m_k_cabang : $req->input('id_m_k_cabang'),
-            'id_m_jenis_pic'=> empty($req->input('id_m_jenis_pic')) ? $check->id_m_jenis_pic : $req->input('id_m_jenis_pic'),
+            'user_id'      => empty($req->input('user_id')) ? $check->user_id : $req->input('user_id'),
+            'id_mk_area'   => empty($req->input('id_mk_area')) ? $check->id_mk_area : $req->input('id_mk_area'),
+            'id_mk_cabang' => empty($req->input('id_mk_cabang')) ? $check->id_mk_cabang : $req->input('id_mk_cabang'),
+            'id_mj_pic'    => empty($req->input('id_mj_pic')) ? $check->id_mj_pic : $req->input('id_mj_pic'),
             'nama'         => empty($req->input('nama')) ? $check->nama : $req->input('nama'),
             'flg_aktif'    => empty($req->input('flg_aktif')) ? $check->flg_aktif : $req->input('flg_aktif')
         );

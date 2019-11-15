@@ -15,20 +15,19 @@ class AreaController extends BaseController
 {
     public function index() {
         // $query = Area::get();
-        $query = DB::connection('web')->table('m_k_area')
-            ->join('master_provinsi', 'master_provinsi.id', '=', 'm_k_area.id_provinsi')
-            ->join('master_kabupaten', 'master_kabupaten.id', '=', 'm_k_area.id_kabupaten')
+        $query = DB::connection('web')->table('mk_area')
+            ->join('master_provinsi', 'master_provinsi.id', '=', 'mk_area.id_provinsi')
+            ->join('master_kabupaten', 'master_kabupaten.id', '=', 'mk_area.id_kabupaten')
             ->select(
-                'm_k_area.id as id_area',
-                'm_k_area.nama as nama_area',
-                'm_k_area.id_provinsi',
+                'mk_area.id as id_area',
+                'mk_area.nama as nama_area',
+                'mk_area.id_provinsi',
                 'master_provinsi.nama as nama_provinsi',
-                'm_k_area.id_kabupaten',
+                'mk_area.id_kabupaten',
                 'master_kabupaten.nama as nama_kabupaten',
-                'm_k_area.jml_cabang',
-                'm_k_area.flg_aktif',
-                'm_k_area.created_at',
-                'm_k_area.updated_at'
+                'mk_area.flg_aktif',
+                'mk_area.created_at',
+                'mk_area.updated_at'
             )
             ->get();
 
@@ -96,22 +95,21 @@ class AreaController extends BaseController
                 'message' => 'Data tidak ada'
             ], 404);
         }else{
-            $query = DB::connection('web')->table('m_k_area')
-            ->join('master_provinsi', 'master_provinsi.id', '=', 'm_k_area.id_provinsi')
-            ->join('master_kabupaten', 'master_kabupaten.id', '=', 'm_k_area.id_kabupaten')
+            $query = DB::connection('web')->table('mk_area')
+            ->join('master_provinsi', 'master_provinsi.id', '=', 'mk_area.id_provinsi')
+            ->join('master_kabupaten', 'master_kabupaten.id', '=', 'mk_area.id_kabupaten')
             ->select(
-                'm_k_area.id as id_area',
-                'm_k_area.nama as nama_area',
-                'm_k_area.id_provinsi',
+                'mk_area.id as id_area',
+                'mk_area.nama as nama_area',
+                'mk_area.id_provinsi',
                 'master_provinsi.nama as nama_provinsi',
-                'm_k_area.id_kabupaten',
+                'mk_area.id_kabupaten',
                 'master_kabupaten.nama as nama_kabupaten',
-                'm_k_area.jml_cabang',
-                'm_k_area.flg_aktif',
-                'm_k_area.created_at',
-                'm_k_area.updated_at'
+                'mk_area.flg_aktif',
+                'mk_area.created_at',
+                'mk_area.updated_at'
             )
-            ->where('m_k_area.id', $id)
+            ->where('mk_area.id', $id)
             ->first();
 
             try {
