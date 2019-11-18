@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\CC;
+namespace App\Models\Bisnis;
 
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
@@ -8,7 +8,7 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Lumen\Auth\Authorizable;
 
-class FasilitasPinjaman extends Model implements AuthenticatableContract, AuthorizableContract
+class TrSo extends Model implements AuthenticatableContract, AuthorizableContract
 {
     use Authenticatable, Authorizable;
 
@@ -19,21 +19,10 @@ class FasilitasPinjaman extends Model implements AuthenticatableContract, Author
      */
     protected $connection = 'web';
 
-    protected $table = 'fasilitas_pinjaman';
+    protected $table = 'trans_so';
     protected $primaryKey = 'id';
 
     protected $fillable = [
-        'id_calon_debitur', 'nomor_so', 'jenis_pinjaman', 'tujuan_pinjaman', 'plafon', 'tenor'
+        'nomor_so', 'user_id', 'kode_kantor', 'id_asal_data', 'nama_marketing', 'plafon', 'tenor'
     ];
-
-    /**
-     * The attributes excluded from the model's JSON form.
-     *
-     * @var array
-     */
-    // protected $hidden = [
-
-    // ];
-
-    // public $timestamps = false;
 }

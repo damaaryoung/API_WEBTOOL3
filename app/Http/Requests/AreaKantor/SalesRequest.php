@@ -9,7 +9,7 @@ use Illuminate\Validation\ValidationException;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Foundation\Http\FormRequest as LaravelFormRequest;
 
-class KasRequest extends FormRequest
+class SalesRequest extends FormRequest
 {
     public function authorize()
     {
@@ -19,8 +19,8 @@ class KasRequest extends FormRequest
     public function rules()
     {
         return [
-            'id_m_k_area'   => 'required',
-            'id_m_k_cabang' => 'required',
+            'id_mk_area'   => 'required',
+            'id_mk_cabang' => 'required',
             'nama'          => 'required',
             'id_provinsi'   => 'required',
             'id_kabupaten'  => 'required',
@@ -32,8 +32,8 @@ class KasRequest extends FormRequest
 
     public function messages(){
         return [
-            'id_m_k_area.required'  => ':attribute belum diisi',
-            'id_m_k_cabang.required'=> ':attribute belum diisi',
+            'id_mk_area.required'   => ':attribute belum diisi',
+            'id_mk_cabang.required' => ':attribute belum diisi',
             'nama.required'         => ':attribute belum diisi',
             'id_provinsi.required'  => ':attribute belum diisi',
             'id_kabupaten.required' => ':attribute belum diisi',

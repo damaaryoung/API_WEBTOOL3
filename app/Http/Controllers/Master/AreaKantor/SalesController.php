@@ -4,17 +4,17 @@ namespace App\Http\Controllers\Master\AreaKantor;
 
 use Laravel\Lumen\Routing\Controller as BaseController;
 use App\Http\Controllers\Controller as Helper;
-use App\Http\Requests\AreaKantor\KasRequest;
-use App\Models\AreaKantor\Kas;
+use App\Http\Requests\AreaKantor\SalesRequest;
+use App\Models\AreaKantor\Sales;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Carbon\Carbon;
 use DB;
 
-class KasController extends BaseController
+class SalesController extends BaseController
 {
     public function index() {
-        // $query = Kas::get();
+        // $query = Sales::get();
         $query = DB::connection('web')->table('m_k_kas')
             ->join('m_k_area', 'm_k_area.id',                 '=', 'm_k_kas.id_m_k_area')
             ->join('m_k_cabang', 'm_k_cabang.id',             '=', 'm_k_kas.id_m_k_cabang')
@@ -73,7 +73,7 @@ class KasController extends BaseController
         }
     }
 
-    public function store(KasRequest $req) {
+    public function store(SalesRequest $req) {
         $data = array(
             'id_m_k_area'   => $req->input('id_m_k_area'),
             'id_m_k_kas' => $req->input('id_m_k_kas'),
@@ -85,7 +85,7 @@ class KasController extends BaseController
             'flg_aktif'     => $req->input('flg_aktif')
         );
 
-        Kas::create($data);
+        Sales::create($data);
 
         try {
             return response()->json([
@@ -103,7 +103,7 @@ class KasController extends BaseController
     }
 
     public function show($id) {
-        $check = Kas::where('id', $id)->first();
+        $check = Sales::where('id', $id)->first();
 
         if ($check == null) {
             return response()->json([
@@ -158,8 +158,8 @@ class KasController extends BaseController
         }
     }
 
-    public function update($id, KasRequest $req) {
-        $check = Kas::where('id', $id)->first();
+    public function update($id, SalesRequest $req) {
+        $check = Sales::where('id', $id)->first();
 
         if (!$check) {
             return response()->json([
@@ -178,7 +178,7 @@ class KasController extends BaseController
             'flg_aktif'    => empty($req->input('flg_aktif')) ? $check->flg_aktif : $req->input('flg_aktif')
         );
 
-        Kas::where('id', $id)->update($data);
+        Sales::where('id', $id)->update($data);
 
         try {
             return response()->json([
@@ -196,7 +196,7 @@ class KasController extends BaseController
     }
 
     public function delete($id) {
-        $check = Kas::where('id', $id)->first();
+        $check = Sales::where('id', $id)->first();
 
         if (!$check) {
             return response()->json([
@@ -206,7 +206,7 @@ class KasController extends BaseController
             ], 404);
         }
 
-        Kas::where('id', $id)->delete();
+        Sales::where('id', $id)->delete();
 
         try {
             return response()->json([

@@ -1,7 +1,7 @@
 <?php
 
 $router->get('/', function () use ($router) {
-    return 'API - WEBTOOL' ;
+    return 'API - DEVIS' ;
 });
 
 $router->get('/api', function () use ($router) {
@@ -43,55 +43,64 @@ $router->group(['prefix' => '/wilayah'], function () use ($router) {
 
 $router->put('/api/users/reset_password', 'UserController@resetPassword'); //Reset Password
 
-
 $router->post('/login', 'AuthController@login'); // Login All Level
 $router->post('/cc', 'Pengajuan\MasterCC_Controller@store'); // Registration Debitur
 
 $router->group(['middleware' => 'jwt.auth'], function () use ($router) {
     //For Non User (Debitur)
     $router->group(['prefix' => '/api'], function () use ($router) {
+
+        $router->get('/logs', 'LogsController@index'); //Log History All
+        $router->get('/logs/{id}', 'LogsController@detail'); //Log History By ID
+        $router->get('/logs/limit/{limit}', 'LogsController@limit'); //Log History Limit
+        $router->get('/logs/search/{search}', 'LogsController@search'); //Log History Search
+
         $router->get('/users', 'UserController@index');
         $router->put('/users/change_password', 'UserController@changePassword');
+
+        $router->get('/oto', 'FlagAuthorController@otoIndex'); // Otorisasi
+        // $router->post('/oto', 'FlagAuthorController@otoStore');
+        $router->get('/oto/{id}', 'FlagAuthorController@otoShow');
+        $router->put('/oto/{id}', 'FlagAuthorController@otoUpdate');
+        $router->get('/log_oto', 'FlagAuthorController@AfterOto');
+        $router->get('/log_oto/{id}', 'FlagAuthorController@DetailAfterOto');
+        // $router->delete('/oto/{id}', 'FlagAuthorController@otoDelete');
 
         $router->get('/apro', 'FlagAuthorController@aproIndex'); // Approval
         // $router->post('/apro', 'FlagAuthorController@aproStore');
         $router->get('/apro/{id}', 'FlagAuthorController@aproShow');
         $router->put('/apro/{id}', 'FlagAuthorController@aproUpdate');
+        $router->get('/log_apro', 'FlagAuthorController@AfterApro');
+        $router->get('/log_apro/{id}', 'FlagAuthorController@DetailAfterApro');
         // $router->delete('/apro/{id}', 'FlagAuthorController@aproDelete');
 
-        $router->get('/oto', 'FlagAuthorController@otoIndex'); // Otorisasi
-        $router->post('/oto', 'FlagAuthorController@otoStore');
-        $router->get('/oto/{id}', 'FlagAuthorController@otoShow');
-        $router->put('/oto/{id}', 'FlagAuthorController@otoUpdate');
-        $router->delete('/oto/{id}', 'FlagAuthorController@otoDelete');
-
         $router->group(['prefix' => '/master'], function () use ($router) {
-            $router->get('/asal_data', 'Master\AsalDataController@index');
-            $router->post('/asal_data', 'Master\AsalDataController@store');
-            $router->get('/asal_data/{id}', 'Master\AsalDataController@show');
-            $router->put('/asal_data/{id}', 'Master\AsalDataController@update');
-            $router->delete('/asal_data/{id}', 'Master\AsalDataController@delete');
+            $router->get('/asal_data', 'Master\Bisnis\AsalDataController@index');
+            $router->post('/asal_data', 'Master\Bisnis\AsalDataController@store');
+            $router->get('/asal_data/{id}', 'Master\Bisnis\AsalDataController@show');
+            $router->put('/asal_data/{id}', 'Master\Bisnis\AsalDataController@update');
+            $router->delete('/asal_data/{id}', 'Master\Bisnis\AsalDataController@delete');
 
             //Area Kantor
-            $router->get('/area', 'Master\AreaKantor\AreaController@index');
-            $router->post('/area', 'Master\AreaKantor\AreaController@store');
-            $router->get('/area/{id}', 'Master\AreaKantor\AreaController@show');
-            $router->put('/area/{id}', 'Master\AreaKantor\AreaController@update');
-            $router->delete('/area/{id}', 'Master\AreaKantor\AreaController@delete');
+            $router->get('/area_kerja', 'Master\AreaKantor\AreaController@index');
+            $router->post('/area_kerja', 'Master\AreaKantor\AreaController@store');
+            $router->get('/area_kerja/{id}', 'Master\AreaKantor\AreaController@show');
+            $router->put('/area_kerja/{id}', 'Master\AreaKantor\AreaController@update');
+            $router->delete('/area_kerja/{id}', 'Master\AreaKantor\AreaController@delete');
 
             //Cabang Kantor
-            $router->get('/cabang', 'Master\AreaKantor\CabangController@index');
-            $router->post('/cabang', 'Master\AreaKantor\CabangController@store');
-            $router->get('/cabang/{id}', 'Master\AreaKantor\CabangController@show');
-            $router->put('/cabang/{id}', 'Master\AreaKantor\CabangController@update');
-            $router->delete('/cabang/{id}', 'Master\AreaKantor\CabangController@delete');
+            $router->get('/area_cabang', 'Master\AreaKantor\CabangController@index');
+            $router->post('area_cabang', 'Master\AreaKantor\CabangController@store');
+            $router->get('area_cabang/{id}', 'Master\AreaKantor\CabangController@show');
+            $router->put('area_cabang/{id}', 'Master\AreaKantor\CabangController@update');
+            $router->delete('/area_cabang/{id}', 'Master\AreaKantor\CabangController@delete');
 
             //Kas Kantor
-            $router->get('/kas', 'Master\AreaKantor\KasController@index');
-            $router->post('/kas', 'Master\AreaKantor\KasController@store');
-            $router->get('/kas/{id}', 'Master\AreaKantor\KasController@show');
-            $router->put('/kas/{id}', 'Master\AreaKantor\KasController@update');
-            $router->delete('/kas/{id}', 'Master\AreaKantor\KasController@delete');
+            $router->get('/area_sales', 'Master\AreaKantor\SalesController@index');
+            $router->post('/area_sales', 'Master\AreaKantor\SalesController@store');
+            $router->get('/area_sales/{id}', 'Master\AreaKantor\SalesController@show');
+            $router->put('/area_sales/{id}', 'Master\AreaKantor\SalesController@update');
+            $router->delete('/area_sales/{id}', 'Master\AreaKantor\SalesController@delete');
 
             //PIC
             $router->get('/pic', 'Master\AreaKantor\PICController@index');
@@ -101,11 +110,18 @@ $router->group(['middleware' => 'jwt.auth'], function () use ($router) {
             $router->delete('/pic/{id}', 'Master\AreaKantor\PICController@delete');
 
             //Jenis PIC
-            $router->get('/jenis_area', 'Master\JenisAreaController@index');
-            $router->post('/jenis_area', 'Master\JenisAreaController@store');
-            $router->get('/jenis_area/{id}', 'Master\JenisAreaController@show');
-            $router->put('/jenis_area/{id}', 'Master\JenisAreaController@update');
-            $router->delete('/jenis_area/{id}', 'Master\JenisAreaController@delete');
+            $router->get('/jenis_pic', 'Master\AreaKantor\JPICController@index');
+            $router->post('/jenis_pic', 'Master\AreaKantor\JPICController@store');
+            $router->get('/jenis_pic/{id}', 'Master\AreaKantor\JPICController@show');
+            $router->put('/jenis_pic/{id}', 'Master\AreaKantor\JPICController@update');
+            $router->delete('/jenis_pic/{id}', 'Master\AreaKantor\JPICController@delete');
+
+            //Transaction SO
+            $router->get('/trans_so', 'Master\Bisnis\TrSoController@index');
+            $router->post('/trans_so', 'Master\Bisnis\TrSoController@store');
+            $router->get('/trans_so/{id}', 'Master\Bisnis\TrSoController@show');
+            $router->put('/trans_so/{id}', 'Master\Bisnis\TrSoController@update');
+            $router->delete('/trans_so/{id}', 'Master\Bisnis\TrSoController@delete');
 
             $router->get('/kode_area/ao', 'Master\CodeController@ao'); // AO -> dpm_online.kre_kode_group2
             $router->get('/kode_area/so', 'Master\CodeController@so'); // SO -> dpm_online.kre_kode_so

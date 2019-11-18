@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\AreaKantor;
+namespace App\Http\Requests\Bisnis;
 
 use Illuminate\Http\JsonResponse;
 use Urameshibr\Requests\FormRequest;
@@ -9,7 +9,7 @@ use Illuminate\Validation\ValidationException;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Foundation\Http\FormRequest as LaravelFormRequest;
 
-class AreaRequest extends FormRequest
+class TrSoReq extends FormRequest
 {
     public function authorize()
     {
@@ -19,20 +19,25 @@ class AreaRequest extends FormRequest
     public function rules()
     {
         return [
-            'nama'         => 'required',
-            'id_provinsi'  => 'required',
-            'id_kabupaten' => 'required',
-            'flg_aktif'    => 'required|in:0,1'
+            'user_id'       => 'required',
+            'kode_kantor'   => 'required',
+            'id_asal_data'  => 'required',
+            'nama_marketing'=> 'required',
+            'plafon'        => 'required|numeric',
+            'tenor'         => 'required|numeric'
         ];
     }
 
     public function messages(){
         return [
-            'nama.required'         => ':attribute belum diisi',
-            'id_provinsi.required'  => ':attribute belum diisi',
-            'id_kabupaten.required' => ':attribute belum diisi',
-            'flg_aktif.required'    => ':attribute belum diisi',
-            'flg_aktif.in'          => ':attribute harus salah satu dari jenis berikut :values'
+            'user_id.required'        => ':attribute belum diisi',
+            'kode_kantor.required'    => ':attribute belum diisi',
+            'id_asal_data.required'   => ':attribute belum diisi',
+            'nama_marketing.required' => ':attribute belum diisi',
+            'plafon.required'         => ':attribute belum diisi',
+            'plafon.numeric'          => ':attribute harus berupa angka',
+            'tenor.required'          => ':attribute belum diisi',
+            'tenor.numeric'           => ':attribute harus berupa angka'
         ];
     }
 

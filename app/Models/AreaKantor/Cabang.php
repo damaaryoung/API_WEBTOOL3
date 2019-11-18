@@ -19,11 +19,11 @@ class Cabang extends Model implements AuthenticatableContract, AuthorizableContr
      */
     protected $connection = 'web';
 
-    protected $table = 'm_k_cabang';
+    protected $table = 'mk_cabang';
     protected $primaryKey = 'id';
 
     protected $fillable = [
-        'id_m_k_area', 'nama', 'id_provinsi', 'id_kabupaten', 'id_kecamatan', 'id_kelurahan', 'jml_ao', 'jml_so', 'jml_col', 'flg_aktif'
+        'id_mk_area', 'nama', 'id_provinsi', 'id_kabupaten', 'id_kecamatan', 'id_kelurahan', 'jenis_kantor', 'flg_aktif'
     ];
 
     /**

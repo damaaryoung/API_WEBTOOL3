@@ -1,14 +1,15 @@
 <?php
 
-namespace App\Models\CC;
+namespace App\Models;
 
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Lumen\Auth\Authorizable;
+// use App\Models\User;
 
-class FasilitasPinjaman extends Model implements AuthenticatableContract, AuthorizableContract
+class LogActivity extends Model implements AuthenticatableContract, AuthorizableContract
 {
     use Authenticatable, Authorizable;
 
@@ -19,21 +20,14 @@ class FasilitasPinjaman extends Model implements AuthenticatableContract, Author
      */
     protected $connection = 'web';
 
-    protected $table = 'fasilitas_pinjaman';
-    protected $primaryKey = 'id';
+    protected $table = 'access_logs';
 
     protected $fillable = [
-        'id_calon_debitur', 'nomor_so', 'jenis_pinjaman', 'tujuan_pinjaman', 'plafon', 'tenor'
+       'subject', 'url', 'method', 'ip', 'agent', 'user_id'
     ];
 
-    /**
-     * The attributes excluded from the model's JSON form.
-     *
-     * @var array
-     */
-    // protected $hidden = [
-
-    // ];
-
-    // public $timestamps = false;
+    // public function user()
+    // {
+    //     return $this->belongsTo(User::class, 'user_id');
+    // }
 }

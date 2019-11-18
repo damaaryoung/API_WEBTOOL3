@@ -19,7 +19,7 @@ class CabangRequest extends FormRequest
     public function rules()
     {
         return [
-            'id_m_k_area'  => 'required',
+            'id_mk_area'  => 'required',
             'nama'         => 'required',
             'id_provinsi'  => 'required',
             'id_kabupaten' => 'required',
@@ -31,7 +31,7 @@ class CabangRequest extends FormRequest
 
     public function messages(){
         return [
-            'id_m_k_area.required'  => ':attribute belum diisi',
+            'id_mk_area.required'  => ':attribute belum diisi',
             'nama.required'         => ':attribute belum diisi',
             'id_provinsi.required'  => ':attribute belum diisi',
             'id_kabupaten.required' => ':attribute belum diisi',

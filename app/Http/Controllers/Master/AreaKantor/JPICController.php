@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Master;
+namespace App\Http\Controllers\Master\AreaKantor;
 
 use Laravel\Lumen\Routing\Controller as BaseController;
 use App\Http\Controllers\Controller as Helper;
@@ -9,9 +9,8 @@ use App\Models\AreaKantor\JPIC;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Carbon\Carbon;
-use DB;
 
-class JenisAreaController extends BaseController
+class JPICController extends BaseController
 {
     public function index() {
         $query = JPIC::get();
