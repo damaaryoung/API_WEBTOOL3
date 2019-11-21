@@ -151,6 +151,8 @@ class FlagAuthorController extends BaseController
 
         $Now = Carbon::now()->toDateTimeString();
 
+        $because = $req->input('keterangan');
+
         // $logData = array(
         //     'subject' => 'Update Otorisasi',
         //     'url'     => $req->getPathInfo(),
@@ -164,7 +166,7 @@ class FlagAuthorController extends BaseController
             ['id', $id],
             ['user_id', $user_id],
             ['id_modul',0]
-        ])->update(['otorisasi' => 1, 'waktu_otorisasi' => $Now]);
+        ])->update(['otorisasi' => 1, 'keterangan' => $because, 'waktu_otorisasi' => $Now]);
 
         try {
             return response()->json([
@@ -319,11 +321,13 @@ class FlagAuthorController extends BaseController
 
         $Now = Carbon::now()->toDateTimeString();
 
+        $because = $req->input('keterangan');
+
         FlgOto::where([
             ['id', $id],
             ['user_id', $user_id],
             ['id_modul', '>',0]
-        ])->update(['approval' => 1, 'waktu_otorisasi' => $Now]);
+        ])->update(['approval' => 1, 'keterangan' => $because, 'waktu_otorisasi' => $Now]);
 
         try {
             return response()->json([
@@ -346,7 +350,7 @@ class FlagAuthorController extends BaseController
 
         $query = FlgOto::where('id_modul',0)
                 ->where('user_id', $user_id)
-                ->where('otorisasi', 0)
+                ->where('otorisasi', '!=', 1)
                 ->count();
 
         try {
@@ -370,7 +374,7 @@ class FlagAuthorController extends BaseController
 
         $query = FlgOto::where('id_modul', '>',0)
                     ->where('user_id', $user_id)
-                    ->where('approval', 0)
+                    ->where('approval', '!=', 1)
                     ->count();
 
         try {
@@ -424,6 +428,7 @@ class FlagAuthorController extends BaseController
 
                     if ($val->otorisasi == 1 ) {
                         $data[$i]['status'] = 'accepted';
+                        $data[$i]['info']   = $val->keterangan;
                         $data[$i]['time_acepted'] = $val->waktu_otorisasi;
                     }elseif ($val->otorisasi == 2) {
                         $data[$i]['status'] = 'rejected';
@@ -490,6 +495,7 @@ class FlagAuthorController extends BaseController
 
                     if ($val->otorisasi == 1 ) {
                         $data[$i]['status'] = 'accepted';
+                        $data[$i]['info']   = $val->keterangan;
                         $data[$i]['time_acepted'] = $val->waktu_otorisasi;
                     }elseif ($val->otorisasi == 2) {
                         $data[$i]['status'] = 'rejected';
@@ -557,6 +563,7 @@ class FlagAuthorController extends BaseController
 
                     if ($val->approval == 1 ) {
                         $data[$i]['status'] = 'accepted';
+                        $data[$i]['info']   = $val->keterangan;
                         $data[$i]['time_acepted'] = $val->waktu_otorisasi;
                     }elseif ($val->approval == 2) {
                         $data[$i]['status'] = 'rejected';
@@ -624,6 +631,7 @@ class FlagAuthorController extends BaseController
 
                     if ($val->approval == 1 ) {
                         $data[$i]['status'] = 'accepted';
+                        $data[$i]['info']   = $val->keterangan;
                         $data[$i]['time_acepted'] = $val->waktu_otorisasi;
                     }elseif ($val->approval == 2) {
                         $data[$i]['status'] = 'rejected';
