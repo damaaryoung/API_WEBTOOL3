@@ -17,6 +17,6 @@ class Pasangan extends Model implements AuthenticatableContract, AuthorizableCon
     protected $primaryKey = 'id';
 
     protected $fillable = [
-        'id_calon_debitur', 'nama_lengkap', 'nama_ibu_kandung', 'gelar_keagamaan', 'gelar_pendidikan', 'jenis_kelamin', 'no_ktp', 'no_ktp_kk', 'no_kk', 'no_npwp', 'tempat_lahir', 'tgl_lahir', 'alamat_ktp', 'no_telp', 'lamp_ktp', 'lamp_kk', 'pendapatan', 'ver_ktp', 'ver_akta_nikah', 'validasi'
+        'id_calon_debitur', 'nama_lengkap', 'nama_ibu_kandung', 'gelar_keagamaan', 'gelar_pendidikan', 'jenis_kelamin', 'no_ktp', 'no_ktp_kk', 'no_npwp', 'tempat_lahir', 'tgl_lahir', 'alamat_ktp', 'no_telp', 'pekerjaan', 'posisi_pekerjaan', 'lamp_ktp', 'lamp_buku_nikah', 'ver_ktp', 'ver_akta_nikah', 'validasi', 'flg_aktif'
     ];
 }

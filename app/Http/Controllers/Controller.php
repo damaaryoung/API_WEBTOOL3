@@ -6,7 +6,7 @@ use Laravel\Lumen\Routing\Controller as BaseController;
 
 class Controller extends BaseController
 {
-    public function push_notif($fcm_token, $title, $message){
+    public static function push_notif($fcm_token, $title, $message){
         define('API_ACCESS_KEY','AAAAjrvLI_4:APA91bGI_urQhVNWgEMEReiqUG8Jz3o8pXX55T69mDGv9KW-BwphHdsk4E74UUkx4kb3XqUfA_QMu_QjWAJw3PLg2eovQtqD2hCfJhHFMdxfptKlvP0ZTW6hC9XgB06KBmuvi45LU9nA'); //Server Key on SERVER
 
         $fcmUrl = 'https://fcm.googleapis.com/fcm/send';
@@ -49,7 +49,7 @@ class Controller extends BaseController
         }
     }
 
-    function sendOTP($hp, $msg_otp)
+    public static function sendOTP($hp, $msg_otp)
     {
         $url = 'https://kreditmandiri.co.id/API_SMS/sms.php';
 
@@ -72,5 +72,15 @@ class Controller extends BaseController
         $result = file_get_contents($url, false, $context);
 
         return $result;
+    }
+
+    public static function img64enc($file) {
+        // $file = $req->file('lam_imb');
+        $type = pathinfo($file, PATHINFO_EXTENSION);
+        $extention = $file->getClientOriginalExtension();
+        $data = file_get_contents($file);
+        $base64 = 'data:image/' . $extention . ';base64,' . base64_encode($data);
+
+        return $base64;
     }
 }

@@ -18,7 +18,7 @@ class MenuSub extends Model implements AuthenticatableContract, AuthorizableCont
     protected $primaryKey = 'id';
 
     protected $fillable = [
-       'id_menu_master', 'nama', 'url'
+       'id_menu_master', 'nama', 'url', 'flg_aktif'
     ];
 
     public function mMaster()

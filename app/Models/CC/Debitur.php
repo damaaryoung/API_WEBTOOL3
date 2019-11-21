@@ -23,16 +23,10 @@ class Debitur extends Model implements AuthenticatableContract, AuthorizableCont
     protected $primaryKey = 'id';
 
     protected $fillable = [
-        'nama_lengkap', 'jenis_kelamin', 'ibu_kandung', 'status_nikah', 'no_ktp', 'no_ktp_kk', 'no_kk', 'no_npwp', 'tempat_lahir', 'tgl_lahir', 'agama', 'alamat_ktp', 'rt_ktp', 'rw_ktp', 'id_provinsi_ktp', 'id_kabupaten_ktp', 'id_kecamatan_ktp', 'id_kelurahan_ktp', 'alamat_domisili', 'rt_domisili', 'rw_domisili', 'id_provinsi_domisili', 'id_kabupaten_domisili', 'id_kecamatan_domisili', 'id_kelurahan_domisili', 'pendidikan_terakhir', 'jumlah_tanggungan', 'no_telp', 'alamat_surat', 'nama_anak1', 'tgl_lahir_anak1', 'nama_anak2', 'tgl_lahir_anak2', 'lamp_surat_cerai', 'pekerjaan', 'lamp_buku_tabungan', 'lamp_kk'
+        'nama_lengkap', 'gelar_keagamaan', 'gelar_pendidikan', 'jenis_kelamin', 'status_nikah', 'ibu_kandung', 'no_ktp', 'no_ktp_kk', 'no_kk', 'no_npwp', 'tempat_lahir', 'tgl_lahir', 'agama', 'alamat_ktp', 'rt_ktp', 'rw_ktp', 'id_provinsi_ktp', 'id_kabupaten_ktp', 'id_kecamatan_ktp', 'id_kelurahan_ktp', 'alamat_domisili', 'rt_domisili', 'rw_domisili', 'id_provinsi_domisili', 'id_kabupaten_domisili', 'id_kecamatan_domisili', 'id_kelurahan_domisili', 'pendidikan_terakhir', 'jumlah_tanggungan', 'no_telp', 'no_hp', 'alamat_surat', 'nama_anak1', 'tgl_lahir_anak1', 'nama_anak2', 'tgl_lahir_anak2', 'tinggi_badan', 'berat_badan', 'pekerjaan', 'posisi', 'lamp_surat_cerai', 'lamp_ktp', 'lamp_kk', 'lamp_buku_tabungan', 'ver_ktp', 'ver_kk', 'ver_akta_kematian', 'ver_rek_tabungan', 'validasi_data_debt', 'validasi_lingkungan', 'validasi_domisili', 'flg_aktif'
     ];
 
-
-    /**
-     * The attributes excluded from the model's JSON form.
-     *
-     * @var array
-     */
-    // protected $hidden = [
-
-    // ];
+    public function prov(){
+        return $this->belongsTo('App\Models\Wilayah\Provinsi', 'id_provinsi_ktp');
+    }
 }

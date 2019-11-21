@@ -17,7 +17,7 @@ class KabupatenController extends BaseController
                 return response()->json([
                     "code"    => 404,
                     "status"  => "not found",
-                    "message" => "Data kosong"
+                    "message" => "Data kosong!!"
                 ], 404);
             }
 
@@ -42,54 +42,38 @@ class KabupatenController extends BaseController
 
         if (!$nama) {
             return response()->json([
-                "code"    => 400,
-                "status"  => "bad request",
-                "message" => "Field 'nama' harus diisi!!"
-            ], 400);
+                "code"    => 422,
+                "status"  => "not valid request",
+                "message" => "nama belum diisi"
+            ], 422);
         }
 
         if (!$provinsi) {
             return response()->json([
-                "code"    => 400,
-                "status"  => "bad request",
-                "message" => "Field 'provinsi' harus diisi!!"
-            ], 400);
+                "code"    => 422,
+                "status"  => "not valid request",
+                "message" => "id provinsi belum diisi"
+            ], 422);
         }
 
-        if (!$flg_aktif) {
-            return response()->json([
-                "code"    => 400,
-                "status"  => "bad request",
-                "message" => "Field 'flg_aktif' harus diisi!!"
-            ], 400);
-        }
+        try {
+            $query = DB::connection('web')->table('master_kabupaten')->insert([
+                'nama'        => $nama,
+                'id_provinsi' => $provinsi,
+                'flg_aktif'   => $flg_aktif
+            ]);
 
-        if ($flg_aktif == 1 || $flg_aktif == 0) {
-            try {
-                $query = DB::connection('web')->table('master_kabupaten')->insert([
-                    'nama'        => $nama,
-                    'id_provinsi' => $provinsi,
-                    'flg_aktif'   => $flg_aktif
-                ]);
-
-                return response()->json([
-                    'code'    => 200,
-                    'status'  => 'success',
-                    'message' => 'Data berhasil dibuat'
-                ], 200);
-            } catch (Exception $e) {
-                return response()->json([
-                    "code"    => 501,
-                    "status"  => "error",
-                    "message" => $e
-                ], 501);
-            }
-        }else{
             return response()->json([
-                "code"    => 400,
-                "status"  => "bad request",
-                "message" => "Nilai Field 'flg_aktif' yang benar adalah 1 atau 0"
-            ], 400);
+                'code'    => 200,
+                'status'  => 'success',
+                'message' => 'Data berhasil dibuat'
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                "code"    => 501,
+                "status"  => "error",
+                "message" => $e
+            ], 501);
         }
     }
 
@@ -97,11 +81,11 @@ class KabupatenController extends BaseController
         try {
             $query = DB::connection('web')->table('master_kabupaten')->where('id', $id)->first();
 
-            if (!$query) {
+            if ($query == null) {
                 return response()->json([
                     'code'    => 404,
                     'status'  => 'not found',
-                    'message' => 'Data tidak ada'
+                    'message' => 'Data kosong!!'
                 ], 404);
             }else{
                 return response()->json([
@@ -134,43 +118,35 @@ class KabupatenController extends BaseController
         $provinsi  = empty($req->input('id_provinsi')) ? $check->id_provinsi : $req->input('id_provinsi');
         $flg_aktif = empty($req->input('flg_aktif')) ? $check->flg_aktif : $req->input('flg_aktif');
 
-        if ($flg_aktif == 1 || $flg_aktif == 0) {
-            try {
-                $query = DB::connection('web')->table('master_kabupaten')->where('id', $id)->update([
-                    'nama'        => $nama,
-                    'id_provinsi' => $provinsi,
-                    'flg_aktif'   => $flg_aktif
-                ]);
+        try {
+            $query = DB::connection('web')->table('master_kabupaten')->where('id', $id)->update([
+                'nama'        => $nama,
+                'id_provinsi' => $provinsi,
+                'flg_aktif'   => $flg_aktif
+            ]);
 
-                return response()->json([
-                    'code'    => 200,
-                    'status'  => 'success',
-                    'message' => 'Data berhasil diupdate'
-                ], 200);
-            } catch (Exception $e) {
-                return response()->json([
-                    "code"    => 501,
-                    "status"  => "error",
-                    "message" => $e
-                ], 501);
-            }
-        }else{
             return response()->json([
-                "code"    => 400,
-                "status"  => "bad request",
-                "message" => "Nilai Field 'flg_aktif' yang benar adalah 1 atau 0"
-            ], 400);
+                'code'    => 200,
+                'status'  => 'success',
+                'message' => 'Data berhasil diupdate'
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                "code"    => 501,
+                "status"  => "error",
+                "message" => $e
+            ], 501);
         }
     }
 
     public function delete($id) {
         $check = DB::connection('web')->table('master_kabupaten')->where('id', $id)->first();
 
-        if (!$check) {
+        if ($check == null) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
-                'message' => 'Data tidak ada'
+                'message' => 'Data kosong!!'
             ], 404);
         }
 
@@ -191,15 +167,15 @@ class KabupatenController extends BaseController
         }
     }
 
-    public function display($id_prov) {
+    public function sector($id_prov) {
         try {
             $query = DB::connection('web')->table('master_kabupaten')->where('id_provinsi', $id_prov)->get();
 
-            if (!$query) {
+            if ($query == '[]') {
                 return response()->json([
                     'code'    => 404,
                     'status'  => 'not found',
-                    'message' => 'Data tidak ada'
+                    'message' => 'Data kosong!!'
                 ], 404);
             }else{
                 return response()->json([

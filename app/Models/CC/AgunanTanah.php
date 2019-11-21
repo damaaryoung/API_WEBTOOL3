@@ -23,7 +23,7 @@ class AgunanTanah extends Model implements AuthenticatableContract, Authorizable
     protected $primaryKey = 'id';
 
     protected $fillable = [
-        'id_calon_debitur', 'tipe_lokasi', 'alamat', 'id_kelurahan', 'rt', 'rw', 'luas_tanah', 'luas_bangunan', 'nama_pemilik_sertifikat', 'jenis_sertifikat', 'no_sertifikat', 'tgl_ukur_sertifikat', 'masa_berlaku_shgb', 'lam_imb', 'no_imb', 'njop', 'nop', 'lamp_agunan_depan', 'lamp_agunan_kanan', 'lamp_agunan_kiri', 'lamp_agunan_belakang', 'lamp_agunan_dalam', 'lamp_sertifikat', 'lamp_imb', 'lamp_pbb', 'ver_imb', 'ver_pbb', 'validation'
+        'id_calon_debitur', 'tipe_lokasi', 'alamat', 'id_kelurahan', 'rt', 'rw', 'luas_tanah', 'luas_bangunan', 'nama_pemilik_sertifikat', 'jenis_sertifikat', 'no_sertifikat', 'tgl_ukur_sertifikat', 'masa_berlaku_shgb', 'lam_imb', 'no_imb', 'njop', 'nop', 'lamp_agunan_depan', 'lamp_agunan_kanan', 'lamp_agunan_kiri', 'lamp_agunan_belakang', 'lamp_agunan_dalam', 'lamp_sertifikat', 'lamp_imb', 'lamp_pbb', 'ver_imb', 'ver_pbb', 'validation', 'flg_aktif'
     ];
 
     /**

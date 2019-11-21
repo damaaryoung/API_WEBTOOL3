@@ -23,7 +23,7 @@ class PemeriksaanAgunTan extends Model implements AuthenticatableContract, Autho
     protected $primaryKey = 'id';
 
     protected $fillable = [
-        'id_calon_debitur', 'id_agunan_tanah', 'nama_penghuni', 'status_penghuni', 'bentuk_bangunan', 'kondisi_bangunan', 'fasilitas', 'listrik', 'nilai_taksasi_agunan', 'nilai_taksasi_bangunan', 'tgl_taksasi', 'nilai_likuidasi'
+        'id_calon_debitur', 'id_agunan_tanah', 'nama_penghuni', 'status_penghuni', 'bentuk_bangunan', 'kondisi_bangunan', 'fasilitas', 'listrik', 'nilai_taksasi_agunan', 'nilai_taksasi_bangunan', 'tgl_taksasi', 'nilai_likuidasi', 'flg_aktif'
     ];
 
     /**

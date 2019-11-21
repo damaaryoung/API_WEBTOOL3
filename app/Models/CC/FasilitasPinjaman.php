@@ -23,7 +23,7 @@ class FasilitasPinjaman extends Model implements AuthenticatableContract, Author
     protected $primaryKey = 'id';
 
     protected $fillable = [
-        'id_calon_debitur', 'nomor_so', 'jenis_pinjaman', 'tujuan_pinjaman', 'plafon', 'tenor'
+        'id_calon_debitur', 'jenis_pinjaman', 'tujuan_pinjaman', 'plafon', 'tenor', 'flg_aktif'
     ];
 
     /**

@@ -27,8 +27,7 @@ class DebtPasanganRequest extends FormRequest
             'tgl_lahir_pas'     => 'date_format:d-m-Y',
             'no_telp_pas'       => 'between:11,13|unique:web.pasangan_calon_debitur,no_ktp',
             'lamp_ktp_pas'      => 'mimes:jpg,jpeg,png,pdf',
-            'lamp_kk_pas'       => 'mimes:jpg,jpeg,png,pdf',
-            'pendapatan_pas'    => 'numeric'
+            'lamp_kk_pas'       => 'mimes:jpg,jpeg,png,pdf'
         ];
     }
 
@@ -43,12 +42,17 @@ class DebtPasanganRequest extends FormRequest
             'no_kk_pas.unique'          => ':attribute telah ada yang menggunakan',
             'no_npwp_pas.digits'        => ':attribute harus berupa angka dan berjumlah :digits digit',
             'no_npwp_pas.unique'        => ':attribute telah ada yang menggunakan',
+            'id_provinsi'               => ':attribute harus berupa angka',
+            'id_kabupaten'              => ':attribute harus berupa angka',
+            'id_kecamatan'              => ':attribute harus berupa angka',
+            'id_kelurahan'              => ':attribute harus berupa angka',
+            'rt'                        => ':attribute harus berupa angka',
+            'rw'                        => ':attribute harus berupa angka',
             'tgl_lahir_pas.date_format' => ':attribute harus berupa angka dengan format :format',
             'no_telp_pas.between'       => ':attribute harus berada diantara :min - :max.',
             'no_telp_pas.unique'        => ':attribute telah ada yang menggunakan',
             'lamp_ktp_pas.mimes'        => ':attribute harus bertipe :values',
-            'lamp_kk_pas.mimes'         => ':attribute harus bertipe :values',
-            'pendapatan_pas.numeric'    => ':attribute harus berupa angka'
+            'lamp_kk_pas.mimes'         => ':attribute harus bertipe :values'
         ];
     }
 
@@ -60,7 +64,7 @@ class DebtPasanganRequest extends FormRequest
             response()->json([
                 "code"    => 422,
                 "status"  => "not valid request",
-                "errors"  => $errors
+                "message" => $errors
             ], JsonResponse::HTTP_UNPROCESSABLE_ENTITY)
         );
     }

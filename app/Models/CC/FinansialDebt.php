@@ -23,7 +23,7 @@ class FinansialDebt extends Model implements AuthenticatableContract, Authorizab
     protected $primaryKey = 'id';
 
     protected $fillable = [
-        'id_calon_debitur', 'pendapatan', 'biaya_rumah_tangga', 'biaya_transport', 'biaya_pendidikan', 'biaya_telp-listr-air'
+        'id_calon_debitur', 'pendapatan', 'biaya_rumah_tangga', 'biaya_transport', 'biaya_pendidikan', 'biaya_telp-listr-air', 'biaya_lain', 'flg_aktif'
     ];
 
     /**

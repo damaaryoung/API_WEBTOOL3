@@ -23,6 +23,11 @@ class AsalData extends Model implements AuthenticatableContract, AuthorizableCon
     protected $primaryKey = 'id';
 
     protected $fillable = [
-        'nama', 'info'
+        'nama', 'info', 'flg_aktif'
     ];
+
+    //relasi one to many (Saya memiliki banyak anggota di model .....)
+//     public function transo(){
+//         return $this->hasMany('App\Models\Bisnis\TansSo', 'id_asal_data');
+//     }
 }
