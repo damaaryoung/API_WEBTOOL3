@@ -18,7 +18,7 @@ class MenuAccess extends Model implements AuthenticatableContract, AuthorizableC
     protected $primaryKey = 'id';
 
     protected $fillable = [
-       'id_user', 'id_menu_master', 'id_menu_sub', 'print_access', 'add_access', 'edit_access', 'delete_access'
+       'id_user', 'id_menu_master', 'id_menu_sub', 'print_access', 'add_access', 'edit_access', 'delete_access', 'flg_aktif'
     ];
 
     public function mMaster()

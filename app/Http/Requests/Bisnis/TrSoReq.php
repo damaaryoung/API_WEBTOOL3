@@ -49,7 +49,7 @@ class TrSoReq extends FormRequest
             response()->json([
                 "code"    => 422,
                 "status"  => "not valid request",
-                "errors"  => $errors
+                "message" => $errors
             ], JsonResponse::HTTP_UNPROCESSABLE_ENTITY)
         );
     }

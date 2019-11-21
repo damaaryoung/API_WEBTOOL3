@@ -19,7 +19,6 @@ class FasPinRequest extends FormRequest
     public function rules()
     {
         return [
-            'nomor_so'        => 'numeric',
             'jenis_pinjaman'  => 'required|in:KONSUMTIF,MODAL,INVESTASI',
             'tujuan_pinjaman' => 'required',
             'plafon'          => 'required|numeric',
@@ -29,8 +28,6 @@ class FasPinRequest extends FormRequest
 
     public function messages(){
         return [
-            // 'nomor_so.required'        => ':attribute belum diisi',
-            'nomor_so.numeric'         => ':attribute harus berupa angka',
             'jenis_pinjaman.required'  => ':attribute belum diisi',
             'jenis_pinjaman.in'        => ':attribute harus bertipe :values',
             'tujuan_pinjaman.required' => ':attribute belum diisi',
@@ -49,7 +46,7 @@ class FasPinRequest extends FormRequest
             response()->json([
                 "code"    => 422,
                 "status"  => "not valid request",
-                "errors"  => $errors
+                "message" => $errors
             ], JsonResponse::HTTP_UNPROCESSABLE_ENTITY)
         );
     }

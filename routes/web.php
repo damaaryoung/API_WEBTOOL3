@@ -8,6 +8,9 @@ $router->get('/api', function () use ($router) {
     return redirect('/') ;
 });
 
+$router->post('/img', 'ImgController@upload');
+$router->get('/img', 'ImgController@getDecode');
+
 $router->group(['prefix' => '/wilayah'], function () use ($router) {
     $router->get('/', function () use ($router) {
         return 'add parameters after slash';
@@ -24,27 +27,26 @@ $router->group(['prefix' => '/wilayah'], function () use ($router) {
     $router->get('/kabupaten/{id}', 'Wilayah\KabupatenController@show');
     $router->put('/kabupaten/{id}', 'Wilayah\KabupatenController@update');
     $router->delete('/kabupaten/{id}', 'Wilayah\KabupatenController@delete');
-    $router->get('/kabupaten/prov/{id_prov}', 'Wilayah\KabupatenController@display'); // throwing data to frontend
+    $router->get('/provinsi/{id}/kabupaten', 'Wilayah\KabupatenController@sector'); // Get Data Kabupaten By Id Provinsi
 
     $router->get('/kecamatan', 'Wilayah\KecamatanController@index');
     $router->post('/kecamatan', 'Wilayah\KecamatanController@store');
     $router->get('/kecamatan/{id}', 'Wilayah\KecamatanController@show');
     $router->put('/kecamatan/{id}', 'Wilayah\KecamatanController@update');
     $router->delete('/kecamatan/{id}', 'Wilayah\KecamatanController@delete');
-    $router->get('/kabupaten/kab/{id_kab}', 'Wilayah\KabupatenController@display'); // throwing data to frontend
+    $router->get('/kabupaten/{id}/kecamatan', 'Wilayah\KecamatanController@sector'); // Get Data Kecamatan By Id Kabupaten
 
     $router->get('/kelurahan', 'Wilayah\KelurahanController@index');
     $router->post('/kelurahan', 'Wilayah\KelurahanController@store');
     $router->get('/kelurahan/{id}', 'Wilayah\KelurahanController@show');
     $router->put('/kelurahan/{id}', 'Wilayah\KelurahanController@update');
     $router->delete('/kelurahan/{id}', 'Wilayah\KelurahanController@delete');
-    $router->get('/kabupaten/kec/{id_kec}', 'Wilayah\KabupatenController@display'); // throwing data to frontend
+    $router->get('/kecamatan/{id}/kelurahan', 'Wilayah\KelurahanController@sector'); // Get Data Kelurahan By Id Kecamatan
 });
 
 $router->put('/api/users/reset_password', 'UserController@resetPassword'); //Reset Password
 
 $router->post('/login', 'AuthController@login'); // Login All Level
-$router->post('/cc', 'Pengajuan\MasterCC_Controller@store'); // Registration Debitur
 
 $router->group(['middleware' => 'jwt.auth'], function () use ($router) {
     //For Non User (Debitur)
@@ -59,20 +61,23 @@ $router->group(['middleware' => 'jwt.auth'], function () use ($router) {
         $router->put('/users/change_password', 'UserController@changePassword');
 
         $router->get('/oto', 'FlagAuthorController@otoIndex'); // Otorisasi
-        // $router->post('/oto', 'FlagAuthorController@otoStore');
         $router->get('/oto/{id}', 'FlagAuthorController@otoShow');
         $router->put('/oto/{id}', 'FlagAuthorController@otoUpdate');
         $router->get('/log_oto', 'FlagAuthorController@AfterOto');
         $router->get('/log_oto/{id}', 'FlagAuthorController@DetailAfterOto');
-        // $router->delete('/oto/{id}', 'FlagAuthorController@otoDelete');
+        $router->get('/count_oto', 'FlagAuthorController@countOto');
+        $router->put('/oto/{id}/reject', 'FlagAuthorController@rejectOto');
 
         $router->get('/apro', 'FlagAuthorController@aproIndex'); // Approval
-        // $router->post('/apro', 'FlagAuthorController@aproStore');
         $router->get('/apro/{id}', 'FlagAuthorController@aproShow');
         $router->put('/apro/{id}', 'FlagAuthorController@aproUpdate');
         $router->get('/log_apro', 'FlagAuthorController@AfterApro');
         $router->get('/log_apro/{id}', 'FlagAuthorController@DetailAfterApro');
-        // $router->delete('/apro/{id}', 'FlagAuthorController@aproDelete');
+        $router->get('/count_apro', 'FlagAuthorController@countApro');
+        $router->put('/apro/{id}/reject', 'FlagAuthorController@rejectApro');
+
+        $router->get('/oto/{id}/reset', 'FlagAuthorController@otoReset'); // Reset Otorisasi
+        $router->get('/apro/{id}/reset', 'FlagAuthorController@aproReset'); // Reset Otorisasi
 
         $router->group(['prefix' => '/master'], function () use ($router) {
             $router->get('/asal_data', 'Master\Bisnis\AsalDataController@index');
@@ -116,12 +121,11 @@ $router->group(['middleware' => 'jwt.auth'], function () use ($router) {
             $router->put('/jenis_pic/{id}', 'Master\AreaKantor\JPICController@update');
             $router->delete('/jenis_pic/{id}', 'Master\AreaKantor\JPICController@delete');
 
-            //Transaction SO
-            $router->get('/trans_so', 'Master\Bisnis\TrSoController@index');
-            $router->post('/trans_so', 'Master\Bisnis\TrSoController@store');
-            $router->get('/trans_so/{id}', 'Master\Bisnis\TrSoController@show');
-            $router->put('/trans_so/{id}', 'Master\Bisnis\TrSoController@update');
-            $router->delete('/trans_so/{id}', 'Master\Bisnis\TrSoController@delete');
+
+            $router->post('/mcc', 'Pengajuan\MasterCC_Controller@store'); // Memorandum Account Officer
+            $router->get('/mao', 'Pengajuan\MasterAO_Controller@index'); // All Memorandum Account Officer
+            $router->get('/mao/{id}', 'Pengajuan\MasterAO_Controller@show'); //GEt MAO BY ID
+            $router->put('/mao/{id}', 'Pengajuan\MasterAO_Controller@update'); //Update MAO BY ID
 
             $router->get('/kode_area/ao', 'Master\CodeController@ao'); // AO -> dpm_online.kre_kode_group2
             $router->get('/kode_area/so', 'Master\CodeController@so'); // SO -> dpm_online.kre_kode_so

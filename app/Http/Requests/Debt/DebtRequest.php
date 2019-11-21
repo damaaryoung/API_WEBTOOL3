@@ -47,14 +47,18 @@ class DebtRequest extends FormRequest
             'pendidikan_terakhir'   => 'required',
             'jumlah_tanggungan'     => 'numeric',
             'no_telp'               => 'required|between:11,13|unique:web.calon_debitur,no_telp',
+            'no_hp'                 => 'required|between:11,13|unique:web.calon_debitur,no_telp',
             'alamat_surat'          => 'required',
             'tgl_lahir_anak1'       => 'date_format:d-m-Y',
             'tgl_lahir_anak2'       => 'date_format:d-m-Y',
             'lamp_surat_cerai'      => 'mimes:jpg,jpeg,png,pdf',
+            'tinggi_badan'          => 'numeric',
+            'berat_badan'           => 'numeric',
             'pekerjaan'             => 'required',
             'lamp_buku_tabungan'    => 'mimes:jpg,jpeg,png,pdf',
+            'lamp_ktp'              => 'mimes:jpg,jpeg,png,pdf',
             'lamp_kk'               => 'mimes:jpg,jpeg,png,pdf',
-            'jenis_jaminan'         => 'required|in:TANAH,KENDARAAN'
+            'jenis_jaminan'         => 'in:TANAH,KENDARAAN'
         ];
     }
 
@@ -113,15 +117,20 @@ class DebtRequest extends FormRequest
             'no_telp.required'               => ':attribute belum diisi',
             'no_telp.between'                => ':attribute harus berada diantara :min - :max.',
             'no_telp.unique'                 => ':attribute telah ada yang menggunakan',
+            'no_hp.required'                 => ':attribute belum diisi',
+            'no_hp.between'                  => ':attribute harus berada diantara :min - :max.',
+            'no_hp.unique'                   => ':attribute telah ada yang menggunakan',
             'alamat_surat.required'          => ':attribute belum diisi.',
             'tgl_lahir_anak1'                => ':attribute harus berupa angka dan berjumlah :digits digit',
             'tgl_lahir_anak2'                => ':attribute harus berupa angka dan berjumlah :digits digit',
             'lamp_surat_cerai.mimes'         => ':attribute harus bertipe :values',
+            'tinggi_badan.numeric'           => ':attribute harus berupa angka',
+            'berat_badan.numeric'            => ':attribute harus berupa angka',
             'pekerjaan.required'             => ':attribute belum diisi.',
             'pekerjaan.in'                   => ':attribute harus salah satu dari jenis berikut :values',
             'lamp_buku_tabungan.mimes'       => ':attribute harus bertipe :values',
+            'lamp_ktp.mimes'                 => ':attribute harus bertipe :values',
             'lamp_kk.mimes'                  => ':attribute harus bertipe :values',
-            'jenis_jaminan.required'         => ':attribute belum diisi',
             'jenis_jaminan.in'               => ':attribute harus salah satu dari jenis berikut :values'
         ];
     }
@@ -134,7 +143,7 @@ class DebtRequest extends FormRequest
             response()->json([
                 "code"    => 422,
                 "status"  => "not valid request",
-                "errors"  => $errors
+                "message" => $errors
             ], JsonResponse::HTTP_UNPROCESSABLE_ENTITY)
         );
     }

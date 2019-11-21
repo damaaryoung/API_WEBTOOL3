@@ -23,7 +23,7 @@ class MenuMaster extends Model implements AuthenticatableContract, AuthorizableC
     protected $primaryKey = 'id';
 
     protected $fillable = [
-       'nama', 'url', 'icon'
+       'nama', 'url', 'icon', 'flg_aktif'
     ];
 
     public function mAccess()

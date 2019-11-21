@@ -21,8 +21,10 @@ $app = new Laravel\Lumen\Application(
     dirname(__DIR__)
 );
 
+class_alias(Intervention\Image\Facades\Image::class, 'Image');
 $app->withFacades();
 
+$app->register(Intervention\Image\ImageServiceProvider::class); //Intervention Image
 $app->withEloquent();
 
 /*

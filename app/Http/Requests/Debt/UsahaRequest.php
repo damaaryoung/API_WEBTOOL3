@@ -19,6 +19,13 @@ class UsahaRequest extends FormRequest
     public function rules()
     {
         return [
+            'id_calon_debitur'      => 'numeric',
+            'id_provinsi'           => 'numeric',
+            'id_kabupaten'          => 'numeric',
+            'id_kecamatan'          => 'numeric',
+            'id_kelurahan'          => 'numeric',
+            'rt'                    => 'numeric',
+            'rw'                    => 'numeric',
             'tunai'                 => 'numeric',
             'kredit'                => 'numeric',
             'biaya_sewa'            => 'numeric',
@@ -42,6 +49,13 @@ class UsahaRequest extends FormRequest
 
     public function messages(){
         return [
+            'id_calon_debitur.numeric'  => ':attribute harus berupa angka',
+            'id_provinsi.numeric'       => ':attribute harus berupa angka',
+            'id_kabupaten.numeric'      => ':attribute harus berupa angka',
+            'id_kecamatan.numeric'      => ':attribute harus berupa angka',
+            'id_kelurahan.numeric'      => ':attribute harus berupa angka',
+            'rt.numeric'                => ':attribute harus berupa angka',
+            'rw.numeric'                => ':attribute harus berupa angka',
             'tunai.numeric'               => ':attribute harus berupa angka',
             'kredit.numeric'              => ':attribute harus berupa angka',
             'biaya_sewa.numeric'          => ':attribute harus berupa angka',
@@ -71,7 +85,7 @@ class UsahaRequest extends FormRequest
             response()->json([
                 "code"    => 422,
                 "status"  => "not valid request",
-                "errors"  => $errors
+                "message" => $errors
             ], JsonResponse::HTTP_UNPROCESSABLE_ENTITY)
         );
     }
