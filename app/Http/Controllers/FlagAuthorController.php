@@ -758,7 +758,7 @@ class FlagAuthorController extends BaseController
     }
 
     // Reset Approval
-    public function aproUpdate($id, Request $req) {
+    public function aproReset($id, Request $req) {
         $user_id = $req->auth->user_id;
 
         $Now = Carbon::now()->toDateTimeString();

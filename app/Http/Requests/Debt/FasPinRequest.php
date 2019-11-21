@@ -19,21 +19,16 @@ class FasPinRequest extends FormRequest
     public function rules()
     {
         return [
-            'jenis_pinjaman'  => 'required|in:KONSUMTIF,MODAL,INVESTASI',
-            'tujuan_pinjaman' => 'required',
-            'plafon'          => 'required|numeric',
-            'tenor'           => 'required|numeric'
+            'jenis_pinjaman'  => 'in:KONSUMTIF,MODAL,INVESTASI',
+            'plafon'          => 'numeric',
+            'tenor'           => 'numeric'
         ];
     }
 
     public function messages(){
         return [
-            'jenis_pinjaman.required'  => ':attribute belum diisi',
             'jenis_pinjaman.in'        => ':attribute harus bertipe :values',
-            'tujuan_pinjaman.required' => ':attribute belum diisi',
-            'plafon.required'          => ':attribute belum diisi',
             'plafon.numeric'           => ':attribute harus berupa angka',
-            'tenor.required'           => ':attribute belum diisi',
             'tenor.numeric'            => ':attribute harus berupa angka'
         ];
     }

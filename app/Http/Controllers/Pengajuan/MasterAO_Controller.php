@@ -87,9 +87,9 @@ class MasterAO_Controller extends BaseController
 
         foreach ($query as $key => $val) {
 
-            $idPenj = $val->id_penjamin;
+            // $idPenj = $val->id_penjamin;
 
-            $ex_penj = explode (",",$idPenj);
+            // $ex_penj = explode (",",$idPenj);
 
             $prov_ktp = Provinsi::where('id', $val->debt['id_provinsi_ktp'])->first();
             $kab_ktp  = Kabupaten::where('id', $val->debt['id_kabupaten_ktp'])->first();
@@ -202,7 +202,7 @@ class MasterAO_Controller extends BaseController
         }
     }
 
-    public function update($id) {
+    public function update($id, Request $req, FasPinRequest $reqFasPin, DebtRequest $reqDebt, DebtPasanganRequest $reqPas, DebtPenjaminRequest $reqPen, UsahaRequest $reqUs, UsahaPasReq $reqUsPas, AguTaReq $reqAta) {
         $Trans = TransSo::where('id', $id)->first();
 
         if ($Trans == null) {
@@ -213,11 +213,12 @@ class MasterAO_Controller extends BaseController
             ], 404);
         }
 
-        $debitur = Debitur::where('id', $Trans->id_calon_debt)->first();
+        $debitur  = Debitur::where('id', $Trans->id_calon_debt)->first();
         $pasangan = Pasangan::where('id', $Trans->id_pasangan)->first();
-        $usaha = Usaha::where('id', $Trans->id_usaha)->first();
+        $usaha    = Usaha::where('id', $Trans->id_usaha)->first();
+        $penjamin = Penjamin::where('id_calon_debitur', $Trans->id_calon_debt)->get();
 
-        // dd($usaha->lamp_tempat_usaha);
+        dd($penjamin);
 
         // Data Calon Debitur
         $dataDebitur = array(
@@ -235,17 +236,17 @@ class MasterAO_Controller extends BaseController
 
         // Data Usaha Calon Debitur
         $dataUsaha = array(
-            'nama_tempat_usaha' => $req->input('nama_usaha'),
-            'jenis_usaha'       => $req->input('jenis_usaha'),
-            'alamat' => $req->input('alamat_usaha'),
-            'id_provinsi' => $req->input('id_provinsi'),
-            'id_kabupaten' => $req->input('id_kabupaten'),
-            'id_kecamatan' => $req->input('id_kecamatan'),
-            'id_kelurahan' => $req->input('id_kelurahan'),
-            'rt' => $req->input('rt'),
-            'rw' => $req->input('rw'),
-            'lama_usaha' => $req->input('lama_usaha'),
-            'telp_tempat_usaha' => $req->input('telp_tempat_usaha'),
+            'nama_tempat_usaha' => $reqUs->input('nama_usaha'),
+            'jenis_usaha'       => $reqUs->input('jenis_usaha'),
+            'alamat'            => $reqUs->input('alamat_usaha'),
+            'id_provinsi'       => $reqUs->input('id_prov_usaha'),
+            'id_kabupaten'      => $reqUs->input('id_kab_usaha'),
+            'id_kecamatan'      => $reqUs->input('id_kec_usaha'),
+            'id_kelurahan'      => $reqUs->input('id_kel_usaha'),
+            'rt'                => $reqUs->input('rt_usaha'),
+            'rw'                => $reqUs->input('rw_usaha'),
+            'lama_usaha'        => $reqUs->input('lama_usaha'),
+            'telp_tempat_usaha' => $reqUs->input('no_tlp_usaha'),
             'lamp_tempat_usaha' => empty($reqUs->file('lamp_tempat_usaha')) ? $usaha->lamp_tempat_usaha : Helper::img64enc($reqUs->file('lamp_tempat_usaha'))
         );
 
@@ -270,17 +271,17 @@ class MasterAO_Controller extends BaseController
         $dataUsahaPas = array(
             'id_calon_debitur'  => $Trans->id_calon_debt,
             'id_pasangan'       => $Trans->id_pasangan,
-            'nama_tempat_usaha' => $req->input('nama_usaha'),
-            'jenis_usaha'       => $req->input('jenis_usaha'),
-            'alamat'            => $req->input('alamat_usaha'),
-            'id_provinsi'       => $req->input('id_provinsi'),
-            'id_kabupaten'      => $req->input('id_kabupaten'),
-            'id_kecamatan'      => $req->input('id_kecamatan'),
-            'id_kelurahan'      => $req->input('id_kelurahan'),
-            'rt'                => $req->input('rt'),
-            'rw'                => $req->input('rw'),
-            'lama_usaha'        => $req->input('lama_usaha'),
-            'telp_tempat_usaha' => $req->input('telp_tempat_usaha'),
+            'nama_tempat_usaha' => $reqUsPas->input('nama_usaha_pas'),
+            'jenis_usaha'       => $reqUsPas->input('jenis_usaha_pas'),
+            'alamat'            => $reqUsPas->input('alamat_usaha_pas'),
+            'id_provinsi'       => $reqUsPas->input('id_prov_usaha_pas'),
+            'id_kabupaten'      => $reqUsPas->input('id_kab_usaha_pas'),
+            'id_kecamatan'      => $reqUsPas->input('id_kec_usaha_pas'),
+            'id_kelurahan'      => $reqUsPas->input('id_kel_usaha_pas'),
+            'rt'                => $reqUsPas->input('rt_usaha_pas'),
+            'rw'                => $reqUsPas->input('rw_usaha_pas'),
+            'lama_usaha'        => $reqUsPas->input('lama_usaha_pas'),
+            'telp_tempat_usaha' => $reqUsPas->input('no_telp_usaha_pas')
         );
 
         $dataAguTa = array(
@@ -296,71 +297,34 @@ class MasterAO_Controller extends BaseController
 
         DB::connection('web')->beginTransaction();
         try {
-            $debt = Debitur::create($dataDebitur);
-            $id_debt = $debt->id;
-
-            $arrIdDebt = array('id_calon_debitur' => $id_debt);
-
-            if ($dataFasPin) {
-                $newFasPin = array_merge($arrIdDebt, $dataFasPin);
-                $FasPin    = FasilitasPinjaman::create($newFasPin);
-                $id_faspin = $FasPin->id;
-            }else{
-                $id_faspin = null;
-            }
-
-            // if ($dataDebitur['pekerjaan'] == 'usaha' || $dataDebitur['pekerjaan'] == 'USAHA') {
-                // $newUsaha = array('id_calon_debitur' => $id_debt, 'lamp_tempat_usaha' => $lamp_tempat_usaha);
-
-                $newUsa   = array_merge($arrIdDebt, $dataUsaha);
-                $usaha    = Usaha::create($newUsa);
-                $id_usaha = $usaha->id;
-            // }else{
-                // $id_usaha = null;
-            // }
-
-            if ($dataDebitur['status_nikah'] == 'NIKAH') {
-                $newPass     = array_merge($arrIdDebt, $dataPasangan);
-                $pasangan    = Pasangan::create($newPass);
-                $id_pasangan = $pasangan->id;
-            }else{
-                $id_pasangan = null;
-            }
 
             if (!$reqPen) {
                 $id_penjamin = null;
             }else{
 
-                // $a = 1; $b = 1; $c = 1; $d = 1;
-                // if($files = $reqPen->file('lamp_ktp_pen')){
-                //     foreach($files as $file){
-                //         $name = 'ktp.'.$file->getClientOriginalExtension();
-                //         $path = base_path('uploads/debiturs/'.$dataDebitur['no_ktp'].'/penjamin'.$a);
-                //         $file->move($path,$name);
-                //         $imgKTP[]='uploads/debiturs/'.$dataDebitur['no_ktp'].'/penjamin'.$a.'/'.$name;
-                //         $a++;
-                //     }
-                // }
-
-                for ($i = 0; $i < count($reqPen->nama_ktp_pen); $i++) {
+                for ($i = 0; $i < count($reqPen->pekerjaan); $i++) {
 
                     $DP[] = [
-                        'id_calon_debitur' => $id_debt,
-                        'nama_ktp'         => $reqPen->nama_ktp_pen[$i],
-                        'nama_ibu_kandung' => $reqPen->nama_ibu_kandung_pen[$i],
-                        'no_ktp'           => $reqPen->no_ktp_pen[$i],
-                        'no_npwp'          => $reqPen->no_npwp_pen[$i],
-                        'tempat_lahir'     => $reqPen->tempat_lahir_pen[$i],
-                        'tgl_lahir'        => Carbon::parse($reqPen->tgl_lahir_pen[$i])->format('Y-m-d'),
-                        'jenis_kelamin'    => $reqPen->jenis_kelamin_pen[$i],
-                        'alamat_ktp'       => $reqPen->alamat_ktp_pen[$i],
-                        'no_telp'          => $reqPen->no_telp_pen[$i],
-                        'hubungan_debitur' => $reqPen->hubungan_debitur_pen[$i],
-                        'lamp_ktp'         => empty($reqPen->file('lamp_ktp_pen')[$i]) ? null : Helper::img64enc($reqPen->file('lamp_ktp_pen')[$i]),
-                        'lamp_ktp_pasangan'=> empty($reqPen->file('lamp_ktp_pasangan_pen')[$i]) ? null : Helper::img64enc($reqPen->file('lamp_ktp_pasangan_pen')[$i]),
-                        'lamp_kk'          => empty($reqPen->file('lamp_kk_pen')[$i]) ? null : Helper::img64enc($reqPen->file('lamp_kk_pen')[$i]),
-                        'lamp_buku_nikah'  => empty($reqPen->file('lamp_buku_nikah_pen')[$i]) ? null : Helper::img64enc($reqPen->file('lamp_buku_nikah_pen')[$i]),
-                        'created_at'       => Carbon::now()->toDateTimeString()
+                        'id_calon_debitur' => $Trans->id_calon_debt,
+                        'pekerjaan'        => $reqPen->pekerjaan_pen[$i],
+                        'posisi_pekerjaan' => $reqPen->posisi_pekerjaan[$i],
+                        'updated_at'       => Carbon::now()->toDateTimeString()
+                    ];
+
+                    $DUP[] = [
+                        'id_calon_debitur'  => $Trans->id_calon_debt,
+                        'id_penjamin'       => $penjamin->id,
+                        'nama_tempat_usaha' => $reqUs->nama_usaha_pen[$i],
+                        'jenis_usaha'       => $reqUs->jenis_usaha_pen[$i],
+                        'alamat'            => $reqUs->alamat_usaha_pen[$i],
+                        'id_provinsi'       => $reqUs->id_prov_usaha_pen[$i],
+                        'id_kabupaten'      => $reqUs->id_kab_usaha_pen[$i],
+                        'id_kecamatan'      => $reqUs->id_kec_usaha_pen[$i],
+                        'id_kelurahan'      => $reqUs->id_kel_usaha_pen[$i],
+                        'rt'                => $reqUs->rt_usaha_pen[$i],
+                        'rw'                => $reqUs->rw_usaha_pen[$i],
+                        'lama_usaha'        => $reqUs->lama_usaha_pen[$i],
+                        'telp_tempat_usaha' => $reqUs->no_telp_usaha_pen[$i]
                     ];
                 }
 
@@ -368,35 +332,6 @@ class MasterAO_Controller extends BaseController
                 $penjamin = Penjamin::insert($DP);
                 // $id_penjamin = DB::connection('web')->getPdo()->lastInsertId();
             }
-
-            $newAguta = array_merge($arrIdDebt, $dataAguTa);
-            $aguta = AgunanTanah::create($newAguta);
-            $id_aguta = $aguta->id;
-
-            $pu = Penjamin::select('id')->where('id_calon_debitur', $id_debt)->get();
-
-            $te = array();
-            $i = 0;
-            foreach ($pu as $val) {
-                $te['id'][$i] = $val->id;
-                $i++;
-            };
-
-            $id_penjamins = implode(",", $te['id']);
-
-            // dd($id_penjamins);
-
-            $arrTr = array(
-                'id_fasilitas_pinjaman' => $id_faspin,
-                'id_calon_debt'         => $id_debt,
-                'id_pasangan'           => $id_pasangan,
-                'id_penjamin'           => $id_penjamins,
-                'id_agunan_tanah'       => $id_aguta,
-                'id_usaha'              => $id_usaha
-            );
-
-            // $mergeTr  = array_merge($arrTr, $dataTr);
-            // TransSo::create($mergeTr);
 
             $debitur = Debitur::where('id', $id_calon_debt)->update();
             $debitur = Pasangan::where('id', $id_pasangan)->update();
@@ -423,28 +358,4 @@ class MasterAO_Controller extends BaseController
             ], 501);
         }
     }
-
-     // "id": 5,
-     //        "nomor_so": "00-SO-11-2019-2",
-     //        "user_id": 1130,
-     //        "kode_kantor": 0,
-     //        "id_asal_data": 1,
-     //        "nama_marketing": "Marketing Name",
-     //        "nama_so": "APRELA AGIF SOFYAN",
-     //        "id_fasilitas_pinjaman": 47,
-     //        "id_calon_debt": 47,
-     //        "id_pasangan": 47,
-     //        "id_penjamin": 17,
-     //        "id_agunan_tanah": 19,
-     //        "id_agunan_kendaraan": null,
-     //        "id_periksa_agunan_tanah": null,
-     //        "id_periksa_agunan_kendaraan": null,
-     //        "id_usaha": 39,
-     //        "recomendasi_ao": null,
-     //        "catatan_hasil_cek": null,
-     //        "plafon": 100000,
-     //        "tenor": 10,
-     //        "flg_aktif": null,
-     //        "created_at": "2019-11-20 13:56:10",
-     //        "updated_at": "2019-11-20 13:56:10"
 }
