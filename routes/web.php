@@ -8,6 +8,8 @@ $router->get('/api', function () use ($router) {
     return redirect('/') ;
 });
 
+$router->post('/push', 'ImgController@push');
+
 $router->post('/img', 'ImgController@upload');
 $router->get('/img', 'ImgController@getDecode');
 
@@ -125,7 +127,7 @@ $router->group(['middleware' => 'jwt.auth'], function () use ($router) {
             $router->post('/mcc', 'Pengajuan\MasterCC_Controller@store'); // Memorandum Account Officer
             $router->get('/mao', 'Pengajuan\MasterAO_Controller@index'); // All Memorandum Account Officer
             $router->get('/mao/{id}', 'Pengajuan\MasterAO_Controller@show'); //GEt MAO BY ID
-            $router->put('/mao/{id}', 'Pengajuan\MasterAO_Controller@update'); //Update MAO BY ID
+            $router->post('/mao/{id}', 'Pengajuan\MasterAO_Controller@update'); //Update MAO BY ID
 
             $router->get('/kode_area/ao', 'Master\CodeController@ao'); // AO -> dpm_online.kre_kode_group2
             $router->get('/kode_area/so', 'Master\CodeController@so'); // SO -> dpm_online.kre_kode_so

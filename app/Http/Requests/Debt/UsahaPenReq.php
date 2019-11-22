@@ -27,7 +27,7 @@ class UsahaPenReq extends FormRequest
             'id_kelurahan'      => 'numeric',
             'rt'                => 'numeric',
             'rw'                => 'numeric',
-            'lama_usaha'        => 'numeric',
+            'tgl_mulai_usaha'   => 'date_format:d-m-Y',
             'telp_tempat_usaha' => 'numeric',
             'flg_aktif'         => 'numeric'
         ];
@@ -35,17 +35,17 @@ class UsahaPenReq extends FormRequest
 
     public function messages(){
         return [
-            'id_calon_debitur.numeric'  => ':attribute harus berupa angka',
-            'id_penjamin.numeric'       => ':attribute harus berupa angka',
-            'id_provinsi.numeric'       => ':attribute harus berupa angka',
-            'id_kabupaten.numeric'      => ':attribute harus berupa angka',
-            'id_kecamatan.numeric'      => ':attribute harus berupa angka',
-            'id_kelurahan.numeric'      => ':attribute harus berupa angka',
-            'rt.numeric'                => ':attribute harus berupa angka',
-            'rw.numeric'                => ':attribute harus berupa angka',
-            'lama_usaha.numeric'        => ':attribute harus berupa angka',
-            'telp_tempat_usaha.numeric' => ':attribute harus berupa angka',
-            'flg_aktif.numeric'         => ':attribute harus berupa angka'
+            'id_calon_debitur.numeric'    => ':attribute harus berupa angka',
+            'id_penjamin.numeric'         => ':attribute harus berupa angka',
+            'id_provinsi.numeric'         => ':attribute harus berupa angka',
+            'id_kabupaten.numeric'        => ':attribute harus berupa angka',
+            'id_kecamatan.numeric'        => ':attribute harus berupa angka',
+            'id_kelurahan.numeric'        => ':attribute harus berupa angka',
+            'rt.numeric'                  => ':attribute harus berupa angka',
+            'rw.numeric'                  => ':attribute harus berupa angka',
+            'tgl_mulai_usaha.date_format' => ':attribute harus berupa angka dengan format :format',
+            'telp_tempat_usaha.numeric'   => ':attribute harus berupa angka',
+            'flg_aktif.numeric'           => ':attribute harus berupa angka'
         ];
     }
 

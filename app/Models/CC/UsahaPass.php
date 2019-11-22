@@ -23,7 +23,7 @@ class UsahaPass extends Model implements AuthenticatableContract, AuthorizableCo
     protected $primaryKey = 'id';
 
     protected $fillable = [
-       'id_calon_debitur', 'id_pasangan', 'nama_tempat_usaha', 'jenis_usaha', 'alamat', 'id_provinsi', 'id_kabupaten', 'id_kecamatan', 'id_kelurahan', 'rt', 'rw', 'lama_usaha', 'telp_tempat_usaha', 'flg_aktif'
+       'id_calon_debitur', 'id_pasangan', 'nama_tempat_usaha', 'jenis_usaha', 'alamat', 'id_provinsi', 'id_kabupaten', 'id_kecamatan', 'id_kelurahan', 'rt', 'rw', 'tgl_mulai_usaha', 'telp_tempat_usaha', 'flg_aktif'
     ];
 
     /**

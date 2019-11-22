@@ -128,18 +128,7 @@ class MasterCC_Controller extends BaseController
         $dataUsaha = array(
             'lamp_tempat_usaha' => empty($reqUs->file('lamp_usaha')) ? null : Helper::img64enc($reqUs->file('lamp_usaha'))
         );
-
-        $dataAguTa = array(
-            'lamp_sertifikat'      => empty($reqAta->file('lamp_sertifikat')) ? null : Helper::img64enc($reqAta->file('lamp_sertifikat')),
-            'lamp_pbb'             => empty($reqAta->file('lamp_pbb')) ? null : Helper::img64enc($reqAta->file('lamp_pbb')),
-            'lamp_agunan_depan'    => empty($reqAta->file('lamp_agunan_depan')) ? null : Helper::img64enc($reqAta->file('lamp_agunan_depan')),
-            'lamp_agunan_kanan'    => empty($reqAta->file('lamp_agunan_kanan')) ? null : Helper::img64enc($reqAta->file('lamp_agunan_kanan')),
-            'lamp_agunan_kiri'     => empty($reqAta->file('lamp_agunan_kiri')) ? null : Helper::img64enc($reqAta->file('lamp_agunan_kiri')),
-            'lamp_agunan_belakang' => empty($reqAta->file('lamp_agunan_belakang')) ? null : Helper::img64enc($reqAta->file('lamp_agunan_belakang')),
-            'lamp_agunan_dalam'    => empty($reqAta->file('lamp_agunan_dalam')) ? null : Helper::img64enc($reqAta->file('lamp_agunan_dalam')),
-            'lamp_imb'             => empty($reqAta->file('lamp_imb')) ? null : Helper::img64enc($reqAta->file('lamp_imb'))
-        );
-
+//
         DB::connection('web')->beginTransaction();
         try {
             $debt = Debitur::create($dataDebitur);
@@ -192,21 +181,36 @@ class MasterCC_Controller extends BaseController
 
                     $DP[] = [
                         'id_calon_debitur' => $id_debt,
-                        'nama_ktp'         => $reqPen->nama_ktp_pen[$i],
-                        'nama_ibu_kandung' => $reqPen->nama_ibu_kandung_pen[$i],
-                        'no_ktp'           => $reqPen->no_ktp_pen[$i],
-                        'no_npwp'          => $reqPen->no_npwp_pen[$i],
-                        'tempat_lahir'     => $reqPen->tempat_lahir_pen[$i],
-                        'tgl_lahir'        => Carbon::parse($reqPen->tgl_lahir_pen[$i])->format('Y-m-d'),
-                        'jenis_kelamin'    => $reqPen->jenis_kelamin_pen[$i],
-                        'alamat_ktp'       => $reqPen->alamat_ktp_pen[$i],
-                        'no_telp'          => $reqPen->no_telp_pen[$i],
-                        'hubungan_debitur' => $reqPen->hubungan_debitur_pen[$i],
+                        'nama_ktp'         => empty($reqPen->nama_ktp_pen[$i]) ? null : $reqPen->nama_ktp_pen[$i],
+                        'nama_ibu_kandung' => empty($reqPen->nama_ibu_kandung_pen[$i]) ? null : $reqPen->nama_ibu_kandung_pen[$i],
+                        'no_ktp'           => empty($reqPen->no_ktp_pen[$i]) ? null : $reqPen->no_ktp_pen[$i],
+                        'no_npwp'          => empty($reqPen->no_npwp_pen[$i]) ? null : $reqPen->no_npwp_pen[$i],
+                        'tempat_lahir'     => empty($reqPen->tempat_lahir_pen[$i]) null : $reqPen->tempat_lahir_pen[$i],
+                        'tgl_lahir'        => empty($reqPen->tgl_lahir_pen[$i]) ? null : Carbon::parse($reqPen->tgl_lahir_pen[$i])->format('Y-m-d'),
+                        'jenis_kelamin'    => empty($reqPen->jenis_kelamin_pen[$i]) ? null : $reqPen->jenis_kelamin_pen[$i],
+                        'alamat_ktp'       => empty($reqPen->alamat_ktp_pen[$i]) ? null : $reqPen->alamat_ktp_pen[$i],
+                        'no_telp'          => empty($reqPen->no_telp_pen[$i]) ? null : $reqPen->no_telp_pen[$i],
+                        'hubungan_debitur' => empty($reqPen->hubungan_debitur_pen[$i]) ? null : $reqPen->hubungan_debitur_pen[$i],
                         'lamp_ktp'         => empty($reqPen->file('lamp_ktp_pen')[$i]) ? null : Helper::img64enc($reqPen->file('lamp_ktp_pen')[$i]),
                         'lamp_ktp_pasangan'=> empty($reqPen->file('lamp_ktp_pasangan_pen')[$i]) ? null : Helper::img64enc($reqPen->file('lamp_ktp_pasangan_pen')[$i]),
                         'lamp_kk'          => empty($reqPen->file('lamp_kk_pen')[$i]) ? null : Helper::img64enc($reqPen->file('lamp_kk_pen')[$i]),
                         'lamp_buku_nikah'  => empty($reqPen->file('lamp_buku_nikah_pen')[$i]) ? null : Helper::img64enc($reqPen->file('lamp_buku_nikah_pen')[$i]),
                         'created_at'       => Carbon::now()->toDateTimeString()
+                    ];
+                }
+
+                for ($i = 0; $i < count($reqAta->file('lamp_sertifikat')); $i++) {
+
+                    $dataAguTa[] = [
+                        'id_calon_debitur'     => $id_debt,
+                        'lamp_sertifikat'      => empty($reqAta->file('lamp_sertifikat')[$i]) ? null : Helper::img64enc($reqAta->file('lamp_sertifikat')[$i]),
+                        'lamp_pbb'             => empty($reqAta->file('lamp_pbb')[$i]) ? null : Helper::img64enc($reqAta->file('lamp_pbb')[$i]),
+                        'lamp_agunan_depan'    => empty($reqAta->file('lamp_agunan_depan')[$i]) ? null : Helper::img64enc($reqAta->file('lamp_agunan_depan')[$i]),
+                        'lamp_agunan_kanan'    => empty($reqAta->file('lamp_agunan_kanan')[$i]) ? null : Helper::img64enc($reqAta->file('lamp_agunan_kanan')[$i][$i][$i]),
+                        'lamp_agunan_kiri'     => empty($reqAta->file('lamp_agunan_kiri')[$i]) ? null : Helper::img64enc($reqAta->file('lamp_agunan_kiri')[$i][$i]),
+                        'lamp_agunan_belakang' => empty($reqAta->file('lamp_agunan_belakang')[$i]) ? null : Helper::img64enc($reqAta->file('lamp_agunan_belakang')[$i]),
+                        'lamp_agunan_dalam'    => empty($reqAta->file('lamp_agunan_dalam')[$i]) ? null : Helper::img64enc($reqAta->file('lamp_agunan_dalam')[$i]),
+                        'lamp_imb'             => empty($reqAta->file('lamp_imb')[$i]) ? null : Helper::img64enc($reqAta->file('lamp_imb')[$i])
                     ];
                 }
 
@@ -220,15 +224,22 @@ class MasterCC_Controller extends BaseController
             $id_aguta = $aguta->id;
 
             $pu = Penjamin::select('id')->where('id_calon_debitur', $id_debt)->get();
-
             $te = array();
-            $i = 0;
+            $i  = 0;
             foreach ($pu as $val) {
                 $te['id'][$i] = $val->id;
                 $i++;
             };
-
             $id_penjamins = implode(",", $te['id']);
+
+            $at = AgunanTanah::select('id')->where('id_calon_debitur', $id_debt)->get();
+            $ab = array();
+            $j  = 0;
+            foreach ($at as $val) {
+                $ab['id'][$i] = $val->id;
+                $i++;
+            };
+            $id_at = implode(",", $ab['id']);
 
             // dd($id_penjamins);
 
@@ -237,7 +248,7 @@ class MasterCC_Controller extends BaseController
                 'id_calon_debt'         => $id_debt,
                 'id_pasangan'           => $id_pasangan,
                 'id_penjamin'           => $id_penjamins,
-                'id_agunan_tanah'       => $id_aguta,
+                'id_agunan_tanah'       => $id_at,
                 'id_usaha'              => $id_usaha
             );
 

@@ -9,6 +9,7 @@ use App\Http\Controllers\Controller as Helper;
 use App\Http\Requests\Debt\FasPinRequest;
 use App\Http\Requests\Debt\UsahaRequest;
 use App\Http\Requests\Debt\UsahaPasReq;
+use App\Http\Requests\Debt\UsahaPenReq;
 use App\Http\Requests\Debt\DebtRequest;
 use App\Http\Requests\Debt\AguTaReq;
 use App\Models\CC\FasilitasPinjaman;
@@ -20,6 +21,7 @@ use App\Models\CC\AgunanTanah;
 use App\Models\Bisnis\TransSo;
 use Illuminate\Http\Request;
 use App\Models\CC\UsahaPass;
+use App\Models\CC\UsahaPenj;
 use App\Models\CC\Pasangan;
 use App\Models\CC\Penjamin;
 use App\Models\CC\Debitur;
@@ -103,25 +105,6 @@ class MasterAO_Controller extends BaseController
 
             $penjamin = Penjamin::where('id_calon_debitur', $val->id_calon_debt)->get();
 
-            foreach ($penjamin as $keys => $penj) {
-                $NP[$keys] = [
-                    'id'                => $penj->id,
-                    'nama_ktp'          => $penj->nama_ktp,
-                    'nama_ibu_kandung'  => $penj->nama_ibu_kandung,
-                    'no_ktp'            => $penj->no_ktp,
-                    'no_npwp'           => $penj->no_npwp,
-                    'tempat_lahir'      => $penj->tempat_lahir,
-                    'tgl_lahir'         => $penj->tgl_lahir,
-                    'jenis_kelamin'     => $penj->jenis_kelamin,
-                    'alamat_ktp'        => $penj->alamat_ktp,
-                    'no_telp'           => $penj->no_telp,
-                    'hubungan_debitur'  => $penj->hubungan_debitr,
-                    'lamp_ktp'          => $penj->lamp_ktp,
-                    'lamp_ktp_pasangan' => $penj->lamp_ktp_pasangan,
-                    'lamp_buku_nikah'   => $penj->lamp_buku_nikah
-                ];
-            }
-
             $data[$key] = [
                 'id'             => $val->id,
                 'nomor_so'       => $val->nomor_so,
@@ -183,7 +166,7 @@ class MasterAO_Controller extends BaseController
                     'alamat_ktp'       => $val->pas['alamat_ktp'],
                     'no_telp'          => $val->pas['no_telp'],
                 ],
-                'data_penjamin' => [$NP]
+                'data_penjamin' => $penjamin
             ];
         }
 
@@ -202,7 +185,8 @@ class MasterAO_Controller extends BaseController
         }
     }
 
-    public function update($id, Request $req, FasPinRequest $reqFasPin, DebtRequest $reqDebt, DebtPasanganRequest $reqPas, DebtPenjaminRequest $reqPen, UsahaRequest $reqUs, UsahaPasReq $reqUsPas, AguTaReq $reqAta) {
+    public function update($id, Request $req, FasPinRequest $reqFasPin, DebtRequest $reqDebt, DebtPasanganRequest $reqPas, DebtPenjaminRequest $reqPen, UsahaRequest $reqUs, UsahaPasReq $reqUsPas, UsahaPenReq $reqUsPen, AguTaReq $reqAta) {
+
         $Trans = TransSo::where('id', $id)->first();
 
         if ($Trans == null) {
@@ -213,16 +197,21 @@ class MasterAO_Controller extends BaseController
             ], 404);
         }
 
-        $debitur  = Debitur::where('id', $Trans->id_calon_debt)->first();
-        $pasangan = Pasangan::where('id', $Trans->id_pasangan)->first();
-        $usaha    = Usaha::where('id', $Trans->id_usaha)->first();
-        $penjamin = Penjamin::where('id_calon_debitur', $Trans->id_calon_debt)->get();
+        $debitur  = Debitur::select('lamp_buku_tabungan')->where('id', $Trans->id_calon_debt)->first();
+        $pasangan = Pasangan::select('lamp_ktp', 'lamp_buku_nikah')->where('id', $Trans->id_pasangan)->first();
+        $usaha    = Usaha::select('lamp_tempat_usaha')->where('id', $Trans->id_usaha)->first();
+        $penjamin = Penjamin::select('pekerjaan', 'posisi_pekerjaan')->where('id_calon_debitur', $Trans->id_calon_debt)->get();
+        $aTa      = AgunanTanah::where('id_calon_debitur', $Trans->id_calon_debt)->get();
 
-        dd($penjamin);
+        $idPenj   = $Trans->id_penjamin;
+        $arIdPenj = explode (",",$idPenj);
+
+        $idAta = $Trans->id_agunan_tanah;
+        $arIdAT= explode(",",$idAta);
 
         // Data Calon Debitur
         $dataDebitur = array(
-            'tinggi_badan'       => $reqDebt->input('tinggi_badan'),
+            // 'tinggi_badan'       => $reqDebt->input('tinggi_badan'),
             'berat_badan'        => $reqDebt->input('berat_badan'),
             'nama_anak1'         => $reqDebt->input('nama_anak1'),
             'tgl_lahir_anak1'    => $reqDebt->input('tgl_lahir_anak1'),
@@ -245,7 +234,7 @@ class MasterAO_Controller extends BaseController
             'id_kelurahan'      => $reqUs->input('id_kel_usaha'),
             'rt'                => $reqUs->input('rt_usaha'),
             'rw'                => $reqUs->input('rw_usaha'),
-            'lama_usaha'        => $reqUs->input('lama_usaha'),
+            'tgl_mulai_usaha'   => $reqUs->input('tgl_mulai_usaha'),
             'telp_tempat_usaha' => $reqUs->input('no_tlp_usaha'),
             'lamp_tempat_usaha' => empty($reqUs->file('lamp_tempat_usaha')) ? $usaha->lamp_tempat_usaha : Helper::img64enc($reqUs->file('lamp_tempat_usaha'))
         );
@@ -261,8 +250,8 @@ class MasterAO_Controller extends BaseController
             'tempat_lahir'     => $reqPas->input('tempat_lahir_pas'),
             'tgl_lahir'        => Carbon::parse($reqPas->input('tgl_lahir_pas'))->format('Y-m-d'),
             'alamat_ktp'       => $reqPas->input('alamat_ktp_pas'),
-            'pekerjaan'        => $reqPas->input('pekerjaan'),
-            'posisi_pekerjaan' => $reqPas->input('posisi_pekerjaan'),
+            'pekerjaan'        => $reqPas->input('pekerjaan_pas'),
+            'posisi_pekerjaan' => $reqPas->input('posisi_pekerjaan_pas'),
             'no_telp'          => $reqPas->input('no_telp_pas'),
             'lamp_ktp'         => empty($reqPas->file('lamp_ktp_pas')) ? $pasangan->lamp_ktp : Helper::img64enc($reqPas->file('lamp_ktp_pas')),
             'lamp_buku_nikah'  => empty($reqPas->file('lamp_buku_nikah_pas')) ? $pasangan->lamp_buku_nikah : Helper::img64enc($reqPas->file('lamp_buku_nikah_pas'))
@@ -280,82 +269,107 @@ class MasterAO_Controller extends BaseController
             'id_kelurahan'      => $reqUsPas->input('id_kel_usaha_pas'),
             'rt'                => $reqUsPas->input('rt_usaha_pas'),
             'rw'                => $reqUsPas->input('rw_usaha_pas'),
-            'lama_usaha'        => $reqUsPas->input('lama_usaha_pas'),
+            'tgl_mulai_usaha'   => $reqUsPas->input('tgl_mulai_usaha_pas'),
             'telp_tempat_usaha' => $reqUsPas->input('no_telp_usaha_pas')
         );
 
-        $dataAguTa = array(
-            'lamp_sertifikat'      => empty($reqAta->file('lamp_sertifikat')) ? null : Helper::img64enc($reqAta->file('lamp_sertifikat')),
-            'lamp_pbb'             => empty($reqAta->file('lamp_pbb')) ? null : Helper::img64enc($reqAta->file('lamp_pbb')),
-            'lamp_agunan_depan'    => empty($reqAta->file('lamp_agunan_depan')) ? null : Helper::img64enc($reqAta->file('lamp_agunan_depan')),
-            'lamp_agunan_kanan'    => empty($reqAta->file('lamp_agunan_kanan')) ? null : Helper::img64enc($reqAta->file('lamp_agunan_kanan')),
-            'lamp_agunan_kiri'     => empty($reqAta->file('lamp_agunan_kiri')) ? null : Helper::img64enc($reqAta->file('lamp_agunan_kiri')),
-            'lamp_agunan_belakang' => empty($reqAta->file('lamp_agunan_belakang')) ? null : Helper::img64enc($reqAta->file('lamp_agunan_belakang')),
-            'lamp_agunan_dalam'    => empty($reqAta->file('lamp_agunan_dalam')) ? null : Helper::img64enc($reqAta->file('lamp_agunan_dalam')),
-            'lamp_imb'             => empty($reqAta->file('lamp_imb')) ? null : Helper::img64enc($reqAta->file('lamp_imb'))
-        );
-
         DB::connection('web')->beginTransaction();
-        try {
+        // try {
 
-            if (!$reqPen) {
-                $id_penjamin = null;
-            }else{
+            for ($i = 0; $i < count($reqPen->pekerjaan_pen); $i++) {
 
-                for ($i = 0; $i < count($reqPen->pekerjaan); $i++) {
+                $DaPenj[] = [
+                    'pekerjaan'        => empty($reqPen->pekerjaan_pen[$i]) ? $penjamin[$i]->pekerjaan : $reqPen->pekerjaan_pen[$i],
+                    'posisi_pekerjaan' => empty($reqPen->posisi_pekerjaan_pen[$i]) ? $penjamin[$i]->posisi_pekerjaan : $reqPen->posisi_pekerjaan_pen[$i],
+                    'updated_at'       => Carbon::now()->toDateTimeString()
+                ];
 
-                    $DP[] = [
-                        'id_calon_debitur' => $Trans->id_calon_debt,
-                        'pekerjaan'        => $reqPen->pekerjaan_pen[$i],
-                        'posisi_pekerjaan' => $reqPen->posisi_pekerjaan[$i],
-                        'updated_at'       => Carbon::now()->toDateTimeString()
-                    ];
-
-                    $DUP[] = [
-                        'id_calon_debitur'  => $Trans->id_calon_debt,
-                        'id_penjamin'       => $penjamin->id,
-                        'nama_tempat_usaha' => $reqUs->nama_usaha_pen[$i],
-                        'jenis_usaha'       => $reqUs->jenis_usaha_pen[$i],
-                        'alamat'            => $reqUs->alamat_usaha_pen[$i],
-                        'id_provinsi'       => $reqUs->id_prov_usaha_pen[$i],
-                        'id_kabupaten'      => $reqUs->id_kab_usaha_pen[$i],
-                        'id_kecamatan'      => $reqUs->id_kec_usaha_pen[$i],
-                        'id_kelurahan'      => $reqUs->id_kel_usaha_pen[$i],
-                        'rt'                => $reqUs->rt_usaha_pen[$i],
-                        'rw'                => $reqUs->rw_usaha_pen[$i],
-                        'lama_usaha'        => $reqUs->lama_usaha_pen[$i],
-                        'telp_tempat_usaha' => $reqUs->no_telp_usaha_pen[$i]
-                    ];
-                }
-
-
-                $penjamin = Penjamin::insert($DP);
-                // $id_penjamin = DB::connection('web')->getPdo()->lastInsertId();
+                // Penjamin::where('id', $arIdPenj)->update($DaPenj[$i]);
             }
 
-            $debitur = Debitur::where('id', $id_calon_debt)->update();
-            $debitur = Pasangan::where('id', $id_pasangan)->update();
-            $debitur = Penjamin::where('id', $id_penjamin)->update();
-            $debitur = Usaha::where('id', $id_usaha)->update();
-            $debitur = AgunanTanah::where('id', $id_agunan_tanah)->update();
+            for ($i = 0; $i < count($reqUsPen->nama_usaha_pen); $i++){
+                $DaUsPen[] = [
+                    'id_calon_debitur'  => $Trans->id_calon_debt,
+                    'id_penjamin'       => $arIdPenj[$i],
+                    'nama_tempat_usaha' => empty($reqUsPen->nama_usaha_pen[$i]) ? null : $reqUsPen->nama_usaha_pen[$i],
+                    'jenis_usaha'       => empty($reqUsPen->jenis_usaha_pen[$i]) ? null : $reqUsPen->jenis_usaha_pen[$i],
+                    'alamat'            => empty($reqUsPen->alamat_usaha_pen[$i]) ? null : $reqUsPen->alamat_usaha_pen[$i],
+                    'id_provinsi'       => empty($reqUsPen->id_prov_usaha_pen[$i]) ? null : $reqUsPen->id_prov_usaha_pen[$i],
+                    'id_kabupaten'      => empty($reqUsPen->id_kab_usaha_pen[$i]) ? null : $reqUsPen->id_kab_usaha_pen[$i],
+                    'id_kecamatan'      => empty($reqUsPen->id_kec_usaha_pen[$i]) ? null : $reqUsPen->id_kec_usaha_pen[$i],
+                    'id_kelurahan'      => empty($reqUsPen->id_kel_usaha_pen[$i]) ? null : $reqUsPen->id_kel_usaha_pen[$i],
+                    'rt'                => empty($reqUsPen->rt_usaha_pen[$i]) ? null : $reqUsPen->rt_usaha_pen[$i],
+                    'rw'                => empty($reqUsPen->rw_usaha_pen[$i]) ? null : $reqUsPen->rw_usaha_pen[$i],
+                    'tgl_mulai_usaha'   => empty($reqUsPen->tgl_mulai_usaha_pen[$i]) ? null : $reqUsPen->tgl_mulai_usaha_pen[$i],
+                    'telp_tempat_usaha' => empty($reqUsPen->no_telp_usaha_pen[$i]) ? null : $reqUsPen->no_telp_usaha_pen[$i],
+                    'created_at'        => Carbon::now()->toDateTimeString()
+                ];
+
+                // $Us = UsahaPenj::create($DaUsPen[$i]);
+            }
+
+            for ($i = 0; $i < count($reqAta->tipe_lokasi_agunan); $i++){
+                $DaAguTa[] = [
+                    'id_calon_debitur'        => $Trans->id_calon_debt,
+                    'tipe_lokasi'             => empty($reqAta->tipe_lokasi_agunan[$i]) ? $aTa->tipe_lokasi[$i] : $reqAta->tipe_lokasi_agunan[$i],
+                    'alamat'                  => empty($reqAta->alamat_agunan[$i]) ? $aTa->alamat_agunan[$i] : $reqAta->alamat_agunan[$i],
+                    'id_povinsi'              => empty($reqAta->id_prov_agunan[$i]) ? null : $reqAta->id_prov_agunan[$i],
+                    // 'id_kabupaten'            => empty($reqAta->id_kab_agunan[$i]) ? $aTa->id_kab_agunan[$i] : $reqAta->id_kab_agunan[$i],
+                    // 'id_kecamatan'            => empty($reqAta->id_kec_agunan[$i]) ? $aTa->id_kec_agunan[$i] : $reqAta->id_kec_agunan[$i],
+                    // 'id_kelurahan'            => empty($reqAta->id_kel_agunan[$i]) ? $aTa->id_kel_agunan[$i] : $reqAta->id_kel_agunan[$i],
+                    // 'rt'                      => empty($reqAta->rt_agunan[$i]) ? $aTa->rt_agunan[$i] : $reqAta->rt_agunan[$i],
+                    // 'rw'                      => empty($reqAta->rw_agunan[$i]) ? $aTa->rw_agunan[$i] : $reqAta->rw_agunan[$i],
+                    // 'luas_tanah'              => empty($reqAta->luas_tanah[$i]) ? $aTa->luas_tanah[$i] : $reqAta->luas_tanah[$i],
+                    // 'luas_bangunan'           => empty($reqAta->luas_bangunan[$i]) ? $aTa->luas_bangunan[$i] : $reqAta->luas_bangunan[$i],
+                    // 'nama_pemilik_sertifikat' => empty($reqAta->nama_pemilik_sertifikat[$i]) ? $aTa->nama_pemilik_sertifikat[$i] : $reqAta->nama_pemilik_sertifikat[$i],
+                    // 'jenis_sertifikat'        => empty($reqAta->jenis_sertifikat[$i]) ? $aTa->jenis_sertifikat[$i] : $reqAta->jenis_sertifikat[$i],
+                    // 'no_sertifikat'           => empty($reqAta->no_sertifikat[$i]) ? $aTa->no_sertifikat[$i] : $reqAta->no_sertifikat[$i],
+                    // 'tgl_ukur_sertifikat'     => empty($reqAta->tgl_ukur_sertifikat[$i]) ? $aTa->tgl_ukur_sertifikat[$i] : $reqAta->tgl_ukur_sertifikat[$i],
+                    // 'tgl_berlaku_shgb'        => empty($reqAta->tgl_berlaku_shgb[$i]) ? $aTa->tgl_berlaku_shgb[$i] : $reqAta->tgl_berlaku_shgb[$i],
+                    // 'no_imb'                  => empty($reqAta->no_imb[$i]) ? $aTa->no_imb[$i] : $reqAta->no_imb[$i],
+                    // 'njop'                    => empty($reqAta->njop[$i]) ? $aTa->njop[$i] : $reqAta->njop[$i],
+                    // 'nop'                     => empty($reqAta->nop[$i]) ? $aTa->nop[$i] : $reqAta->nop[$i],
+                    // 'lam_imb'                 => empty($reqAta->file('lam_imb')[$i]) ? $aTa->lamp_imb[$i] : Helper::img64enc($reqAta->file('lam_imb')[$i]),
+                    // 'lamp_agunan_depan'       => empty($reqAta->file('lamp_agunan_depan')[$i]) ? $aTa->lamp_agunan_depan[$i] : Helper::img64enc($reqAta->file('lamp_agunan_depan')[$i]),
+                    // 'lamp_agunan_kanan'       => empty($reqAta->file('lamp_agunan_kanan')[$i]) ? $aTa->lamp_agunan_kanan[$i] : Helper::img64enc($reqAta->file('lamp_agunan_kanan')[$i]),
+                    // 'lamp_agunan_kiri'        => empty($reqAta->file('lamp_agunan_kiri')[$i]) ? $aTa->lamp_agunan_kiri[$i] : Helper::img64enc($reqAta->file('lamp_agunan_kiri')[$i]),
+                    // 'lamp_agunan_belakang'    => empty($reqAta->file('lamp_agunan_belakang')[$i]) ? $aTa->lamp_agunan_belakang[$i] : Helper::img64enc($reqAta->file('lamp_agunan_belakang')[$i]),
+                    // 'lamp_agunan_dalam'       => empty($reqAta->file('lamp_agunan_dalam')[$i]) ? $aTa->lamp_agunan_dalam[$i] : Helper::img64enc($reqAta->file('lamp_agunan_dalam')[$i]),
+                    // 'lamp_sertifikat'         => empty($reqAta->file('lamp_sertifikat')[$i]) ? $aTa->lamp_sertifikat[$i] : Helper::img64enc($reqAta->file('lamp_sertifikat')[$i]),
+                    // 'lamp_imb'                => empty($reqAta->file('lamp_imb')[$i]) ? $aTa->lamp_imb[$i] : Helper::img64enc($reqAta->file('lamp_imb')[$i]),
+                    // 'lamp_pbb'                => empty($reqAta->file('lamp_pbb')[$i]) ? $aTa->lamp_pbb[$i] : Helper::img64enc($reqAta->file('lamp_pbb')[$i])
+                ];
+            }
+
+            dd($DaAguTa);
+
+
+
+            // Debitur::where('id', $id_calon_debt)->update($dataDebitur);
+            // Usaha::where('id', $id_usaha)->update($dataUsaha);
+            // Pasangan::where('id', $id_pasangan)->update($dataPasangan);
+            // UsahaPass::create($dataUsahaPas);
+            // $newPen = Penjamin::where('id', $arP)->updateOrCreate($DaPenj);
+
+            // AgunanTanah::where('id', $id_agunan_tanah)->update();
 
             DB::connection('web')->commit();
 
-            return response()->json([
-                'code'   => 200,
-                'status' => 'success',
-                'message'=> 'Data berhasil dibuat'
-            ], 200);
+            // return response()->json([
+            //     'code'   => 200,
+            //     'status' => 'success',
+            //     'message'=> 'Data berhasil dibuat'
+            // ], 200);
             //all good
-        } catch (\Exception $e) {
-            DB::connection('web')->rollback();
+        // } catch (\Exception $e) {
+        //     DB::connection('web')->rollback();
 
-            //something went wrong
-            return response()->json([
-                'code'    => 501,
-                'status'  => 'error',
-                'message' => $e
-            ], 501);
-        }
+        //     //something went wrong
+        //     return response()->json([
+        //         'code'    => 501,
+        //         'status'  => 'error',
+        //         'message' => $e
+        //     ], 501);
+        // }
     }
 }
