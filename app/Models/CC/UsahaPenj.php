@@ -23,7 +23,7 @@ class UsahaPenj extends Model implements AuthenticatableContract, AuthorizableCo
     protected $primaryKey = 'id';
 
     protected $fillable = [
-       'id_calon_debitur', 'id_penjamin', 'nama_tempat_usaha', 'jenis_usaha', 'alamat_usaha', 'id_provinsi', 'id_kabupaten', 'id_kecamatan', 'id_kelurahan', 'rt', 'rw', 'lama_usaha', 'telp_tempat_usaha'
+       'id_calon_debitur', 'id_penjamin', 'nama_tempat_usaha', 'jenis_usaha', 'alamat_usaha', 'id_provinsi', 'id_kabupaten', 'id_kecamatan', 'id_kelurahan', 'rt', 'rw', 'tgl_mulai_usaha', 'telp_tempat_usaha'
     ];
 
     /**

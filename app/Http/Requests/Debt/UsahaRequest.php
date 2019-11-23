@@ -42,20 +42,20 @@ class UsahaRequest extends FormRequest
             'lamp_rek_tabungan'     => 'mimes:jpg,jpeg,png,pdf',
             'lamp_persetujuan_ideb' => 'mimes:jpg,jpeg,png,pdf',
             'lamp_tempat_usaha'     => 'mimes:jpg,jpeg,png,pdf',
-            'lama_usaha'            => 'numeric',
+            'tgl_mulai_usaha'       => 'date_format:d-m-Y',
             'telp_tempat_usaha'     => 'numeric'
         ];
     }
 
     public function messages(){
         return [
-            'id_calon_debitur.numeric'  => ':attribute harus berupa angka',
-            'id_provinsi.numeric'       => ':attribute harus berupa angka',
-            'id_kabupaten.numeric'      => ':attribute harus berupa angka',
-            'id_kecamatan.numeric'      => ':attribute harus berupa angka',
-            'id_kelurahan.numeric'      => ':attribute harus berupa angka',
-            'rt.numeric'                => ':attribute harus berupa angka',
-            'rw.numeric'                => ':attribute harus berupa angka',
+            'id_calon_debitur.numeric'    => ':attribute harus berupa angka',
+            'id_provinsi.numeric'         => ':attribute harus berupa angka',
+            'id_kabupaten.numeric'        => ':attribute harus berupa angka',
+            'id_kecamatan.numeric'        => ':attribute harus berupa angka',
+            'id_kelurahan.numeric'        => ':attribute harus berupa angka',
+            'rt.numeric'                  => ':attribute harus berupa angka',
+            'rw.numeric'                  => ':attribute harus berupa angka',
             'tunai.numeric'               => ':attribute harus berupa angka',
             'kredit.numeric'              => ':attribute harus berupa angka',
             'biaya_sewa.numeric'          => ':attribute harus berupa angka',
@@ -72,7 +72,7 @@ class UsahaRequest extends FormRequest
             'lamp_rek_tabungan.mimes'     => ':attribute harus bertipe :values',
             'lamp_persetujuan_ideb'       => ':attribute harus bertipe :values',
             'lamp_tempat_usaha.mimes'     => ':attribute harus bertipe :values',
-            'lama_usaha.numeric'          => ':attribute harus berupa angka',
+            'tgl_mulai_usaha.date_format' => ':attribute harus berupa angka dengan format :format',
             'telp_tempat_usaha.numeric'   => ':attribute harus berupa angka'
         ];
     }
