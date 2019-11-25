@@ -11,12 +11,15 @@ use App\Http\Requests\Debt\UsahaRequest;
 use App\Http\Requests\Debt\UsahaPasReq;
 use App\Http\Requests\Debt\UsahaPenReq;
 use App\Http\Requests\Debt\DebtRequest;
+use App\Http\Requests\Debt\PemAgTaReq;
+use App\Http\Requests\Debt\PemAgKeReq;
+use App\Http\Requests\Debt\AguKenReq;
 use App\Http\Requests\Debt\AguTaReq;
 use App\Models\CC\FasilitasPinjaman;
-use App\Models\Wilayah\Provinsi;
 use App\Models\Wilayah\Kabupaten;
 use App\Models\Wilayah\Kecamatan;
 use App\Models\Wilayah\Kelurahan;
+use App\Models\Wilayah\Provinsi;
 use App\Models\CC\AgunanTanah;
 use App\Models\Bisnis\TransSo;
 use Illuminate\Http\Request;
@@ -35,8 +38,10 @@ use DB;
 
 class MasterAO_Controller extends BaseController
 {
-    public function index(){
-        $query = TransSo::get();
+    public function index(Request $req){
+        $user_id = $req->auth->user_id;
+
+        $query = TransSo::where('user_id', $user_id)->get();
 
         if ($query == '[]') {
             return response()->json([
@@ -52,7 +57,8 @@ class MasterAO_Controller extends BaseController
                 'id'             => $val->id,
                 'nomor_so'       => $val->nomor_so,
                 'kode_kantor'    => $val->kode_kantor,
-                'asal_data'      => $val->asaldata->nama,
+                // 'asal_data'      => $val->asaldata->nama,
+                'asal_data'      => $val->asaldata['nama'],
                 'nama_marketing' => $val->nama_marketing,
                 'nama_so'        => $val->nama_so,
                 'nama_debitur'   => $val->debt['nama_lengkap'],
@@ -76,8 +82,9 @@ class MasterAO_Controller extends BaseController
         }
     }
 
-    public function show($id){
-        $query = TransSo::where('id', $id)->get();
+    public function show($id, Request $req){
+        $user_id = $req->auth->user_id;
+        $query = TransSo::where('id', $id)->where('user_id', $user_id)->get();
 
         if ($query == '[]') {
             return response()->json([
@@ -185,7 +192,7 @@ class MasterAO_Controller extends BaseController
         }
     }
 
-    public function update($id, Request $req, FasPinRequest $reqFasPin, DebtRequest $reqDebt, DebtPasanganRequest $reqPas, DebtPenjaminRequest $reqPen, UsahaRequest $reqUs, UsahaPasReq $reqUsPas, UsahaPenReq $reqUsPen, AguTaReq $reqAta) {
+    public function update($id, Request $req, FasPinRequest $reqFasPin, DebtRequest $reqDebt, DebtPasanganRequest $reqPas, DebtPenjaminRequest $reqPen, UsahaRequest $reqUs, UsahaPasReq $reqUsPas, UsahaPenReq $reqUsPen, AguTaReq $reqAta, AguKenReq $reqAk, PemAgTaReq $reqPAT, PemAgKeReq $reqPAK) {
 
         $Trans = TransSo::where('id', $id)->first();
 
@@ -311,39 +318,95 @@ class MasterAO_Controller extends BaseController
             for ($i = 0; $i < count($reqAta->tipe_lokasi_agunan); $i++){
                 $DaAguTa[] = [
                     'id_calon_debitur'        => $Trans->id_calon_debt,
-                    'tipe_lokasi'             => empty($reqAta->tipe_lokasi_agunan[$i]) ? $aTa->tipe_lokasi[$i] : $reqAta->tipe_lokasi_agunan[$i],
-                    'alamat'                  => empty($reqAta->alamat_agunan[$i]) ? $aTa->alamat_agunan[$i] : $reqAta->alamat_agunan[$i],
+                    'tipe_lokasi'             => empty($reqAta->tipe_lokasi_agunan[$i]) ? null : $reqAta->tipe_lokasi_agunan[$i],
+                    'alamat'                  => empty($reqAta->alamat_agunan[$i]) ? null : $reqAta->alamat_agunan[$i],
                     'id_povinsi'              => empty($reqAta->id_prov_agunan[$i]) ? null : $reqAta->id_prov_agunan[$i],
-                    // 'id_kabupaten'            => empty($reqAta->id_kab_agunan[$i]) ? $aTa->id_kab_agunan[$i] : $reqAta->id_kab_agunan[$i],
-                    // 'id_kecamatan'            => empty($reqAta->id_kec_agunan[$i]) ? $aTa->id_kec_agunan[$i] : $reqAta->id_kec_agunan[$i],
-                    // 'id_kelurahan'            => empty($reqAta->id_kel_agunan[$i]) ? $aTa->id_kel_agunan[$i] : $reqAta->id_kel_agunan[$i],
-                    // 'rt'                      => empty($reqAta->rt_agunan[$i]) ? $aTa->rt_agunan[$i] : $reqAta->rt_agunan[$i],
-                    // 'rw'                      => empty($reqAta->rw_agunan[$i]) ? $aTa->rw_agunan[$i] : $reqAta->rw_agunan[$i],
-                    // 'luas_tanah'              => empty($reqAta->luas_tanah[$i]) ? $aTa->luas_tanah[$i] : $reqAta->luas_tanah[$i],
-                    // 'luas_bangunan'           => empty($reqAta->luas_bangunan[$i]) ? $aTa->luas_bangunan[$i] : $reqAta->luas_bangunan[$i],
-                    // 'nama_pemilik_sertifikat' => empty($reqAta->nama_pemilik_sertifikat[$i]) ? $aTa->nama_pemilik_sertifikat[$i] : $reqAta->nama_pemilik_sertifikat[$i],
-                    // 'jenis_sertifikat'        => empty($reqAta->jenis_sertifikat[$i]) ? $aTa->jenis_sertifikat[$i] : $reqAta->jenis_sertifikat[$i],
-                    // 'no_sertifikat'           => empty($reqAta->no_sertifikat[$i]) ? $aTa->no_sertifikat[$i] : $reqAta->no_sertifikat[$i],
-                    // 'tgl_ukur_sertifikat'     => empty($reqAta->tgl_ukur_sertifikat[$i]) ? $aTa->tgl_ukur_sertifikat[$i] : $reqAta->tgl_ukur_sertifikat[$i],
-                    // 'tgl_berlaku_shgb'        => empty($reqAta->tgl_berlaku_shgb[$i]) ? $aTa->tgl_berlaku_shgb[$i] : $reqAta->tgl_berlaku_shgb[$i],
-                    // 'no_imb'                  => empty($reqAta->no_imb[$i]) ? $aTa->no_imb[$i] : $reqAta->no_imb[$i],
-                    // 'njop'                    => empty($reqAta->njop[$i]) ? $aTa->njop[$i] : $reqAta->njop[$i],
-                    // 'nop'                     => empty($reqAta->nop[$i]) ? $aTa->nop[$i] : $reqAta->nop[$i],
-                    // 'lam_imb'                 => empty($reqAta->file('lam_imb')[$i]) ? $aTa->lamp_imb[$i] : Helper::img64enc($reqAta->file('lam_imb')[$i]),
-                    // 'lamp_agunan_depan'       => empty($reqAta->file('lamp_agunan_depan')[$i]) ? $aTa->lamp_agunan_depan[$i] : Helper::img64enc($reqAta->file('lamp_agunan_depan')[$i]),
-                    // 'lamp_agunan_kanan'       => empty($reqAta->file('lamp_agunan_kanan')[$i]) ? $aTa->lamp_agunan_kanan[$i] : Helper::img64enc($reqAta->file('lamp_agunan_kanan')[$i]),
-                    // 'lamp_agunan_kiri'        => empty($reqAta->file('lamp_agunan_kiri')[$i]) ? $aTa->lamp_agunan_kiri[$i] : Helper::img64enc($reqAta->file('lamp_agunan_kiri')[$i]),
-                    // 'lamp_agunan_belakang'    => empty($reqAta->file('lamp_agunan_belakang')[$i]) ? $aTa->lamp_agunan_belakang[$i] : Helper::img64enc($reqAta->file('lamp_agunan_belakang')[$i]),
-                    // 'lamp_agunan_dalam'       => empty($reqAta->file('lamp_agunan_dalam')[$i]) ? $aTa->lamp_agunan_dalam[$i] : Helper::img64enc($reqAta->file('lamp_agunan_dalam')[$i]),
-                    // 'lamp_sertifikat'         => empty($reqAta->file('lamp_sertifikat')[$i]) ? $aTa->lamp_sertifikat[$i] : Helper::img64enc($reqAta->file('lamp_sertifikat')[$i]),
-                    // 'lamp_imb'                => empty($reqAta->file('lamp_imb')[$i]) ? $aTa->lamp_imb[$i] : Helper::img64enc($reqAta->file('lamp_imb')[$i]),
-                    // 'lamp_pbb'                => empty($reqAta->file('lamp_pbb')[$i]) ? $aTa->lamp_pbb[$i] : Helper::img64enc($reqAta->file('lamp_pbb')[$i])
+                    'id_kabupaten'            => empty($reqAta->id_kab_agunan[$i]) ? null : $reqAta->id_kab_agunan[$i],
+                    'id_kecamatan'            => empty($reqAta->id_kec_agunan[$i]) ? null : $reqAta->id_kec_agunan[$i],
+                    'id_kelurahan'            => empty($reqAta->id_kel_agunan[$i]) ? null : $reqAta->id_kel_agunan[$i],
+                    'rt'                      => empty($reqAta->rt_agunan[$i]) ? null : $reqAta->rt_agunan[$i],
+                    'rw'                      => empty($reqAta->rw_agunan[$i]) ? null : $reqAta->rw_agunan[$i],
+                    'luas_tanah'              => empty($reqAta->luas_tanah[$i]) ? null : $reqAta->luas_tanah[$i],
+                    'luas_bangunan'           => empty($reqAta->luas_bangunan[$i]) ? null : $reqAta->luas_bangunan[$i],
+                    'nama_pemilik_sertifikat' => empty($reqAta->nama_pemilik_sertifikat[$i]) ? null : $reqAta->nama_pemilik_sertifikat[$i],
+                    'jenis_sertifikat'        => empty($reqAta->jenis_sertifikat[$i]) ? null : $reqAta->jenis_sertifikat[$i],
+                    'no_sertifikat'           => empty($reqAta->no_sertifikat[$i]) ? null : $reqAta->no_sertifikat[$i],
+                    'tgl_ukur_sertifikat'     => empty($reqAta->tgl_ukur_sertifikat[$i]) ? null : $reqAta->tgl_ukur_sertifikat[$i],
+                    'tgl_berlaku_shgb'        => empty($reqAta->tgl_berlaku_shgb[$i]) ? null : $reqAta->tgl_berlaku_shgb[$i],
+                    'no_imb'                  => empty($reqAta->no_imb[$i]) ? null : $reqAta->no_imb[$i],
+                    'njop'                    => empty($reqAta->njop[$i]) ? null : $reqAta->njop[$i],
+                    'nop'                     => empty($reqAta->nop[$i]) ? null : $reqAta->nop[$i],
+                    'lam_imb'                 => empty($reqAta->file('lam_imb')[$i]) ? null : Helper::img64enc($reqAta->file('lam_imb')[$i]),
+                    'lamp_agunan_depan'       => empty($reqAta->file('lamp_agunan_depan')[$i]) ? null : Helper::img64enc($reqAta->file('lamp_agunan_depan')[$i]),
+                    'lamp_agunan_kanan'       => empty($reqAta->file('lamp_agunan_kanan')[$i]) ? null : Helper::img64enc($reqAta->file('lamp_agunan_kanan')[$i]),
+                    'lamp_agunan_kiri'        => empty($reqAta->file('lamp_agunan_kiri')[$i]) ? null : Helper::img64enc($reqAta->file('lamp_agunan_kiri')[$i]),
+                    'lamp_agunan_belakang'    => empty($reqAta->file('lamp_agunan_belakang')[$i]) ? null : Helper::img64enc($reqAta->file('lamp_agunan_belakang')[$i]),
+                    'lamp_agunan_dalam'       => empty($reqAta->file('lamp_agunan_dalam')[$i]) ? null : Helper::img64enc($reqAta->file('lamp_agunan_dalam')[$i]),
+                    'lamp_sertifikat'         => empty($reqAta->file('lamp_sertifikat')[$i]) ? null : Helper::img64enc($reqAta->file('lamp_sertifikat')[$i]),
+                    'lamp_imb'                => empty($reqAta->file('lamp_imb')[$i]) ? null : Helper::img64enc($reqAta->file('lamp_imb')[$i]),
+                    'lamp_pbb'                => empty($reqAta->file('lamp_pbb')[$i]) ? null : Helper::img64enc($reqAta->file('lamp_pbb')[$i])
                 ];
             }
 
-            dd($DaAguTa);
+            for ($i = 0; $i < count($reqAk->no_bpkb_ken); $i++) {
+                $daAguKe[] = [
+                    'id_calon_debitur'      => $Trans->id_calon_debt,
+                    'no_bpkb'               => empty($reqAk->no_bpkb_ken[$i]) ? null : $reqAk->no_bpkb_ken[$i],
+                    'nama_pemilik'          => empty($reqAk->nama_pemilik_ken[$i]) ? null : $reqAk->nama_pemilik_ken[$i],
+                    'alamat_pemilik'        => empty($reqAk->alamat_pemilik_ken[$i]) ? null : $reqAk->nama_pemilik_ken[$i],
+                    'merk'                  => empty($reqAk->merk_ken[$i]) ? null : $reqAk->merk_ken[$i],
+                    'jenis'                 => empty($reqAk->jenis_ken[$i]) ? null : $reqAk->jenis_ken[$i],
+                    'no_rangka'             => empty($reqAk->no_rangka_ken[$i]) ? null : $reqAk->no_rangka_ken[$i],
+                    'no_mesin'              => empty($reqAk->no_mesin_ken[$i]) ? null : $reqAk->no_mesin_ken[$i],
+                    'warna'                 => empty($reqAk->warna_ken[$i]) ? null : $reqAk->warna_ken[$i],
+                    'tahun'                 => empty($reqAk->tahun_ken[$i]) ? null : $reqAk->tahun_ken[$i],
+                    'no_polisi'             => empty($reqAk->no_polisi_ken[$i]) ? null : $reqAk->no_polisi_ken[$i],
+                    'no_stnk'               => empty($reqAk->no_stnk_ken[$i]) ? null : $reqAk->no_stnk_ken[$i],
+                    'tgl_kadaluarsa_pajak'  => empty($reqAk->tgl_exp_pajak_ken[$i]) ? null : $reqAk->tgl_exp_pajak_ken[$i],
+                    'tgl_kadaluarsa_stnk'   => empty($reqAk->tgl_exp_stnk_ken[$i]) ? null : $reqAk->tgl_exp_stnk_ken[$i],
+                    'no_faktur'             => empty($reqAk->no_faktur_ken[$i]) ? null : $reqAk->no_faktur_ken[$i],
+                    'lamp_agunan_depan'     => empty($reqAk->lamp_foto_depan_ken[$i]) ? null : Helper::img64enc($reqAk->lamp_foto_depan_ken[$i]),
+                    'lamp_agunan_kanan'     => empty($reqAk->lamp_foto_kanan_ken[$i]) ? null : Helper::img64enc($reqAk->lamp_foto_kanan_ken[$i]),
+                    'lamp_agunan_kiri'      => empty($reqAk->lamp_foto_kiri_ken[$i]) ? null : Helper::img64enc($reqAk->lamp_foto_kiri_ken[$i]),
+                    'lamp_agunan_belakang'  => empty($reqAk->lamp_foto_belakang_ken[$i]) ? null : Helper::img64enc($reqAk->lamp_foto_belakang_ken[$i]),
+                    'lamp_agunan_dalam'     => empty($reqAk->lamp_foto_dalam_ken[$i]) ? null : Helper::img64enc($reqAk->lamp_foto_dalam_ken[$i]),
+                    'validasi'              => empty($reqAk->val_ken[$i]) ? null : $reqAk->val_ken[$i]
+                ];
+            }
 
+            for ($i = 0; $i < count($reqPAT->nama_penghuni_agunan); $i++){
+                $PemAguTa[] = [
+                    'id_calon_debitur'      => $Trans->id_calon_debt,
+                    'id_agunan_tanah'       => 1,
+                    'nama_penghuni'         => empty($reqPAT->nama_penghuni_agunan[$i]) ? null : $reqPAT->nama_penghuni_agunan[$i],
+                    'status_penghuni'       => empty($reqPAT->status_penghuni_agunan[$i]) ? null : $reqPAT->status_penghuni_agunan[$i],
+                    'bentuk_bangunan'       => empty($reqPAT->bentuk_bangunan_agunan[$i]) ? null : $reqPAT->bentuk_bangunan_agunan[$i],
+                    'kondisi_bangunan'      => empty($reqPAT->kondisi_bangunan_agunan[$i]) ? null : $reqPAT->kondisi_bangunan_agunan[$i],
+                    'fasilitas'             => empty($reqPAT->fasilitas_agunan[$i]) ? null : $reqPAT->fasilitas_agunan[$i],
+                    'listrik'               => empty($reqPAT->listrik_agunan[$i]) ? null : $reqPAT->listrik_agunan[$i],
+                    'nilai_taksasi_agunan'  => empty($reqPAT->nilai_taksasi_agunan[$i]) ? null : $reqPAT->nilai_taksasi_agunan[$i],
+                    'nilai_taksasi_bangunan'=> empty($reqPAT->nilai_taksasi_bangunan[$i]) ? null : $reqPAT->nilai_taksasi_bangunan[$i],
+                    'tgl_taksasi'           => empty($reqPAT->tgl_taksasi_agunan[$i]) ? null : $reqPAT->tgl_taksasi_agunan[$i],
+                    'nilai_likuidasi'       => empty($reqPAT->nilai_likuidasi_agunan[$i]) ? null : $reqPAT->nilai_likuidasi_agunan[$i]
+                ];
+            }
 
+            for ($i = 0; $i < count($reqPAK->nama_pengguna_ken); $i++){
+                $PemAguKe[] = [
+                    'id_calon_debitur'      => $Trans->id_calon_debt,
+                    'id_agunan_kendaraan'   => 2,
+                    'nama_pengguna'         => empty($reqPAK->nama_pengguna_ken[$i]) ? null : $reqPAK->nama_pengguna_ken[$i],
+                    'status_pengguna'       => empty($reqPAK->status_pengguna_ken[$i]) ? null : $reqPAK->status_pengguna_ken[$i],
+                    'jml_roda_kendaraan'    => empty($reqPAK->jml_roda_ken[$i]) ? null : $reqPAK->jml_roda_ken[$i],
+                    'kondisi_kendaraan'     => empty($reqPAK->kondisi_ken[$i]) ? null : $reqPAK->kondisi_ken[$i],
+                    'keberadaan_kendaraan'  => empty($reqPAK->keberadaan_ken[$i]) ? null : $reqPAK->keberadaan_ken[$i],
+                    'body'                  => empty($reqPAK->body_ken[$i]) ? null : $reqPAK->body_ken[$i],
+                    'interior'              => empty($reqPAK->interior_ken[$i]) ? null : $reqPAK->interior_ken[$i],
+                    'km'                    => empty($reqPAK->km_ken[$i]) ? null : $reqPAK->km_ken[$i],
+                    'modifikasi'            => empty($reqPAK->modifikasi_ken[$i]) ? null : $reqPAK->modifikasi_ken[$i],
+                    'aksesoris'             => empty($reqPAK->aksesoris_ken[$i]) ? null : $reqPAK->aksesoris_ken[$i]
+                ];
+            }
 
             // Debitur::where('id', $id_calon_debt)->update($dataDebitur);
             // Usaha::where('id', $id_usaha)->update($dataUsaha);

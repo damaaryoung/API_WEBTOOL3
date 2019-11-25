@@ -43,6 +43,7 @@ class AuthController extends Controller
     public function login(User $user, Request $request) {
         $username = $request->input('user');
         $password = $request->input('password');
+        $fcm_token= $request->input('fcm_token');
 
         $user = User::where('user', $username)->first();
 
@@ -63,28 +64,28 @@ class AuthController extends Controller
         // Check request Uservame
         if (!$request->input('user') || empty($request->input('user'))) {
 			return response()->json([
-                "code"    => 400,
+                "code"    => 422,
                 "status"  => "bad request",
                 "message" => "Nama user harus diinput!!"
-            ], 400);
+            ], 422);
 		}
 
 		// Check request Password
 		if (!$request->input('password') || empty($request->input('password'))) {
 			return response()->json([
-                "code"    => 400,
+                "code"    => 422,
                 "status"  => "bad request",
                 "message" => "Password harus diinput!!"
-            ], 404);
+            ], 422);
 		}
 
 		// Check request Password valid or no
         if (md5($password) != $user->password) {
             return response()->json([
-                "code"    => 400,
+                "code"    => 422,
                 "status"  => "bad request",
                 "message" => "Password salah!!"
-            ], 400);
+            ], 422);
         }
 
         // Check Expired Account
@@ -96,13 +97,47 @@ class AuthController extends Controller
             ], 403);
         }
 
+        if($user->fcm_token && $user->fcm_token != $fcm_token){
+            return response()->json([
+                "code"    => 422,
+                "status"  => "bad request",
+                "message" => "Anda telah login di device lain"
+            ], 422);
+        }
+
+        // if ($user->email == $reqEmail && $user->email_verified == '1'){
+
+        //     DB::update('UPDATE kmi_user SET `imei`=?, fcm_token=? WHERE `email`=? ',[$reqImei, $reqFcm, $user->email]);
+
+        //     return response()->json([
+        //         'message'=>'Success Login',
+        //         'token'=> $this->jwt($user)
+        //     ], 200);
+        // }else{
+        //     return response()->json([
+        //         "code"    => "400",
+        //         "status"  => "bad request",
+        //         "message" => "please verify email"
+        //     ], 400);
+        // }
         // Login & Create Token
         if ($user->user == $username && $user->password == md5($password)){
-            return response()->json([
-                "code"   => 200,
-                "status" => "success",
-                'token'  => $this->jwt($user)
-            ], 200);
+
+            User::where('user', $username)->update(['fcm_token' => $fcm_token]);
+
+            try {
+                return response()->json([
+                    "code"   => 200,
+                    "status" => "success",
+                    "token"  => $this->jwt($user)
+                ], 200);
+            } catch (Exception $e) {
+                return response()->json([
+                    "code"    => 501,
+                    "status"  => "error",
+                    "message" => $e
+                ], 501);
+            }
         }
     }
 }

@@ -9,31 +9,31 @@ class Controller extends BaseController
     // public static function push_notif($fcm_token, $title, $message){
     public static function push_notif($fcm_token){
         // define('API_ACCESS_KEY','AAAAjrvLI_4:APA91bGI_urQhVNWgEMEReiqUG8Jz3o8pXX55T69mDGv9KW-BwphHdsk4E74UUkx4kb3XqUfA_QMu_QjWAJw3PLg2eovQtqD2hCfJhHFMdxfptKlvP0ZTW6hC9XgB06KBmuvi45LU9nA'); //Server Key on SERVER
-        define('API_ACCESS_KEY','AIzaSyAWydABgOUabwQcOdXadSOigEsL5v1izl0'); //Server Key on SERVER
+        define('API_ACCESS_KEY','AAAAt-7q_AI:APA91bH6xE4YaKuoiKoHqBIJY3O3vN9nvwZByWKi8UIoPrleakjmMK2wYg8AkISiuj4zEyiuHn5PjCxV2dV3ZYQfLDhXA7QZVoBCp5v_vbK3SbbpgseuIgb8qhBVzc48dEa8PXjQ_423'); //Server Key on SERVER
 
         $fcmUrl = 'https://fcm.googleapis.com/fcm/send';
         // $fcm_token = array( $_GET['id'] );
 
-        $notification = [
-            'title'    => 'title',
-            'body'     => 'message',
-            'icon'     => 'stock_ticker_update',
-            'color'    => '#23e60d',
-            'sound'    => 'default',
-            'priority' => 'high'
-        ];
+        // $notification = [
+        //     'title'    => 'title',
+        //     'body'     => 'message',
+        //     'icon'     => 'stock_ticker_update',
+        //     'color'    => '#23e60d',
+        //     'sound'    => 'default',
+        //     'priority' => 'high'
+        // ];
 
-        // $notification = array(
-        //     'message'   => 'here is a message. message',
-        //     'title'     => 'This is a title. title',
-        //     'subtitle'  => 'This is a subtitle. subtitle',
-        //     'tickerText'=> 'Ticker text here...Ticker text here...Ticker text here',
-        //     'vibrate'   => 1,
-        //     'sound'     => 1,
-        //     'largeIcon' => 'large_icon',
-        //     'smallIcon' => 'small_icon',
-        //     'priority'  => 'high'
-        // );
+        $notification = array(
+            'message'   => 'here is a message. message',
+            'title'     => 'This is a title. title',
+            'subtitle'  => 'This is a subtitle. subtitle',
+            'tickerText'=> 'Ticker text here...Ticker text here...Ticker text here',
+            'vibrate'   => 1,
+            'sound'     => 1,
+            'largeIcon' => 'large_icon',
+            'smallIcon' => 'small_icon',
+            'priority'  => 'high'
+        );
 
         $fcmNotification = [
             'to'            => $fcm_token, //single token
