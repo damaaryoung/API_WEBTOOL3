@@ -6,6 +6,7 @@ use Laravel\Lumen\Routing\Controller as BaseController;
 use App\Http\Requests\Debt\DebtPenjaminRequest;
 use App\Http\Requests\Debt\DebtPasanganRequest;
 use App\Http\Controllers\Controller as Helper;
+use App\Http\Requests\Debt\KapBulananReq;
 use App\Http\Requests\Debt\FasPinRequest;
 use App\Http\Requests\Debt\UsahaRequest;
 use App\Http\Requests\Debt\UsahaPasReq;
@@ -192,7 +193,7 @@ class MasterAO_Controller extends BaseController
         }
     }
 
-    public function update($id, Request $req, FasPinRequest $reqFasPin, DebtRequest $reqDebt, DebtPasanganRequest $reqPas, DebtPenjaminRequest $reqPen, UsahaRequest $reqUs, UsahaPasReq $reqUsPas, UsahaPenReq $reqUsPen, AguTaReq $reqAta, AguKenReq $reqAk, PemAgTaReq $reqPAT, PemAgKeReq $reqPAK) {
+    public function update($id, Request $req, FasPinRequest $reqFasPin, DebtRequest $reqDebt, DebtPasanganRequest $reqPas, DebtPenjaminRequest $reqPen, UsahaRequest $reqUs, UsahaPasReq $reqUsPas, UsahaPenReq $reqUsPen, AguTaReq $reqAta, AguKenReq $reqAk, PemAgTaReq $reqPAT, PemAgKeReq $reqPAK, KapBulananReq $reqkapBul) {
 
         $Trans = TransSo::where('id', $id)->first();
 
@@ -407,6 +408,21 @@ class MasterAO_Controller extends BaseController
                     'aksesoris'             => empty($reqPAK->aksesoris_ken[$i]) ? null : $reqPAK->aksesoris_ken[$i]
                 ];
             }
+
+            $kapBul = array(
+                'pemasukan_cadebt'      => empty($reqkapBul->pemasukan_cadebt) ? null : $reqkapBul->pemasukan_cadebt,
+                'pemasukan_pasangan'    => empty($reqkapBul->pemasukan_pasangan) ? null : $reqkapBul->pemasukan_pasangan,
+                'pemasukan_penjamin'    => empty($reqkapBul->pemasukan_penjamin) ? null : $reqkapBul->pemasukan_penjamin,
+                'biaya_rumah_tangga'    => empty($reqkapBul->biaya_rumah_tangga) ? null : $reqkapBul->biaya_rumah_tangga,
+                'biaya_transport'       => empty($reqkapBul->biaya_transport) ? null : $reqkapBul->biaya_transport,
+                'biaya_pendidikan'      => empty($reqkapBul->biaya_pendidikan) ? null : $reqkapBul->biaya_pendidikan,
+                'biaya_telp-listr-air'  => empty($reqkapBul->biaya_telp_listr_air) ? null : $reqkapBul->biaya_telp_listr_air,
+                'biaya_lain'            => empty($reqkapBul->biaya_lain) ? null : $reqkapBul->biaya_lain
+            );
+
+            // $esUsaha = array(
+
+            // );
 
             // Debitur::where('id', $id_calon_debt)->update($dataDebitur);
             // Usaha::where('id', $id_usaha)->update($dataUsaha);
