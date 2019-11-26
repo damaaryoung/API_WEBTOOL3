@@ -167,7 +167,7 @@ class CabangController extends BaseController
         }
 
         $data = array(
-            'id_master_area' => empty($req->input('id_master_area')) ? $check->id_master_area : $req->input('id_master_area'),
+            'id_mk_area'     => empty($req->input('id_master_area')) ? $check->id_master_area : $req->input('id_master_area'),
             'nama'           => empty($req->input('nama')) ? $check->nama : $req->input('nama'),
             'id_provinsi'    => empty($req->input('id_provinsi')) ? $check->id_provinsi : $req->input('id_provinsi'),
             'id_kabupaten'   => empty($req->input('id_kabupaten')) ? $check->id_kabupaten : $req->input('id_kabupaten'),

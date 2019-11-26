@@ -28,10 +28,10 @@ class PemAgKeReq extends FormRequest
 
     public function messages(){
         return [
-            'status_pengguna_ken.*.in'  => 'in:PEMILIK,PENYEWA',
-            'jml_roda_ken.*.numeric'    => 'numeric',
-            'kondisi_ken.*.in'          => 'in:LAYAK,KURANG,TIDAK',
-            'km_ken.*.numeric'          => 'numeric'
+            'status_pengguna_ken.*.in'  => ':attribute harus salah satu dari jenis berikut :values',
+            'jml_roda_ken.*.numeric'    => ':attribute harus berupa angka',
+            'kondisi_ken.*.in'          => ':attribute harus salah satu dari jenis berikut :values',
+            'km_ken.*.numeric'          => ':attribute harus berupa angka'
         ];
     }
 
