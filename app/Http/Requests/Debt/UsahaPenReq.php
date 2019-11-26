@@ -19,33 +19,27 @@ class UsahaPenReq extends FormRequest
     public function rules()
     {
         return [
-            'id_calon_debitur'  => 'numeric',
-            'id_penjamin'       => 'numeric',
-            'id_provinsi'       => 'numeric',
-            'id_kabupaten'      => 'numeric',
-            'id_kecamatan'      => 'numeric',
-            'id_kelurahan'      => 'numeric',
-            'rt'                => 'numeric',
-            'rw'                => 'numeric',
-            'tgl_mulai_usaha'   => 'date_format:d-m-Y',
-            'telp_tempat_usaha' => 'numeric',
-            'flg_aktif'         => 'numeric'
+            'id_prov_usaha_pen.*'   => 'numeric',
+            'id_kab_usaha_pen.*'    => 'numeric',
+            'id_kec_usaha_pen.*'    => 'numeric',
+            'id_kel_usaha_pen.*'    => 'numeric',
+            'rt_usaha_pen.*'        => 'numeric',
+            'rw_usaha_pen.*'        => 'numeric',
+            'tgl_mulai_usaha_pen.*' => 'date_format:d-m-Y',
+            'no_telp_usaha_pen.*'   => 'numeric'
         ];
     }
 
     public function messages(){
         return [
-            'id_calon_debitur.numeric'    => ':attribute harus berupa angka',
-            'id_penjamin.numeric'         => ':attribute harus berupa angka',
-            'id_provinsi.numeric'         => ':attribute harus berupa angka',
-            'id_kabupaten.numeric'        => ':attribute harus berupa angka',
-            'id_kecamatan.numeric'        => ':attribute harus berupa angka',
-            'id_kelurahan.numeric'        => ':attribute harus berupa angka',
-            'rt.numeric'                  => ':attribute harus berupa angka',
-            'rw.numeric'                  => ':attribute harus berupa angka',
-            'tgl_mulai_usaha.date_format' => ':attribute harus berupa angka dengan format :format',
-            'telp_tempat_usaha.numeric'   => ':attribute harus berupa angka',
-            'flg_aktif.numeric'           => ':attribute harus berupa angka'
+            'id_prov_usaha_pen.*.numeric'       => ':attribute harus berupa angka',
+            'id_kab_usaha_pen.*.numeric'        => ':attribute harus berupa angka',
+            'id_kec_usaha_pen.*.numeric'        => ':attribute harus berupa angka',
+            'id_kel_usaha_pen.*.numeric'        => ':attribute harus berupa angka',
+            'rt_usaha_pen.*.numeric'            => ':attribute harus berupa angka',
+            'rw_usaha_pen.*.numeric'            => ':attribute harus berupa angka',
+            'tgl_mulai_usaha_pen.*.date_format' => ':attribute harus berupa angka dengan format :format',
+            'no_telp_usaha_pen.*.numeric'       => ':attribute harus berupa angka'
         ];
     }
 

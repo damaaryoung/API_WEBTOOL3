@@ -10,8 +10,11 @@ use DB;
 
 class ImgController extends BaseController
 {
-    public function push(){
-        $fcm_token = 'dgiLDB5iZvk:APA91bHWxx8RAYNlaRwiu4nEeVJA4BZ7iBExFh-z682tH2_Z07N3L-NEppsSiRD5-m1vTFkNXi8JkW1fxW2Nap9OpiTh9fdecSi7jQNKyL8MxAxyEbcgcg1MiETGnb_BN8zstdR-anAS';
+    public function push($fcm_token, Request $req){
+        // $fcm_token = 'eVl--mRK8IY:APA91bFcPr9jKKpPN-XYRHGQtbRRP14MI4CYrW0FDUhp-AE_Pb2uytKVKm-mkYm5GdNlGqNuvoVhRPuTGNPU1P0BdIEzIFsuv3qE6dJUWJBzhOF7fNwiXm8W_kPfLAPzFEMj4j6Oq-4_';
+
+        $fcm_token = $req->input('fcm_token');
+
         $push_an = Helper::push_notif($fcm_token);
 
         try {
