@@ -384,19 +384,17 @@ if (! function_exists('retry')) {
     function retry($times, callable $callback, $sleep = 0, $when = null)
     {
         $attempts = 0;
-        $times--;
 
         beginning:
         $attempts++;
+        $times--;
 
         try {
             return $callback($attempts);
         } catch (Exception $e) {
-            if (! $times || ($when && ! $when($e))) {
+            if ($times < 1 || ($when && ! $when($e))) {
                 throw $e;
             }
-
-            $times--;
 
             if ($sleep) {
                 usleep($sleep * 1000);
@@ -531,7 +529,7 @@ if (! function_exists('windows_os')) {
      */
     function windows_os()
     {
-        return strtolower(substr(PHP_OS, 0, 3)) === 'win';
+        return PHP_OS_FAMILY === 'Windows';
     }
 }
 

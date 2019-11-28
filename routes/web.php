@@ -20,6 +20,8 @@ $router->group(['prefix' => '/wilayah'], function () use ($router) {
 
     $router->get('/provinsi', 'Wilayah\ProvinsiController@index');
     $router->post('/provinsi', 'Wilayah\ProvinsiController@store');
+    $router->post('/provinsi', 'Wilayah\ProvinsiController@store');
+    $router->get('/provinsi/search/{search}', 'Wilayah\ProvinsiController@search');
     $router->get('/provinsi/{id}', 'Wilayah\ProvinsiController@show');
     $router->put('/provinsi/{id}', 'Wilayah\ProvinsiController@update');
     $router->delete('/provinsi/{id}', 'Wilayah\ProvinsiController@delete');

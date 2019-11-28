@@ -89,6 +89,8 @@ $app->register(Urameshibr\Providers\FormRequestServiceProvider::class); // Form-
 // $app->register(App\Helpers\LogActivity::class);
 // class_alias(App\Helpers\LogActivity::class, 'LogActivity'); // Aliases
 
+$app->register(Irazasyed\Larasupport\Providers\ArtisanServiceProvider::class); // Path
+
 /*
 |--------------------------------------------------------------------------
 | Load The Application Routes

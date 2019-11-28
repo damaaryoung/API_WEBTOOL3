@@ -169,6 +169,8 @@ class MasterAO_Controller extends BaseController
                     'nama_ibu_kandung' => $val->pas['nama_ibu_kandung'],
                     'jenis_kelamin'    => $val->pas['jenis_kelamin'],
                     'no_ktp'           => $val->pas['no_ktp'],
+                    'no_ktp_kk'        => $val->pas['no_ktp_kk'],
+                    'no_npwp'          => $val->pas['no_npwp'],
                     'tempat_lahir'     => $val->pas['tempat_lahir'],
                     'tgl_lahir'        => $val->pas['tgl_lahir'],
                     'alamat_ktp'       => $val->pas['alamat_ktp'],
