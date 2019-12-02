@@ -96,7 +96,7 @@ class HMController extends BaseController
                 'id'             => $val->id,
                 'nomor_so'       => $val->nomor_so,
                 'kode_kantor'    => $val->kode_kantor,
-                'asal_data'      => $val->asaldata->nama,
+                'asal_data'      => $val->asaldata['nama'],
                 'nama_marketing' => $val->nama_marketing,
                 'nama_so'        => $val->nama_so,
                 'plafon'         => (int) $val->faspin->plafon,
