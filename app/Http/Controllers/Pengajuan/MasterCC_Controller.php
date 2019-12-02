@@ -114,7 +114,7 @@ class MasterCC_Controller extends BaseController
 
         if($file = $reqDebt->file('lamp_sertifikat')){
             $path = $lamp_dir.'/debitur';
-            $name = 'kk.'.$file->getClientOriginalExtension();
+            $name = 'sertifikat.'.$file->getClientOriginalExtension();
             $file->move($path,$name);
 
             $sertifikatDebt = $path.'/'.$name;
@@ -124,7 +124,7 @@ class MasterCC_Controller extends BaseController
 
         if($file = $reqDebt->file('lamp_pbb')){
             $path = $lamp_dir.'/debitur';
-            $name = 'kk.'.$file->getClientOriginalExtension();
+            $name = 'pbb.'.$file->getClientOriginalExtension();
             $file->move($path,$name);
 
             $pbbDebt = $path.'/'.$name;
@@ -134,7 +134,7 @@ class MasterCC_Controller extends BaseController
 
         if($file = $reqDebt->file('lamp_imb')){
             $path = $lamp_dir.'/debitur';
-            $name = 'kk.'.$file->getClientOriginalExtension();
+            $name = 'imb.'.$file->getClientOriginalExtension();
             $file->move($path,$name);
 
             $imbDebt = $path.'/'.$name;
