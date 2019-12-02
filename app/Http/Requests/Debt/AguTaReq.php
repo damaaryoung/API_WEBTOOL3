@@ -19,6 +19,7 @@ class AguTaReq extends FormRequest
     public function rules()
     {
         return [
+            'tipe_lokasi.*'         => 'in:PERUM,BIASA',
             'rt_agunan.*'           => 'numeric',
             'rw_agunan.*'           => 'numeric',
             'luas_tanah.*'          => 'numeric',
@@ -27,21 +28,22 @@ class AguTaReq extends FormRequest
             'tgl_ukur_sertifikat.*' => 'date_format:d-m-Y',
             'tgl_berlaku_shgb.*'    => 'date_format:d-m-Y',
             'lam_imb.*'             => 'mimes:jpg,jpeg,png,pdf',
-            'njop.*'                => 'numeric',
-            'nop.*'                 => 'numeric',
-            'lamp_agunan_depan.*'   => 'mimes:jpg,jpeg,png,pdf',
-            'lamp_agunan_kanan.*'   => 'mimes:jpg,jpeg,png,pdf',
-            'lamp_agunan_kiri.*'    => 'mimes:jpg,jpeg,png,pdf',
-            'lamp_agunan_belakang.*'=> 'mimes:jpg,jpeg,png,pdf',
-            'lamp_agunan_dalam.*'   => 'mimes:jpg,jpeg,png,pdf',
-            'lamp_sertifikat.*'     => 'mimes:jpg,jpeg,png,pdf',
-            'lamp_imb.*'            => 'mimes:jpg,jpeg,png,pdf',
-            'lamp_pbb.*'            => 'mimes:jpg,jpeg,png,pdf'
+            'njop.*'                => 'integer',
+            'nop.*'                 => 'integer',
+            'lamp_agunan_depan.*'   => 'mimes:jpg,jpeg,png,pdf|max:2048',
+            'lamp_agunan_kanan.*'   => 'mimes:jpg,jpeg,png,pdf|max:2048',
+            'lamp_agunan_kiri.*'    => 'mimes:jpg,jpeg,png,pdf|max:2048',
+            'lamp_agunan_belakang.*'=> 'mimes:jpg,jpeg,png,pdf|max:2048',
+            'lamp_agunan_dalam.*'   => 'mimes:jpg,jpeg,png,pdf|max:2048',
+            'lamp_sertifikat.*'     => 'mimes:jpg,jpeg,png,pdf|max:2048',
+            'lamp_imb.*'            => 'mimes:jpg,jpeg,png,pdf|max:2048',
+            'lamp_pbb.*'            => 'mimes:jpg,jpeg,png,pdf|max:2048'
         ];
     }
 
     public function messages(){
         return [
+            'tipe_lokasi.*.in'                  => ':attribute harus salah satu dari jenis berikut :values',
             'rt_agunan.*.numeric'               => ':attribute harus berupa angka',
             'rw.*.numeric'                      => ':attribute harus berupa angka',
             'luas_tanah.*.numeric'              => ':attribute harus berupa angka',
@@ -50,8 +52,8 @@ class AguTaReq extends FormRequest
             'tgl_ukur_sertifikat.*.date_format' => ':attribute harus berupa angka dengan format :format',
             'tgl_berlaku_shgb.*.date_format'    => ':attribute harus berupa angka dengan format :format',
             'lam_imb.*.mimes'                   => ':attribute harus bertipe :values',
-            'njop.*.numeric'                    => ':attribute harus berupa angka',
-            'nop.*.numeric'                     => ':attribute harus berupa angka',
+            'njop.*.integer'                    => ':attribute harus berupa bilangan bulat',
+            'nop.*.integer'                     => ':attribute harus berupa bilangan bulat',
             'lamp_agunan_depan.*.mimes'         => ':attribute harus bertipe :values',
             'lamp_agunan_kanan.*.mimes'         => ':attribute harus bertipe :values',
             'lamp_agunan_kiri.*.mimes'          => ':attribute harus bertipe :values',
@@ -60,6 +62,14 @@ class AguTaReq extends FormRequest
             'lamp_sertifikat.*.mimes'           => ':attribute harus bertipe :values',
             'lamp_imb.*.mimes'                  => ':attribute harus bertipe :values',
             'lamp_pbb.*.mimes'                  => ':attribute harus bertipe :values',
+            'lamp_agunan_depan.*.max'           => 'ukuran :attribute max :max kb',
+            'lamp_agunan_kanan.*.max'           => 'ukuran :attribute max :max kb',
+            'lamp_agunan_kiri.*.max'            => 'ukuran :attribute max :max kb',
+            'lamp_agunan_belakang.*.max'        => 'ukuran :attribute max :max kb',
+            'lamp_agunan_dalam.*.max'           => 'ukuran :attribute max :max kb',
+            'lamp_sertifikat.*.max'             => 'ukuran :attribute max :max kb',
+            'lamp_imb.*.max'                    => 'ukuran :attribute max :max kb',
+            'lamp_pbb.*.max'                    => 'ukuran :attribute max :max kb'
         ];
     }
 

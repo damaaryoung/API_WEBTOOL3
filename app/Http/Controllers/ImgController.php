@@ -15,8 +15,8 @@ class ImgController extends BaseController
 
         $fcm_token = $req->input('fcm_token');
 
-        $title = 'this is title';
-        $msg   = 'this is Message';
+        $title = $req->input('title');
+        $msg   = $req->input('msg');
 
         $push_an = Helper::push_notif($fcm_token, $title, $msg);
 

@@ -42,15 +42,18 @@ class DebtRequest extends FormRequest
             'jumlah_tanggungan'     => 'numeric',
             'no_telp'               => 'between:11,13|unique:web.calon_debitur,no_telp',
             'no_hp'                 => 'between:11,13|unique:web.calon_debitur,no_telp',
-            'tgl_lahir_anak1'       => 'date_format:d-m-Y',
-            'tgl_lahir_anak2'       => 'date_format:d-m-Y',
-            'lamp_surat_cerai'      => 'mimes:jpg,jpeg,png,pdf',
+            'tgl_lahir_anak.*'      => 'date_format:d-m-Y',
+            'lamp_surat_cerai'      => 'mimes:jpg,jpeg,png,pdf|max:2048',
             'tinggi_badan'          => 'numeric',
             'berat_badan'           => 'numeric',
-            'lamp_buku_tabungan'    => 'mimes:jpg,jpeg,png,pdf',
-            'lamp_ktp'              => 'mimes:jpg,jpeg,png,pdf',
-            'lamp_kk'               => 'mimes:jpg,jpeg,png,pdf',
-            'jenis_jaminan'         => 'in:TANAH,KENDARAAN'
+            'pekerjaan'             => 'in:KARYAWAN,PNS,WIRASWASTA,PENGURUS_RT',
+            'lamp_buku_tabungan'    => 'mimes:jpg,jpeg,png,pdf|max:2048',
+            'lamp_ktp'              => 'mimes:jpg,jpeg,png,pdf|max:2048',
+            'lamp_kk'               => 'mimes:jpg,jpeg,png,pdf|max:2048',
+            'rt_tempat_kerja'       => 'numeric',
+            'rw_tempat_kerja'       => 'numeric',
+            'tgl_mulai_kerja'       => 'date_format:d-m-Y',
+            'no_telp_tempat_kerja'  => 'numeric'
         ];
     }
 
@@ -85,16 +88,22 @@ class DebtRequest extends FormRequest
             'no_telp.unique'                 => ':attribute telah ada yang menggunakan',
             'no_hp.between'                  => ':attribute harus berada diantara :min - :max.',
             'no_hp.unique'                   => ':attribute telah ada yang menggunakan',
-            'tgl_lahir_anak1'                => ':attribute harus berupa angka dan berjumlah :digits digit',
-            'tgl_lahir_anak2'                => ':attribute harus berupa angka dan berjumlah :digits digit',
+            'tgl_lahir_anak.*.date_format'   => ':attribute harus berupa angka dengan format :format',
             'lamp_surat_cerai.mimes'         => ':attribute harus bertipe :values',
+            'lamp_surat_cerai.max'           => 'ukuran :attribute max :values',
             'tinggi_badan.numeric'           => ':attribute harus berupa angka',
             'berat_badan.numeric'            => ':attribute harus berupa angka',
             'pekerjaan.in'                   => ':attribute harus salah satu dari jenis berikut :values',
             'lamp_buku_tabungan.mimes'       => ':attribute harus bertipe :values',
             'lamp_ktp.mimes'                 => ':attribute harus bertipe :values',
             'lamp_kk.mimes'                  => ':attribute harus bertipe :values',
-            'jenis_jaminan.in'               => ':attribute harus salah satu dari jenis berikut :values'
+            'lamp_buku_tabungan.max'         => 'ukuran :attribute max :max kb',
+            'lamp_ktp.max'                   => 'ukuran :attribute max :max kb',
+            'lamp_kk.max'                    => 'ukuran :attribute max :max kb',
+            'rt_tempat_kerja.numeric'        => ':attribute harus berupa angka',
+            'rw_tempat_kerja.numeric'        => ':attribute harus berupa angka',
+            'tgl_mulai_kerja.date_format'    => ':attribute harus berupa angka dengan format :format',
+            'no_telp_tempat_kerja.numeric'   => ':attribute harus berupa angka'
         ];
     }
 

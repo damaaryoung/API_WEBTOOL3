@@ -19,27 +19,27 @@ class KapBulananReq extends FormRequest
     public function rules()
     {
         return [
-            'pemasukan_cadebt'      => 'numeric',
-            'pemasukan_pasangan'    => 'numeric',
-            'pemasukan_penjamin'    => 'numeric',
-            'biaya_rumah_tangga'    => 'numeric',
-            'biaya_transport'       => 'numeric',
-            'biaya_pendidikan'      => 'numeric',
-            'biaya_telp_listr_air'  => 'numeric',
-            'biaya_lain'            => 'numeric'
+            'pemasukan_cadebt'      => 'integer',
+            'pemasukan_pasangan'    => 'integer',
+            'pemasukan_penjamin'    => 'integer',
+            'biaya_rumah_tangga'    => 'integer',
+            'biaya_transport'       => 'integer',
+            'biaya_pendidikan'      => 'integer',
+            'biaya_telp_listr_air'  => 'integer',
+            'biaya_lain'            => 'integer'
         ];
     }
 
     public function messages(){
         return [
-            'pemasukan_cadebt.numeric'      => ':attribute harus berupa angka',
-            'pemasukan_pasangan.numeric'    => ':attribute harus berupa angka',
-            'pemasukan_penjamin.numeric'    => ':attribute harus berupa angka',
-            'biaya_rumah_tangga.numeric'    => ':attribute harus berupa angka',
-            'biaya_transport.numeric'       => ':attribute harus berupa angka',
-            'biaya_pendidikan.numeric'      => ':attribute harus berupa angka',
-            'biaya_telp_listr_air.numeric'  => ':attribute harus berupa angka',
-            'biaya_lain.numeric'            => ':attribute harus berupa angka'
+            'pemasukan_cadebt.integer'      => ':attribute harus berupa bilangan bulat',
+            'pemasukan_pasangan.integer'    => ':attribute harus berupa bilangan bulat',
+            'pemasukan_penjamin.integer'    => ':attribute harus berupa bilangan bulat',
+            'biaya_rumah_tangga.integer'    => ':attribute harus berupa bilangan bulat',
+            'biaya_transport.integer'       => ':attribute harus berupa bilangan bulat',
+            'biaya_pendidikan.integer'      => ':attribute harus berupa bilangan bulat',
+            'biaya_telp_listr_air.integer'  => ':attribute harus berupa bilangan bulat',
+            'biaya_lain.integer'            => ':attribute harus berupa bilangan bulat'
         ];
     }
 

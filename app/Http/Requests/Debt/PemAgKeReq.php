@@ -20,18 +20,16 @@ class PemAgKeReq extends FormRequest
     {
         return [
             'status_pengguna_ken.*' => 'in:PEMILIK,PENYEWA',
-            'jml_roda_ken.*'        => 'numeric',
-            'kondisi_ken.*'         => 'in:LAYAK,KURANG,TIDAK',
-            'km_ken.*'              => 'numeric'
+            'jml_roda_ken.*'        => 'integer',
+            'km_ken.*'              => 'integer'
         ];
     }
 
     public function messages(){
         return [
             'status_pengguna_ken.*.in'  => ':attribute harus salah satu dari jenis berikut :values',
-            'jml_roda_ken.*.numeric'    => ':attribute harus berupa angka',
-            'kondisi_ken.*.in'          => ':attribute harus salah satu dari jenis berikut :values',
-            'km_ken.*.numeric'          => ':attribute harus berupa angka'
+            'jml_roda_ken.*.integer'    => ':attribute harus berupa angka / bilangan bulat',
+            'km_ken.*.integer'          => ':attribute harus berupa angka / bilangan bulat'
         ];
     }
 

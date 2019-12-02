@@ -171,9 +171,4 @@ $router->group(['middleware' => 'jwt.auth'], function () use ($router) {
         $router->post('/pinjaman', 'PinjamanController@store');
         $router->get('/pinjaman/plus', 'PinjamanController@plus');
     });
-
-    //For User (Debitur)
-    // $router->group(['prefix' => '/debt'], function () use ($router) {
-
-    // }
 });
