@@ -19,63 +19,44 @@ class UsahaRequest extends FormRequest
     public function rules()
     {
         return [
-            'id_calon_debitur'      => 'numeric',
-            'id_provinsi'           => 'numeric',
-            'id_kabupaten'          => 'numeric',
-            'id_kecamatan'          => 'numeric',
-            'id_kelurahan'          => 'numeric',
-            'rt'                    => 'numeric',
-            'rw'                    => 'numeric',
-            'pemasukan_tunai'       => 'numeric',
-            'pemasukan_kredit'      => 'numeric',
-            'biaya_sewa'            => 'numeric',
-            'biaya_gaji_pegawai'    => 'numeric',
-            'biaya_belanja_brg'     => 'numeric',
-            'biaya_telp_listr_air'  => 'numeric',
-            'biaya_sampah_kemanan'  => 'numeric',
-            'biaya_kirim_barang'    => 'numeric',
-            'biaya_hutang_dagang'   => 'numeric',
-            'biaya_angsuran'        => 'numeric',
-            'biaya_lain_lain'       => 'numeric',
-            'laba_usaha'            => 'numeric',
-            'lamp_surat_ket_usaha'  => 'mimes:jpg,jpeg,png,pdf',
-            'lamp_pembukuan_usaha'  => 'mimes:jpg,jpeg,png,pdf',
-            'lamp_rek_tabungan'     => 'mimes:jpg,jpeg,png,pdf',
-            'lamp_persetujuan_ideb' => 'mimes:jpg,jpeg,png,pdf',
-            'lamp_tempat_usaha'     => 'mimes:jpg,jpeg,png,pdf',
-            'tgl_mulai_usaha'       => 'date_format:d-m-Y',
-            'telp_tempat_usaha'     => 'numeric'
+            'pemasukan_tunai'       => 'integer',
+            'pemasukan_kredit'      => 'integer',
+            'biaya_sewa'            => 'integer',
+            'biaya_gaji_pegawai'    => 'integer',
+            'biaya_belanja_brg'     => 'integer',
+            'biaya_telp_listr_air'  => 'integer',
+            'biaya_sampah_kemanan'  => 'integer',
+            'biaya_kirim_barang'    => 'integer',
+            'biaya_hutang_dagang'   => 'integer',
+            'biaya_angsuran'        => 'integer',
+            'biaya_lain_lain'       => 'integer'
+            // 'laba_usaha'            => 'integer'
+            // 'lamp_sku'              => 'mimes:jpg,jpeg,png,pdf|max:2048',
+            // 'lamp_pembukuan_usaha'  => 'mimes:jpg,jpeg,png,pdf|max:2048',
+            // 'lamp_tempat_usaha'     => 'mimes:jpg,jpeg,png,pdf|max:2048'
         ];
     }
 
     public function messages(){
         return [
-            'id_calon_debitur.numeric'    => ':attribute harus berupa angka',
-            'id_provinsi.numeric'         => ':attribute harus berupa angka',
-            'id_kabupaten.numeric'        => ':attribute harus berupa angka',
-            'id_kecamatan.numeric'        => ':attribute harus berupa angka',
-            'id_kelurahan.numeric'        => ':attribute harus berupa angka',
-            'rt.numeric'                  => ':attribute harus berupa angka',
-            'rw.numeric'                  => ':attribute harus berupa angka',
-            'pemasukan_tunai.numeric'     => ':attribute harus berupa angka',
-            'pemasukan_kredit.numeric'    => ':attribute harus berupa angka',
-            'biaya_sewa.numeric'          => ':attribute harus berupa angka',
-            'biaya_gaji_pegawai.numeric'  => ':attribute harus berupa angka',
-            'biaya_belanja_brg.numeric'   => ':attribute harus berupa angka',
-            'biaya_telp_listr_air.numeric'=> ':attribute harus berupa angka',
-            'biaya_sampah_kemanan.numeric'=> ':attribute harus berupa angka',
-            'biaya_kirim_barang.numeric'  => ':attribute harus berupa angka',
-            'biaya_hutang_dagang.numeric' => ':attribute harus berupa angka',
-            'biaya_angsuran.numeric'      => ':attribute harus berupa angka',
-            'biaya_lain_lain.numeric'     => ':attribute harus berupa angka',
-            'laba_usaha.numeric'          => ':attribute harus berupa angka',
-            'lamp_surat_ket_usaha.mimes'  => ':attribute harus bertipe :values',
-            'lamp_pembukuan_usaha.mimes'  => ':attribute harus bertipe :values',
-            'lamp_rek_tabungan.mimes'     => ':attribute harus bertipe :values',
-            'lamp_persetujuan_ideb'       => ':attribute harus bertipe :values',
-            'lamp_tempat_usaha.mimes'     => ':attribute harus bertipe :values',
-            'tgl_mulai_usaha.date_format' => ':attribute harus berupa angka dengan format :format',
-            'telp_tempat_usaha.numeric'   => ':attribute harus berupa angka'
+            'pemasukan_tunai.integer'     => ':attribute harus berupa bilangan bulat',
+            'pemasukan_kredit.integer'    => ':attribute harus berupa bilangan bulat',
+            'biaya_sewa.integer'          => ':attribute harus berupa bilangan bulat',
+            'biaya_gaji_pegawai.integer'  => ':attribute harus berupa bilangan bulat',
+            'biaya_belanja_brg.integer'   => ':attribute harus berupa bilangan bulat',
+            'biaya_telp_listr_air.integer'=> ':attribute harus berupa bilangan bulat',
+            'biaya_sampah_kemanan.integer'=> ':attribute harus berupa bilangan bulat',
+            'biaya_kirim_barang.integer'  => ':attribute harus berupa bilangan bulat',
+            'biaya_hutang_dagang.integer' => ':attribute harus berupa bilangan bulat',
+            'biaya_angsuran.integer'      => ':attribute harus berupa bilangan bulat',
+            'biaya_lain_lain.integer'     => ':attribute harus berupa bilangan bulat'
+            // 'laba_usaha.integer'          => ':attribute harus berupa bilangan bulat',
+            // 'lamp_sku.mimes'              => ':attribute harus bertipe :values',
+            // 'lamp_pembukuan_usaha.mimes'  => ':attribute harus bertipe :values',
+            // 'lamp_tempat_usaha.mimes'     => ':attribute harus bertipe :values',
+            // 'lamp_sku.max'                => 'ukuran :attribute max :max kb',
+            // 'lamp_pembukuan_usaha.max'    => 'ukuran :attribute max :max kb',
+            // 'lamp_tempat_usaha.max'       => 'ukuran :attribute max :max kb'
         ];
     }
 

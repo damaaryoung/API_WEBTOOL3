@@ -24,7 +24,7 @@ class TransSo extends Model implements AuthenticatableContract, AuthorizableCont
 
     protected $fillable = [
         'nomor_so', 'user_id', 'kode_kantor', 'nama_so', 'id_asal_data', 'nama_marketing',
-        'id_fasilitas_pinjaman', 'id_calon_debt', 'id_pasangan', 'id_penjamin', 'id_agunan_tanah', 'id_agunan_kendaraan', 'id_periksa_agunan_tanah', 'id_periksa_agunan_kendaraan', 'id_usaha', 'plafon', 'tenor', 'catatan_verifikasi', 'catatan_validasi', 'flg_aktif'
+        'id_fasilitas_pinjaman', 'id_calon_debt', 'id_pasangan', 'id_penjamin', 'id_agunan_tanah', 'id_agunan_kendaraan', 'id_periksa_agunan_tanah', 'id_periksa_agunan_kendaraan', 'id_usaha', 'flg_aktif'
     ];
 
     public function asaldata(){

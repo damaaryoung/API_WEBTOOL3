@@ -23,7 +23,7 @@ class KapBulanan extends Model implements AuthenticatableContract, AuthorizableC
     protected $primaryKey = 'id';
 
     protected $fillable = [
-       'id_calon_debitur', 'pemasukan_cadebt', 'pemasukan_pasangan', 'pemasukan_penjamin', 'biaya_rumah_tangga', 'biaya_transport', 'biaya_pendidikan', 'biaya_telp_listr_air', 'biaya_lain', 'flg_aktif'
+       'id_calon_debitur', 'pemasukan_cadebt', 'pemasukan_pasangan', 'pemasukan_penjamin', 'biaya_rumah_tangga', 'biaya_transport', 'biaya_pendidikan', 'biaya_telp_listr_air', 'biaya_lain', 'total_pemasukan', 'total_pengeluaran', 'penghasilan_bersih', 'flg_aktif'
     ];
 
     /**

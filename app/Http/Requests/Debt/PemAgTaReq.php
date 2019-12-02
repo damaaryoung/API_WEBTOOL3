@@ -22,10 +22,10 @@ class PemAgTaReq extends FormRequest
             'status_penghuni.*'       => 'in:PEMILIK,PENYEWA',
             'bentuk_bangunan.*'       => 'in:RUMAH,KONTRAKAN,VILLA,RUKO,APARTMENT',
             'kondisi_bangunan.*'      => 'in:LAYAK,KURANG,TIDAK',
-            'nilai_taksasi_agunan.*'  => 'numeric',
-            'nilai_taksasi_bangunan.*'=> 'numeric',
+            'nilai_taksasi_agunan.*'  => 'integer',
+            'nilai_taksasi_bangunan.*'=> 'integer',
             'tgl_taksasi.*'           => 'date_format:d-m-Y',
-            'nilai_likuidasi.*'       => 'numeric'
+            'nilai_likuidasi.*'       => 'integer'
         ];
     }
 
@@ -34,10 +34,10 @@ class PemAgTaReq extends FormRequest
             'status_penghuni.*.in'              => ':attribute harus salah satu dari jenis berikut :values',
             'bentuk_bangunan.*.in'              => ':attribute harus salah satu dari jenis berikut :values',
             'kondisi_bangunan.*.in'             => ':attribute harus salah satu dari jenis berikut :values',
-            'nilai_taksasi_agunan.*.numeric'    => ':attribute harus berupa angka',
-            'nilai_taksasi_bangunan.*.numeric'  => ':attribute harus berupa angka',
+            'nilai_taksasi_agunan.*.integer'    => ':attribute harus berupa angka / bilangan bulat',
+            'nilai_taksasi_bangunan.*.integer'  => ':attribute harus berupa angka / bilangan bulat',
             'tgl_taksasi.*.date_format'         => ':attribute harus berupa angka dengan format :format',
-            'nilai_likuidasi.*.numeric'         => ':attribute harus berupa angka'
+            'nilai_likuidasi.*.integer'         => ':attribute harus berupa angka / bilangan bulat'
         ];
     }
 

@@ -20,6 +20,8 @@ $router->group(['prefix' => '/wilayah'], function () use ($router) {
 
     $router->get('/provinsi', 'Wilayah\ProvinsiController@index');
     $router->post('/provinsi', 'Wilayah\ProvinsiController@store');
+    $router->post('/provinsi', 'Wilayah\ProvinsiController@store');
+    $router->get('/provinsi/search/{search}', 'Wilayah\ProvinsiController@search');
     $router->get('/provinsi/{id}', 'Wilayah\ProvinsiController@show');
     $router->put('/provinsi/{id}', 'Wilayah\ProvinsiController@update');
     $router->delete('/provinsi/{id}', 'Wilayah\ProvinsiController@delete');
@@ -169,9 +171,4 @@ $router->group(['middleware' => 'jwt.auth'], function () use ($router) {
         $router->post('/pinjaman', 'PinjamanController@store');
         $router->get('/pinjaman/plus', 'PinjamanController@plus');
     });
-
-    //For User (Debitur)
-    // $router->group(['prefix' => '/debt'], function () use ($router) {
-
-    // }
 });

@@ -151,6 +151,9 @@ class FlagAuthorController extends BaseController
 
         $Now = Carbon::now()->toDateTimeString();
 
+        $checkFLG = FlgOto::where('user_id', $user_id)->first();
+        $checkFCM = User::where('user_id', $user_id)->first();
+
         $because = $req->input('keterangan');
 
         // $logData = array(
@@ -162,23 +165,33 @@ class FlagAuthorController extends BaseController
         //     'user_id' => $user_id
         // );
 
-        FlgOto::where([
-            ['id', $id],
-            ['user_id', $user_id],
-            ['id_modul',0]
-        ])->update(['otorisasi' => 1, 'keterangan' => $because, 'waktu_otorisasi' => $Now]);
+        $msg = 'Otorisasi berhasil di setujui';
 
+        DB::connection('web')->beginTransaction();
         try {
+
+            FlgOto::where([
+                ['id', $id],
+                ['user_id', $user_id],
+                ['id_modul',0]
+            ])->update(['otorisasi' => 1, 'keterangan' => $because, 'waktu_otorisasi' => $Now]);
+
+            Helper::push_notif($checkFCM->fcm_token, $checkFLG->subject, $msg);
+
+            DB::connection('web')->commit();
+
             return response()->json([
                 "code"    => 200,
                 'status'  => 'success',
-                'message' => 'Otorisasi berhasil di setujui'
+                'message' => $msg
             ], 200);
         } catch (Exception $e) {
+            $err = DB::connection('web')->rollback();
+
             return response()->json([
                 "code"    => 501,
                 'status'  => 'error',
-                'message' => $e
+                'message' => $err
             ], 501);
         }
     }
@@ -321,25 +334,38 @@ class FlagAuthorController extends BaseController
 
         $Now = Carbon::now()->toDateTimeString();
 
+        $checkFLG = FlgOto::where('user_id', $user_id)->first();
+        $checkFCM = User::where('user_id', $user_id)->first();
+
         $because = $req->input('keterangan');
 
-        FlgOto::where([
-            ['id', $id],
-            ['user_id', $user_id],
-            ['id_modul', '>',0]
-        ])->update(['approval' => 1, 'keterangan' => $because, 'waktu_otorisasi' => $Now]);
+        $msg = 'approval berhasil disetujui';
 
+        DB::connection('web')->beginTransaction();
         try {
+
+            FlgOto::where([
+                ['id', $id],
+                ['user_id', $user_id],
+                ['id_modul', '>',0]
+            ])->update(['approval' => 1, 'keterangan' => $because, 'waktu_otorisasi' => $Now]);
+
+            Helper::push_notif($checkFCM->fcm_token, $checkFLG->subject, $msg);
+
+            DB::connection('web')->commit();
+
             return response()->json([
                 "code"    => 200,
                 'status'  => 'success',
-                'message' => 'approval berhasil disetujui'
+                'message' => $msg
             ], 200);
         } catch (Exception $e) {
+            $err = DB::connection('web')->rollback();
+
             return response()->json([
                 "code"    => 501,
                 'status'  => 'error',
-                'message' => $e
+                'message' => $err
             ], 501);
         }
     }
@@ -665,9 +691,13 @@ class FlagAuthorController extends BaseController
 
     // Rejected Otorisasi
     public function rejectOto($id, Request $req) {
-        $user_id = $req->auth->user_id;
+        // $user_id = $req->auth->user_id;
+        $user_id = '1131';
 
         $Now = Carbon::now()->toDateTimeString();
+
+        $checkFLG = FlgOto::where('user_id', $user_id)->first();
+        $checkFCM = User::where('user_id', $user_id)->first();
 
         $because = $req->input('keterangan');
 
@@ -679,23 +709,33 @@ class FlagAuthorController extends BaseController
             ], 422);
         }
 
-        FlgOto::where([
-            ['id', $id],
-            ['user_id', $user_id],
-            ['id_modul',0]
-        ])->update(['otorisasi' => 2, 'keterangan' => $because, 'waktu_otorisasi' => $Now]);
+        $msg = 'Otorisasi berhasil ditolak';
 
+        DB::connection('web')->beginTransaction();
         try {
+
+            FlgOto::where([
+                ['id', $id],
+                ['user_id', $user_id],
+                ['id_modul',0]
+            ])->update(['otorisasi' => 2, 'keterangan' => $because, 'waktu_otorisasi' => $Now]);
+
+            Helper::push_notif($checkFCM->fcm_token, $checkFLG->subject, $msg);
+
+            DB::connection('web')->commit();
+
             return response()->json([
                 "code"    => 200,
                 'status'  => 'success',
-                'message' => 'otorisasi berhasil ditolak'
+                'message' => $msg
             ], 200);
         } catch (Exception $e) {
+            $err = DB::connection('web')->rollback();
+
             return response()->json([
                 "code"    => 501,
                 'status'  => 'error',
-                'message' => $e
+                'message' => $err
             ], 501);
         }
     }
@@ -706,6 +746,9 @@ class FlagAuthorController extends BaseController
 
         $Now = Carbon::now()->toDateTimeString();
 
+        $checkFLG = FlgOto::where('user_id', $user_id)->first();
+        $checkFCM = User::where('user_id', $user_id)->first();
+
         $because = $req->input('keterangan');
 
         if (!$because) {
@@ -716,23 +759,33 @@ class FlagAuthorController extends BaseController
             ], 422);
         }
 
-        FlgOto::where([
-            ['id', $id],
-            ['user_id', $user_id],
-            ['id_modul', '>',0],
-        ])->update(['approval' => 2, 'keterangan' => $because, 'waktu_otorisasi' => $Now]);
+        $msg = 'approval berhasil ditolak';
 
+        DB::connection('web')->beginTransaction();
         try {
+
+            FlgOto::where([
+                ['id', $id],
+                ['user_id', $user_id],
+                ['id_modul', '>',0],
+            ])->update(['approval' => 2, 'keterangan' => $because, 'waktu_otorisasi' => $Now]);
+
+            Helper::push_notif($checkFCM->fcm_token, $checkFLG->subject, $msg);
+
+            DB::connection('web')->commit();
+
             return response()->json([
                 "code"    => 200,
                 'status'  => 'success',
-                'message' => 'approval berhasil ditolak'
+                'message' => $msg
             ], 200);
         } catch (Exception $e) {
+            $err = DB::connection('web')->rollback();
+
             return response()->json([
                 "code"    => 501,
                 'status'  => 'error',
-                'message' => $e
+                'message' => $err
             ], 501);
         }
     }

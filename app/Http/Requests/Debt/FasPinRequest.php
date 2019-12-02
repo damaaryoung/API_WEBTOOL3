@@ -20,7 +20,7 @@ class FasPinRequest extends FormRequest
     {
         return [
             'jenis_pinjaman'  => 'in:KONSUMTIF,MODAL,INVESTASI',
-            'plafon'          => 'numeric',
+            'plafon'          => 'integer',
             'tenor'           => 'numeric'
         ];
     }
@@ -28,7 +28,7 @@ class FasPinRequest extends FormRequest
     public function messages(){
         return [
             'jenis_pinjaman.in'        => ':attribute harus bertipe :values',
-            'plafon.numeric'           => ':attribute harus berupa angka',
+            'plafon.integer'           => ':attribute harus berupa bilangan bulat',
             'tenor.numeric'            => ':attribute harus berupa angka'
         ];
     }

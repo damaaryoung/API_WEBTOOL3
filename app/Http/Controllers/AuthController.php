@@ -97,13 +97,13 @@ class AuthController extends Controller
             ], 403);
         }
 
-        if($user->fcm_token && $user->fcm_token != $fcm_token){
-            return response()->json([
-                "code"    => 422,
-                "status"  => "bad request",
-                "message" => "Anda telah login di device lain"
-            ], 422);
-        }
+        // if($user->fcm_token && $user->fcm_token != $fcm_token){
+        //     return response()->json([
+        //         "code"    => 422,
+        //         "status"  => "bad request",
+        //         "message" => "Anda telah login di device lain"
+        //     ], 422);
+        // }
 
         // if ($user->email == $reqEmail && $user->email_verified == '1'){
 

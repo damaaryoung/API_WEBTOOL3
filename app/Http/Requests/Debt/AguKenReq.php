@@ -22,12 +22,11 @@ class AguKenReq extends FormRequest
             'tahun_ken.*'                => 'date_format:Y',
             'tgl_exp_pajak_ken.*'        => 'date_format:d-m-Y',
             'tgl_exp_stnk_ken.*'         => 'date_format:d-m-Y',
-            'lamp_agunan_depan_ken.*'    => 'mimes:jpg,jpeg,png,pdf',
-            'lamp_agunan_kanan_ken.*'    => 'mimes:jpg,jpeg,png,pdf',
-            'lamp_agunan_kiri_ken.*'     => 'mimes:jpg,jpeg,png,pdf',
-            'lamp_agunan_belakang_ken.*' => 'mimes:jpg,jpeg,png,pdf',
-            'lamp_agunan_dalam_ken.*'    => 'mimes:jpg,jpeg,png,pdf',
-            'validasi_ken.*'             => 'numeric'
+            'lamp_agunan_depan_ken.*'    => 'mimes:jpg,jpeg,png,pdf|max:2048',
+            'lamp_agunan_kanan_ken.*'    => 'mimes:jpg,jpeg,png,pdf|max:2048',
+            'lamp_agunan_kiri_ken.*'     => 'mimes:jpg,jpeg,png,pdf|max:2048',
+            'lamp_agunan_belakang_ken.*' => 'mimes:jpg,jpeg,png,pdf|max:2048',
+            'lamp_agunan_dalam_ken.*'    => 'mimes:jpg,jpeg,png,pdf|max:2048'
         ];
     }
 
@@ -41,7 +40,11 @@ class AguKenReq extends FormRequest
             'lamp_agunan_kiri_ken.*.mime'     => ':attribute harus bertipe :values',
             'lamp_agunan_belakang_ken.*.mime' => ':attribute harus bertipe :values',
             'lamp_agunan_dalam_ken.*.mime'    => ':attribute harus bertipe :values',
-            'validasi_ken.*.numeric'          => ':attribute harus berupa angka'
+            'lamp_agunan_depan_ken.*.max'     => 'ukuran :attribute max :max kb',
+            'lamp_agunan_kanan_ken.*.max'     => 'ukuran :attribute max :max kb',
+            'lamp_agunan_kiri_ken.*.max'      => 'ukuran :attribute max :max kb',
+            'lamp_agunan_belakang_ken.*.max'  => 'ukuran :attribute max :max kb',
+            'lamp_agunan_dalam_ken.*.max'     => 'ukuran :attribute max :max kb'
         ];
     }
 

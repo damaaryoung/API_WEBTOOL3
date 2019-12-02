@@ -22,9 +22,7 @@ class TrSoReq extends FormRequest
             'user_id'       => 'required',
             'kode_kantor'   => 'required',
             'id_asal_data'  => 'required',
-            'nama_marketing'=> 'required',
-            'plafon'        => 'required|numeric',
-            'tenor'         => 'required|numeric'
+            'nama_marketing'=> 'required'
         ];
     }
 
@@ -33,11 +31,7 @@ class TrSoReq extends FormRequest
             'user_id.required'        => ':attribute belum diisi',
             'kode_kantor.required'    => ':attribute belum diisi',
             'id_asal_data.required'   => ':attribute belum diisi',
-            'nama_marketing.required' => ':attribute belum diisi',
-            'plafon.required'         => ':attribute belum diisi',
-            'plafon.numeric'          => ':attribute harus berupa angka',
-            'tenor.required'          => ':attribute belum diisi',
-            'tenor.numeric'           => ':attribute harus berupa angka'
+            'nama_marketing.required' => ':attribute belum diisi'
         ];
     }
 

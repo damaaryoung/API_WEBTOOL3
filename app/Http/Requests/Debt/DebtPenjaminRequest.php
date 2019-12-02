@@ -19,32 +19,55 @@ class DebtPenjaminRequest extends FormRequest
     public function rules()
     {
         return [
-            'no_ktp_pen.*'            => 'unique:web.penjamin_calon_debitur,no_ktp',
-            'no_npwp_pen.*'           => 'unique:web.penjamin_calon_debitur,no_npwp',
-            'tgl_lahir_pen.*'         => 'date_format:d-m-Y',
-            'jenis_kelamin_pen.*'     => 'in:L,P',
-            'no_telp_pen.*'           => 'between:11,13|unique:web.penjamin_calon_debitur,no_telp',
-            'lamp_ktp_pen.*'          => 'mimes:jpg,jpeg,png,pdf',
-            'lamp_ktp_pasangan_pen.*' => 'mimes:jpg,jpeg,png,pdf',
-            'lamp_kk_pen.*'           => 'mimes:jpg,jpeg,png,pdf',
-            'lamp_buku_nikah_pen.*'   => 'mimes:jpg,jpeg,png,pdf'
+            'no_ktp_pen.*'               => 'required|digits:16|unique:web.penjamin_calon_debitur,no_ktp',
+            'no_npwp_pen.*'              => 'required|digits:15|unique:web.penjamin_calon_debitur,no_npwp',
+            'tgl_lahir_pen.*'            => 'required|date_format:d-m-Y',
+            'jenis_kelamin_pen.*'        => 'required|in:L,P',
+            'no_telp_pen.*'              => 'required|between:11,13|unique:web.penjamin_calon_debitur,no_telp',
+            'lamp_ktp_pen.*'             => 'required|mimes:jpg,jpeg,png,pdf|max:2048',
+            'lamp_ktp_pasangan_pen.*'    => 'required|mimes:jpg,jpeg,png,pdf|max:2048',
+            'lamp_kk_pen.*'              => 'required|mimes:jpg,jpeg,png,pdf|max:2048',
+            'lamp_buku_nikah_pen.*'      => 'required|mimes:jpg,jpeg,png,pdf|max:2048',
+            'pekerjaan_pen.*'            => 'in:KARYAWAN,PNS,WIRASWASTA,PENGURUS_RT',
+            'rt_tempat_kerja_pen.*'      => 'numeric',
+            'rw_tempat_kerja_pen.*'      => 'numeric',
+            'tgl_mulai_kerja_pen.*'      => 'date_format:d-m-Y',
+            'no_telp_tempat_kerja_pen.*' => 'numeric'
         ];
     }
 
     public function messages(){
         return [
-            'no_ktp_pen.*.digits'             => ':attribute harus berupa angka dan berjumlah :digits digit',
-            'no_ktp_pen.*.unique'             => ':attribute telah ada yang menggunakan',
-            'no_npwp_pen.*.digits'            => ':attribute harus berupa angka dan berjumlah :digits digit',
-            'no_npwp_pen.*.unique'            => ':attribute telah ada yang menggunakan',
-            'tgl_lahir_pen.*.date_format'     => ':attribute harus berupa angka dengan format :format',
-            'jenis_kelamin_pen.*.in'          => ':attribute harus salah satu dari jenis berikut :values',
-            'no_telp_pen.*.between'           => ':attribute harus berada diantara :min - :max.',
-            'no_telp_pen.*.unique'            => ':attribute telah ada yang menggunakan',
-            'lamp_ktp_pen.*.mimes'            => ':attribute harus bertipe :values',
-            'lamp_ktp_pasangan_pen.*.mimes'   => ':attribute harus bertipe :values',
-            'lamp_kk_pen.*.mimes'             => ':attribute harus bertipe :values',
-            'lamp_buku_nikah_pen.*.mimes'     => ':attribute harus bertipe :values'
+            'no_ktp_pen.*.required'              => ':attribute belum diisi',
+            'no_ktp_pen.*.digits'                => ':attribute harus berupa angka dan berjumlah :digits digit',
+            'no_ktp_pen.*.unique'                => ':attribute telah ada yang menggunakan',
+            'no_npwp_pen.*.required'             => ':attribute belum diisi',
+            'no_npwp_pen.*.digits'               => ':attribute harus berupa angka dan berjumlah :digits digit',
+            'no_npwp_pen.*.unique'               => ':attribute telah ada yang menggunakan',
+            'tgl_lahir_pen.*.required'           => ':attribute belum diisi',
+            'tgl_lahir_pen.*.date_format'        => ':attribute harus berupa angka dengan format :format',
+            'jenis_kelamin_pen.*.required'       => ':attribute belum diisi',
+            'jenis_kelamin_pen.*.in'             => ':attribute harus salah satu dari jenis berikut :values',
+            'no_telp_pen.*.required'             => ':attribute belum diisi',
+            'no_telp_pen.*.between'              => ':attribute harus berada diantara :min - :max.',
+            'no_telp_pen.*.unique'               => ':attribute telah ada yang menggunakan',
+            'lamp_ktp_pen.*.required'            => ':attribute belum diisi',
+            'lamp_ktp_pasangan_pen.*.required'   => ':attribute belum diisi',
+            'lamp_kk_pen.*.required'             => ':attribute belum diisi',
+            'lamp_buku_nikah_pen.*.required'     => ':attribute belum diisi',
+            'lamp_ktp_pen.*.mimes'               => ':attribute harus bertipe :values',
+            'lamp_ktp_pasangan_pen.*.mimes'      => ':attribute harus bertipe :values',
+            'lamp_kk_pen.*.mimes'                => ':attribute harus bertipe :values',
+            'lamp_buku_nikah_pen.*.mimes'        => ':attribute harus bertipe :values',
+            'lamp_ktp_pen.*.max'                 => 'ukuran :attribute max :max kb',
+            'lamp_ktp_pasangan_pen.*.max'        => 'ukuran :attribute max :max kb',
+            'lamp_kk_pen.*.max'                  => 'ukuran :attribute max :max kb',
+            'lamp_buku_nikah_pen.*.max'          => 'ukuran :attribute max :max kb',
+            'pekerjaan_pen.*.in'                 => ':attribute harus salah satu dari jenis berikut :values',
+            'rt_tempat_kerja_pen.*.numeric'      => ':attribute harus berupa angka',
+            'rw_tempat_kerja_pen.*.numeric'      => ':attribute harus berupa angka',
+            'tgl_mulai_kerja_pen.*.date_format'  => ':attribute harus berupa angka dengan format :format',
+            'no_telp_tempat_kerja_pen.*.numeric' => ':attribute harus berupa angka / bilangan bulat'
         ];
     }
 

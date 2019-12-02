@@ -7,30 +7,23 @@ use App\Http\Requests\Debt\DebtPenjaminRequest;
 use App\Http\Requests\Debt\DebtPasanganRequest;
 use App\Http\Controllers\Controller as Helper;
 use App\Http\Requests\Debt\FasPinRequest;
-use App\Http\Requests\Debt\UsahaRequest;
 use App\Http\Requests\Debt\DebtRequest;
-use App\Http\Requests\Debt\AguTaReq;
 use App\Models\CC\FasilitasPinjaman;
-// use App\Models\CC\AgunanTanah;
 use App\Models\Bisnis\TransSo;
+use App\Models\KeuanganUsaha;
 use Illuminate\Http\Request;
 use App\Models\CC\Pasangan;
 use App\Models\CC\Penjamin;
 use App\Models\CC\Debitur;
-// use App\Models\CC\Usaha;
 use App\Http\Requests;
-use App\Models\User;
+Use App\Models\User;
 use Carbon\Carbon;
-// use Validator;
 // use Image;
 use DB;
 
 class MasterCC_Controller extends BaseController
 {
-    // public function store(Request $req, FasPinRequest $reqFasPin, DebtRequest $reqDebt, DebtPasanganRequest $reqPas, DebtPenjaminRequest $reqPen, UsahaRequest $reqUs, AguTaReq $reqAta) {
     public function store(Request $req, FasPinRequest $reqFasPin, DebtRequest $reqDebt, DebtPasanganRequest $reqPas, DebtPenjaminRequest $reqPen) {
-
-        $cloud_url = 'http://localhost:2000/bprm_cloud';
 
         $user_id = $req->auth->user_id;
 
@@ -52,6 +45,7 @@ class MasterCC_Controller extends BaseController
         $year  = $now->year;
         $month = $now->month;
 
+        //  ID-Cabang - AO / CA / SO - Bulan - Tahun - NO. Urut
         $nomor_so = $kode_kantor.'-SO-'.$month.'-'.$year.'-'.$no; //  ID-Cabang - AO / CA / SO - Bulan - Tahun - NO. Urut
         $dataTr = array(
             'nomor_so'       => $nomor_so,
@@ -59,9 +53,7 @@ class MasterCC_Controller extends BaseController
             'kode_kantor'    => $kode_kantor,
             'nama_so'        => $so_name,
             'id_asal_data'   => $req->input('id_asal_data'),
-            'nama_marketing' => $req->input('nama_marketing'),
-            'plafon'         => $req->input('plafon'),
-            'tenor'          => $req->input('tenor')
+            'nama_marketing' => $req->input('nama_marketing')
         );
 
         // Data Fasilitas Pinjaman
@@ -72,13 +64,65 @@ class MasterCC_Controller extends BaseController
             'tenor'           => $reqFasPin->input('tenor_pinjaman')
         );
 
+        $lamp_dir = 'public/lamp_trans.'.$nomor_so;
+
+        if($file = $reqDebt->file('lamp_ktp')){
+            $path = $lamp_dir.'/debitur';
+            $name = 'ktp.'.$file->getClientOriginalExtension();
+            $file->move($path,$name);
+
+            $ktpDebt = $path.'/'.$name;
+        }else{
+            $ktpDebt = null;
+        }
+
+        if($file = $reqDebt->file('lamp_kk')){
+            $path = $lamp_dir.'/debitur';
+            $name = 'kk.'.$file->getClientOriginalExtension();
+            $file->move($path,$name);
+
+            $kkDebt = $path.'/'.$name;
+        }else{
+            $kkDebt = null;
+        }
+
+        if($file = $reqDebt->file('lamp_sertifikat')){
+            $path = $lamp_dir.'/debitur';
+            $name = 'kk.'.$file->getClientOriginalExtension();
+            $file->move($path,$name);
+
+            $sertifikatDebt = $path.'/'.$name;
+        }else{
+            $sertifikatDebt = null;
+        }
+
+        if($file = $reqDebt->file('lamp_pbb')){
+            $path = $lamp_dir.'/debitur';
+            $name = 'kk.'.$file->getClientOriginalExtension();
+            $file->move($path,$name);
+
+            $pbbDebt = $path.'/'.$name;
+        }else{
+            $pbbDebt = null;
+        }
+
+        if($file = $reqDebt->file('lamp_imb')){
+            $path = $lamp_dir.'/debitur';
+            $name = 'kk.'.$file->getClientOriginalExtension();
+            $file->move($path,$name);
+
+            $imbDebt = $path.'/'.$name;
+        }else{
+            $imbDebt = null;
+        }
+
         // Data Calon Debitur
         $dataDebitur = array(
             'nama_lengkap'          => $reqDebt->input('nama_lengkap'),
             'gelar_keagamaan'       => $reqDebt->input('gelar_keagamaan'),
             'gelar_pendidikan'      => $reqDebt->input('gelar_pendidikan'),
-            'jenis_kelamin'         => $reqDebt->input('jenis_kelamin'),
-            'status_nikah'          => $reqDebt->input('status_nikah'),
+            'jenis_kelamin'         => strtoupper($reqDebt->input('jenis_kelamin')),
+            'status_nikah'          => strtoupper($reqDebt->input('status_nikah')),
             'ibu_kandung'           => $reqDebt->input('ibu_kandung'),
             'no_ktp'                => $reqDebt->input('no_ktp'),
             'no_ktp_kk'             => $reqDebt->input('no_ktp_kk'),
@@ -86,100 +130,71 @@ class MasterCC_Controller extends BaseController
             'no_npwp'               => $reqDebt->input('no_npwp'),
             'tempat_lahir'          => $reqDebt->input('tempat_lahir'),
             'tgl_lahir'             => Carbon::parse($reqDebt->input('tgl_lahir'))->format('Y-m-d'),
-            'agama'                 => $reqDebt->input('agama'),
+            'agama'                 => strtoupper($reqDebt->input('agama')),
             'alamat_ktp'            => $reqDebt->input('alamat_ktp'),
             'rt_ktp'                => $reqDebt->input('rt_ktp'),
             'rw_ktp'                => $reqDebt->input('rw_ktp'),
-            'id_provinsi_ktp'       => $reqDebt->input('id_provinsi_ktp'),
-            'id_kabupaten_ktp'      => $reqDebt->input('id_kabupaten_ktp'),
-            'id_kecamatan_ktp'      => $reqDebt->input('id_kecamatan_ktp'),
-            'id_kelurahan_ktp'      => $reqDebt->input('id_kelurahan_ktp'),
+            'id_prov_ktp'           => $reqDebt->input('id_provinsi_ktp'),
+            'id_kab_ktp'            => $reqDebt->input('id_kabupaten_ktp'),
+            'id_kec_ktp'            => $reqDebt->input('id_kecamatan_ktp'),
+            'id_kel_ktp'            => $reqDebt->input('id_kelurahan_ktp'),
             'alamat_domisili'       => $reqDebt->input('alamat_domisili'),
             'rt_domisili'           => $reqDebt->input('rt_domisili'),
             'rw_domisili'           => $reqDebt->input('rw_domisili'),
-            'id_provinsi_domisili'  => $reqDebt->input('id_provinsi_domisili'),
-            'id_kabupaten_domisili' => $reqDebt->input('id_kabupaten_domisili'),
-            'id_kecamatan_domisili' => $reqDebt->input('id_kecamatan_domisili'),
-            'id_kelurahan_domisili' => $reqDebt->input('id_kelurahan_domisili'),
+            'id_prov_domisili'      => $reqDebt->input('id_provinsi_domisili'),
+            'id_kab_domisili'       => $reqDebt->input('id_kabupaten_domisili'),
+            'id_kec_domisili'       => $reqDebt->input('id_kecamatan_domisili'),
+            'id_kel_domisili'       => $reqDebt->input('id_kelurahan_domisili'),
             'pendidikan_terakhir'   => $reqDebt->input('pendidikan_terakhir'),
             'jumlah_tanggungan'     => $reqDebt->input('jumlah_tanggungan'),
             'no_telp'               => $reqDebt->input('no_telp'),
             'no_hp'                 => $reqDebt->input('no_hp'),
-            'alamat_surat'          => $reqDebt->input('alamat_surat')
-            // 'lamp_ktp'              => empty($reqDebt->file('lamp_ktp')) ? null : Helper::img64enc($reqDebt->file('lamp_ktp')),
-            // 'lamp_kk'               => empty($reqDebt->file('lamp_kk')) ? null : Helper::img64enc($reqDebt->file('lamp_kk'))
+            'alamat_surat'          => $reqDebt->input('alamat_surat'),
+            'lamp_ktp'              => $ktpDebt,
+            'lamp_kk'               => $kkDebt,
+            'lamp_sertifikat'       => $sertifikatDebt,
+            'lamp_sttp_pbb'         => $pbbDebt,
+            'lamp_imb'              => $imbDebt
         );
 
-        // $a = 1; $b = 1; $c = 1; $d = 1;
+        if($file = $reqPas->file('lamp_ktp_pas')){
+            $path = $lamp_dir.'/pasangan';
+            $name = 'ktp.'.$file->getClientOriginalExtension();
+            $file->move($path,$name);
 
-
-        if($files = $reqPen->file('lamp_ktp')){
-            foreach($files as $file){
-                $name = 'ktp.'.$file->getClientOriginalExtension();
-                $path = $cloud_url.'/sevin_img/debiturs/'.$dataDebitur['no_ktp'];
-                $file->move($path,$name);
-                // $imgKTP[]='sevin_img/debiturs/'.$dataDebitur['no_ktp'].'/penjamin'.$a.'/'.$name;
-                // $a++;
-                $dataDebitur['lamp_ktp'] = $path.'/'.$name;
-            }
+            $ktpPass = $path.'/'.$name;
+        }else{
+            $ktpPass = null;
         }
 
-        if($files = $reqPen->file('lamp_kk')){
-            foreach($files as $file){
-                $name = 'kk.'.$file->getClientOriginalExtension();
-                $path = $cloud_url.'/sevin_img/debiturs/'.$dataDebitur['no_ktp'];
-                $file->move($path,$name);
-                // $imgKTP[]='sevin_img/debiturs/'.$dataDebitur['no_ktp'].'/penjamin'.$a.'/'.$name;
-                // $a++;
-                $dataDebitur['lamp_kk'] = $path.'/'.$name;
-            }
+        if($file = $reqPas->file('lamp_buku_nikah_pas')){
+            $path = $lamp_dir.'/pasangan';
+            $name = 'buku_nikah.'.$file->getClientOriginalExtension();
+            $file->move($path,$name);
+
+            $bukuNikahPass = $path.'/'.$name;
+        }else{
+            $bukuNikahPass = null;
         }
 
         // Data Pasangan Calon Debitur
         $dataPasangan = array(
             'nama_lengkap'     => $reqPas->input('nama_lengkap_pas'),
             'nama_ibu_kandung' => $reqPas->input('nama_ibu_kandung_pas'),
-            'jenis_kelamin'    => $reqPas->input('jenis_kelamin_pas'),
+            'jenis_kelamin'    => strtoupper($reqPas->input('jenis_kelamin_pas')),
             'no_ktp'           => $reqPas->input('no_ktp_pas'),
             'no_ktp_kk'        => $reqPas->input('no_ktp_kk_pas'),
             'no_npwp'          => $reqPas->input('no_npwp_pas'),
             'tempat_lahir'     => $reqPas->input('tempat_lahir_pas'),
             'tgl_lahir'        => Carbon::parse($reqPas->input('tgl_lahir_pas'))->format('Y-m-d'),
             'alamat_ktp'       => $reqPas->input('alamat_ktp_pas'),
-            'no_telp'          => $reqPas->input('no_telp_pas')
-            // 'lamp_ktp'         => empty($reqPas->file('lamp_ktp_pas')) ? null : Helper::img64enc($reqPas->file('lamp_ktp_pas')),
-            // 'lamp_buku_nikah'  => empty($reqPas->file('lamp_buku_nikah_pas')) ? null : Helper::img64enc($reqPas->file('lamp_buku_nikah_pas'))
+            'no_telp'          => $reqPas->input('no_telp_pas'),
+            'lamp_ktp'         => $ktpPass,
+            'lamp_buku_nikah'  => $bukuNikahPass
         );
 
-        if($files = $reqPas->file('lamp_ktp_pas')){
-            foreach($files as $file){
-                $name = 'ktp.'.$file->getClientOriginalExtension();
-                $path = $cloud_url.'/sevin_img/debiturs/'.$dataDebitur['no_ktp'].'/pasangan';
-                $file->move($path,$name);
-                // $imgKTP[]='sevin_img/debiturs/'.$dataDebitur['no_ktp'].'/penjamin'.$a.'/'.$name;
-                // $a++;
-                $dataPasangan['lamp_ktp'] = $path.'/'.$name;
-            }
-        }
-
-        if($files = $reqPas->file('lamp_buku_nikah_pas')){
-            foreach($files as $file){
-                $name = 'buku_nikah.'.$file->getClientOriginalExtension();
-                $path = $cloud_url.'/sevin_img/debiturs/'.$dataDebitur['no_ktp'].'/pasangan';
-                $file->move($path,$name);
-                // $imgKTP[]='sevin_img/debiturs/'.$dataDebitur['no_ktp'].'/penjamin'.$a.'/'.$name;
-                // $a++;
-                $dataPasangan['lamp_buku_nikah'] = $path.'/'.$name;
-            }
-        }
-
-        // Data Usaha Calon Debitur
-        // $dataUsaha = array(
-        //     'lamp_tempat_usaha' => empty($reqUs->file('lamp_usaha')) ? null : Helper::img64enc($reqUs->file('lamp_usaha'))
-        // );
-//
         DB::connection('web')->beginTransaction();
-        // try {
+        try {
             $debt = Debitur::create($dataDebitur);
             $id_debt = $debt->id;
 
@@ -193,16 +208,6 @@ class MasterCC_Controller extends BaseController
                 $id_faspin = null;
             }
 
-            // if ($dataDebitur['pekerjaan'] == 'usaha' || $dataDebitur['pekerjaan'] == 'USAHA') {
-                // $newUsaha = array('id_calon_debitur' => $id_debt, 'lamp_tempat_usaha' => $lamp_tempat_usaha);
-
-                // $newUsa   = array_merge($arrIdDebt, $dataUsaha);
-                // $usaha    = Usaha::create($newUsa);
-                // $id_usaha = $usaha->id;
-            // }else{
-                // $id_usaha = null;
-            // }
-
             if ($dataDebitur['status_nikah'] == 'NIKAH') {
                 $newPass     = array_merge($arrIdDebt, $dataPasangan);
                 $pasangan    = Pasangan::create($newPass);
@@ -214,124 +219,129 @@ class MasterCC_Controller extends BaseController
             if (!$reqPen) {
                 $id_penjamin = null;
             }else{
-                // Array Data Penjamin
+
+                $a = 1; $b = 1; $c = 1; $d = 1;
+
+                if($files = $reqPen->file('lamp_ktp_pen')){
+                    foreach($files as $file){
+                        $path = $lamp_dir.'/penjamin';
+                        $name = 'ktp_penjamin'.$a.'.'.$file->getClientOriginalExtension();
+                        $file->move($path,$name);
+                        $a++;
+
+                        $ktpPen[] = $path.'/'.$name;
+                    }
+                }
+
+                if($files = $reqPen->file('lamp_ktp_pasangan_pen')){
+                    foreach($files as $file){
+                        $path = $lamp_dir.'/penjamin';
+                        $name = 'ktp_pasangan'.$b.'.'.$file->getClientOriginalExtension();
+                        $file->move($path,$name);
+                        $b++;
+
+                        $ktpPenPAS[] = $path.'/'.$name;
+                    }
+                }
+
+                if($files = $reqPen->file('lamp_kk_pen')){
+                    foreach($files as $file){
+                        $path = $lamp_dir.'/penjamin';
+                        $name = 'kk_penjamin'.$c.'.'.$file->getClientOriginalExtension();
+                        $file->move($path,$name);
+                        $c++;
+
+                        $kkPen[] = $path.'/'.$name;
+                   }
+                }
+
+                if($files = $reqPen->file('lamp_buku_nikah_pen')){
+                    foreach($files as $file){
+                        $path = $lamp_dir.'/penjamin';
+                        $name = 'buku_nikah_penjamin'.$c.'.'.$file->getClientOriginalExtension();
+                        $file->move($path,$name);
+                        $d++;
+
+                        $bukuNikahPen[] = $path.'/'.$name;
+                    }
+                }
+
+                $DP = array();
                 for ($i = 0; $i < count($reqPen->nama_ktp_pen); $i++) {
-
-                     $a = 1; $b = 1; $c = 1; $d = 1;
-                    if($files = $reqPen->file('lamp_ktp_pen')){
-                        foreach($files as $file){
-                            $name = 'ktp.'.$file->getClientOriginalExtension();
-                            $path = $cloud_url.'/sevin_img/debiturs/'.$dataDebitur['no_ktp'].'/penjamin/'.$a;
-                            $file->move($path,$name);
-                            $imgKTP[]='sevin_img/debiturs/'.$dataDebitur['no_ktp'].'/penjamin/'.$a.'/'.$name;
-                            $a++;
-                        }
-                    }
-
-                    if($files = $reqPen->file('lamp_ktp_pasangan_pen')){
-                        foreach($files as $file){
-                            $name = 'ktp_pasangan.'.$file->getClientOriginalExtension();
-                            $path = $cloud_url.'sevin_img/debiturs/'.$dataDebitur['no_ktp'].'/penjamin/'.$a;
-                            $file->move($path,$name);
-                            $imgKTPPAS[]='sevin_img/debiturs/'.$dataDebitur['no_ktp'].'/penjamin/'.$a.'/'.$name;
-                            $a++;
-                        }
-                    }
-
-                    if($files = $reqPen->file('lamp_kk_pen')){
-                        foreach($files as $file){
-                            $name = 'kk.'.$file->getClientOriginalExtension();
-                            $path = $cloud_url.'sevin_img/debiturs/'.$dataDebitur['no_ktp'].'/penjamin/'.$a;
-                            $file->move($path,$name);
-                            $imgKK[]='sevin_img/debiturs/'.$dataDebitur['no_ktp'].'/penjamin/'.$a.'/'.$name;
-                            $a++;
-                        }
-                    }
-
-                    if($files = $reqPen->file('lamp_buku_nikah_pen')){
-                        foreach($files as $file){
-                            $name = 'buku_nikah.'.$file->getClientOriginalExtension();
-                            $path = $cloud_url.'sevin_img/debiturs/'.$dataDebitur['no_ktp'].'/penjamin/'.$a;
-                            $file->move($path,$name);
-                            $bukuNikah[]='sevin_img/debiturs/'.$dataDebitur['no_ktp'].'/penjamin/'.$a.'/'.$name;
-                            $a++;
-                        }
-                    }
 
                     $DP[] = [
                         'id_calon_debitur' => $id_debt,
-                        'nama_ktp'         => empty($reqPen->nama_ktp_pen[$i]) ? null : $reqPen->nama_ktp_pen[$i],
-                        'nama_ibu_kandung' => empty($reqPen->nama_ibu_kandung_pen[$i]) ? null : $reqPen->nama_ibu_kandung_pen[$i],
-                        'no_ktp'           => empty($reqPen->no_ktp_pen[$i]) ? null : $reqPen->no_ktp_pen[$i],
-                        'no_npwp'          => empty($reqPen->no_npwp_pen[$i]) ? null : $reqPen->no_npwp_pen[$i],
-                        'tempat_lahir'     => empty($reqPen->tempat_lahir_pen[$i]) ? null : $reqPen->tempat_lahir_pen[$i],
-                        'tgl_lahir'        => empty($reqPen->tgl_lahir_pen[$i]) ? null : Carbon::parse($reqPen->tgl_lahir_pen[$i])->format('Y-m-d'),
-                        'jenis_kelamin'    => empty($reqPen->jenis_kelamin_pen[$i]) ? null : $reqPen->jenis_kelamin_pen[$i],
-                        'alamat_ktp'       => empty($reqPen->alamat_ktp_pen[$i]) ? null : $reqPen->alamat_ktp_pen[$i],
-                        'no_telp'          => empty($reqPen->no_telp_pen[$i]) ? null : $reqPen->no_telp_pen[$i],
-                        'hubungan_debitur' => empty($reqPen->hubungan_debitur_pen[$i]) ? null : $reqPen->hubungan_debitur_pen[$i],
-                        'lamp_ktp'         => empty($reqPen->lamp_ktp_pen[$i]) ? null : $imgKTP[$i],
-                        'lamp_ktp_pasangan'=> empty($reqPen->lamp_ktp_pasangan_pen[$i]) ? null : $imgKTPPAS[$i],
-                        'lamp_kk'          => empty($reqPen->lamp_kk_pen[$i]) ? null : $imgKK[$i],
-                        'lamp_buku_nikah'  => empty($reqPen->lamp_buku_nikah_pen[$i]) ? null : $bukuNikah[$i],
-                        // 'lamp_ktp'         => empty($reqPen->file('lamp_ktp_pen')[$i]) ? null : Helper::img64enc($reqPen->file('lamp_ktp_pen')[$i]),
-                        // 'lamp_ktp_pasangan'=> empty($reqPen->file('lamp_ktp_pasangan_pen')[$i]) ? null : Helper::img64enc($reqPen->file('lamp_ktp_pasangan_pen')[$i]),
-                        // 'lamp_kk'          => empty($reqPen->file('lamp_kk_pen')[$i]) ? null : Helper::img64enc($reqPen->file('lamp_kk_pen')[$i]),
-                        // 'lamp_buku_nikah'  => empty($reqPen->file('lamp_buku_nikah_pen')[$i]) ? null : Helper::img64enc($reqPen->file('lamp_buku_nikah_pen')[$i]),
-                        'created_at'       => Carbon::now()->toDateTimeString()
+                        'nama_ktp'         => empty($reqPen->nama_ktp_pen[$i]) ? null[$i] : $reqPen->nama_ktp_pen[$i],
+                        'nama_ibu_kandung' => empty($reqPen->nama_ibu_kandung_pen[$i]) ? null[$i] : $reqPen->nama_ibu_kandung_pen[$i],
+                        'no_ktp'           => empty($reqPen->no_ktp_pen[$i]) ? null[$i] : $reqPen->no_ktp_pen[$i],
+                        'no_npwp'          => empty($reqPen->no_npwp_pen[$i]) ? null[$i] : $reqPen->no_npwp_pen[$i],
+                        'tempat_lahir'     => empty($reqPen->tempat_lahir_pen[$i]) ? null[$i] : $reqPen->tempat_lahir_pen[$i],
+                        'tgl_lahir'        => empty($reqPen->tgl_lahir_pen[$i]) ? null[$i] : Carbon::parse($reqPen->tgl_lahir_pen[$i])->format('Y-m-d'),
+                        'jenis_kelamin'    => empty($reqPen->jenis_kelamin_pen[$i]) ? null[$i] : strtoupper($reqPen->jenis_kelamin_pen[$i]),
+                        'alamat_ktp'       => empty($reqPen->alamat_ktp_pen[$i]) ? null[$i] : $reqPen->alamat_ktp_pen[$i],
+                        'no_telp'          => empty($reqPen->no_telp_pen[$i]) ? null[$i] : $reqPen->no_telp_pen[$i],
+                        'hubungan_debitur' => empty($reqPen->hubungan_debitur_pen[$i]) ? null[$i] : $reqPen->hubungan_debitur_pen[$i],
+                        'lamp_ktp'         => empty($ktpPen[$i]) ? null[$i] : $ktpPen[$i],
+                        'lamp_ktp_pasangan'=> empty($ktpPenPAS[$i]) ? null[$i] : $ktpPenPAS[$i],
+                        'lamp_kk'          => empty($kkPen[$i]) ? null[$i] : $kkPen[$i],
+                        'lamp_buku_nikah'  => empty($bukuNikahPen[$i]) ? null[$i] : $bukuNikahPen[$i]
+                        // 'created_at'       => Carbon::now()->toDateTimeString()
                     ];
+
+                    if ($DP[$i]['lamp_ktp'] == null) {
+                        return response()->json([
+                            "code"    => 422,
+                            "status"  => "not valid request",
+                            "message" => "lamp_ktp_pen ada yang belum diisi"
+                        ], 422);
+                    }
+
+                    if ($DP[$i]['lamp_ktp_pasangan'] == null) {
+                        return response()->json([
+                            "code"    => 422,
+                            "status"  => "not valid request",
+                            "message" => "lamp_ktp_pasangan ada yang belum diisi"
+                        ], 422);
+                    }
+
+                    if ($DP[$i]['lamp_kk'] == null) {
+                        return response()->json([
+                            "code"    => 422,
+                            "status"  => "not valid request",
+                            "message" => "lamp_kk ada yang belum diisi"
+                        ], 422);
+                    }
+
+                    if ($DP[$i]['lamp_buku_nikah'] == null) {
+                        return response()->json([
+                            "code"    => 422,
+                            "status"  => "not valid request",
+                            "message" => "lamp_buku_nikah ada yang belum diisi"
+                        ], 422);
+                    }
                 }
 
-                // Array Data Agunan Tanah
-                // for ($i = 0; $i < count($reqAta->file('lamp_sertifikat')); $i++) {
+                $penjamin = Penjamin::create($DP);
 
-                //     $dataAguTa[] = [
-                //         'id_calon_debitur'     => $id_debt,
-                //         'lamp_sertifikat'      => empty($reqAta->file('lamp_sertifikat')[$i]) ? null : Helper::img64enc($reqAta->file('lamp_sertifikat')[$i]),
-                //         'lamp_pbb'             => empty($reqAta->file('lamp_pbb')[$i]) ? null : Helper::img64enc($reqAta->file('lamp_pbb')[$i]),
-                //         'lamp_agunan_depan'    => empty($reqAta->file('lamp_agunan_depan')[$i]) ? null : Helper::img64enc($reqAta->file('lamp_agunan_depan')[$i]),
-                //         'lamp_agunan_kanan'    => empty($reqAta->file('lamp_agunan_kanan')[$i]) ? null : Helper::img64enc($reqAta->file('lamp_agunan_kanan')[$i][$i][$i]),
-                //         'lamp_agunan_kiri'     => empty($reqAta->file('lamp_agunan_kiri')[$i]) ? null : Helper::img64enc($reqAta->file('lamp_agunan_kiri')[$i][$i]),
-                //         'lamp_agunan_belakang' => empty($reqAta->file('lamp_agunan_belakang')[$i]) ? null : Helper::img64enc($reqAta->file('lamp_agunan_belakang')[$i]),
-                //         'lamp_agunan_dalam'    => empty($reqAta->file('lamp_agunan_dalam')[$i]) ? null : Helper::img64enc($reqAta->file('lamp_agunan_dalam')[$i]),
-                //         'lamp_imb'             => empty($reqAta->file('lamp_imb')[$i]) ? null : Helper::img64enc($reqAta->file('lamp_imb')[$i])
-                //     ];
-                // }
-
-
-                $penjamin = Penjamin::insert($DP);
                 // $id_penjamin = DB::connection('web')->getPdo()->lastInsertId();
             }
-
-            // $newAguta = array_merge($arrIdDebt, $dataAguTa);
-            // $aguta = AgunanTanah::create($newAguta);
-            // $id_aguta = $aguta->id;
 
             $pu = Penjamin::select('id')->where('id_calon_debitur', $id_debt)->get();
             $te = array();
             $i  = 0;
+
             foreach ($pu as $val) {
                 $te['id'][$i] = $val->id;
                 $i++;
-            };
-            $id_penjamins = implode(",", $te['id']);
+            }
 
-            // $at = AgunanTanah::select('id')->where('id_calon_debitur', $id_debt)->get();
-            // $ab = array();
-            // $j  = 0;
-            // foreach ($at as $val) {
-            //     $ab['id'][$i] = $val->id;
-            //     $i++;
-            // };
-            // $id_at = implode(",", $ab['id']);
+            $id_penjamins = implode(",", $te['id']);
 
             $arrTr = array(
                 'id_fasilitas_pinjaman' => $id_faspin,
                 'id_calon_debt'         => $id_debt,
                 'id_pasangan'           => $id_pasangan,
                 'id_penjamin'           => $id_penjamins
-                // 'id_agunan_tanah'       => $id_at,
-                // 'id_usaha'              => $id_usaha
             );
 
             $mergeTr  = array_merge($dataTr, $arrTr);
@@ -344,29 +354,25 @@ class MasterCC_Controller extends BaseController
                 'status' => 'success',
                 'message'=> 'Data berhasil dibuat'
             ], 200);
-            //all good
-        // }
-        // catch (\Exception $e) {
-            // DB::connection('web')->rollback();
-
-            //something went wrong
-            // return response()->json([
-            //     'code'    => 501,
-            //     'status'  => 'error',
-            //     'message' => $e
-            // ], 501);
-        // }
+        }catch (\Exception $e) {
+            $err = DB::connection('web')->rollback();
+            return response()->json([
+                'code'    => 501,
+                'status'  => 'error',
+                'message' => $err
+            ], 501);
+        }
     }
 
-    public function mitra(Request $req){
-        $mitra_user = DB::connection('dpm')->table('mitra_user')
-            ->select('id', 'fullname', 'kode_mitra', 'jenis_mitra')
-            ->where('jenis_mitra', 'MB')
-            ->where('no_hp_verified', '1')
-            ->where('user_verifikasi', '!=', 0)
-            ->where('kode_referal', '!=', null)
-            ->get();
+    // public function mitra(Request $req){
+    //     $mitra_user = DB::connection('dpm')->table('mitra_user')
+    //         ->select('id', 'fullname', 'kode_mitra', 'jenis_mitra')
+    //         ->where('jenis_mitra', 'MB')
+    //         ->where('no_hp_verified', '1')
+    //         ->where('user_verifikasi', '!=', 0)
+    //         ->where('kode_referal', '!=', null[$i])
+    //         ->get();
 
-        dd($mitra_user);
-    }
+    //     dd($mitra_user);
+    // }
 }

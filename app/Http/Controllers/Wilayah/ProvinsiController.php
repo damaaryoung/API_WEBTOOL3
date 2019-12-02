@@ -9,6 +9,16 @@ use DB;
 
 class ProvinsiController extends BaseController
 {
+    public function search($search){
+        $query = DB::connection('web')->table('master_provinsi')->where('nama','like','%'.$search.'%')->get();
+
+        return response()->json([
+            'code'   => 200,
+            'status' => 'success',
+            'data'   => $query
+        ], 200);
+    }
+
     public function index() {
         try {
             $query = DB::connection('web')->table('master_provinsi')->get();
