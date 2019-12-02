@@ -221,12 +221,6 @@ class MasterAO_Controller extends BaseController
         $idPenj   = $Trans->id_penjamin;
         $arIdPenj = explode (",",$idPenj);
 
-        // foreach ($arIdPenj as $key => $value) {
-        //     $newIDPenj[$key]['id'] = $value;
-        // }
-
-        // dd($arIdPenj);
-
         // dd(sizeof($reqDebt->nama_anak));
 
         for ($i = 0; $i < count($reqDebt->nama_anak); $i++){
@@ -614,9 +608,9 @@ class MasterAO_Controller extends BaseController
                 $pen = Penjamin::where('id', $arIdPenj[$i])->update($dataPenjamin[$i]);
             }
 
-            VerifModel::insert($dataVerifikasi);
-            ValidModel::insert($dataValidasi);
-            AgunanTanah::insert($daAguTa);
+            VerifModel::updateOrCreate($dataVerifikasi);
+            ValidModel::updateOrCreate($dataValidasi);
+            AgunanTanah::updateOrCreate($daAguTa);
             $getAguta = AgunanTanah::select('id')->where('id_calon_debitur', $Trans->id_calon_debt)->get();
 
             $i  = 0;
@@ -632,7 +626,7 @@ class MasterAO_Controller extends BaseController
                 $id_AguTa = null;
             }
 
-            AgunanKendaraan::insert($daAguKe);
+            AgunanKendaraan::updateOrCreate($daAguKe);
             $getAguKe = AgunanKendaraan::select('id')->where('id_calon_debitur', $Trans->id_calon_debt)->get();
 
             if ($getAguKe != '[]') {
@@ -685,7 +679,7 @@ class MasterAO_Controller extends BaseController
                     'updated_at'            => $now
                 ];
 
-                PemeriksaanAgunKen::create($pemAguKe[$i]);
+                PemeriksaanAgunKen::updateOrCreate($pemAguKe[$i]);
             }
 
             $getAguTa = PemeriksaanAgunTan::select('id')->where('id_calon_debitur', $Trans->id_calon_debt)->get();
@@ -703,16 +697,21 @@ class MasterAO_Controller extends BaseController
 
             $getAguKe = PemeriksaanAgunKen::select('id')->where('id_calon_debitur', $Trans->id_calon_debt)->get();
 
-            foreach ($getAguKe as $val) {
-                $PAK['id'][$i] = $val->id;
-                $i++;
+            if ($getAguKe != '[]') {
+                foreach ($getAguKe as $val) {
+                    $PAK['id'][$i] = $val->id;
+                    $i++;
+                }
+
+                $id_PAK = implode(",", $PAK['id']);
+            }else{
+                $id_PAK = null;
             }
 
-            $id_PAK = implode(",", $PAK['id']);
 
-            $KB = KapBulanan::create($kapBul);
-            $KU = KeuanganUsaha::create($dataKeUsaha);
-            $RAO = RecomAO::create($recomAO);
+            $KB = KapBulanan::updateOrCreate($kapBul);
+            $KU = KeuanganUsaha::updateOrCreate($dataKeUsaha);
+            $RAO = RecomAO::updateOrCreate($recomAO);
 
             TransSo::where('id', $Trans->id)->update([
                 'id_agunan_tanah'             => $id_AguTa,
@@ -730,13 +729,11 @@ class MasterAO_Controller extends BaseController
                 'message'=> 'Data berhasil dibuat'
             ], 200);
         } catch (\Exception $e) {
-            DB::connection('web')->rollback();
-
-            //something went wrong
+            $err = DB::connection('web')->rollback();
             return response()->json([
                 'code'    => 501,
                 'status'  => 'error',
-                'message' => $e
+                'message' => $err
             ], 501);
         }
     }
