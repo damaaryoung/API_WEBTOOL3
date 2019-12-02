@@ -16,6 +16,7 @@ use App\Models\CC\Pasangan;
 use App\Models\CC\Penjamin;
 use App\Models\CC\Debitur;
 use App\Http\Requests;
+Use App\Models\User;
 use Carbon\Carbon;
 // use Image;
 use DB;
