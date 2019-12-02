@@ -130,11 +130,11 @@ $router->group(['middleware' => 'jwt.auth'], function () use ($router) {
             $router->get('/mcc', 'Pengajuan\MasterCC_Controller@index'); // Memorandum Account Officer
 
             $router->get('/das', 'Pengajuan\DASController@index'); //Cek HM
-            $router->get('/das', 'Pengajuan\DASController@show'); //Cek HM
+            $router->get('/das/{id}', 'Pengajuan\DASController@show'); //Cek HM
             $router->put('/das/{id}', 'Pengajuan\DASController@update'); //Cek HM
 
             $router->get('/hm', 'Pengajuan\HMController@index'); //Cek HM
-            $router->get('/hm', 'Pengajuan\HMController@show'); //Cek HM
+            $router->get('/hm/{id}', 'Pengajuan\HMController@show'); //Cek HM
             $router->put('/hm/{id}', 'Pengajuan\HMController@update'); //Cek HM
 
             $router->get('/mao', 'Pengajuan\MasterAO_Controller@index'); // All Memorandum Account Officer
