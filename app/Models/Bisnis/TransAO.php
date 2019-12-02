@@ -8,7 +8,7 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Lumen\Auth\Authorizable;
 
-class RecomAO extends Model implements AuthenticatableContract, AuthorizableContract
+class TransAO extends Model implements AuthenticatableContract, AuthorizableContract
 {
     use Authenticatable, Authorizable;
 
@@ -23,7 +23,7 @@ class RecomAO extends Model implements AuthenticatableContract, AuthorizableCont
     protected $primaryKey = 'id';
 
     protected $fillable = [
-        'id_trans_so', 'produk', 'plafon_kredit', 'jangka_waktu', 'suku_bunga', 'pembayaran_bunga', 'akad_kredit', 'ikatan_agunan', 'analisa_ao', 'biaya_provinsi', 'biaya_administrasi', 'biaya_credit_checking', 'biaya_tabungan', 'flg_aktif'
+        'nomor_ao', 'id_trans_so', 'produk', 'plafon_kredit', 'jangka_waktu', 'suku_bunga', 'pembayaran_bunga', 'akad_kredit', 'ikatan_agunan', 'analisa_ao', 'biaya_provinsi', 'biaya_administrasi', 'biaya_credit_checking', 'biaya_tabungan', 'flg_aktif'
     ];
 
     //relasi one to many (Saya memiliki banyak anggota di model .....)
