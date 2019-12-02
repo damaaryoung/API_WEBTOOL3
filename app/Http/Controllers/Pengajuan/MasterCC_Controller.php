@@ -23,6 +23,32 @@ use DB;
 
 class MasterCC_Controller extends BaseController
 {
+    public function index(){
+        $check = TransSo::get();
+
+        if ($check == '[]') {
+            return response()->json([
+                'code'    => 404,
+                'status'  => 'not found',
+                'message' => 'Data kosong'
+            ], 404);
+        }
+
+        try {
+            return response()->json([
+                'code'   => 200,
+                'status' => 'success',
+                'data'   => $check
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                "code"    => 501,
+                "status"  => "error",
+                "message" => $e
+            ], 501);
+        }
+    }
+
     public function store(Request $req, FasPinRequest $reqFasPin, DebtRequest $reqDebt, DebtPasanganRequest $reqPas, DebtPenjaminRequest $reqPen) {
 
         $user_id = $req->auth->user_id;
@@ -88,7 +114,7 @@ class MasterCC_Controller extends BaseController
 
         if($file = $reqDebt->file('lamp_sertifikat')){
             $path = $lamp_dir.'/debitur';
-            $name = 'kk.'.$file->getClientOriginalExtension();
+            $name = 'sertifikat.'.$file->getClientOriginalExtension();
             $file->move($path,$name);
 
             $sertifikatDebt = $path.'/'.$name;
@@ -98,7 +124,7 @@ class MasterCC_Controller extends BaseController
 
         if($file = $reqDebt->file('lamp_pbb')){
             $path = $lamp_dir.'/debitur';
-            $name = 'kk.'.$file->getClientOriginalExtension();
+            $name = 'pbb.'.$file->getClientOriginalExtension();
             $file->move($path,$name);
 
             $pbbDebt = $path.'/'.$name;
@@ -108,7 +134,7 @@ class MasterCC_Controller extends BaseController
 
         if($file = $reqDebt->file('lamp_imb')){
             $path = $lamp_dir.'/debitur';
-            $name = 'kk.'.$file->getClientOriginalExtension();
+            $name = 'imb.'.$file->getClientOriginalExtension();
             $file->move($path,$name);
 
             $imbDebt = $path.'/'.$name;
@@ -194,7 +220,7 @@ class MasterCC_Controller extends BaseController
         );
 
         DB::connection('web')->beginTransaction();
-        // try {
+        try {
             $debt = Debitur::create($dataDebitur);
             $id_debt = $debt->id;
 
@@ -258,7 +284,7 @@ class MasterCC_Controller extends BaseController
                 if($files = $reqPen->file('lamp_buku_nikah_pen')){
                     foreach($files as $file){
                         $path = $lamp_dir.'/penjamin';
-                        $name = 'buku_nikah_penjamin'.$c.'.'.$file->getClientOriginalExtension();
+                        $name = 'buku_nikah_penjamin'.$d.'.'.$file->getClientOriginalExtension();
                         $file->move($path,$name);
                         $d++;
 
@@ -267,81 +293,83 @@ class MasterCC_Controller extends BaseController
                 }
 
                 $DP = array();
-                for ($i = 0; $i < count($reqPen->nama_ktp_pen); $i++) {
 
-                    $DP[] = [
-                        'id_calon_debitur' => $id_debt,
-                        'nama_ktp'         => empty($reqPen->nama_ktp_pen[$i]) ? null[$i] : $reqPen->nama_ktp_pen[$i],
-                        'nama_ibu_kandung' => empty($reqPen->nama_ibu_kandung_pen[$i]) ? null[$i] : $reqPen->nama_ibu_kandung_pen[$i],
-                        'no_ktp'           => empty($reqPen->no_ktp_pen[$i]) ? null[$i] : $reqPen->no_ktp_pen[$i],
-                        'no_npwp'          => empty($reqPen->no_npwp_pen[$i]) ? null[$i] : $reqPen->no_npwp_pen[$i],
-                        'tempat_lahir'     => empty($reqPen->tempat_lahir_pen[$i]) ? null[$i] : $reqPen->tempat_lahir_pen[$i],
-                        'tgl_lahir'        => empty($reqPen->tgl_lahir_pen[$i]) ? null[$i] : Carbon::parse($reqPen->tgl_lahir_pen[$i])->format('Y-m-d'),
-                        'jenis_kelamin'    => empty($reqPen->jenis_kelamin_pen[$i]) ? null[$i] : strtoupper($reqPen->jenis_kelamin_pen[$i]),
-                        'alamat_ktp'       => empty($reqPen->alamat_ktp_pen[$i]) ? null[$i] : $reqPen->alamat_ktp_pen[$i],
-                        'no_telp'          => empty($reqPen->no_telp_pen[$i]) ? null[$i] : $reqPen->no_telp_pen[$i],
-                        'hubungan_debitur' => empty($reqPen->hubungan_debitur_pen[$i]) ? null[$i] : $reqPen->hubungan_debitur_pen[$i],
-                        'lamp_ktp'         => empty($ktpPen[$i]) ? null[$i] : $ktpPen[$i],
-                        'lamp_ktp_pasangan'=> empty($ktpPenPAS[$i]) ? null[$i] : $ktpPenPAS[$i],
-                        'lamp_kk'          => empty($kkPen[$i]) ? null[$i] : $kkPen[$i],
-                        'lamp_buku_nikah'  => empty($bukuNikahPen[$i]) ? null[$i] : $bukuNikahPen[$i],
-                        'created_at'       => Carbon::now()->toDateTimeString(),
-                        'updated_at'       => Carbon::now()->toDateTimeString()
-                    ];
+                if (!empty($reqPen->input('nama_ktp_pen'))) {
+                    for ($i = 0; $i < count($reqPen->input('nama_ktp_pen')); $i++) {
 
-                    if ($DP[$i]['lamp_ktp'] == null) {
-                        return response()->json([
-                            "code"    => 422,
-                            "status"  => "not valid request",
-                            "message" => "lamp_ktp_pen ada yang belum diisi"
-                        ], 422);
-                    }
+                        $DP[] = [
+                            'id_calon_debitur' => $id_debt,
+                            'nama_ktp'         => empty($reqPen->nama_ktp_pen[$i]) ? null[$i] : $reqPen->nama_ktp_pen[$i],
+                            'nama_ibu_kandung' => empty($reqPen->nama_ibu_kandung_pen[$i]) ? null[$i] : $reqPen->nama_ibu_kandung_pen[$i],
+                            'no_ktp'           => empty($reqPen->no_ktp_pen[$i]) ? null[$i] : $reqPen->no_ktp_pen[$i],
+                            'no_npwp'          => empty($reqPen->no_npwp_pen[$i]) ? null[$i] : $reqPen->no_npwp_pen[$i],
+                            'tempat_lahir'     => empty($reqPen->tempat_lahir_pen[$i]) ? null[$i] : $reqPen->tempat_lahir_pen[$i],
+                            'tgl_lahir'        => empty($reqPen->tgl_lahir_pen[$i]) ? null[$i] : Carbon::parse($reqPen->tgl_lahir_pen[$i])->format('Y-m-d'),
+                            'jenis_kelamin'    => empty($reqPen->jenis_kelamin_pen[$i]) ? null[$i] : strtoupper($reqPen->jenis_kelamin_pen[$i]),
+                            'alamat_ktp'       => empty($reqPen->alamat_ktp_pen[$i]) ? null[$i] : $reqPen->alamat_ktp_pen[$i],
+                            'no_telp'          => empty($reqPen->no_telp_pen[$i]) ? null[$i] : $reqPen->no_telp_pen[$i],
+                            'hubungan_debitur' => empty($reqPen->hubungan_debitur_pen[$i]) ? null[$i] : $reqPen->hubungan_debitur_pen[$i],
+                            'lamp_ktp'         => empty($ktpPen[$i]) ? null[$i] : $ktpPen[$i],
+                            'lamp_ktp_pasangan'=> empty($ktpPenPAS[$i]) ? null[$i] : $ktpPenPAS[$i],
+                            'lamp_kk'          => empty($kkPen[$i]) ? null[$i] : $kkPen[$i],
+                            'lamp_buku_nikah'  => empty($bukuNikahPen[$i]) ? null[$i] : $bukuNikahPen[$i],
+                            'created_at'       => Carbon::now()->toDateTimeString(),
+                            'updated_at'       => Carbon::now()->toDateTimeString()
+                        ];
 
-                    if ($DP[$i]['lamp_ktp_pasangan'] == null) {
-                        return response()->json([
-                            "code"    => 422,
-                            "status"  => "not valid request",
-                            "message" => "lamp_ktp_pasangan_penjamin ada yang belum diisi"
-                        ], 422);
-                    }
 
-                    if ($DP[$i]['lamp_kk'] == null) {
-                        return response()->json([
-                            "code"    => 422,
-                            "status"  => "not valid request",
-                            "message" => "lamp_kk ada yang belum diisi"
-                        ], 422);
-                    }
+                        if ($DP[$i]['lamp_ktp'] == null) {
+                            return response()->json([
+                                "code"    => 422,
+                                "status"  => "not valid request",
+                                "message" => "lamp_ktp_pen ada yang belum diisi"
+                            ], 422);
+                        }
 
-                    if ($DP[$i]['lamp_buku_nikah'] == null) {
-                        return response()->json([
-                            "code"    => 422,
-                            "status"  => "not valid request",
-                            "message" => "lamp_buku_nikah ada yang belum diisi"
-                        ], 422);
+                        if ($DP[$i]['lamp_ktp_pasangan'] == null) {
+                            return response()->json([
+                                "code"    => 422,
+                                "status"  => "not valid request",
+                                "message" => "lamp_ktp_pasangan_penjamin ada yang belum diisi"
+                            ], 422);
+                        }
+
+                        if ($DP[$i]['lamp_kk'] == null) {
+                            return response()->json([
+                                "code"    => 422,
+                                "status"  => "not valid request",
+                                "message" => "lamp_kk ada yang belum diisi"
+                            ], 422);
+                        }
+
+                        if ($DP[$i]['lamp_buku_nikah'] == null) {
+                            return response()->json([
+                                "code"    => 422,
+                                "status"  => "not valid request",
+                                "message" => "lamp_buku_nikah ada yang belum diisi"
+                            ], 422);
+                        }
+
+                        $penjamin = Penjamin::insert($DP);
                     }
                 }
-
-                $penjamin = Penjamin::insert($DP);
-
-                // dd($penjamin);
-
-                // $id_penjamin = DB::connection('web')->getPdo()->lastInsertId();
             }
 
             $pu = Penjamin::select('id')->where('id_calon_debitur', $id_debt)->get();
 
-            // dd($pu);
+            if ($pu != '[]') {
+                $te = array();
+                $i  = 0;
 
-            $te = array();
-            $i  = 0;
+                foreach ($pu as $val) {
+                    $te['id'][$i] = $val->id;
+                    $i++;
+                }
 
-            foreach ($pu as $val) {
-                $te['id'][$i] = $val->id;
-                $i++;
+                $id_penjamins = implode(",", $te['id']);
+            }else{
+                $id_penjamins = null;
             }
-
-            $id_penjamins = implode(",", $te['id']);
 
             $arrTr = array(
                 'id_fasilitas_pinjaman' => $id_faspin,
@@ -360,14 +388,14 @@ class MasterCC_Controller extends BaseController
                 'status' => 'success',
                 'message'=> 'Data berhasil dibuat'
             ], 200);
-        // }catch (\Exception $e) {
-        //     $err = DB::connection('web')->rollback();
-        //     return response()->json([
-        //         'code'    => 501,
-        //         'status'  => 'error',
-        //         'message' => $err
-        //     ], 501);
-        // }
+        }catch (\Exception $e) {
+            $err = DB::connection('web')->rollback();
+            return response()->json([
+                'code'    => 501,
+                'status'  => 'error',
+                'message' => $err
+            ], 501);
+        }
     }
 
     // public function mitra(Request $req){

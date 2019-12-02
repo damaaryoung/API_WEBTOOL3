@@ -14,6 +14,7 @@ use App\Http\Requests\Debt\PemAgTaReq;
 use App\Http\Requests\Debt\PemAgKeReq;
 use App\Http\Requests\Debt\AguKenReq;
 use App\Http\Requests\Debt\AguTaReq;
+use App\Http\Requests\Debt\TrAoReq;
 use App\Models\CC\FasilitasPinjaman;
 use App\Models\CC\PemeriksaanAgunKen;
 use App\Models\CC\PemeriksaanAgunTan;
@@ -27,7 +28,7 @@ use App\Models\Wilayah\Provinsi;
 use App\Models\CC\KeuanganUsaha;
 use App\Models\CC\KapBulanan;
 use App\Models\CC\AgunanTanah;
-use App\Models\Bisnis\RecomAO;
+use App\Models\Bisnis\TransAO;
 use App\Models\Bisnis\TransSo;
 use Illuminate\Http\Request;
 use App\Models\CC\Pasangan;
@@ -44,7 +45,7 @@ class MasterAO_Controller extends BaseController
     public function index(Request $req){
         $user_id = $req->auth->user_id;
 
-        $query = TransSo::where('user_id', $user_id)->get();
+        $query = TransSo::where('user_id', $user_id)->where('status_hm', 1)->get();
 
         if ($query == '[]') {
             return response()->json([
@@ -65,7 +66,9 @@ class MasterAO_Controller extends BaseController
                 'nama_so'        => $val->nama_so,
                 'nama_debitur'   => $val->debt['nama_lengkap'],
                 'plafon'         => (int) $val->faspin->plafon,
-                'tenor'          => (int) $val->faspin->tenor
+                'tenor'          => (int) $val->faspin->tenor,
+                'status_hm'      => $val->status_hm,
+                'catatan_hm'     => $val->catatan_hm
             ];
         }
 
@@ -86,7 +89,7 @@ class MasterAO_Controller extends BaseController
 
     public function show($id, Request $req){
         $user_id = $req->auth->user_id;
-        $query = TransSo::where('id', $id)->where('user_id', $user_id)->get();
+        $query = TransSo::where('id', $id)->where('user_id', $user_id)->where('status_hm', 1)->get();
 
         if ($query == '[]') {
             return response()->json([
@@ -130,40 +133,43 @@ class MasterAO_Controller extends BaseController
                     'tujuan_pinjaman' => $val->faspin->tujuan_pinjaman
                 ],
                 'data_debitur' => [
-                     'nama_lengkap'          => $val->debt['nama_lengkap'],
-                     'gelar_keagamaan'       => $val->debt['gelar_keagamaan'],
-                     'gelar_pendidikan'      => $val->debt['gelar_pendidikan'],
-                     'jenis_kelamin'         => $val->debt['jenis_kelamin'],
-                     'status_nikah'          => $val->debt['status_nikah'],
-                     'ibu_kandung'           => $val->debt['ibu_kandung'],
-                     'no_ktp'                => $val->debt['no_ktp'],
-                     'no_ktp_kk'             => $val->debt[''],
-                     'no_kk'                 => $val->debt['no_ktp_kk'],
-                     'no_npwp'               => $val->debt['no_npwp'],
-                     'tempat_lahir'          => $val->debt['tempat_lahir'],
-                     'tgl_lahir'             => $val->debt['tgl_lahir'],
-                     'agama'                 => $val->debt['agama'],
-                     'alamat_ktp'            => $val->debt['alamat_ktp'],
-                     'rt_ktp'                => $val->debt['rt_ktp'],
-                     'rw_ktp'                => $val->debt['rw_ktp'],
-                     'provinsi_ktp'          => $prov_ktp->nama,
-                     'kabupaten_ktp'         => $kab_ktp->nama,
-                     'kecamatan_ktp'         => $kec_ktp->nama,
-                     'kelurahan_ktp'         => $kel_ktp->nama,
-                     'alamat_domisili'       => $val->debt['alamat_domisili'],
-                     'rt_domisili'           => $val->debt['rt_domisili'],
-                     'rw_domisili'           => $val->debt['rw_domisili'],
-                     'provinsi_domisili'     => $prov_dom->nama,
-                     'kabupaten_domisili'    => $kab_dom->nama,
-                     'kecamatan_domisili'    => $kec_dom->nama,
-                     'kelurahan_domisili'    => $kel_dom->nama,
-                     'pendidikan_terakhir'   => $val->debt['pendidikan_terakhir'],
-                     'jumlah_tanggungan'     => $val->debt['jumlah_tanggungan'],
-                     'no_telp'               => $val->debt['no_telp'],
-                     'no_hp'                 => $val->debt['no_hp'],
-                     'alamat_surat'          => $val->debt['alamat_surat'],
-                     'lamp_ktp'              => $val->debt['lamp_ktp'],
-                     'lamp_kk'               => $val->debt['lamp_kk']
+                    'nama_lengkap'          => $val->debt['nama_lengkap'],
+                    'gelar_keagamaan'       => $val->debt['gelar_keagamaan'],
+                    'gelar_pendidikan'      => $val->debt['gelar_pendidikan'],
+                    'jenis_kelamin'         => $val->debt['jenis_kelamin'],
+                    'status_nikah'          => $val->debt['status_nikah'],
+                    'ibu_kandung'           => $val->debt['ibu_kandung'],
+                    'no_ktp'                => $val->debt['no_ktp'],
+                    'no_ktp_kk'             => $val->debt[''],
+                    'no_kk'                 => $val->debt['no_ktp_kk'],
+                    'no_npwp'               => $val->debt['no_npwp'],
+                    'tempat_lahir'          => $val->debt['tempat_lahir'],
+                    'tgl_lahir'             => $val->debt['tgl_lahir'],
+                    'agama'                 => $val->debt['agama'],
+                    'alamat_ktp'            => $val->debt['alamat_ktp'],
+                    'rt_ktp'                => $val->debt['rt_ktp'],
+                    'rw_ktp'                => $val->debt['rw_ktp'],
+                    'provinsi_ktp'          => $prov_ktp->nama,
+                    'kabupaten_ktp'         => $kab_ktp->nama,
+                    'kecamatan_ktp'         => $kec_ktp->nama,
+                    'kelurahan_ktp'         => $kel_ktp->nama,
+                    'alamat_domisili'       => $val->debt['alamat_domisili'],
+                    'rt_domisili'           => $val->debt['rt_domisili'],
+                    'rw_domisili'           => $val->debt['rw_domisili'],
+                    'provinsi_domisili'     => $prov_dom->nama,
+                    'kabupaten_domisili'    => $kab_dom->nama,
+                    'kecamatan_domisili'    => $kec_dom->nama,
+                    'kelurahan_domisili'    => $kel_dom->nama,
+                    'pendidikan_terakhir'   => $val->debt['pendidikan_terakhir'],
+                    'jumlah_tanggungan'     => $val->debt['jumlah_tanggungan'],
+                    'no_telp'               => $val->debt['no_telp'],
+                    'no_hp'                 => $val->debt['no_hp'],
+                    'alamat_surat'          => $val->debt['alamat_surat'],
+                    'lamp_ktp'              => $val->debt['lamp_ktp'],
+                    'lamp_kk'               => $val->debt['lamp_kk'],
+                    'lamp_sertifikat'       => $val->debt['lamp_sertifikat'],
+                    'lamp_sttp_pbb'         => $val->debt['lamp_sttp_pbb'],
+                    'lamp_imb'              => $val->debt['lamp_imb']
                 ],
                 'data_pasangan' => [
                     'nama_lengkap'     => $val->pas['nama_lengkap'],
@@ -176,8 +182,11 @@ class MasterAO_Controller extends BaseController
                     'tgl_lahir'        => $val->pas['tgl_lahir'],
                     'alamat_ktp'       => $val->pas['alamat_ktp'],
                     'no_telp'          => $val->pas['no_telp'],
+                    'lamp_buku_nikah'  => $val->pas['lamp_buku_nikah']
                 ],
-                'data_penjamin' => $penjamin
+                'data_penjamin' => $penjamin,
+                'status_hm'     => $val->status_hm,
+                'catatan_hm'    => $val->catatan_hm
             ];
         }
 
@@ -196,7 +205,29 @@ class MasterAO_Controller extends BaseController
         }
     }
 
-    public function update($id, Request $req, FasPinRequest $reqFasPin, DebtRequest $reqDebt, DebtPasanganRequest $reqPas, DebtPenjaminRequest $reqPen, UsahaRequest $reqUs, AguTaReq $reqAta, AguKenReq $reqAk, PemAgTaReq $reqPAT, PemAgKeReq $reqPAK, KapBulananReq $reqkapBul) {
+    public function update($id, Request $req, FasPinRequest $reqFasPin, DebtRequest $reqDebt, DebtPasanganRequest $reqPas, DebtPenjaminRequest $reqPen, UsahaRequest $reqUs, AguTaReq $reqAta, AguKenReq $reqAk, PemAgTaReq $reqPAT, PemAgKeReq $reqPAK, KapBulananReq $reqkapBul, TrAoReq $reqAo) {
+
+        $user_id = $req->auth->user_id;
+
+        $user = User::where('user_id', $user_id)->first();
+
+        $kode_kantor = $user->kd_cabang;
+        $so_name     = $user->nama;
+
+        $countTSO = TransAo::count();
+
+        if (!$countTSO) {
+            $no = 1;
+        }else{
+            $no = $countTSO + 1;
+        }
+
+        //Data Transaksi SO
+        $nows  = Carbon::now();
+        $year  = $nows->year;
+        $month = $nows->month;
+
+        $noAO = $kode_kantor.'-SO-'.$month.'-'.$year.'-'.$no;
 
         $Trans = TransSo::where('id', $id)->first();
 
@@ -470,66 +501,70 @@ class MasterAO_Controller extends BaseController
         }
 
 
-        for ($i = 0; $i < count($reqAta->tipe_lokasi_agunan); $i++){
-            $daAguTa[] = [
-                'id_calon_debitur'        => $Trans->id_calon_debt,
-                'tipe_lokasi'             => empty($reqAta->tipe_lokasi_agunan[$i]) ? null[$i] : strtoupper($reqAta->tipe_lokasi_agunan[$i]),
-                'alamat'                  => empty($reqAta->alamat_agunan[$i]) ? null[$i] : $reqAta->alamat_agunan[$i],
-                'id_povinsi'              => empty($reqAta->id_prov_agunan[$i]) ? null[$i] : $reqAta->id_prov_agunan[$i],
-                'id_kabupaten'            => empty($reqAta->id_kab_agunan[$i]) ? null[$i] : $reqAta->id_kab_agunan[$i],
-                'id_kecamatan'            => empty($reqAta->id_kec_agunan[$i]) ? null[$i] : $reqAta->id_kec_agunan[$i],
-                'id_kelurahan'            => empty($reqAta->id_kel_agunan[$i]) ? null[$i] : $reqAta->id_kel_agunan[$i],
-                'rt'                      => empty($reqAta->rt_agunan[$i]) ? null[$i] : $reqAta->rt_agunan[$i],
-                'rw'                      => empty($reqAta->rw_agunan[$i]) ? null[$i] : $reqAta->rw_agunan[$i],
-                'luas_tanah'              => empty($reqAta->luas_tanah[$i]) ? null[$i] : $reqAta->luas_tanah[$i],
-                'luas_bangunan'           => empty($reqAta->luas_bangunan[$i]) ? null[$i] : $reqAta->luas_bangunan[$i],
-                'nama_pemilik_sertifikat' => empty($reqAta->nama_pemilik_sertifikat[$i]) ? null[$i] : $reqAta->nama_pemilik_sertifikat[$i],
-                'jenis_sertifikat'        => empty($reqAta->jenis_sertifikat[$i]) ? null[$i] : strtoupper($reqAta->jenis_sertifikat[$i]),
-                'no_sertifikat'           => empty($reqAta->no_sertifikat[$i]) ? null[$i] : $reqAta->no_sertifikat[$i],
-                'tgl_ukur_sertifikat'     => empty($reqAta->tgl_ukur_sertifikat[$i]) ? null[$i] : Carbon::parse($reqAta->tgl_ukur_sertifikat[$i])->format('Y-m-d'),
-                'tgl_berlaku_shgb'        => empty($reqAta->tgl_berlaku_shgb[$i]) ? null[$i] : Carbon::parse($reqAta->tgl_berlaku_shgb[$i])->format('Y-m-d'),
-                'no_imb'                  => empty($reqAta->no_imb[$i]) ? null[$i] : $reqAta->no_imb[$i],
-                'njop'                    => empty($reqAta->njop[$i]) ? null[$i] : $reqAta->njop[$i],
-                'nop'                     => empty($reqAta->nop[$i]) ? null[$i] : $reqAta->nop[$i],
-                // 'lam_imb'                 => empty($reqAta->file('lam_imb')[$i]) ? null : Helper::img64enc($reqAta->file('lam_imb')[$i]),
-                'lamp_agunan_depan'       => empty($agunanDepan[$i]) ? null[$i] : $agunanDepan[$i],
-                'lamp_agunan_kanan'       => empty($agunanKanan[$i]) ? null[$i] : $agunanKanan[$i],
-                'lamp_agunan_kiri'        => empty($agunanKiriKen[$i]) ? null[$i] : $agunanKiriKen[$i],
-                'lamp_agunan_belakang'    => empty($agunanBelakang[$i]) ? null[$i] : $agunanBelakang[$i],
-                'lamp_agunan_dalam'       => empty($agunanDalamKen[$i]) ? null[$i] : $agunanDalamKen[$i],
-                // 'lamp_sertifikat'         => empty($reqAta->file('lamp_sertifikat')[$i]) ? null : Helper::img64enc($reqAta->file('lamp_sertifikat')[$i]),
-                // 'lamp_imb'                => empty($reqAta->file('lamp_imb')[$i]) ? null : Helper::img64enc($reqAta->file('lamp_imb')[$i]),
-                // 'lamp_pbb'                => empty($reqAta->file('lamp_pbb')[$i]) ? null : Helper::img64enc($reqAta->file('lamp_pbb')[$i])
-                'created_at'              => $now,
-                'updated_at'              => $now
-            ];
+        if (!empty($reqAta->input('tipe_lokasi_agunan'))) {
+            for ($i = 0; $i < count($reqAta->input('tipe_lokasi_agunan')); $i++){
+                $daAguTa[] = [
+                    'id_calon_debitur'        => $Trans->id_calon_debt,
+                    'tipe_lokasi'             => empty($reqAta->tipe_lokasi_agunan[$i]) ? null[$i] : strtoupper($reqAta->tipe_lokasi_agunan[$i]),
+                    'alamat'                  => empty($reqAta->alamat_agunan[$i]) ? null[$i] : $reqAta->alamat_agunan[$i],
+                    'id_povinsi'              => empty($reqAta->id_prov_agunan[$i]) ? null[$i] : $reqAta->id_prov_agunan[$i],
+                    'id_kabupaten'            => empty($reqAta->id_kab_agunan[$i]) ? null[$i] : $reqAta->id_kab_agunan[$i],
+                    'id_kecamatan'            => empty($reqAta->id_kec_agunan[$i]) ? null[$i] : $reqAta->id_kec_agunan[$i],
+                    'id_kelurahan'            => empty($reqAta->id_kel_agunan[$i]) ? null[$i] : $reqAta->id_kel_agunan[$i],
+                    'rt'                      => empty($reqAta->rt_agunan[$i]) ? null[$i] : $reqAta->rt_agunan[$i],
+                    'rw'                      => empty($reqAta->rw_agunan[$i]) ? null[$i] : $reqAta->rw_agunan[$i],
+                    'luas_tanah'              => empty($reqAta->luas_tanah[$i]) ? null[$i] : $reqAta->luas_tanah[$i],
+                    'luas_bangunan'           => empty($reqAta->luas_bangunan[$i]) ? null[$i] : $reqAta->luas_bangunan[$i],
+                    'nama_pemilik_sertifikat' => empty($reqAta->nama_pemilik_sertifikat[$i]) ? null[$i] : $reqAta->nama_pemilik_sertifikat[$i],
+                    'jenis_sertifikat'        => empty($reqAta->jenis_sertifikat[$i]) ? null[$i] : strtoupper($reqAta->jenis_sertifikat[$i]),
+                    'no_sertifikat'           => empty($reqAta->no_sertifikat[$i]) ? null[$i] : $reqAta->no_sertifikat[$i],
+                    'tgl_ukur_sertifikat'     => empty($reqAta->tgl_ukur_sertifikat[$i]) ? null[$i] : Carbon::parse($reqAta->tgl_ukur_sertifikat[$i])->format('Y-m-d'),
+                    'tgl_berlaku_shgb'        => empty($reqAta->tgl_berlaku_shgb[$i]) ? null[$i] : Carbon::parse($reqAta->tgl_berlaku_shgb[$i])->format('Y-m-d'),
+                    'no_imb'                  => empty($reqAta->no_imb[$i]) ? null[$i] : $reqAta->no_imb[$i],
+                    'njop'                    => empty($reqAta->njop[$i]) ? null[$i] : $reqAta->njop[$i],
+                    'nop'                     => empty($reqAta->nop[$i]) ? null[$i] : $reqAta->nop[$i],
+                    // 'lam_imb'                 => empty($reqAta->file('lam_imb')[$i]) ? null : Helper::img64enc($reqAta->file('lam_imb')[$i]),
+                    'lamp_agunan_depan'       => empty($agunanDepan[$i]) ? null[$i] : $agunanDepan[$i],
+                    'lamp_agunan_kanan'       => empty($agunanKanan[$i]) ? null[$i] : $agunanKanan[$i],
+                    'lamp_agunan_kiri'        => empty($agunanKiriKen[$i]) ? null[$i] : $agunanKiriKen[$i],
+                    'lamp_agunan_belakang'    => empty($agunanBelakang[$i]) ? null[$i] : $agunanBelakang[$i],
+                    'lamp_agunan_dalam'       => empty($agunanDalamKen[$i]) ? null[$i] : $agunanDalamKen[$i],
+                    // 'lamp_sertifikat'         => empty($reqAta->file('lamp_sertifikat')[$i]) ? null : Helper::img64enc($reqAta->file('lamp_sertifikat')[$i]),
+                    // 'lamp_imb'                => empty($reqAta->file('lamp_imb')[$i]) ? null : Helper::img64enc($reqAta->file('lamp_imb')[$i]),
+                    // 'lamp_pbb'                => empty($reqAta->file('lamp_pbb')[$i]) ? null : Helper::img64enc($reqAta->file('lamp_pbb')[$i])
+                    'created_at'              => $now,
+                    'updated_at'              => $now
+                ];
+            }
         }
 
-        for ($i = 0; $i < count($reqAk->no_bpkb_ken); $i++) {
-            $daAguKe[] = [
-                'id_calon_debitur'      => $Trans->id_calon_debt,
-                'no_bpkb'               => empty($reqAk->no_bpkb_ken[$i]) ? null[$i] : $reqAk->no_bpkb_ken[$i],
-                'nama_pemilik'          => empty($reqAk->nama_pemilik_ken[$i]) ? null[$i] : $reqAk->nama_pemilik_ken[$i],
-                'alamat_pemilik'        => empty($reqAk->alamat_pemilik_ken[$i]) ? null[$i] : $reqAk->nama_pemilik_ken[$i],
-                'merk'                  => empty($reqAk->merk_ken[$i]) ? null[$i] : $reqAk->merk_ken[$i],
-                'jenis'                 => empty($reqAk->jenis_ken[$i]) ? null[$i] : $reqAk->jenis_ken[$i],
-                'no_rangka'             => empty($reqAk->no_rangka_ken[$i]) ? null[$i] : $reqAk->no_rangka_ken[$i],
-                'no_mesin'              => empty($reqAk->no_mesin_ken[$i]) ? null[$i] : $reqAk->no_mesin_ken[$i],
-                'warna'                 => empty($reqAk->warna_ken[$i]) ? null[$i] : $reqAk->warna_ken[$i],
-                'tahun'                 => empty($reqAk->tahun_ken[$i]) ? null[$i] : $reqAk->tahun_ken[$i],
-                'no_polisi'             => empty($reqAk->no_polisi_ken[$i]) ? null[$i] : strtoupper($reqAk->no_polisi_ken[$i]),
-                'no_stnk'               => empty($reqAk->no_stnk_ken[$i]) ? null[$i] : $reqAk->no_stnk_ken[$i],
-                'tgl_kadaluarsa_pajak'  => empty($reqAk->tgl_exp_pajak_ken[$i]) ? null[$i] : Carbon::parse($reqAk->tgl_exp_pajak_ken[$i])->format('Y-m-d'),
-                'tgl_kadaluarsa_stnk'   => empty($reqAk->tgl_exp_stnk_ken[$i]) ? null[$i] : Carbon::parse($reqAk->tgl_exp_stnk_ken[$i])->format('Y-m-d'),
-                'no_faktur'             => empty($reqAk->no_faktur_ken[$i]) ? null[$i] : $reqAk->no_faktur_ken[$i],
-                'lamp_agunan_depan'     => empty($agunanDepanKen[$i]) ? null[$i] : $agunanDepanKen[$i],
-                'lamp_agunan_kanan'     => empty($agunanKananKen[$i]) ? null[$i] : $agunanKananKen[$i],
-                'lamp_agunan_kiri'      => empty($agunanKiriKen[$i]) ? null[$i] : $agunanKiriKen[$i],
-                'lamp_agunan_belakang'  => empty($agunanBelakangKen[$i]) ? null[$i] : $agunanBelakangKen[$i],
-                'lamp_agunan_dalam'     => empty($agunanDalamKen[$i]) ? null[$i] : $agunanDalamKen[$i],
-                'created_at'            => $now,
-                'updated_at'            => $now
-            ];
+        if (!empty($reqAk->input('no_bpkb_ken'))) {
+            for ($i = 0; $i < count($reqAk->input('no_bpkb_ken')); $i++) {
+                $daAguKe[] = [
+                    'id_calon_debitur'      => $Trans->id_calon_debt,
+                    'no_bpkb'               => empty($reqAk->no_bpkb_ken[$i]) ? null[$i] : $reqAk->no_bpkb_ken[$i],
+                    'nama_pemilik'          => empty($reqAk->nama_pemilik_ken[$i]) ? null[$i] : $reqAk->nama_pemilik_ken[$i],
+                    'alamat_pemilik'        => empty($reqAk->alamat_pemilik_ken[$i]) ? null[$i] : $reqAk->nama_pemilik_ken[$i],
+                    'merk'                  => empty($reqAk->merk_ken[$i]) ? null[$i] : $reqAk->merk_ken[$i],
+                    'jenis'                 => empty($reqAk->jenis_ken[$i]) ? null[$i] : $reqAk->jenis_ken[$i],
+                    'no_rangka'             => empty($reqAk->no_rangka_ken[$i]) ? null[$i] : $reqAk->no_rangka_ken[$i],
+                    'no_mesin'              => empty($reqAk->no_mesin_ken[$i]) ? null[$i] : $reqAk->no_mesin_ken[$i],
+                    'warna'                 => empty($reqAk->warna_ken[$i]) ? null[$i] : $reqAk->warna_ken[$i],
+                    'tahun'                 => empty($reqAk->tahun_ken[$i]) ? null[$i] : $reqAk->tahun_ken[$i],
+                    'no_polisi'             => empty($reqAk->no_polisi_ken[$i]) ? null[$i] : strtoupper($reqAk->no_polisi_ken[$i]),
+                    'no_stnk'               => empty($reqAk->no_stnk_ken[$i]) ? null[$i] : $reqAk->no_stnk_ken[$i],
+                    'tgl_kadaluarsa_pajak'  => empty($reqAk->tgl_exp_pajak_ken[$i]) ? null[$i] : Carbon::parse($reqAk->tgl_exp_pajak_ken[$i])->format('Y-m-d'),
+                    'tgl_kadaluarsa_stnk'   => empty($reqAk->tgl_exp_stnk_ken[$i]) ? null[$i] : Carbon::parse($reqAk->tgl_exp_stnk_ken[$i])->format('Y-m-d'),
+                    'no_faktur'             => empty($reqAk->no_faktur_ken[$i]) ? null[$i] : $reqAk->no_faktur_ken[$i],
+                    'lamp_agunan_depan'     => empty($agunanDepanKen[$i]) ? null[$i] : $agunanDepanKen[$i],
+                    'lamp_agunan_kanan'     => empty($agunanKananKen[$i]) ? null[$i] : $agunanKananKen[$i],
+                    'lamp_agunan_kiri'      => empty($agunanKiriKen[$i]) ? null[$i] : $agunanKiriKen[$i],
+                    'lamp_agunan_belakang'  => empty($agunanBelakangKen[$i]) ? null[$i] : $agunanBelakangKen[$i],
+                    'lamp_agunan_dalam'     => empty($agunanDalamKen[$i]) ? null[$i] : $agunanDalamKen[$i],
+                    'created_at'            => $now,
+                    'updated_at'            => $now
+                ];
+            }
         }
 
         $kapBul = array(
@@ -548,20 +583,21 @@ class MasterAO_Controller extends BaseController
             'penghasilan_bersih'    => ((empty($reqkapBul->input('pemasukan_debitur')) ? 0 : $reqkapBul->input('pemasukan_debitur')) + (empty($reqkapBul->input('pemasuk + an_pasangan')) ? 0 : $reqkapBul->input('pemasukan_pasangan')) + (empty($reqkapBul->input('pemasukan_penjamin')) ? 0 : $reqkapBul->input('pemasukan_penjamin'))) - ((empty($reqkapBul->input('biaya_rumah_tangga')) ? 0 : $reqkapBul->input('biaya_rumah_tangga')) + (empty($reqkapBul->input('biaya_transport')) ? 0 : $reqkapBul->input('biaya_transport')) + (empty($reqkapBul->input('biaya_pendidikan')) ? 0 : $reqkapBul->input('biaya_pendidikan')) + (empty($reqkapBul->input('biaya_telp_listr_air')) ? 0 : $reqkapBul->input('biaya_telp_listr_air')) + (empty($reqkapBul->input('biaya_lain')) ? 0 : $reqkapBul->input('biaya_lain')))
         );
 
-        $recomAO = array(
+        $TransAO = array(
+            'nomor_ao'              => $noAO,
             'id_trans_so'           => $id,
-            'produk'                => $req->input('produk'),
-            'plafon_kredit'         => $req->input('plafon_kredit'),
-            'jangka_waktu'          => $req->input('jangka_waktu'),
-            'suku_bunga'            => $req->input('suku_bunga'),
-            'pembayaran_bunga'      => $req->input('pembayaran_bunga'),
-            'akad_kredit'           => $req->input('akad_kredit'),
-            'ikatan_agunan'         => $req->input('ikatan_agunan'),
-            'analisa_ao'            => $req->input('analisa_ao'),
-            'biaya_provinsi'        => $req->input('biaya_provinsi'),
-            'biaya_administrasi'    => $req->input('biaya_administrasi'),
-            'biaya_credit_checking' => $req->input('biaya_credit_checking'),
-            'biaya_tabungan'        => $req->input('biaya_tabungan')
+            'produk'                => $reqAo->input('produk'),
+            'plafon_kredit'         => $reqAo->input('plafon_kredit'),
+            'jangka_waktu'          => $reqAo->input('jangka_waktu'),
+            'suku_bunga'            => $reqAo->input('suku_bunga'),
+            'pembayaran_bunga'      => $reqAo->input('pembayaran_bunga'),
+            'akad_kredit'           => $reqAo->input('akad_kredit'),
+            'ikatan_agunan'         => $reqAo->input('ikatan_agunan'),
+            'analisa_ao'            => $reqAo->input('analisa_ao'),
+            'biaya_provinsi'        => $reqAo->input('biaya_provinsi'),
+            'biaya_administrasi'    => $reqAo->input('biaya_administrasi'),
+            'biaya_credit_checking' => $reqAo->input('biaya_credit_checking'),
+            'biaya_tabungan'        => $reqAo->input('biaya_tabungan')
         );
 
         $dataKeUsaha = array(
@@ -610,7 +646,32 @@ class MasterAO_Controller extends BaseController
 
             VerifModel::updateOrCreate($dataVerifikasi);
             ValidModel::updateOrCreate($dataValidasi);
-            AgunanTanah::updateOrCreate($daAguTa);
+
+            if (!empty($reqAta->input('tipe_lokasi_agunan'))){
+                AgunanTanah::updateOrCreate($daAguTa);
+
+                for ($i = 0; $i < count($reqAta->input('tipe_lokasi_agunan')); $i++){
+                    $pemAguTa[] = [
+                        'id_calon_debitur'      => $Trans->id_calon_debt,
+                        'id_agunan_tanah'       => $id_AguTa[$i],
+                        'nama_penghuni'         => empty($reqPAT->nama_penghuni_agunan[$i]) ? null[$i] : $reqPAT->nama_penghuni_agunan[$i],
+                        'status_penghuni'       => empty($reqPAT->status_penghuni_agunan[$i]) ? null[$i] : strtoupper($reqPAT->status_penghuni_agunan[$i]),
+                        'bentuk_bangunan'       => empty($reqPAT->bentuk_bangunan_agunan[$i]) ? null[$i] : $reqPAT->bentuk_bangunan_agunan[$i],
+                        'kondisi_bangunan'      => empty($reqPAT->kondisi_bangunan_agunan[$i]) ? null[$i] : $reqPAT->kondisi_bangunan_agunan[$i],
+                        'fasilitas'             => empty($reqPAT->fasilitas_agunan[$i]) ? null[$i] : $reqPAT->fasilitas_agunan[$i],
+                        'listrik'               => empty($reqPAT->listrik_agunan[$i]) ? null[$i] : $reqPAT->listrik_agunan[$i],
+                        'nilai_taksasi_agunan'  => empty($reqPAT->nilai_taksasi_agunan[$i]) ? null[$i] : $reqPAT->nilai_taksasi_agunan[$i],
+                        'nilai_taksasi_bangunan'=> empty($reqPAT->nilai_taksasi_bangunan[$i]) ? null[$i] : $reqPAT->nilai_taksasi_bangunan[$i],
+                        'tgl_taksasi'           => empty($reqPAT->tgl_taksasi_agunan[$i]) ? null[$i] : Carbon::parse($reqPAT->tgl_taksasi_agunan[$i])->format('Y-m-d'),
+                        'nilai_likuidasi'       => empty($reqPAT->nilai_likuidasi_agunan[$i]) ? null[$i] : $reqPAT->nilai_likuidasi_agunan[$i],
+                        'created_at'            => $now,
+                        'updated_at'            => $now
+                    ];
+
+                    PemeriksaanAgunTan::updateOrCreate($pemAguTa[$i]);
+                }
+            }
+
             $getAguta = AgunanTanah::select('id')->where('id_calon_debitur', $Trans->id_calon_debt)->get();
 
             $i  = 0;
@@ -626,7 +687,31 @@ class MasterAO_Controller extends BaseController
                 $id_AguTa = null;
             }
 
-            AgunanKendaraan::updateOrCreate($daAguKe);
+            if (!empty($reqAk->input('no_bpkb_ken'))){
+               AgunanKendaraan::updateOrCreate($daAguKe);
+
+                for ($i = 0; $i < count($reqAk->input('no_bpkb_ken')); $i++){
+                    $pemAguKe[] = [
+                        'id_calon_debitur'      => $Trans->id_calon_debt,
+                        'id_agunan_kendaraan'   => $id_AguKe[$i],
+                        'nama_pengguna'         => empty($reqPAK->nama_pengguna_ken[$i]) ? null[$i] : $reqPAK->nama_pengguna_ken[$i],
+                        'status_pengguna'       => empty($reqPAK->status_pengguna_ken[$i]) ? null[$i] : strtoupper($reqPAK->status_pengguna_ken[$i]),
+                        'jml_roda_kendaraan'    => empty($reqPAK->jml_roda_ken[$i]) ? null[$i] : $reqPAK->jml_roda_ken[$i],
+                        'kondisi_kendaraan'     => empty($reqPAK->kondisi_ken[$i]) ? null[$i] : $reqPAK->kondisi_ken[$i],
+                        'keberadaan_kendaraan'  => empty($reqPAK->keberadaan_ken[$i]) ? null[$i] : $reqPAK->keberadaan_ken[$i],
+                        'body'                  => empty($reqPAK->body_ken[$i]) ? null[$i] : $reqPAK->body_ken[$i],
+                        'interior'              => empty($reqPAK->interior_ken[$i]) ? null[$i] : $reqPAK->interior_ken[$i],
+                        'km'                    => empty($reqPAK->km_ken[$i]) ? null[$i] : $reqPAK->km_ken[$i],
+                        'modifikasi'            => empty($reqPAK->modifikasi_ken[$i]) ? null[$i] : $reqPAK->modifikasi_ken[$i],
+                        'aksesoris'             => empty($reqPAK->aksesoris_ken[$i]) ? null[$i] : $reqPAK->aksesoris_ken[$i],
+                        'created_at'            => $now,
+                        'updated_at'            => $now
+                    ];
+
+                    PemeriksaanAgunKen::updateOrCreate($pemAguKe[$i]);
+                }
+            }
+
             $getAguKe = AgunanKendaraan::select('id')->where('id_calon_debitur', $Trans->id_calon_debt)->get();
 
             if ($getAguKe != '[]') {
@@ -638,48 +723,6 @@ class MasterAO_Controller extends BaseController
                 $id_AguKe = implode(",", $Ak['id']);
             }else{
                 $id_AguKe = null;
-            }
-
-            for ($i = 0; $i < count($reqAta->tipe_lokasi_agunan); $i++){
-                $pemAguTa[] = [
-                    'id_calon_debitur'      => $Trans->id_calon_debt,
-                    'id_agunan_tanah'       => $id_AguTa[$i],
-                    'nama_penghuni'         => empty($reqPAT->nama_penghuni_agunan[$i]) ? null[$i] : $reqPAT->nama_penghuni_agunan[$i],
-                    'status_penghuni'       => empty($reqPAT->status_penghuni_agunan[$i]) ? null[$i] : strtoupper($reqPAT->status_penghuni_agunan[$i]),
-                    'bentuk_bangunan'       => empty($reqPAT->bentuk_bangunan_agunan[$i]) ? null[$i] : $reqPAT->bentuk_bangunan_agunan[$i],
-                    'kondisi_bangunan'      => empty($reqPAT->kondisi_bangunan_agunan[$i]) ? null[$i] : $reqPAT->kondisi_bangunan_agunan[$i],
-                    'fasilitas'             => empty($reqPAT->fasilitas_agunan[$i]) ? null[$i] : $reqPAT->fasilitas_agunan[$i],
-                    'listrik'               => empty($reqPAT->listrik_agunan[$i]) ? null[$i] : $reqPAT->listrik_agunan[$i],
-                    'nilai_taksasi_agunan'  => empty($reqPAT->nilai_taksasi_agunan[$i]) ? null[$i] : $reqPAT->nilai_taksasi_agunan[$i],
-                    'nilai_taksasi_bangunan'=> empty($reqPAT->nilai_taksasi_bangunan[$i]) ? null[$i] : $reqPAT->nilai_taksasi_bangunan[$i],
-                    'tgl_taksasi'           => empty($reqPAT->tgl_taksasi_agunan[$i]) ? null[$i] : Carbon::parse($reqPAT->tgl_taksasi_agunan[$i])->format('Y-m-d'),
-                    'nilai_likuidasi'       => empty($reqPAT->nilai_likuidasi_agunan[$i]) ? null[$i] : $reqPAT->nilai_likuidasi_agunan[$i],
-                    'created_at'            => $now,
-                    'updated_at'            => $now
-                ];
-
-                PemeriksaanAgunTan::updateOrCreate($pemAguTa[$i]);
-            }
-
-            for ($i = 0; $i < count($reqAk->no_bpkb_ken); $i++){
-                $pemAguKe[] = [
-                    'id_calon_debitur'      => $Trans->id_calon_debt,
-                    'id_agunan_kendaraan'   => $id_AguKe[$i],
-                    'nama_pengguna'         => empty($reqPAK->nama_pengguna_ken[$i]) ? null[$i] : $reqPAK->nama_pengguna_ken[$i],
-                    'status_pengguna'       => empty($reqPAK->status_pengguna_ken[$i]) ? null[$i] : strtoupper($reqPAK->status_pengguna_ken[$i]),
-                    'jml_roda_kendaraan'    => empty($reqPAK->jml_roda_ken[$i]) ? null[$i] : $reqPAK->jml_roda_ken[$i],
-                    'kondisi_kendaraan'     => empty($reqPAK->kondisi_ken[$i]) ? null[$i] : $reqPAK->kondisi_ken[$i],
-                    'keberadaan_kendaraan'  => empty($reqPAK->keberadaan_ken[$i]) ? null[$i] : $reqPAK->keberadaan_ken[$i],
-                    'body'                  => empty($reqPAK->body_ken[$i]) ? null[$i] : $reqPAK->body_ken[$i],
-                    'interior'              => empty($reqPAK->interior_ken[$i]) ? null[$i] : $reqPAK->interior_ken[$i],
-                    'km'                    => empty($reqPAK->km_ken[$i]) ? null[$i] : $reqPAK->km_ken[$i],
-                    'modifikasi'            => empty($reqPAK->modifikasi_ken[$i]) ? null[$i] : $reqPAK->modifikasi_ken[$i],
-                    'aksesoris'             => empty($reqPAK->aksesoris_ken[$i]) ? null[$i] : $reqPAK->aksesoris_ken[$i],
-                    'created_at'            => $now,
-                    'updated_at'            => $now
-                ];
-
-                PemeriksaanAgunKen::updateOrCreate($pemAguKe[$i]);
             }
 
             $getAguTa = PemeriksaanAgunTan::select('id')->where('id_calon_debitur', $Trans->id_calon_debt)->get();
@@ -711,7 +754,7 @@ class MasterAO_Controller extends BaseController
 
             $KB = KapBulanan::updateOrCreate($kapBul);
             $KU = KeuanganUsaha::updateOrCreate($dataKeUsaha);
-            $RAO = RecomAO::updateOrCreate($recomAO);
+            $RAO = TransAO::updateOrCreate($TransAO);
 
             TransSo::where('id', $Trans->id)->update([
                 'id_agunan_tanah'             => $id_AguTa,
