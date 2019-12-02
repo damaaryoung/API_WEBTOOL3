@@ -194,7 +194,7 @@ class MasterCC_Controller extends BaseController
         );
 
         DB::connection('web')->beginTransaction();
-        try {
+        // try {
             $debt = Debitur::create($dataDebitur);
             $id_debt = $debt->id;
 
@@ -284,8 +284,9 @@ class MasterCC_Controller extends BaseController
                         'lamp_ktp'         => empty($ktpPen[$i]) ? null[$i] : $ktpPen[$i],
                         'lamp_ktp_pasangan'=> empty($ktpPenPAS[$i]) ? null[$i] : $ktpPenPAS[$i],
                         'lamp_kk'          => empty($kkPen[$i]) ? null[$i] : $kkPen[$i],
-                        'lamp_buku_nikah'  => empty($bukuNikahPen[$i]) ? null[$i] : $bukuNikahPen[$i]
-                        // 'created_at'       => Carbon::now()->toDateTimeString()
+                        'lamp_buku_nikah'  => empty($bukuNikahPen[$i]) ? null[$i] : $bukuNikahPen[$i],
+                        'created_at'       => Carbon::now()->toDateTimeString(),
+                        'updated_at'       => Carbon::now()->toDateTimeString()
                     ];
 
                     if ($DP[$i]['lamp_ktp'] == null) {
@@ -300,7 +301,7 @@ class MasterCC_Controller extends BaseController
                         return response()->json([
                             "code"    => 422,
                             "status"  => "not valid request",
-                            "message" => "lamp_ktp_pasangan ada yang belum diisi"
+                            "message" => "lamp_ktp_pasangan_penjamin ada yang belum diisi"
                         ], 422);
                     }
 
@@ -321,12 +322,17 @@ class MasterCC_Controller extends BaseController
                     }
                 }
 
-                $penjamin = Penjamin::create($DP);
+                $penjamin = Penjamin::insert($DP);
+
+                // dd($penjamin);
 
                 // $id_penjamin = DB::connection('web')->getPdo()->lastInsertId();
             }
 
             $pu = Penjamin::select('id')->where('id_calon_debitur', $id_debt)->get();
+
+            // dd($pu);
+
             $te = array();
             $i  = 0;
 
@@ -354,14 +360,14 @@ class MasterCC_Controller extends BaseController
                 'status' => 'success',
                 'message'=> 'Data berhasil dibuat'
             ], 200);
-        }catch (\Exception $e) {
-            $err = DB::connection('web')->rollback();
-            return response()->json([
-                'code'    => 501,
-                'status'  => 'error',
-                'message' => $err
-            ], 501);
-        }
+        // }catch (\Exception $e) {
+        //     $err = DB::connection('web')->rollback();
+        //     return response()->json([
+        //         'code'    => 501,
+        //         'status'  => 'error',
+        //         'message' => $err
+        //     ], 501);
+        // }
     }
 
     // public function mitra(Request $req){
