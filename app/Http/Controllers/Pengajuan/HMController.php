@@ -45,7 +45,9 @@ class HMController extends BaseController
                 'nama_so'        => $val->nama_so,
                 'nama_debitur'   => $val->debt['nama_lengkap'],
                 'plafon'         => (int) $val->faspin->plafon,
-                'tenor'          => (int) $val->faspin->tenor
+                'tenor'          => (int) $val->faspin->tenor,
+                'status_das'     => $val->status_das,
+                'catatan_das'    => $val->catatan_das
             ];
         }
 
@@ -183,8 +185,17 @@ class HMController extends BaseController
             ], 404);
         }
 
+        if(!preg_match("/^([0-1])$/", $req->input('status_hm'))){
+            return response()->json([
+                "code"    => 422,
+                "status"  => "bad request",
+                "message" => "status_hm harus berupa angka!!, range: 0-1"
+            ], 422);
+        }
+
         TransSo::where('id', $id)->update([
-            'catatan_das' => empty($req->input('catatan_das')) ? $check->catatan_das : $req->input('catatan_das')
+            'catatan_hm' => empty($req->input('catatan_hm')) ? $check->catatan_das : $req->input('catatan_hm'),
+            'status_hm'  => empty($req->input('status_hm')) ? $check->status_hm : $req->input('status_hm')
         ]);
 
         try {

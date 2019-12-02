@@ -44,7 +44,7 @@ class MasterAO_Controller extends BaseController
     public function index(Request $req){
         $user_id = $req->auth->user_id;
 
-        $query = TransSo::where('user_id', $user_id)->get();
+        $query = TransSo::where('user_id', $user_id)->where('status_hm', 1)->get();
 
         if ($query == '[]') {
             return response()->json([
@@ -65,7 +65,9 @@ class MasterAO_Controller extends BaseController
                 'nama_so'        => $val->nama_so,
                 'nama_debitur'   => $val->debt['nama_lengkap'],
                 'plafon'         => (int) $val->faspin->plafon,
-                'tenor'          => (int) $val->faspin->tenor
+                'tenor'          => (int) $val->faspin->tenor,
+                'status_hm'      => $val->status_hm,
+                'catatan_hm'     => $val->catatan_hm
             ];
         }
 
@@ -86,7 +88,7 @@ class MasterAO_Controller extends BaseController
 
     public function show($id, Request $req){
         $user_id = $req->auth->user_id;
-        $query = TransSo::where('id', $id)->where('user_id', $user_id)->get();
+        $query = TransSo::where('id', $id)->where('user_id', $user_id)->where('status_hm', 1)->get();
 
         if ($query == '[]') {
             return response()->json([
@@ -177,7 +179,9 @@ class MasterAO_Controller extends BaseController
                     'alamat_ktp'       => $val->pas['alamat_ktp'],
                     'no_telp'          => $val->pas['no_telp'],
                 ],
-                'data_penjamin' => $penjamin
+                'data_penjamin' => $penjamin,
+                'status_hm'     => $val->status_hm,
+                'catatan_hm'    => $val->catatan_hm
             ];
         }
 
