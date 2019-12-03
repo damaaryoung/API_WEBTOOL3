@@ -96,7 +96,7 @@ class HMController extends BaseController
                 'id'             => $val->id,
                 'nomor_so'       => $val->nomor_so,
                 'kode_kantor'    => $val->kode_kantor,
-                'asal_data'      => $val->asaldata->nama,
+                'asal_data'      => $val->asaldata['nama'],
                 'nama_marketing' => $val->nama_marketing,
                 'nama_so'        => $val->nama_so,
                 'plafon'         => (int) $val->faspin->plafon,
@@ -189,12 +189,10 @@ class HMController extends BaseController
             ], 404);
         }
 
-        if(!preg_match("/^([0-1])$/", $req->input('status_hm'))){
-            return response()->json([
-                "code"    => 422,
-                "status"  => "bad request",
-                "message" => "status_hm harus berupa angka!!, range: 0-1"
-            ], 422);
+        if ($req->input('status_hm') == 1) {
+            $msg = 'approve berhasil';
+        }else{
+            $msg = 'reject berhasil';
         }
 
         TransSo::where('id', $id)->update([
@@ -206,7 +204,7 @@ class HMController extends BaseController
             return response()->json([
                 'code'    => 200,
                 'status'  => 'success',
-                'message' => 'Data berhasil dieksekusi'
+                'message' => $msg
             ], 200);
         } catch (Exception $e) {
             return response()->json([
