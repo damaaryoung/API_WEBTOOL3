@@ -22,9 +22,10 @@ use DB;
 class HMController extends BaseController
 {
     public function index(Request $req){
-        $user_id = $req->auth->user_id;
+        // $user_id = $req->auth->user_id;
 
-        $query = TransSo::where('user_id', $user_id)->get();
+        $kode_kantor = $req->auth->kd_cabang;
+        $query = TransSo::where('kode_kantor', $kode_kantor)->get();
 
         if ($query == '[]') {
             return response()->json([
@@ -66,9 +67,40 @@ class HMController extends BaseController
         }
     }
 
+    public function whereKode($kode, Request $req){
+        // $query = TransSo::where('kode_kantor', $kode
+        // $kode_kantor = $req->auth->kd_cabang;
+
+        $query = TransSo::where('kode_kantor', '=', $kode)->get();
+
+        if ($query == '[]') {
+            return response()->json([
+                'code'    => 404,
+                'status'  => 'not found',
+                'message' => 'Data kosong'
+            ], 404);
+        }
+
+        try {
+            return response()->json([
+                'code'   => 200,
+                'status' => 'success',
+                'data'   => $query
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                "code"    => 501,
+                "status"  => "error",
+                "message" => $e
+            ], 501);
+        }
+    }
+
     public function show($id, Request $req){
-        $user_id = $req->auth->user_id;
-        $query = TransSo::where('id', $id)->where('user_id', $user_id)->get();
+        // $user_id = $req->auth->user_id;
+        // $kode_kantor = $req->auth->kd_cabang;
+
+        $query = TransSo::where('kode_kantor', $kode_kantor)->get();
 
         if ($query == '[]') {
             return response()->json([
@@ -189,16 +221,26 @@ class HMController extends BaseController
             ], 404);
         }
 
-        if ($req->input('status_hm') == 1) {
-            $msg = 'approve berhasil';
-        }else{
-            $msg = 'reject berhasil';
+        $data = array(
+            'catatan_hm' => $req->input('catatan_hm'),
+            'status_hm'  => $req->input('status_hm')
+        );
+
+        if($data['catatan_hm'] == null){
+            return response()->json([
+                "code"    => 422,
+                "status"  => "bad request",
+                "message" => "Catatan harus diinput!!"
+            ], 422);
         }
 
-        TransSo::where('id', $id)->update([
-            'catatan_hm' => empty($req->input('catatan_hm')) ? $check->catatan_das : $req->input('catatan_hm'),
-            'status_hm'  => empty($req->input('status_hm')) ? $check->status_hm : $req->input('status_hm')
-        ]);
+        if ($data['status_hm'] == 1) {
+            $msg = 'berhasil menyetujui data';
+        }else if ($data['status_hm'] == 0) {
+            $msg = 'berhasil menolak data';
+        }
+
+        TransSo::where('id', $id)->update($data);
 
         try {
             return response()->json([

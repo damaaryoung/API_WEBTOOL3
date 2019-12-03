@@ -20,29 +20,28 @@ $router->group(['prefix' => '/wilayah'], function () use ($router) {
 
     $router->get('/provinsi', 'Wilayah\ProvinsiController@index');
     $router->post('/provinsi', 'Wilayah\ProvinsiController@store');
-    $router->post('/provinsi', 'Wilayah\ProvinsiController@store');
-    $router->get('/provinsi/search/{search}', 'Wilayah\ProvinsiController@search');
-    $router->get('/provinsi/{id}', 'Wilayah\ProvinsiController@show');
+    // $router->get('/provinsi/search/{search}', 'Wilayah\ProvinsiController@search'); // search Provinsi to Mitra
+    $router->get('/provinsi/{IdOrName}', 'Wilayah\ProvinsiController@show');
     $router->put('/provinsi/{id}', 'Wilayah\ProvinsiController@update');
     $router->delete('/provinsi/{id}', 'Wilayah\ProvinsiController@delete');
 
     $router->get('/kabupaten', 'Wilayah\KabupatenController@index');
     $router->post('/kabupaten', 'Wilayah\KabupatenController@store');
-    $router->get('/kabupaten/{id}', 'Wilayah\KabupatenController@show');
+    $router->get('/kabupaten/{IdOrName}', 'Wilayah\KabupatenController@show');
     $router->put('/kabupaten/{id}', 'Wilayah\KabupatenController@update');
     $router->delete('/kabupaten/{id}', 'Wilayah\KabupatenController@delete');
     $router->get('/provinsi/{id}/kabupaten', 'Wilayah\KabupatenController@sector'); // Get Data Kabupaten By Id Provinsi
 
     $router->get('/kecamatan', 'Wilayah\KecamatanController@index');
     $router->post('/kecamatan', 'Wilayah\KecamatanController@store');
-    $router->get('/kecamatan/{id}', 'Wilayah\KecamatanController@show');
+    $router->get('/kecamatan/{IdOrName}', 'Wilayah\KecamatanController@show');
     $router->put('/kecamatan/{id}', 'Wilayah\KecamatanController@update');
     $router->delete('/kecamatan/{id}', 'Wilayah\KecamatanController@delete');
     $router->get('/kabupaten/{id}/kecamatan', 'Wilayah\KecamatanController@sector'); // Get Data Kecamatan By Id Kabupaten
 
     $router->get('/kelurahan', 'Wilayah\KelurahanController@index');
     $router->post('/kelurahan', 'Wilayah\KelurahanController@store');
-    $router->get('/kelurahan/{id}', 'Wilayah\KelurahanController@show');
+    $router->get('/kelurahan/{IdOrName}', 'Wilayah\KelurahanController@show');
     $router->put('/kelurahan/{id}', 'Wilayah\KelurahanController@update');
     $router->delete('/kelurahan/{id}', 'Wilayah\KelurahanController@delete');
     $router->get('/kecamatan/{id}/kelurahan', 'Wilayah\KelurahanController@sector'); // Get Data Kelurahan By Id Kecamatan
@@ -90,6 +89,9 @@ $router->group(['middleware' => 'jwt.auth'], function () use ($router) {
             $router->put('/asal_data/{id}', 'Master\Bisnis\AsalDataController@update');
             $router->delete('/asal_data/{id}', 'Master\Bisnis\AsalDataController@delete');
 
+            $router->get('/mitra', 'Master\Bisnis\MitraController@index');
+            $router->get('/mitra/{id}', 'Master\Bisnis\MitraController@show');
+
             //Area Kantor
             $router->get('/area_kerja', 'Master\AreaKantor\AreaController@index');
             $router->post('/area_kerja', 'Master\AreaKantor\AreaController@store');
@@ -99,10 +101,12 @@ $router->group(['middleware' => 'jwt.auth'], function () use ($router) {
 
             //Cabang Kantor
             $router->get('/area_cabang', 'Master\AreaKantor\CabangController@index');
-            $router->post('area_cabang', 'Master\AreaKantor\CabangController@store');
-            $router->get('area_cabang/{id}', 'Master\AreaKantor\CabangController@show');
-            $router->put('area_cabang/{id}', 'Master\AreaKantor\CabangController@update');
+            $router->post('/area_cabang', 'Master\AreaKantor\CabangController@store');
+            $router->get('/area_cabang/{id}', 'Master\AreaKantor\CabangController@show');
+            $router->put('/area_cabang/{id}', 'Master\AreaKantor\CabangController@update');
             $router->delete('/area_cabang/{id}', 'Master\AreaKantor\CabangController@delete');
+
+            $router->get('/kode_kantor', 'Master\AreaKantor\KodeKantorController@index');
 
             //Kas Kantor
             $router->get('/area_sales', 'Master\AreaKantor\SalesController@index');
@@ -126,11 +130,12 @@ $router->group(['middleware' => 'jwt.auth'], function () use ($router) {
             $router->delete('/jenis_pic/{id}', 'Master\AreaKantor\JPICController@delete');
 
 
-            $router->post('/mcc', 'Pengajuan\MasterCC_Controller@store'); // Memorandum Account Officer
-            $router->get('/mcc', 'Pengajuan\MasterCC_Controller@index'); // Memorandum Account Officer
+            $router->post('/mcc', 'Pengajuan\MasterCC_Controller@store'); // Memorandum Credit Checking
+            $router->get('/mcc', 'Pengajuan\MasterCC_Controller@index'); // Memorandum Credit Checking
 
             $router->get('/das', 'Pengajuan\DASController@index'); //Cek HM
             $router->get('/das/{id}', 'Pengajuan\DASController@show'); //Cek HM
+            $router->get('/das/kode_area/{kode}', 'Pengajuan\DASController@whereKode'); //Cek HM
             $router->put('/das/{id}', 'Pengajuan\DASController@update'); //Cek HM
 
             $router->get('/hm', 'Pengajuan\HMController@index'); //Cek HM
@@ -141,7 +146,11 @@ $router->group(['middleware' => 'jwt.auth'], function () use ($router) {
             $router->get('/mao/{id}', 'Pengajuan\MasterAO_Controller@show'); //GEt MAO BY ID
             $router->post('/mao/{id}', 'Pengajuan\MasterAO_Controller@update'); //Update MAO BY ID
 
-            $router->get('mitra', 'Pengajuan\MasterCC_Controller@mitra');
+            $router->get('/mca', 'Pengajuan\MasterCA_Controller@index'); // All Memorandum Credit Analyst
+            $router->get('/mca/{id}', 'Pengajuan\MasterCA_Controller@show'); //GEt CA BY ID
+            $router->post('/mca/{id}', 'Pengajuan\MasterCA_Controller@update'); //Update CA BY ID
+
+            // $router->get('/mitra', 'Pengajuan\MasterCC_Controller@mitra');
 
             $router->get('/kode_area/ao', 'Master\CodeController@ao'); // AO -> dpm_online.kre_kode_group2
             $router->get('/kode_area/so', 'Master\CodeController@so'); // SO -> dpm_online.kre_kode_so

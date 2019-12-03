@@ -3,50 +3,21 @@
 namespace App\Http\Controllers\Pengajuan;
 
 use Laravel\Lumen\Routing\Controller as BaseController;
-use App\Http\Requests\Debt\DebtPenjaminRequest;
-use App\Http\Requests\Debt\DebtPasanganRequest;
 use App\Http\Controllers\Controller as Helper;
-use App\Http\Requests\Debt\KapBulananReq;
-use App\Http\Requests\Debt\FasPinRequest;
-use App\Http\Requests\Debt\UsahaRequest;
-use App\Http\Requests\Debt\DebtRequest;
-use App\Http\Requests\Debt\PemAgTaReq;
-use App\Http\Requests\Debt\PemAgKeReq;
-use App\Http\Requests\Debt\AguKenReq;
-use App\Http\Requests\Debt\AguTaReq;
-use App\Http\Requests\Debt\TrAoReq;
-use App\Models\CC\FasilitasPinjaman;
-use App\Models\CC\PemeriksaanAgunKen;
-use App\Models\CC\PemeriksaanAgunTan;
-use App\Models\CC\AgunanKendaraan;
-use App\Models\Bisnis\VerifModel;
-use App\Models\Bisnis\ValidModel;
-use App\Models\Wilayah\Kabupaten;
-use App\Models\Wilayah\Kecamatan;
-use App\Models\Wilayah\Kelurahan;
-use App\Models\Wilayah\Provinsi;
-use App\Models\CC\KeuanganUsaha;
-use App\Models\CC\KapBulanan;
-use App\Models\CC\AgunanTanah;
 use App\Models\Bisnis\TransAO;
 use App\Models\Bisnis\TransSo;
 use Illuminate\Http\Request;
-use App\Models\CC\Pasangan;
-use App\Models\CC\Penjamin;
-use App\Models\CC\Debitur;
 use App\Http\Requests;
 use App\Models\User;
 use Carbon\Carbon;
-// use Image;
 use DB;
 
-class MasterAO_Controller extends BaseController
+class MasterCA_Controller extends BaseController
 {
     public function index(Request $req){
-        // $user_id = $req->auth->user_id;
-        $kode_kantor = $req->auth->kd_cabang;
+        $user_id = $req->auth->user_id;
 
-        $query = TransSo::where('kode_kantor', $kode_kantor)->where('status_hm', 1)->get();
+        $query = TransAO::where('user_id', $user_id)->where('status_ao', 1)->get();
 
         if ($query == '[]') {
             return response()->json([
@@ -59,17 +30,16 @@ class MasterAO_Controller extends BaseController
         foreach ($query as $key => $val) {
 
             $data[$key] = [
-                'id'             => $val->id,
-                'nomor_so'       => $val->nomor_so,
-                'kode_kantor'    => $val->kode_kantor,
-                'asal_data'      => $val->asaldata['nama'],
-                'nama_marketing' => $val->nama_marketing,
-                'nama_so'        => $val->nama_so,
-                'nama_debitur'   => $val->debt['nama_lengkap'],
-                'plafon'         => (int) $val->faspin->plafon,
-                'tenor'          => (int) $val->faspin->tenor,
-                'status_hm'      => $val->status_hm,
-                'catatan_hm'     => $val->catatan_hm
+                'id_trans_so'    => $val->id_trans_so,
+                'nomor_so'       => $val->so['nomor_so'],
+                'nomor_ao'       => $val->nomor_ao,
+                'kode_kantor'    => $val->so['kode_kantor'],
+                'asal_data'      => $val->so['asaldata']['nama'],
+                'nama_marketing' => $val->so['nama_marketing'],
+                'nama_so'        => $val->so['nama_so'],
+                'nama_debitur'   => $val->so['debt']['nama_lengkap'],
+                'plafon'         => $val->so['faspin']['plafon'],
+                'tenor'          => $val->so['faspin']['tenor']
             ];
         }
 
@@ -88,38 +58,12 @@ class MasterAO_Controller extends BaseController
         }
     }
 
-    public function whereKode($kode, Request $req){
-        // $query = TransSo::where('kode_kantor', $kode
-        // $kode_kantor = $req->auth->kd_cabang;
-
-        $query = TransSo::where('kode_kantor', '=', $kode)->where('status_hm', 1)->get();
-
-        if ($query == '[]') {
-            return response()->json([
-                'code'    => 404,
-                'status'  => 'not found',
-                'message' => 'Data kosong'
-            ], 404);
-        }
-
-        try {
-            return response()->json([
-                'code'   => 200,
-                'status' => 'success',
-                'data'   => $query
-            ], 200);
-        } catch (Exception $e) {
-            return response()->json([
-                "code"    => 501,
-                "status"  => "error",
-                "message" => $e
-            ], 501);
-        }
-    }
-
     public function show($id, Request $req){
-        $user_id = $req->auth->user_id;
-        $query = TransSo::where('status_hm', 1)->get();
+        // $user_id = $req->auth->user_id;
+        $user_id = $req->auth->nama;
+        dd($user_id);
+        // 'user_id', 'kode_kantor', 'nama_ao',
+        $query = TransAO::where('id_trans_so', $id)->where('user_id', $user_id)->where('status_ao', 1)->get();
 
         if ($query == '[]') {
             return response()->json([
@@ -141,17 +85,18 @@ class MasterAO_Controller extends BaseController
             $kec_dom  = Kecamatan::where('id', $val->debt['id_kec_domisili'])->first();
             $kel_dom  = Kelurahan::where('id', $val->debt['id_kel_domisili'])->first();
 
-            $penjamin = Penjamin::where('id_calon_debitur', $val->id_calon_debt)->get();
+            // $penjamin = Penjamin::where('id_calon_debitur', $val->id_calon_debt)->get();
 
             $data[$key] = [
-                'id'             => $val->id,
-                'nomor_so'       => $val->nomor_so,
-                'kode_kantor'    => $val->kode_kantor,
-                'asal_data'      => $val->asaldata['nama'],
-                'nama_marketing' => $val->nama_marketing,
-                'nama_so'        => $val->nama_so,
-                'plafon'         => (int) $val->faspin->plafon,
-                'tenor'          => (int) $val->faspin->tenor,
+                'nomor_so'       => $val->so['nomor_so'],
+                'nomor_ao'       => $val->nomor_ao,
+                'kode_kantor'    => $val->so['kode_kantor'],
+                'asal_data'      => $val->so['asaldata']['nama'],
+                'nama_marketing' => $val->so['nama_marketing'],
+                'nama_so'        => $val->so['nama_so'],
+                'nama_debitur'   => $val->so['debt']['nama_lengkap'],
+                'plafon'         => $val->so['faspin']['plafon'],
+                'tenor'          => $val->so['faspin']['tenor'],
                 'fasilitas_pinjaman'  => [
                     'jenis_pinjaman'  => $val->faspin->jenis_pinjaman,
                     'tujuan_pinjaman' => $val->faspin->tujuan_pinjaman
@@ -231,9 +176,12 @@ class MasterAO_Controller extends BaseController
 
     public function update($id, Request $req, FasPinRequest $reqFasPin, DebtRequest $reqDebt, DebtPasanganRequest $reqPas, DebtPenjaminRequest $reqPen, UsahaRequest $reqUs, AguTaReq $reqAta, AguKenReq $reqAk, PemAgTaReq $reqPAT, PemAgKeReq $reqPAK, KapBulananReq $reqkapBul, TrAoReq $reqAo) {
 
-        // $user_id = $req->auth->user_id;
-        $kode_kantor = $req->auth->kd_cabang;
-        $ao_name     = $req->auth->nama;
+        $user_id = $req->auth->user_id;
+
+        $user = User::where('user_id', $user_id)->first();
+
+        $kode_kantor = $user->kd_cabang;
+        $so_name     = $user->nama;
 
         $countTSO = TransAo::count();
 
@@ -248,7 +196,7 @@ class MasterAO_Controller extends BaseController
         $year  = $nows->year;
         $month = $nows->month;
 
-        $noAO = $kode_kantor.'-AO-'.$month.'-'.$year.'-'.$no;
+        $noAO = $kode_kantor.'-SO-'.$month.'-'.$year.'-'.$no;
 
         $Trans = TransSo::where('id', $id)->first();
 
@@ -618,16 +566,8 @@ class MasterAO_Controller extends BaseController
             'biaya_provinsi'        => $reqAo->input('biaya_provinsi'),
             'biaya_administrasi'    => $reqAo->input('biaya_administrasi'),
             'biaya_credit_checking' => $reqAo->input('biaya_credit_checking'),
-            'biaya_tabungan'        => $reqAo->input('biaya_tabungan'),
-            'catatan_ao'            => $reqAO->input('catatan_ao'),
-            'status_ao'             => $reqAO->input('status_ao')
+            'biaya_tabungan'        => $reqAo->input('biaya_tabungan')
         );
-
-        if ($TransAO['status_ao'] == 1) {
-            $msg = 'berhasil menyetujui data';
-        }elseif ($TransAO['status_ao'] == 0) {
-            $msg = 'berhasil menolak data';
-        }
 
         $dataKeUsaha = array(
             'id_calon_debitur'     => $Trans->id_calon_debt,
@@ -798,7 +738,7 @@ class MasterAO_Controller extends BaseController
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'message'=> $msg
+                'message'=> 'Data berhasil dibuat'
             ], 200);
         } catch (\Exception $e) {
             $err = DB::connection('web')->rollback();
