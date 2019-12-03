@@ -51,12 +51,9 @@ class MasterCC_Controller extends BaseController
 
     public function store(Request $req, FasPinRequest $reqFasPin, DebtRequest $reqDebt, DebtPasanganRequest $reqPas, DebtPenjaminRequest $reqPen) {
 
-        $user_id = $req->auth->user_id;
-
-        $user = User::where('user_id', $user_id)->first();
-
-        $kode_kantor = $user->kd_cabang;
-        $so_name     = $user->nama;
+        $user_id     = $req->auth->user_id;
+        $kode_kantor = $req->auth->kd_cabang;
+        $so_name     = $req->auth->nama;
 
         $countTSO = TransSo::count();
 

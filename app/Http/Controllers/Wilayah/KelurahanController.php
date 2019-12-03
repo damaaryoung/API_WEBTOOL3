@@ -95,10 +95,14 @@ class KelurahanController extends BaseController
         }
     }
 
-    public function show($id) {
-        try {
-            $query = DB::connection('web')->table('master_kelurahan')->where('id', $id)->first();
+    public function show($IdOrName) {
+        if(preg_match("/^([0-9])$/", $IdOrName)){
+            $query = DB::connection('web')->table('master_kelurahan')->where('id', $IdOrName)->get();
+        }else{
+            $query = DB::connection('web')->table('master_kelurahan')->where('nama','like','%'.$IdOrName.'%')->get();
+        }
 
+        try {
             if ($query == '[]') {
                 return response()->json([
                     'code'    => 404,

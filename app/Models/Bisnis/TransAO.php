@@ -19,15 +19,14 @@ class TransAO extends Model implements AuthenticatableContract, AuthorizableCont
      */
     protected $connection = 'web';
 
-    protected $table = 'recomendasi_ao';
+    protected $table = 'trans_ao';
     protected $primaryKey = 'id';
 
     protected $fillable = [
-        'nomor_ao', 'id_trans_so', 'produk', 'plafon_kredit', 'jangka_waktu', 'suku_bunga', 'pembayaran_bunga', 'akad_kredit', 'ikatan_agunan', 'analisa_ao', 'biaya_provinsi', 'biaya_administrasi', 'biaya_credit_checking', 'biaya_tabungan', 'flg_aktif'
+        'nomor_ao', 'id_trans_so', 'user_id', 'kode_kantor', 'nama_ao', 'produk', 'plafon_kredit', 'jangka_waktu', 'suku_bunga', 'pembayaran_bunga', 'akad_kredit', 'ikatan_agunan', 'analisa_ao', 'biaya_provinsi', 'biaya_administrasi', 'biaya_credit_checking', 'biaya_tabungan', 'catatan_ao', 'status_ao', 'flg_aktif'
     ];
 
-    //relasi one to many (Saya memiliki banyak anggota di model .....)
-//     public function transo(){
-//         return $this->hasMany('App\Models\Bisnis\TansSo', 'id_asal_data');
-//     }
+    public function so(){
+        return $this->belongsTo('App\Models\Bisnis\TransSo', 'id_trans_so');
+    }
 }

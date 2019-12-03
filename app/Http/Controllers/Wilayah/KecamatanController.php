@@ -77,11 +77,15 @@ class KecamatanController extends BaseController
         }
     }
 
-    public function show($id) {
-        try {
-            $query = DB::connection('web')->table('master_kecamatan')->where('id', $id)->first();
+    public function show($IdOrName) {
+        if(preg_match("/^([0-9])$/", $IdOrName)){
+            $query = DB::connection('web')->table('master_kecamatan')->where('id', $IdOrName)->get();
+        }else{
+            $query = DB::connection('web')->table('master_kecamatan')->where('nama','like','%'.$IdOrName.'%')->get();
+        }
 
-            if ($query == null) {
+        try {
+            if ($query == '[]') {
                 return response()->json([
                     'code'    => 404,
                     'status'  => 'not found',

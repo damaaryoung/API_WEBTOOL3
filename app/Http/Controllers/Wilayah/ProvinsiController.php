@@ -9,16 +9,6 @@ use DB;
 
 class ProvinsiController extends BaseController
 {
-    public function search($search){
-        $query = DB::connection('web')->table('master_provinsi')->where('nama','like','%'.$search.'%')->get();
-
-        return response()->json([
-            'code'   => 200,
-            'status' => 'success',
-            'data'   => $query
-        ], 200);
-    }
-
     public function index() {
         try {
             $query = DB::connection('web')->table('master_provinsi')->get();
@@ -77,11 +67,15 @@ class ProvinsiController extends BaseController
         }
     }
 
-    public function show($id) {
-        try {
-            $query = DB::connection('web')->table('master_provinsi')->where('id', $id)->first();
+    public function show($IdOrName) {
+        if(preg_match("/^([0-9])$/", $IdOrName)){
+            $query = DB::connection('web')->table('master_provinsi')->where('id', $IdOrName)->get();
+        }else{
+            $query = DB::connection('web')->table('master_provinsi')->where('nama','like','%'.$IdOrName.'%')->get();
+        }
 
-            if ($query == null) {
+        try {
+            if ($query == '[]') {
                 return response()->json([
                     'code'    => 404,
                     'status'  => 'not found',

@@ -22,9 +22,10 @@ use DB;
 class DASController extends BaseController
 {
     public function index(Request $req){
-        $user_id = $req->auth->user_id;
+        // $user_id = $req->auth->user_id;
+        $kode_kantor = $req->auth->kd_cabang;
 
-        $query = TransSo::where('user_id', $user_id)->get();
+        $query = TransSo::where('kode_kantor', $kode_kantor)->get();
 
         if ($query == '[]') {
             return response()->json([
@@ -64,9 +65,41 @@ class DASController extends BaseController
         }
     }
 
+    public function whereKode($kode, Request $req){
+        // $query = TransSo::where('kode_kantor', $kode
+        // $kode_kantor = $req->auth->kd_cabang;
+
+        $query = TransSo::where('kode_kantor', '=', $kode)->get();
+
+        if ($query == '[]') {
+            return response()->json([
+                'code'    => 404,
+                'status'  => 'not found',
+                'message' => 'Data kosong'
+            ], 404);
+        }
+
+        try {
+            return response()->json([
+                'code'   => 200,
+                'status' => 'success',
+                'data'   => $query
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                "code"    => 501,
+                "status"  => "error",
+                "message" => $e
+            ], 501);
+        }
+    }
+
     public function show($id, Request $req){
-        $user_id = $req->auth->user_id;
-        $query = TransSo::where('id', $id)->where('user_id', $user_id)->get();
+        // $user_id = $req->auth->user_id;
+
+        // $kode_kantor = $req->auth->kd_cabang;
+
+        $query = TransSo::where('id', $id)->get();
 
         if ($query == '[]') {
             return response()->json([
@@ -191,15 +224,32 @@ class DASController extends BaseController
             ], 404);
         }
 
-        TransSo::where('id', $id)->update([
-            'catatan_das' => empty($req->input('catatan_das')) ? $check->catatan_das : $req->input('catatan_das')
-        ]);
+        $data = array(
+            'catatan_das' => $req->input('catatan_das'),
+            'status_das'  => $req->input('status_das')
+        );
+
+        if($data['catatan_das'] == null){
+            return response()->json([
+                "code"    => 422,
+                "status"  => "bad request",
+                "message" => "Catatan harus diinput!!"
+            ], 422);
+        }
+
+        if ($data['status_das'] == 1) {
+            $msg = 'data lengkap';
+        }else if($data['status_das'] == 0){
+            $msg = 'data perlu ditinjau';
+        }
+
+        TransSo::where('id', $id)->update($data);
 
         try {
             return response()->json([
                 'code'    => 200,
                 'status'  => 'success',
-                'message' => 'Data berhasil dieksekusi'
+                'message' => $msg
             ], 200);
         } catch (Exception $e) {
             return response()->json([
