@@ -88,38 +88,36 @@ class MasterAO_Controller extends BaseController
         }
     }
 
-    public function whereKode($kode, Request $req){
-        // $query = TransSo::where('kode_kantor', $kode
-        // $kode_kantor = $req->auth->kd_cabang;
+    // public function whereKode($kode, Request $req){
+    //     $query = TransSo::where('kode_kantor', '=', $kode)->where('status_hm', 1)->get();
 
-        $query = TransSo::where('kode_kantor', '=', $kode)->where('status_hm', 1)->get();
+    //     if ($query == '[]') {
+    //         return response()->json([
+    //             'code'    => 404,
+    //             'status'  => 'not found',
+    //             'message' => 'Data kosong'
+    //         ], 404);
+    //     }
 
-        if ($query == '[]') {
-            return response()->json([
-                'code'    => 404,
-                'status'  => 'not found',
-                'message' => 'Data kosong'
-            ], 404);
-        }
-
-        try {
-            return response()->json([
-                'code'   => 200,
-                'status' => 'success',
-                'data'   => $query
-            ], 200);
-        } catch (Exception $e) {
-            return response()->json([
-                "code"    => 501,
-                "status"  => "error",
-                "message" => $e
-            ], 501);
-        }
-    }
+    //     try {
+    //         return response()->json([
+    //             'code'   => 200,
+    //             'status' => 'success',
+    //             'data'   => $query
+    //         ], 200);
+    //     } catch (Exception $e) {
+    //         return response()->json([
+    //             "code"    => 501,
+    //             "status"  => "error",
+    //             "message" => $e
+    //         ], 501);
+    //     }
+    // }
 
     public function show($id, Request $req){
-        $user_id = $req->auth->user_id;
-        $query = TransSo::where('status_hm', 1)->get();
+        // $user_id = $req->auth->user_id;
+        $kode_kantor = $req->auth->kd_cabang;
+        $query = TransSo::where('kode_kantor', $kode_kantor)->where('status_hm', 1)->get();
 
         if ($query == '[]') {
             return response()->json([
