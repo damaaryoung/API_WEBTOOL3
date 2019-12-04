@@ -58,6 +58,22 @@ class MasterAO_Controller extends BaseController
 
         foreach ($query as $key => $val) {
 
+            if ($val->status_das == 0) {
+                $status_das = 'waiting';
+            }elseif($val->status_das == 1){
+                $status_das = 'complete';
+            }else{
+                $status_das = 'not complete';
+            }
+
+            if ($val->status_hm == 0) {
+                $status_hm = 'waiting';
+            }elseif ($val->status_hm == 1) {
+                $status_hm = 'complete';
+            }else{
+                $status_hm = 'not complete';
+            }
+
             $data[$key] = [
                 'id'             => $val->id,
                 'nomor_so'       => $val->nomor_so,
@@ -68,8 +84,10 @@ class MasterAO_Controller extends BaseController
                 'nama_debitur'   => $val->debt['nama_lengkap'],
                 'plafon'         => (int) $val->faspin->plafon,
                 'tenor'          => (int) $val->faspin->tenor,
-                'status_hm'      => $val->status_hm,
-                'catatan_hm'     => $val->catatan_hm
+                'das_status'     => $status_das,
+                'das_note'       => $val->catatan_das,
+                'hm_status'      => $status_das,
+                'hm_note'        => $val->catatan_hm
             ];
         }
 
@@ -117,7 +135,7 @@ class MasterAO_Controller extends BaseController
     public function show($id, Request $req){
         // $user_id = $req->auth->user_id;
         $kode_kantor = $req->auth->kd_cabang;
-        $query = TransSo::where('kode_kantor', $kode_kantor)->where('status_hm', 1)->get();
+        $query = TransSo::where('kode_kantor', $kode_kantor)->get();
 
         if ($query == '[]') {
             return response()->json([
@@ -127,19 +145,35 @@ class MasterAO_Controller extends BaseController
             ], 404);
         }
 
+        $prov_ktp = Provinsi::where('id', $val->debt['id_prov_ktp'])->first();
+        $kab_ktp  = Kabupaten::where('id', $val->debt['id_kab_ktp'])->first();
+        $kec_ktp  = Kecamatan::where('id', $val->debt['id_kec_ktp'])->first();
+        $kel_ktp  = Kelurahan::where('id', $val->debt['id_kel_ktp'])->first();
+
+        $prov_dom = Provinsi::where('id', $val->debt['id_prov_domisili'])->first();
+        $kab_dom  = Kabupaten::where('id', $val->debt['id_kab_domisili'])->first();
+        $kec_dom  = Kecamatan::where('id', $val->debt['id_kec_domisili'])->first();
+        $kel_dom  = Kelurahan::where('id', $val->debt['id_kel_domisili'])->first();
+
+        $penjamin = Penjamin::where('id_calon_debitur', $val->id_calon_debt)->get();
+
         foreach ($query as $key => $val) {
 
-            $prov_ktp = Provinsi::where('id', $val->debt['id_prov_ktp'])->first();
-            $kab_ktp  = Kabupaten::where('id', $val->debt['id_kab_ktp'])->first();
-            $kec_ktp  = Kecamatan::where('id', $val->debt['id_kec_ktp'])->first();
-            $kel_ktp  = Kelurahan::where('id', $val->debt['id_kel_ktp'])->first();
+            if ($val->status_das == 0) {
+                $status_das = 'waiting';
+            }elseif($val->status_das == 1){
+                $status_das = 'complete';
+            }else{
+                $status_das = 'not complete';
+            }
 
-            $prov_dom = Provinsi::where('id', $val->debt['id_prov_domisili'])->first();
-            $kab_dom  = Kabupaten::where('id', $val->debt['id_kab_domisili'])->first();
-            $kec_dom  = Kecamatan::where('id', $val->debt['id_kec_domisili'])->first();
-            $kel_dom  = Kelurahan::where('id', $val->debt['id_kel_domisili'])->first();
-
-            $penjamin = Penjamin::where('id_calon_debitur', $val->id_calon_debt)->get();
+            if ($val->status_hm == 0) {
+                $status_hm = 'waiting';
+            }elseif ($val->status_hm == 1) {
+                $status_hm = 'complete';
+            }else{
+                $status_hm = 'not complete';
+            }
 
             $data[$key] = [
                 'id'             => $val->id,
@@ -207,8 +241,10 @@ class MasterAO_Controller extends BaseController
                     'lamp_buku_nikah'  => $val->pas['lamp_buku_nikah']
                 ],
                 'data_penjamin' => $penjamin,
-                'status_hm'     => $val->status_hm,
-                'catatan_hm'    => $val->catatan_hm
+                'das_status'    => $status_das,
+                'das_note'      => $val->catatan_das,
+                'hm_status'     => $status_das,
+                'hm_note'       => $val->catatan_hm
             ];
         }
 

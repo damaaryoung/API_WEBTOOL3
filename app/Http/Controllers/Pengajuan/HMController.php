@@ -25,7 +25,7 @@ class HMController extends BaseController
         // $user_id = $req->auth->user_id;
 
         $kode_kantor = $req->auth->kd_cabang;
-        $query = TransSo::where('kode_kantor', $kode_kantor)->where('status_das', '!=', 0)->get();
+        $query = TransSo::where('kode_kantor', $kode_kantor)->get();
 
         if ($query == '[]') {
             return response()->json([
