@@ -154,7 +154,7 @@ class FlagAuthorController extends BaseController
         $checkFLG = FlgOto::where('user_id', $user_id)->first();
         $checkFCM = User::where('user_id', $user_id)->first();
 
-        $because = $req->input('keterangan');
+        $because = empty($req->input('keterangan')) ? $checkFLG->keterangan : $req->input('keterangan');
 
         // $logData = array(
         //     'subject' => 'Update Otorisasi',
@@ -337,7 +337,7 @@ class FlagAuthorController extends BaseController
         $checkFLG = FlgOto::where('user_id', $user_id)->first();
         $checkFCM = User::where('user_id', $user_id)->first();
 
-        $because = $req->input('keterangan');
+        $because = empty($req->input('keterangan')) ? $checkFLG->keterangan : $req->input('keterangan');
 
         $msg = 'approval berhasil disetujui';
 
@@ -691,8 +691,7 @@ class FlagAuthorController extends BaseController
 
     // Rejected Otorisasi
     public function rejectOto($id, Request $req) {
-        // $user_id = $req->auth->user_id;
-        $user_id = '1131';
+        $user_id = $req->auth->user_id;
 
         $Now = Carbon::now()->toDateTimeString();
 
@@ -749,15 +748,15 @@ class FlagAuthorController extends BaseController
         $checkFLG = FlgOto::where('user_id', $user_id)->first();
         $checkFCM = User::where('user_id', $user_id)->first();
 
-        $because = $req->input('keterangan');
+        $because = empty($req->input('keterangan')) ? $checkFLG->keterangan : $req->input('keterangan');
 
-        if (!$because) {
-            return response()->json([
-                "code"    => 422,
-                "status"  => "not valid request",
-                "message" => "keterangan harus diisi"
-            ], 422);
-        }
+        // if (!$because) {
+        //     return response()->json([
+        //         "code"    => 422,
+        //         "status"  => "not valid request",
+        //         "message" => "keterangan harus diisi"
+        //     ], 422);
+        // }
 
         $msg = 'approval berhasil ditolak';
 
