@@ -26,6 +26,10 @@ class PIC extends Model implements AuthenticatableContract, AuthorizableContract
         'user_id', 'id_mk_area', 'id_mk_cabang', 'id_mj_pic', 'nama', 'flg_aktif'
     ];
 
+    public function user(){
+        return $this->belongsTo('App\Models\User', 'user_id');
+    }
+
     public function area(){
         return $this->belongsTo('App\Models\AreaKantor\Area', 'id_mk_area');
     }
@@ -35,7 +39,7 @@ class PIC extends Model implements AuthenticatableContract, AuthorizableContract
     }
 
     public function jpic(){
-        return $this->belongsTo('App\Models\AreaKantor\PIC', 'id_mj_pic');
+        return $this->belongsTo('App\Models\AreaKantor\JPIC', 'id_mj_pic');
     }
 
     // public $timestamps = false;

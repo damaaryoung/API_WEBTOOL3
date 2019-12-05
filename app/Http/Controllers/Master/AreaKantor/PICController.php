@@ -24,11 +24,23 @@ class PICController extends BaseController
             ], 404);
         }
 
+        foreach ($query as $key => $val) {
+            $res[$key]= [
+                "id"          => $val->id,
+                "jenis_pic"   => $val->jpic['nama_jenis'],
+                "nama_pic"    => $val->nama,
+                "nama_area"   => $val->area['nama'],
+                "nama_cabang" => $val->cabang['nama'],
+                "flg_aktif"   => $val->flg_aktif,
+                "created_at"  => $val->created_at
+            ];
+        }
+
         try {
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'data'   => $query
+                'data'   => $res
             ], 200);
         } catch (Exception $e) {
             return response()->json([
@@ -45,9 +57,10 @@ class PICController extends BaseController
             'id_mk_area'    => $req->input('id_mk_area'),
             'id_mk_cabang'  => $req->input('id_mk_cabang'),
             'id_mj_pic'     => $req->input('id_mj_pic'),
-            'nama'          => $req->input('nama'),
-            'flg_aktif'     => $req->input('flg_aktif')
+            'nama'          => $req->input('nama')
         );
+
+        PIC::create($data);
 
         try {
             return response()->json([
@@ -74,11 +87,24 @@ class PICController extends BaseController
                 'message' => 'Data tidak ada'
             ], 404);
         }else{
+            $res = [
+                "id_pic"         => $query->id,
+                "nama_pic"       => $query->nama,
+                "id_jenis_pic"   => $query->id_mj_pic,
+                "nama_jenis_pic" => $query->jpic['nama_jenis'],
+                "id_area"        => $query->id_mk_area,
+                "nama_area"      => $query->area['nama'],
+                "id_cabang"      => $query->id_mk_cabang,
+                "nama_cabang"    => $query->cabang['nama'],
+                "flg_aktif"      => $query->flg_aktif,
+                "created_at"     => $query->created_at
+            ];
+
             try {
                 return response()->json([
                     'code'   => 200,
                     'status' => 'success',
-                    'data'   => $query
+                    'data'   => $res
                 ], 200);
             } catch (Exception $e) {
                 return response()->json([

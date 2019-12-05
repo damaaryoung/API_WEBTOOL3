@@ -80,8 +80,7 @@ class CabangController extends BaseController
             'id_kabupaten'  => $req->input('id_kabupaten'),
             'id_kecamatan'  => $req->input('id_kecamatan'),
             'id_kelurahan'  => $req->input('id_kelurahan'),
-            'jenis_kantor'  => $req->input('jenis_kantor'),
-            'flg_aktif'     => $req->input('flg_aktif')
+            'jenis_kantor'  => $req->input('jenis_kantor')
         );
 
         $store = Cabang::create($data);

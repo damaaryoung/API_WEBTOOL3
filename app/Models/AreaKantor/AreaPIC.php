@@ -8,7 +8,7 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Lumen\Auth\Authorizable;
 
-class Area extends Model implements AuthenticatableContract, AuthorizableContract
+class AreaPIC extends Model implements AuthenticatableContract, AuthorizableContract
 {
     use Authenticatable, Authorizable;
 
@@ -19,12 +19,20 @@ class Area extends Model implements AuthenticatableContract, AuthorizableContrac
      */
     protected $connection = 'web';
 
-    protected $table = 'mk_area';
+    protected $table = 'm_area_pic';
     protected $primaryKey = 'id';
 
     protected $fillable = [
-        'nama', 'id_provinsi', 'id_kabupaten', 'flg_aktif'
+        'id_mk_area', 'id_mk_cabang', 'nama_area_pic', 'id_provinsi', 'id_kabupaten', 'id_kecamatan', 'id_kelurahan', 'flg_aktif'
     ];
+
+    public function area(){
+        return $this->belongsTo('App\Models\AreaKantor\Area', 'id_mk_area')->select(['id', 'nama']);
+    }
+
+    public function cabang(){
+        return $this->belongsTo('App\Models\AreaKantor\Cabang', 'id_mk_cabang')->select(['id','nama']);
+    }
 
     public function prov(){
         return $this->belongsTo('App\Models\Wilayah\Provinsi', 'id_provinsi')->select(['id', 'nama']);

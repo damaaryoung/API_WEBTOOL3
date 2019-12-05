@@ -11,6 +11,8 @@ class Controller extends BaseController
         // define('API_ACCESS_KEY','AAAAjrvLI_4:APA91bGI_urQhVNWgEMEReiqUG8Jz3o8pXX55T69mDGv9KW-BwphHdsk4E74UUkx4kb3XqUfA_QMu_QjWAJw3PLg2eovQtqD2hCfJhHFMdxfptKlvP0ZTW6hC9XgB06KBmuvi45LU9nA'); //Server Key on SERVER
         define('API_ACCESS_KEY','AAAAt-7q_AI:APA91bH6xE4YaKuoiKoHqBIJY3O3vN9nvwZByWKi8UIoPrleakjmMK2wYg8AkISiuj4zEyiuHn5PjCxV2dV3ZYQfLDhXA7QZVoBCp5v_vbK3SbbpgseuIgb8qhBVzc48dEa8PXjQ_423'); //Server Key on SERVER
 
+        // 'AAAAt-7q_AI:APA91bH6xE4YaKuoiKoHqBIJY3O3vN9nvwZByWKi8UIoPrleakjmMK2wYg8AkISiuj4zEyiuHn5PjCxV2dV3ZYQfLDhXA7QZVoBCp5v_vbK3SbbpgseuIgb8qhBVzc48dEa8PXjQ_423'
+
         $fcmUrl = 'https://fcm.googleapis.com/fcm/send';
         // $fcm_token = array( $_GET['id'] );
 

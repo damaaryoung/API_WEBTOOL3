@@ -19,15 +19,13 @@ class JenisPICReq extends FormRequest
     public function rules()
     {
         return [
-            'nama_jenis' => 'required',
-            'keterangan' => 'required'
+            'nama_jenis' => 'required'
        ];
     }
 
     public function messages(){
         return [
-            'nama_jenis.required' => ':attribute belum diisi',
-            'keterangan.required' => ':attribute belum diisi',
+            'nama_jenis.required' => ':attribute belum diisi'
         ];
     }
 

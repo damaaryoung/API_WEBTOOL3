@@ -20,23 +20,22 @@ class PICRequest extends FormRequest
     {
         return [
             'user_id'       => 'numeric',
-            'id_mk_area'   => 'required',
-            'id_mk_cabang' => 'required',
-            'id_mj_pic'=> 'required',
+            'id_mk_area'    => 'required',
+            'id_mk_cabang'  => 'required',
+            'id_mj_pic'     => 'required',
             'nama'          => 'required',
-            'flg_aktif'     => 'required|in:0,1'
+            'flg_aktif'     => 'in:0,1'
        ];
     }
 
     public function messages(){
         return [
-            'id_mk_area.required'    => ':attribute belum diisi',
-            'id_mk_cabang.required'  => ':attribute belum diisi',
-            'user_id.bumeric'         => ':attribute harus berupa angka',
-            'id_mj_pic.required' => ':attribute belum diisi',
-            'nama.required'           => ':attribute belum diisi',
-            'flg_aktif.required'      => ':attribute belum diisi',
-            'flg_aktif.in'            => ':attribute harus salah satu dari jenis berikut :values'
+            'id_mk_area.required'   => ':attribute belum diisi',
+            'id_mk_cabang.required' => ':attribute belum diisi',
+            'user_id.bumeric'       => ':attribute harus berupa angka',
+            'id_mj_pic.required'    => ':attribute belum diisi',
+            'nama.required'         => ':attribute belum diisi',
+            'flg_aktif.in'          => ':attribute harus salah satu dari jenis berikut :values'
         ];
     }
 
