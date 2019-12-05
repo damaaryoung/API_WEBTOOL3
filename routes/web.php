@@ -60,8 +60,10 @@ $router->group(['middleware' => 'jwt.auth'], function () use ($router) {
         $router->get('/logs/limit/{limit}', 'LogsController@limit'); //Log History Limit
         $router->get('/logs/search/{search}', 'LogsController@search'); //Log History Search
 
-        $router->get('/users', 'UserController@index');
-        $router->put('/users/change_password', 'UserController@changePassword');
+        $router->get('/users', 'UserController@getUsers');
+        $router->get('/users/{search}', 'UserController@search');
+        $router->get('/user', 'UserController@index');
+        $router->put('/user/change_password', 'UserController@changePassword');
 
         $router->get('/oto', 'FlagAuthorController@otoIndex'); // Otorisasi
         $router->get('/oto/{id}', 'FlagAuthorController@otoShow');
