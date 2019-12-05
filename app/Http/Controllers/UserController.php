@@ -91,70 +91,70 @@ class UserController extends BaseController
         }
     }
 
-    // public function changePassword(Request $req) {
-    //     $id = $req->auth->user_id;
+    public function changePassword(Request $req) {
+        $id = $req->auth->user_id;
 
-    //     $check = User::where('user_id', $id)->first();
+        $check = User::where('user_id', $id)->first();
 
-    //     $originalPass = $check->password;
+        $originalPass = $check->password;
 
-    //     $oldPass     = $req->input('password_lama');
-    //     $newPass     = $req->input('password_baru');
-    //     $confirmPass = $req->input('konfirmasi_password');
+        $oldPass     = $req->input('password_lama');
+        $newPass     = $req->input('password_baru');
+        $confirmPass = $req->input('konfirmasi_password');
 
-    //     if (!$oldPass) {
-    //         return response()->json([
-    //             "code"    => 400,
-    //             "status"  => "bad request",
-    //             "message" => "Field 'password_lama' harus diisi!!"
-    //         ], 400);
-    //     }
+        if (!$oldPass) {
+            return response()->json([
+                "code"    => 400,
+                "status"  => "bad request",
+                "message" => "Field 'password_lama' harus diisi!!"
+            ], 400);
+        }
 
-    //     if (md5($oldPass) != $originalPass) {
-    //         return response()->json([
-    //             "code"    => 400,
-    //             "status"  => "bad request",
-    //             "message" => "Password lama salah!!"
-    //         ], 400);
-    //     }
+        if (md5($oldPass) != $originalPass) {
+            return response()->json([
+                "code"    => 400,
+                "status"  => "bad request",
+                "message" => "Password lama salah!!"
+            ], 400);
+        }
 
-    //     if (!$newPass) {
-    //         return response()->json([
-    //             "code"    => 400,
-    //             "status"  => "bad request",
-    //             "message" => "Field 'password_baru' harus diisi!!"
-    //         ], 400);
-    //     }
+        if (!$newPass) {
+            return response()->json([
+                "code"    => 400,
+                "status"  => "bad request",
+                "message" => "Field 'password_baru' harus diisi!!"
+            ], 400);
+        }
 
-    //     if (!$confirmPass) {
-    //         return response()->json([
-    //             "code"    => 400,
-    //             "status"  => "bad request",
-    //             "message" => "Field 'konfirmasi_password' harus diisi!!"
-    //         ], 400);
-    //     }
+        if (!$confirmPass) {
+            return response()->json([
+                "code"    => 400,
+                "status"  => "bad request",
+                "message" => "Field 'konfirmasi_password' harus diisi!!"
+            ], 400);
+        }
 
-    //     if ($newPass != $confirmPass) {
-    //         return response()->json([
-    //             "code"    => 400,
-    //             "status"  => "bad request",
-    //             "message" => "Konfirmasi password'tidak sama dengan password baru!!"
-    //         ], 400);
-    //     }
+        if ($newPass != $confirmPass) {
+            return response()->json([
+                "code"    => 400,
+                "status"  => "bad request",
+                "message" => "Konfirmasi password'tidak sama dengan password baru!!"
+            ], 400);
+        }
 
-    //     try {
-    //         $query = User::where('user_id', $id)->update(['password' => md5($newPass)]);
-    //         return response()->json([
-    //             "code"    => 200,
-    //             "status"  => "success",
-    //             "message" => "Password berhasil perbarui"
-    //         ], 200);
-    //     } catch (Exception $e) {
-    //         return response()->json([
-    //             "code"    => 501,
-    //             "status"  => "error",
-    //             "message" => $e
-    //         ], 501);
-    //     }
-    // }
+        try {
+            $query = User::where('user_id', $id)->update(['password' => md5($newPass)]);
+            return response()->json([
+                "code"    => 200,
+                "status"  => "success",
+                "message" => "Password berhasil perbarui"
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                "code"    => 501,
+                "status"  => "error",
+                "message" => $e
+            ], 501);
+        }
+    }
 }
