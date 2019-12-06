@@ -149,8 +149,9 @@ class FlagAuthorController extends BaseController
     }
 
     public function otoUpdate($id, Request $req) {
-        $user_id = $req->auth->user_id;
+        // $user_id = $req->auth->user_id;
         // $user_id = '1131';
+        $user_id = '1130';
 
         $Now = Carbon::now()->toDateTimeString();
 
@@ -168,7 +169,10 @@ class FlagAuthorController extends BaseController
         //     'user_id' => $user_id
         // );
 
-        $msg = 'Otorisasi berhasil di setujui';
+        $fcm   = "cqqsX8VcUd0:APA91bFsJfGRuPnRaLUSphLLGSKHhYesHHtzo1QRYkla4mVWe1DEiBWjPChZ_Opd8VRUit1Lek1fESlY1tSd_wFS98imEMirZyBaXTjuzR2LWBAZvWbKgIiLdM1-TqraBC6aREwa8Zs";
+        // $fcm   = $checkFCM->fcm_token;
+        $title = $checkFLG->subject;
+        $msg   = 'Otorisasi berhasil di setujui';
 
         DB::connection('web')->beginTransaction();
         try {
@@ -179,14 +183,23 @@ class FlagAuthorController extends BaseController
                 ['id_modul',0]
             ])->update(['otorisasi' => 1, 'keterangan' => $because, 'waktu_otorisasi' => $Now]);
 
-            Helper::push_notif($checkFCM->fcm_token, $checkFLG->subject, $msg);
+            if ($fcm != null) {
+                $push = Helper::push_notif($fcm, $title, $msg);
+            }else{
+                $push = null;
+            }
+
+            // dd($push);
 
             DB::connection('web')->commit();
 
             return response()->json([
                 "code"    => 200,
                 'status'  => 'success',
-                'message' => $msg
+                'message' => [
+                    'accepted'   => true,
+                    'push_notif' => $push
+                ]
             ], 200);
         } catch (Exception $e) {
             $err = DB::connection('web')->rollback();
@@ -194,7 +207,10 @@ class FlagAuthorController extends BaseController
             return response()->json([
                 "code"    => 501,
                 'status'  => 'error',
-                'message' => $err
+                'message' => [
+                    'accepted' => false,
+                    'error'    => $err
+                ]
             ], 501);
         }
     }
@@ -345,7 +361,9 @@ class FlagAuthorController extends BaseController
 
         $because = empty($req->input('keterangan')) ? $checkFLG->keterangan : $req->input('keterangan');
 
-        $msg = 'approval berhasil disetujui';
+        $fcm   = $checkFCM->fcm_token;
+        $title = $checkFLG->subject;
+        $msg   = 'Approval berhasil di setujui';
 
         DB::connection('web')->beginTransaction();
         try {
@@ -356,14 +374,21 @@ class FlagAuthorController extends BaseController
                 ['id_modul', '>',0]
             ])->update(['approval' => 1, 'keterangan' => $because, 'waktu_otorisasi' => $Now]);
 
-            Helper::push_notif($checkFCM->fcm_token, $checkFLG->subject, $msg);
+            if ($fcm != null) {
+                $push = Helper::push_notif($fcm, $title, $msg);
+            }else{
+                $push = null;
+            }
 
             DB::connection('web')->commit();
 
             return response()->json([
                 "code"    => 200,
                 'status'  => 'success',
-                'message' => $msg
+                'message' => [
+                    'accepted'   => true,
+                    'push_notif' => $push
+                ]
             ], 200);
         } catch (Exception $e) {
             $err = DB::connection('web')->rollback();
@@ -371,7 +396,10 @@ class FlagAuthorController extends BaseController
             return response()->json([
                 "code"    => 501,
                 'status'  => 'error',
-                'message' => $err
+                'message' => [
+                    'accepted' => false,
+                    'error'    => $err
+                ]
             ], 501);
         }
     }
@@ -721,7 +749,9 @@ class FlagAuthorController extends BaseController
             ], 422);
         }
 
-        $msg = 'Otorisasi berhasil ditolak';
+        $fcm   = $checkFCM->fcm_token;
+        $title = $checkFLG->subject;
+        $msg   = 'Otorisasi berhasil ditolak';
 
         DB::connection('web')->beginTransaction();
         try {
@@ -732,14 +762,21 @@ class FlagAuthorController extends BaseController
                 ['id_modul',0]
             ])->update(['otorisasi' => 2, 'keterangan' => $because, 'waktu_otorisasi' => $Now]);
 
-            Helper::push_notif($checkFCM->fcm_token, $checkFLG->subject, $msg);
+            if ($fcm != null) {
+                $push = Helper::push_notif($fcm, $title, $msg);
+            }else{
+                $push = null;
+            }
 
             DB::connection('web')->commit();
 
             return response()->json([
                 "code"    => 200,
                 'status'  => 'success',
-                'message' => $msg
+                'message' => [
+                    'rejected'   => true,
+                    'push_notif' => $push
+                ]
             ], 200);
         } catch (Exception $e) {
             $err = DB::connection('web')->rollback();
@@ -747,7 +784,10 @@ class FlagAuthorController extends BaseController
             return response()->json([
                 "code"    => 501,
                 'status'  => 'error',
-                'message' => $err
+                'message' => [
+                    'rejected' => false,
+                    'error'    => $err
+                ]
             ], 501);
         }
     }
@@ -772,7 +812,9 @@ class FlagAuthorController extends BaseController
         //     ], 422);
         // }
 
-        $msg = 'approval berhasil ditolak';
+        $fcm   = $checkFCM->fcm_token;
+        $title = $checkFLG->subject;
+        $msg   = 'Approval berhasil ditolak';
 
         DB::connection('web')->beginTransaction();
         try {
@@ -783,14 +825,21 @@ class FlagAuthorController extends BaseController
                 ['id_modul', '>',0],
             ])->update(['approval' => 2, 'keterangan' => $because, 'waktu_otorisasi' => $Now]);
 
-            Helper::push_notif($checkFCM->fcm_token, $checkFLG->subject, $msg);
+            if ($fcm != null) {
+                $push = Helper::push_notif($fcm, $title, $msg);
+            }else{
+                $push = null;
+            }
 
             DB::connection('web')->commit();
 
             return response()->json([
                 "code"    => 200,
                 'status'  => 'success',
-                'message' => $msg
+                'message' => [
+                    'rejected'   => true,
+                    'push_notif' => $push
+                ]
             ], 200);
         } catch (Exception $e) {
             $err = DB::connection('web')->rollback();
@@ -798,7 +847,10 @@ class FlagAuthorController extends BaseController
             return response()->json([
                 "code"    => 501,
                 'status'  => 'error',
-                'message' => $err
+                'message' => [
+                    'rejected' => false,
+                    'error'    => $err
+                ]
             ], 501);
         }
     }

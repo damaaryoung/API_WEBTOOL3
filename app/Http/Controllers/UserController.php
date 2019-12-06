@@ -68,9 +68,32 @@ class UserController extends BaseController
 
             $msg_otp = 'Password baru anda adalah '.$kode_otp;
 
-            $inData = $help->sendOTP($hp, $msg_otp);
-            $outData = json_decode($inData, true);
-            $xData = $outData['messages'][0]['smsCount'];
+            $otp = $help->sendOTP($hp, $msg_otp);
+            $resOTP = json_decode($otp, true);
+            // $outData = json_decode($inData, true);
+            // $xData = $outData['messages'][0]['smsCount'];
+
+            User::where('no_hp', $hp)->update(['password' => md5($kode_otp)]);
+
+            try {
+                return response()->json([
+                    'code'    => 200,
+                    'status'  => 'success',
+                    'message' => [
+                        'reset_password' => true,
+                        'send_OTP'       => $resOTP['messages'][0]
+                    ]
+                ], 200);
+            } catch (Exception $e) {
+                return response()->json([
+                    "code"    => 400,
+                    'status'  => 'bad request',
+                    'message' => [
+                        'reset_password' => false,
+                        'error'          => $e
+                    ]
+                ], 400);
+            }
 
             if ($xData == 1) {
                 User::where('no_hp', $hp)
