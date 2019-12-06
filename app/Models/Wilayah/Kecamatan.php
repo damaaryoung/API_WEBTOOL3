@@ -22,4 +22,8 @@ class Kecamatan extends Model implements AuthenticatableContract, AuthorizableCo
     ];
 
     public $timestamps = false;
+
+    public function kab(){
+        return $this->belongsTo('App\Models\Wilayah\Kabupaten', 'id_kabupaten')->select(['id', 'nama']);
+    }
 }

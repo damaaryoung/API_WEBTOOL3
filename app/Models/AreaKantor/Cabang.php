@@ -27,22 +27,22 @@ class Cabang extends Model implements AuthenticatableContract, AuthorizableContr
     ];
 
     public function area(){
-        return $this->belongsTo('App\Models\AreaKantor\Area', 'id_mk_area');
+        return $this->belongsTo('App\Models\AreaKantor\Area', 'id_mk_area')->select('id', 'nama');
     }
 
     public function prov(){
-        return $this->belongsTo('App\Models\Wilayah\Provinsi', 'id_provinsi');
+        return $this->belongsTo('App\Models\Wilayah\Provinsi', 'id_provinsi')->select(['id', 'nama']);
     }
 
     public function kab(){
-        return $this->belongsTo('App\Models\Wilayah\Kabupaten', 'id_kabupaten');
+        return $this->belongsTo('App\Models\Wilayah\Kabupaten', 'id_kabupaten')->select(['id', 'nama']);
     }
 
     public function kec(){
-        return $this->belongsTo('App\Models\Wilayah\Kecamatan', 'id_kecamatan');
+        return $this->belongsTo('App\Models\Wilayah\Kecamatan', 'id_kecamatan')->select(['id', 'nama']);
     }
 
     public function kel(){
-        return $this->belongsTo('App\Models\Wilayah\Kelurahan', 'id_kelurahan');
+        return $this->belongsTo('App\Models\Wilayah\Kelurahan', 'id_kelurahan')->select(['id', 'nama', 'kode_pos']);
     }
 }

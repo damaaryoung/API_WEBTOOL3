@@ -121,17 +121,17 @@ class DASController extends BaseController
             ], 404);
         }
 
-        $prov_ktp = Provinsi::where('id', $val->debt['id_prov_ktp'])->first();
-        $kab_ktp  = Kabupaten::where('id', $val->debt['id_kab_ktp'])->first();
-        $kec_ktp  = Kecamatan::where('id', $val->debt['id_kec_ktp'])->first();
-        $kel_ktp  = Kelurahan::where('id', $val->debt['id_kel_ktp'])->first();
+        $prov_ktp = Provinsi::where('id', $query[0]->debt['id_prov_ktp'])->first();
+        $kab_ktp  = Kabupaten::where('id', $query[0]->debt['id_kab_ktp'])->first();
+        $kec_ktp  = Kecamatan::where('id', $query[0]->debt['id_kec_ktp'])->first();
+        $kel_ktp  = Kelurahan::where('id', $query[0]->debt['id_kel_ktp'])->first();
 
-        $prov_dom = Provinsi::where('id', $val->debt['id_prov_domisili'])->first();
-        $kab_dom  = Kabupaten::where('id', $val->debt['id_kab_domisili'])->first();
-        $kec_dom  = Kecamatan::where('id', $val->debt['id_kec_domisili'])->first();
-        $kel_dom  = Kelurahan::where('id', $val->debt['id_kel_domisili'])->first();
+        $prov_dom = Provinsi::where('id', $query[0]->debt['id_prov_domisili'])->first();
+        $kab_dom  = Kabupaten::where('id', $query[0]->debt['id_kab_domisili'])->first();
+        $kec_dom  = Kecamatan::where('id', $query[0]->debt['id_kec_domisili'])->first();
+        $kel_dom  = Kelurahan::where('id', $query[0]->debt['id_kel_domisili'])->first();
 
-        $penjamin = Penjamin::where('id_calon_debitur', $val->id_calon_debt)->get();
+        $penjamin = Penjamin::where('id_calon_debitur', $query[0]->id_calon_debt)->get();
 
         $data = array();
         foreach ($query as $key => $val) {

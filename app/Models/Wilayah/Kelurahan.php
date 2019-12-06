@@ -22,4 +22,8 @@ class Kelurahan extends Model implements AuthenticatableContract, AuthorizableCo
     ];
 
     public $timestamps = false;
+
+    public function kec(){
+        return $this->belongsTo('App\Models\Wilayah\Kecamatan', 'id_kecamatan')->select(['id', 'nama']);
+    }
 }
