@@ -22,4 +22,8 @@ class Kabupaten extends Model implements AuthenticatableContract, AuthorizableCo
     ];
 
     public $timestamps = false;
+
+    public function prov(){
+        return $this->belongsTo('App\Models\Wilayah\Provinsi', 'id_provinsi')->select(['id', 'nama']);
+    }
 }

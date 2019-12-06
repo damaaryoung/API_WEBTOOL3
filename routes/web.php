@@ -47,9 +47,9 @@ $router->group(['prefix' => '/wilayah'], function () use ($router) {
     $router->get('/kecamatan/{id}/kelurahan', 'Wilayah\KelurahanController@sector'); // Get Data Kelurahan By Id Kecamatan
 });
 
-$router->put('/api/users/reset_password', 'UserController@resetPassword'); //Reset Password
-
 $router->post('/login', 'AuthController@login'); // Login All Level
+
+$router->put('/api/user/reset_password', 'UserController@resetPassword'); //Reset Password
 
 $router->group(['middleware' => 'jwt.auth'], function () use ($router) {
     //For Non User (Debitur)

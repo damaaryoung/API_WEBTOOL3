@@ -16,32 +16,34 @@ use DB;
 class CabangController extends BaseController
 {
     public function index() {
-        $query = DB::connection('web')->table('mk_cabang')
-            ->join('mk_area', 'mk_area.id', '=', 'mk_cabang.id_mk_area')
-            ->join('master_provinsi', 'master_provinsi.id', '=', 'mk_cabang.id_provinsi')
-            ->join('master_kabupaten', 'master_kabupaten.id', '=', 'mk_cabang.id_kabupaten')
-            ->join('master_kecamatan', 'master_kecamatan.id', '=', 'mk_cabang.id_kecamatan')
-            ->join('master_kelurahan', 'master_kelurahan.id', '=', 'mk_cabang.id_kelurahan')
-            ->select(
-                'mk_cabang.id_mk_area as id_area',
-                'mk_area.nama as nama_area',
-                'mk_cabang.id as id_cabang',
-                'mk_cabang.nama as nama_cabang',
-                'mk_cabang.id_provinsi',
-                'master_provinsi.nama as nama_provinsi',
-                'mk_cabang.id_kabupaten',
-                'master_kabupaten.nama as nama_kabupaten',
-                'mk_cabang.id_kecamatan',
-                'master_kecamatan.nama as nama_kecamatan',
-                'mk_cabang.id_kelurahan',
-                'master_kelurahan.nama as nama_kelurahan',
-                'master_kelurahan.kode_pos as kode_pos',
-                'mk_cabang.jenis_kantor',
-                'mk_cabang.flg_aktif',
-                'mk_cabang.created_at',
-                'mk_cabang.updated_at'
-            )
-            ->get();
+        // $query = DB::connection('web')->table('mk_cabang')
+        //     ->join('mk_area', 'mk_area.id', '=', 'mk_cabang.id_mk_area')
+        //     ->join('master_provinsi', 'master_provinsi.id', '=', 'mk_cabang.id_provinsi')
+        //     ->join('master_kabupaten', 'master_kabupaten.id', '=', 'mk_cabang.id_kabupaten')
+        //     ->join('master_kecamatan', 'master_kecamatan.id', '=', 'mk_cabang.id_kecamatan')
+        //     ->join('master_kelurahan', 'master_kelurahan.id', '=', 'mk_cabang.id_kelurahan')
+        //     ->select(
+        //         'mk_cabang.id_mk_area as id_area',
+        //         'mk_area.nama as nama_area',
+        //         'mk_cabang.id as id_cabang',
+        //         'mk_cabang.nama as nama_cabang',
+        //         'mk_cabang.id_provinsi',
+        //         'master_provinsi.nama as nama_provinsi',
+        //         'mk_cabang.id_kabupaten',
+        //         'master_kabupaten.nama as nama_kabupaten',
+        //         'mk_cabang.id_kecamatan',
+        //         'master_kecamatan.nama as nama_kecamatan',
+        //         'mk_cabang.id_kelurahan',
+        //         'master_kelurahan.nama as nama_kelurahan',
+        //         'master_kelurahan.kode_pos as kode_pos',
+        //         'mk_cabang.jenis_kantor',
+        //         'mk_cabang.flg_aktif',
+        //         'mk_cabang.created_at',
+        //         'mk_cabang.updated_at'
+        //     )
+        //     ->get();
+
+        $query = Cabang::get();
 
         if ($query == '[]') {
             return response()->json([
@@ -51,17 +53,25 @@ class CabangController extends BaseController
             ], 404);
         }
 
-        if(count($query) > 1){
-            $result = $query;
-        }else{
-            $result = $query[0];
+        $res = array();
+        foreach ($query as $key => $val) {
+            $res[$key] = [
+                "id" => $val->id,
+                "nama_area" => $val->area['nama'],
+                "nama_cabang" => $val->nama,
+                // "nama_provinsi" => $val->kec,
+                // "id_kabupaten": 1,
+                // "id_kecamatan": 12,
+                "nama_kelurahan" => $val->kel,
+                "jenis_kantor" => $val->jenis_kantor
+            ];
         }
 
         try {
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'data'   => $result
+                'data'   => $res
             ], 200);
         } catch (Exception $e) {
             return response()->json([
