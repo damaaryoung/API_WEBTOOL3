@@ -94,23 +94,6 @@ class UserController extends BaseController
                     ]
                 ], 400);
             }
-
-            if ($xData == 1) {
-                User::where('no_hp', $hp)
-                    ->update(['password' => md5($kode_otp)]);
-
-                return response()->json([
-                    'code'    => 200,
-                    'status'  => 'success',
-                    'message' => 'Reset password berhasil'
-                ], 200);
-            }else{
-                return response()->json([
-                    "code"    => 400,
-                    'status'  => 'bad request',
-                    'message' => 'cek koneksi seluler anda'
-                ], 400);
-            }
         }
     }
 
