@@ -60,8 +60,10 @@ $router->group(['middleware' => 'jwt.auth'], function () use ($router) {
         $router->get('/logs/limit/{limit}', 'LogsController@limit'); //Log History Limit
         $router->get('/logs/search/{search}', 'LogsController@search'); //Log History Search
 
-        $router->get('/users', 'UserController@index');
-        $router->put('/users/change_password', 'UserController@changePassword');
+        $router->get('/users', 'UserController@getUsers');
+        $router->get('/users/{search}', 'UserController@search');
+        $router->get('/user', 'UserController@index');
+        $router->put('/user/change_password', 'UserController@changePassword');
 
         $router->get('/oto', 'FlagAuthorController@otoIndex'); // Otorisasi
         $router->get('/oto/{id}', 'FlagAuthorController@otoShow');
@@ -109,11 +111,11 @@ $router->group(['middleware' => 'jwt.auth'], function () use ($router) {
             $router->get('/kode_kantor', 'Master\AreaKantor\KodeKantorController@index');
 
             //Kas Kantor
-            $router->get('/area_sales', 'Master\AreaKantor\SalesController@index');
-            $router->post('/area_sales', 'Master\AreaKantor\SalesController@store');
-            $router->get('/area_sales/{id}', 'Master\AreaKantor\SalesController@show');
-            $router->put('/area_sales/{id}', 'Master\AreaKantor\SalesController@update');
-            $router->delete('/area_sales/{id}', 'Master\AreaKantor\SalesController@delete');
+            $router->get('/area_pic', 'Master\AreaKantor\AreaPICController@index');
+            $router->post('/area_pic', 'Master\AreaKantor\AreaPICController@store');
+            $router->get('/area_pic/{id}', 'Master\AreaKantor\AreaPICController@show');
+            $router->put('/area_pic/{id}', 'Master\AreaKantor\AreaPICController@update');
+            $router->delete('/area_pic/{id}', 'Master\AreaKantor\AreaPICController@delete');
 
             //PIC
             $router->get('/pic', 'Master\AreaKantor\PICController@index');

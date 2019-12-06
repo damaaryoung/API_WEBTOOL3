@@ -9,6 +9,7 @@ use App\Http\Controllers\Controller as Helper;
 use App\Http\Requests\Debt\FasPinRequest;
 use App\Http\Requests\Debt\DebtRequest;
 use App\Models\CC\FasilitasPinjaman;
+use App\Models\AreaKantor\PIC;
 use App\Models\Bisnis\TransSo;
 use App\Models\KeuanganUsaha;
 use Illuminate\Http\Request;
@@ -52,8 +53,12 @@ class MasterCC_Controller extends BaseController
     public function store(Request $req, FasPinRequest $reqFasPin, DebtRequest $reqDebt, DebtPasanganRequest $reqPas, DebtPenjaminRequest $reqPen) {
 
         $user_id     = $req->auth->user_id;
-        $kode_kantor = $req->auth->kd_cabang;
-        $so_name     = $req->auth->nama;
+        // $kode_kantor = $req->auth->kd_cabang;
+        // $so_name     = $req->auth->nama;
+
+        $PIC = PIC::where('user_id', $user_id)->first();
+
+        dd($PIC);
 
         $countTSO = TransSo::count();
 

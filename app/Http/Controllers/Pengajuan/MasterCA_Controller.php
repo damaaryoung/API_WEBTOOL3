@@ -15,9 +15,9 @@ use DB;
 class MasterCA_Controller extends BaseController
 {
     public function index(Request $req){
-        $user_id = $req->auth->user_id;
-
-        $query = TransAO::where('user_id', $user_id)->where('status_ao', 1)->get();
+        // $user_id = $req->auth->user_id;
+        $kode_kantor = $req->auth->kd_cabang;
+        $query = TransAO::where('kode_kantor', $kode_kantor)->where('status_ao', 1)->get();
 
         if ($query == '[]') {
             return response()->json([
@@ -60,10 +60,8 @@ class MasterCA_Controller extends BaseController
 
     public function show($id, Request $req){
         // $user_id = $req->auth->user_id;
-        $user_id = $req->auth->nama;
-        dd($user_id);
-        // 'user_id', 'kode_kantor', 'nama_ao',
-        $query = TransAO::where('id_trans_so', $id)->where('user_id', $user_id)->where('status_ao', 1)->get();
+        $kode_kantor = $req->auth->kd_cabang;
+        $query = TransAO::where('id_trans_so', $id)->where('kode_kantor', $kode_kantor)->where('status_ao', 1)->get();
 
         if ($query == '[]') {
             return response()->json([
@@ -176,12 +174,9 @@ class MasterCA_Controller extends BaseController
 
     public function update($id, Request $req, FasPinRequest $reqFasPin, DebtRequest $reqDebt, DebtPasanganRequest $reqPas, DebtPenjaminRequest $reqPen, UsahaRequest $reqUs, AguTaReq $reqAta, AguKenReq $reqAk, PemAgTaReq $reqPAT, PemAgKeReq $reqPAK, KapBulananReq $reqkapBul, TrAoReq $reqAo) {
 
-        $user_id = $req->auth->user_id;
-
-        $user = User::where('user_id', $user_id)->first();
-
-        $kode_kantor = $user->kd_cabang;
-        $so_name     = $user->nama;
+        $user_id     = $req->auth->user_id;
+        $kode_kantor = $req->auth->kd_cabang;
+        $so_name     = $req->auth->nama;
 
         $countTSO = TransAo::count();
 

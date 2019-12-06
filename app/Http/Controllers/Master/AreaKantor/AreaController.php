@@ -39,17 +39,11 @@ class AreaController extends BaseController
             ], 404);
         }
 
-        if(count($query) > 1){
-            $result = $query;
-        }else{
-            $result = $query[0];
-        }
-
         try {
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'data'   => $result
+                'data'   => $query
             ], 200);
         } catch (Exception $e) {
             return response()->json([

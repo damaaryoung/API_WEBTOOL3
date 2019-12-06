@@ -22,7 +22,7 @@ class AreaRequest extends FormRequest
             'nama'         => 'required',
             'id_provinsi'  => 'required',
             'id_kabupaten' => 'required',
-            'flg_aktif'    => 'required|in:0,1'
+            'flg_aktif'    => 'in:0,1'
         ];
     }
 
@@ -31,7 +31,6 @@ class AreaRequest extends FormRequest
             'nama.required'         => ':attribute belum diisi',
             'id_provinsi.required'  => ':attribute belum diisi',
             'id_kabupaten.required' => ':attribute belum diisi',
-            'flg_aktif.required'    => ':attribute belum diisi',
             'flg_aktif.in'          => ':attribute harus salah satu dari jenis berikut :values'
         ];
     }

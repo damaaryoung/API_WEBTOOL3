@@ -26,14 +26,23 @@ class Cabang extends Model implements AuthenticatableContract, AuthorizableContr
         'id_mk_area', 'nama', 'id_provinsi', 'id_kabupaten', 'id_kecamatan', 'id_kelurahan', 'jenis_kantor', 'flg_aktif'
     ];
 
-    /**
-     * The attributes excluded from the model's JSON form.
-     *
-     * @var array
-     */
-    // protected $hidden = [
-    //     'password'
-    // ];
+    public function area(){
+        return $this->belongsTo('App\Models\AreaKantor\Area', 'id_mk_area');
+    }
 
-    // public $timestamps = false;
+    public function prov(){
+        return $this->belongsTo('App\Models\Wilayah\Provinsi', 'id_provinsi');
+    }
+
+    public function kab(){
+        return $this->belongsTo('App\Models\Wilayah\Kabupaten', 'id_kabupaten');
+    }
+
+    public function kec(){
+        return $this->belongsTo('App\Models\Wilayah\Kecamatan', 'id_kecamatan');
+    }
+
+    public function kel(){
+        return $this->belongsTo('App\Models\Wilayah\Kelurahan', 'id_kelurahan');
+    }
 }

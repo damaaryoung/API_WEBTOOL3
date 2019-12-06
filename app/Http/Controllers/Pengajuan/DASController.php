@@ -22,10 +22,12 @@ use DB;
 class DASController extends BaseController
 {
     public function index(Request $req){
-        // $user_id = $req->auth->user_id;
+        $user_id = $req->auth->user_id;
         $kode_kantor = $req->auth->kd_cabang;
 
+        // $query = DB::connection('web')->table('trans_so')->where('kode_kantor', $kode_kantor)->get();
         $query = TransSo::where('kode_kantor', $kode_kantor)->get();
+        // $query = DB::connection('web')->select("SELECT * FROM trans_so WHERE kode_kantor=?",[$kode_kantor]);
 
         if ($query == '[]') {
             return response()->json([
@@ -35,19 +37,29 @@ class DASController extends BaseController
             ], 404);
         }
 
+        $data = array();
         foreach ($query as $key => $val) {
 
-            $data[$key] = [
-                'id'             => $val->id,
-                'nomor_so'       => $val->nomor_so,
-                'kode_kantor'    => $val->kode_kantor,
-                'asal_data'      => $val->asaldata['nama'],
-                'nama_marketing' => $val->nama_marketing,
-                'nama_so'        => $val->nama_so,
-                'nama_debitur'   => $val->debt['nama_lengkap'],
-                'plafon'         => (int) $val->faspin->plafon,
-                'tenor'          => (int) $val->faspin->tenor
-            ];
+            $data[$key]['id']             = $val->id;
+            $data[$key]['nomor_so']       = $val->nomor_so;
+            $data[$key]['kode_kantor']    = $val->kode_kantor;
+            $data[$key]['asal_data']      = $val->asaldata['nama'];
+            $data[$key]['nama_marketing'] = $val->nama_marketing;
+            $data[$key]['nama_so']        = $val->nama_so;
+            $data[$key]['nama_debitur']   = $val->debt['nama_lengkap'];
+            $data[$key]['plafon']         = $val->faspin->plafon;
+            $data[$key]['tenor']          = $val->faspin->tenor;
+
+            if ($val->status_das == 0) {
+                $status = 'waiting';
+            }elseif ($val->status_das == 1) {
+                $status = 'complete';
+            }else{
+                $status = 'not complete';
+            }
+
+            $data[$key]['status']         = $status;
+            $data[$key]['note']           = $val->catatan_das;
         }
 
         try {
@@ -65,41 +77,41 @@ class DASController extends BaseController
         }
     }
 
-    public function whereKode($kode, Request $req){
-        // $query = TransSo::where('kode_kantor', $kode
-        // $kode_kantor = $req->auth->kd_cabang;
+    // public function whereKode($kode, Request $req){
+    //     // $query = TransSo::where('kode_kantor', $kode
+    //     // $kode_kantor = $req->auth->kd_cabang;
 
-        $query = TransSo::where('kode_kantor', '=', $kode)->get();
+    //     $query = TransSo::where('kode_kantor', '=', $kode)->get();
 
-        if ($query == '[]') {
-            return response()->json([
-                'code'    => 404,
-                'status'  => 'not found',
-                'message' => 'Data kosong'
-            ], 404);
-        }
+    //     if ($query == '[]') {
+    //         return response()->json([
+    //             'code'    => 404,
+    //             'status'  => 'not found',
+    //             'message' => 'Data kosong'
+    //         ], 404);
+    //     }
 
-        try {
-            return response()->json([
-                'code'   => 200,
-                'status' => 'success',
-                'data'   => $query
-            ], 200);
-        } catch (Exception $e) {
-            return response()->json([
-                "code"    => 501,
-                "status"  => "error",
-                "message" => $e
-            ], 501);
-        }
-    }
+    //     try {
+    //         return response()->json([
+    //             'code'   => 200,
+    //             'status' => 'success',
+    //             'data'   => $query
+    //         ], 200);
+    //     } catch (Exception $e) {
+    //         return response()->json([
+    //             "code"    => 501,
+    //             "status"  => "error",
+    //             "message" => $e
+    //         ], 501);
+    //     }
+    // }
 
     public function show($id, Request $req){
         // $user_id = $req->auth->user_id;
 
-        // $kode_kantor = $req->auth->kd_cabang;
+        $kode_kantor = $req->auth->kd_cabang;
 
-        $query = TransSo::where('id', $id)->get();
+        $query = TransSo::where('id', $id)->where('kode_kantor', $kode_kantor)->get();
 
         if ($query == '[]') {
             return response()->json([
@@ -109,25 +121,28 @@ class DASController extends BaseController
             ], 404);
         }
 
+        $prov_ktp = Provinsi::where('id', $val->debt['id_prov_ktp'])->first();
+        $kab_ktp  = Kabupaten::where('id', $val->debt['id_kab_ktp'])->first();
+        $kec_ktp  = Kecamatan::where('id', $val->debt['id_kec_ktp'])->first();
+        $kel_ktp  = Kelurahan::where('id', $val->debt['id_kel_ktp'])->first();
+
+        $prov_dom = Provinsi::where('id', $val->debt['id_prov_domisili'])->first();
+        $kab_dom  = Kabupaten::where('id', $val->debt['id_kab_domisili'])->first();
+        $kec_dom  = Kecamatan::where('id', $val->debt['id_kec_domisili'])->first();
+        $kel_dom  = Kelurahan::where('id', $val->debt['id_kel_domisili'])->first();
+
+        $penjamin = Penjamin::where('id_calon_debitur', $val->id_calon_debt)->get();
+
+        $data = array();
         foreach ($query as $key => $val) {
 
-            // $idPenj = $val->id_penjamin;
-
-            // $ex_penj = explode (",",$idPenj);
-
-            // dd($val->debt);
-
-            $prov_ktp = Provinsi::where('id', $val->debt['id_prov_ktp'])->first();
-            $kab_ktp  = Kabupaten::where('id', $val->debt['id_kab_ktp'])->first();
-            $kec_ktp  = Kecamatan::where('id', $val->debt['id_kec_ktp'])->first();
-            $kel_ktp  = Kelurahan::where('id', $val->debt['id_kel_ktp'])->first();
-
-            $prov_dom = Provinsi::where('id', $val->debt['id_prov_domisili'])->first();
-            $kab_dom  = Kabupaten::where('id', $val->debt['id_kab_domisili'])->first();
-            $kec_dom  = Kecamatan::where('id', $val->debt['id_kec_domisili'])->first();
-            $kel_dom  = Kelurahan::where('id', $val->debt['id_kel_domisili'])->first();
-
-            $penjamin = Penjamin::where('id_calon_debitur', $val->id_calon_debt)->get();
+            if ($val->status_das == 0) {
+                $status = 'waiting';
+            }elseif ($val->status_das == 1) {
+                $status = 'complete';
+            }else{
+                $status = 'not complete';
+            }
 
             $data[$key] = [
                 'id'             => $val->id,
@@ -194,7 +209,9 @@ class DASController extends BaseController
                     'no_telp'          => $val->pas['no_telp'],
                     'lamp_buku_nikah'  => $val->pas['lamp_buku_nikah']
                 ],
-                'data_penjamin' => $penjamin
+                'data_penjamin' => $penjamin,
+                'status'        => $status,
+                'note'          => $val->catatan_das
             ];
         }
 
