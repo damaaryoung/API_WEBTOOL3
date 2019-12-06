@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Wilayah;
 
 use Laravel\Lumen\Routing\Controller as BaseController;
 use App\Http\Controllers\Controller as Helper;
+use App\Models\Wilayah\Kabupaten;
 use Illuminate\Http\Request;
 use DB;
 
@@ -11,7 +12,7 @@ class KabupatenController extends BaseController
 {
     public function index() {
         try {
-            $query = DB::connection('web')->table('master_kabupaten')->get();
+            $query = Kabupaten::get();
 
             if ($query == '[]') {
                 return response()->json([
@@ -21,10 +22,19 @@ class KabupatenController extends BaseController
                 ], 404);
             }
 
+            $res = array();
+            foreach ($query as $key => $val) {
+                $res[$key] = [
+                    "id"    => $val->id,
+                    "nama_kabupaten" => $val->nama,
+                    "nama_provinsi"  => $val->prov['nama']
+                ];
+            }
+
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'data'   => $query
+                'data'   => $res
             ], 200);
         } catch (Exception $e) {
             return response()->json([
@@ -36,11 +46,12 @@ class KabupatenController extends BaseController
     }
 
     public function store(Request $req) {
-        $nama      = $req->input('nama');
-        $provinsi  = $req->input('id_provinsi');
-        $flg_aktif = $req->input('flg_aktif');
+        $data = array(
+            "nama"     => $req->input('nama'),
+            "provinsi" => $req->input('id_provinsi')
+        );
 
-        if (!$nama) {
+        if (empty($data['nama'])) {
             return response()->json([
                 "code"    => 422,
                 "status"  => "not valid request",
@@ -48,7 +59,7 @@ class KabupatenController extends BaseController
             ], 422);
         }
 
-        if (!$provinsi) {
+        if (empty($data['provinsi'])) {
             return response()->json([
                 "code"    => 422,
                 "status"  => "not valid request",
@@ -56,13 +67,9 @@ class KabupatenController extends BaseController
             ], 422);
         }
 
-        try {
-            $query = DB::connection('web')->table('master_kabupaten')->insert([
-                'nama'        => $nama,
-                'id_provinsi' => $provinsi,
-                'flg_aktif'   => $flg_aktif
-            ]);
+        Kabupaten::create($data);
 
+        try {
             return response()->json([
                 'code'    => 200,
                 'status'  => 'success',
@@ -78,10 +85,28 @@ class KabupatenController extends BaseController
     }
 
     public function show($IdOrName) {
+        $res = array();
+
         if(preg_match("/^([0-9])$/", $IdOrName)){
-            $query = DB::connection('web')->table('master_kabupaten')->where('id', $IdOrName)->get();
+            $query = Kabupaten::where('id', $IdOrName)->first();
+
+            $res = [
+                'id'             => $query->id,
+                'nama_kabupaten' => $query->nama,
+                'id_provinsi'    => $query->id_provinsi,
+                'nama_provinsi'  => $query->prov['nama'],
+                'flg_aktif'      => $query->flg_aktif
+            ];
         }else{
-            $query = DB::connection('web')->table('master_kabupaten')->where('nama','like','%'.$IdOrName.'%')->get();
+            $query = Kabupaten::where('nama','like','%'.$IdOrName.'%')->get();
+
+            foreach ($query as $key => $val) {
+                $res[$key] = [
+                    'id'             => $val->id,
+                    'nama_kabupaten' => $val->nama,
+                    'nama_provinsi'  => $val->prov['nama'],
+                ];
+            }
         }
 
         try {
@@ -95,7 +120,7 @@ class KabupatenController extends BaseController
                 return response()->json([
                     'code'    => 200,
                     'status'  => 'success',
-                    'data'    => $query
+                    'data'    => $res
                 ], 200);
             }
         } catch (Exception $e) {
@@ -108,7 +133,7 @@ class KabupatenController extends BaseController
     }
 
     public function update($id, Request $req) {
-        $check = DB::connection('web')->table('master_kabupaten')->where('id', $id)->first();
+        $check = Kabupaten::where('id', $id)->first();
 
         if (!$check) {
             return response()->json([
@@ -144,7 +169,7 @@ class KabupatenController extends BaseController
     }
 
     public function delete($id) {
-        $check = DB::connection('web')->table('master_kabupaten')->where('id', $id)->first();
+        $check = Kabupaten::->where('id', $id)->first();
 
         if ($check == null) {
             return response()->json([
@@ -155,7 +180,7 @@ class KabupatenController extends BaseController
         }
 
         try {
-            $query = DB::connection('web')->table('master_kabupaten')->where('id', $id)->delete();
+            $query = Kabupaten::where('id', $id)->delete();
 
             return response()->json([
                 'code'    => 200,
@@ -173,7 +198,7 @@ class KabupatenController extends BaseController
 
     public function sector($id_prov) {
         try {
-            $query = DB::connection('web')->table('master_kabupaten')->where('id_provinsi', $id_prov)->get();
+            $query = Kabupaten::where('id_provinsi', $id_prov)->get();
 
             if ($query == '[]') {
                 return response()->json([
