@@ -12,12 +12,12 @@ use App\Http\Requests\Debt\UsahaRequest;
 use App\Http\Requests\Debt\DebtRequest;
 use App\Http\Requests\Debt\PemAgTaReq;
 use App\Http\Requests\Debt\PemAgKeReq;
-use App\Http\Requests\Debt\AguKenReq;
-use App\Http\Requests\Debt\AguTaReq;
-use App\Http\Requests\Debt\TrAoReq;
-use App\Models\CC\FasilitasPinjaman;
 use App\Models\CC\PemeriksaanAgunKen;
 use App\Models\CC\PemeriksaanAgunTan;
+use App\Http\Requests\Bisnis\TrAoReq;
+use App\Http\Requests\Debt\AguKenReq;
+use App\Http\Requests\Debt\AguTaReq;
+use App\Models\CC\FasilitasPinjaman;
 use App\Models\CC\AgunanKendaraan;
 use App\Models\Bisnis\VerifModel;
 use App\Models\Bisnis\ValidModel;
@@ -26,10 +26,13 @@ use App\Models\Wilayah\Kecamatan;
 use App\Models\Wilayah\Kelurahan;
 use App\Models\Wilayah\Provinsi;
 use App\Models\CC\KeuanganUsaha;
-use App\Models\CC\KapBulanan;
+use App\Models\AreaKantor\Cabang;
+use App\Models\AreaKantor\JPIC;
+use App\Models\AreaKantor\PIC;
 use App\Models\CC\AgunanTanah;
 use App\Models\Bisnis\TransAO;
 use App\Models\Bisnis\TransSo;
+use App\Models\CC\KapBulanan;
 use Illuminate\Http\Request;
 use App\Models\CC\Pasangan;
 use App\Models\CC\Penjamin;
@@ -58,25 +61,26 @@ class MasterAO_Controller extends BaseController
 
         foreach ($query as $key => $val) {
 
-            if ($val->status_das == 0) {
-                $status_das = 'waiting';
-            }elseif($val->status_das == 1){
+            if ($val->status_das == 1) {
                 $status_das = 'complete';
-            }else{
+            }elseif($val->status_das == 2){
                 $status_das = 'not complete';
+            }else{
+                $status_das = 'waiting';
             }
 
-            if ($val->status_hm == 0) {
-                $status_hm = 'waiting';
-            }elseif ($val->status_hm == 1) {
+            if ($val->status_hm == 1) {
                 $status_hm = 'complete';
-            }else{
+            }elseif ($val->status_hm == 2) {
                 $status_hm = 'not complete';
+            }else{
+                $status_hm = 'waiting';
             }
 
             $data[$key] = [
                 'id'             => $val->id,
                 'nomor_so'       => $val->nomor_so,
+                'user_id'        => $val->user_id,
                 'kode_kantor'    => $val->kode_kantor,
                 'asal_data'      => $val->asaldata['nama'],
                 'nama_marketing' => $val->nama_marketing,
@@ -159,20 +163,20 @@ class MasterAO_Controller extends BaseController
 
         foreach ($query as $key => $val) {
 
-            if ($val->status_das == 0) {
-                $status_das = 'waiting';
-            }elseif($val->status_das == 1){
+            if ($val->status_das == 1) {
                 $status_das = 'complete';
-            }else{
+            }elseif($val->status_das == 2){
                 $status_das = 'not complete';
+            }else{
+                $status_das = 'waiting';
             }
 
-            if ($val->status_hm == 0) {
-                $status_hm = 'waiting';
-            }elseif ($val->status_hm == 1) {
+            if ($val->status_hm == 1) {
                 $status_hm = 'complete';
-            }else{
+            }elseif ($val->status_hm == 2) {
                 $status_hm = 'not complete';
+            }else{
+                $status_hm = 'waiting';
             }
 
             $data[$key] = [
@@ -266,9 +270,18 @@ class MasterAO_Controller extends BaseController
 
     public function update($id, Request $req, FasPinRequest $reqFasPin, DebtRequest $reqDebt, DebtPasanganRequest $reqPas, DebtPenjaminRequest $reqPen, UsahaRequest $reqUs, AguTaReq $reqAta, AguKenReq $reqAk, PemAgTaReq $reqPAT, PemAgKeReq $reqPAK, KapBulananReq $reqkapBul, TrAoReq $reqAo) {
 
-        // $user_id = $req->auth->user_id;
-        $kode_kantor = $req->auth->kd_cabang;
-        $ao_name     = $req->auth->nama;
+        $user_id  = $req->auth->user_id;
+        $username = $req->auth->user;
+
+        $PIC = PIC::where('user_id', $user_id)->first();
+
+        if ($PIC == null) {
+            return response()->json([
+                "code"    => 404,
+                "status"  => "not found",
+                "message" => "User_ID anda adalah '".$user_id."' dengan username '".$username."' . Namun anda belum terdaftar sebagai PIC. Harap daftarkan diri sebagai PIC pada form PIC atau hubungi bagian IT"
+            ], 404);
+        }
 
         $countTSO = TransAo::count();
 
@@ -283,7 +296,10 @@ class MasterAO_Controller extends BaseController
         $year  = $nows->year;
         $month = $nows->month;
 
-        $noAO = $kode_kantor.'-AO-'.$month.'-'.$year.'-'.$no;
+        $JPIC   = JPIC::where('id', $PIC->id_mj_pic)->first();
+
+        //  ID-Cabang - AO / CA / SO - Bulan - Tahun - NO. Urut
+        $nomor_ao = $PIC->id_mk_cabang.'-'.$JPIC->nama_jenis.'-'.$month.'-'.$year.'-'.$no; //  ID-Cabang - AO / CA / SO - Bulan - Tahun - NO. Urut
 
         $Trans = TransSo::where('id', $id)->first();
 
@@ -293,6 +309,36 @@ class MasterAO_Controller extends BaseController
                 'status'  => 'not found',
                 'message' => 'Data kosong'
             ], 404);
+        }
+
+        $TransAO = array(
+            'nomor_ao'              => $nomor_ao,
+            'id_trans_so'           => $id,
+            'user_id'               => $user_id,
+            'kode_kantor'           => $PIC->id_mk_cabang,
+            'nama_ao'               => $PIC->nama,
+            'produk'                => $reqAo->input('produk'),
+            'plafon_kredit'         => $reqAo->input('plafon_kredit'),
+            'jangka_waktu'          => $reqAo->input('jangka_waktu'),
+            'suku_bunga'            => $reqAo->input('suku_bunga'),
+            'pembayaran_bunga'      => $reqAo->input('pembayaran_bunga'),
+            'akad_kredit'           => $reqAo->input('akad_kredit'),
+            'ikatan_agunan'         => $reqAo->input('ikatan_agunan'),
+            'analisa_ao'            => $reqAo->input('analisa_ao'),
+            'biaya_provisi'         => $reqAo->input('biaya_provisi'),
+            'biaya_administrasi'    => $reqAo->input('biaya_administrasi'),
+            'biaya_credit_checking' => $reqAo->input('biaya_credit_checking'),
+            'biaya_tabungan'        => $reqAo->input('biaya_tabungan'),
+            'catatan_ao'            => $req->input('catatan_ao'),
+            'status_ao'             => $req->input('status_ao')
+        );
+
+        if ($TransAO['status_ao'] == 1) {
+            $msg = 'berhasil menyetujui data';
+        }elseif ($TransAO['status_ao'] == 2) {
+            $msg = 'berhasil menolak data';
+        }else{
+            $msg = 'waiting proccess';
         }
 
         $debitur  = Debitur::select('lamp_buku_tabungan')->where('id', $Trans->id_calon_debt)->first();
@@ -639,31 +685,6 @@ class MasterAO_Controller extends BaseController
             'penghasilan_bersih'    => ((empty($reqkapBul->input('pemasukan_debitur')) ? 0 : $reqkapBul->input('pemasukan_debitur')) + (empty($reqkapBul->input('pemasuk + an_pasangan')) ? 0 : $reqkapBul->input('pemasukan_pasangan')) + (empty($reqkapBul->input('pemasukan_penjamin')) ? 0 : $reqkapBul->input('pemasukan_penjamin'))) - ((empty($reqkapBul->input('biaya_rumah_tangga')) ? 0 : $reqkapBul->input('biaya_rumah_tangga')) + (empty($reqkapBul->input('biaya_transport')) ? 0 : $reqkapBul->input('biaya_transport')) + (empty($reqkapBul->input('biaya_pendidikan')) ? 0 : $reqkapBul->input('biaya_pendidikan')) + (empty($reqkapBul->input('biaya_telp_listr_air')) ? 0 : $reqkapBul->input('biaya_telp_listr_air')) + (empty($reqkapBul->input('biaya_lain')) ? 0 : $reqkapBul->input('biaya_lain')))
         );
 
-        $TransAO = array(
-            'nomor_ao'              => $noAO,
-            'id_trans_so'           => $id,
-            'produk'                => $reqAo->input('produk'),
-            'plafon_kredit'         => $reqAo->input('plafon_kredit'),
-            'jangka_waktu'          => $reqAo->input('jangka_waktu'),
-            'suku_bunga'            => $reqAo->input('suku_bunga'),
-            'pembayaran_bunga'      => $reqAo->input('pembayaran_bunga'),
-            'akad_kredit'           => $reqAo->input('akad_kredit'),
-            'ikatan_agunan'         => $reqAo->input('ikatan_agunan'),
-            'analisa_ao'            => $reqAo->input('analisa_ao'),
-            'biaya_provinsi'        => $reqAo->input('biaya_provinsi'),
-            'biaya_administrasi'    => $reqAo->input('biaya_administrasi'),
-            'biaya_credit_checking' => $reqAo->input('biaya_credit_checking'),
-            'biaya_tabungan'        => $reqAo->input('biaya_tabungan'),
-            'catatan_ao'            => $reqAO->input('catatan_ao'),
-            'status_ao'             => $reqAO->input('status_ao')
-        );
-
-        if ($TransAO['status_ao'] == 1) {
-            $msg = 'berhasil menyetujui data';
-        }elseif ($TransAO['status_ao'] == 0) {
-            $msg = 'berhasil menolak data';
-        }
-
         $dataKeUsaha = array(
             'id_calon_debitur'     => $Trans->id_calon_debt,
             'pemasukan_tunai'      => empty($req->input('pemasukan_tunai')) ? null : (int) $req->input('pemasukan_tunai'),
@@ -712,7 +733,22 @@ class MasterAO_Controller extends BaseController
             ValidModel::updateOrCreate($dataValidasi);
 
             if (!empty($reqAta->input('tipe_lokasi_agunan'))){
-                AgunanTanah::updateOrCreate($daAguTa);
+                $tts = AgunanTanah::create($daAguTa);
+
+                $getAguta = AgunanTanah::select('id')->where('id_calon_debitur', $Trans->id_calon_debt)->get();
+
+                $i  = 0;
+                if ($getAguta != '[]') {
+                    $At = array();
+                    foreach ($getAguta as $val) {
+                        $At['id'][$i] = $val->id;
+                        $i++;
+                    }
+
+                    $id_AguTa = implode(",", $At['id']);
+                }else{
+                    $id_AguTa = null;
+                }
 
                 for ($i = 0; $i < count($reqAta->input('tipe_lokasi_agunan')); $i++){
                     $pemAguTa[] = [
@@ -736,23 +772,22 @@ class MasterAO_Controller extends BaseController
                 }
             }
 
-            $getAguta = AgunanTanah::select('id')->where('id_calon_debitur', $Trans->id_calon_debt)->get();
+            if (!empty($reqAk->input('no_bpkb_ken'))){
+                AgunanKendaraan::create($daAguKe);
 
-            $i  = 0;
-            if ($getAguta != '[]') {
-                $At = array();
-                foreach ($getAguta as $val) {
-                    $At['id'][$i] = $val->id;
-                    $i++;
+                $getAguKe = AgunanKendaraan::select('id')->where('id_calon_debitur', $Trans->id_calon_debt)->get();
+
+                if ($getAguKe != '[]') {
+                    foreach ($getAguKe as $val) {
+                        $Ak['id'][$i] = $val->id;
+                        $i++;
+                    }
+
+                    $id_AguKe = implode(",", $Ak['id']);
+                }else{
+                    $id_AguKe = null;
                 }
 
-                $id_AguTa = implode(",", $At['id']);
-            }else{
-                $id_AguTa = null;
-            }
-
-            if (!empty($reqAk->input('no_bpkb_ken'))){
-               AgunanKendaraan::updateOrCreate($daAguKe);
 
                 for ($i = 0; $i < count($reqAk->input('no_bpkb_ken')); $i++){
                     $pemAguKe[] = [
@@ -774,19 +809,6 @@ class MasterAO_Controller extends BaseController
 
                     PemeriksaanAgunKen::updateOrCreate($pemAguKe[$i]);
                 }
-            }
-
-            $getAguKe = AgunanKendaraan::select('id')->where('id_calon_debitur', $Trans->id_calon_debt)->get();
-
-            if ($getAguKe != '[]') {
-                foreach ($getAguKe as $val) {
-                    $Ak['id'][$i] = $val->id;
-                    $i++;
-                }
-
-                $id_AguKe = implode(",", $Ak['id']);
-            }else{
-                $id_AguKe = null;
             }
 
             $getAguTa = PemeriksaanAgunTan::select('id')->where('id_calon_debitur', $Trans->id_calon_debt)->get();

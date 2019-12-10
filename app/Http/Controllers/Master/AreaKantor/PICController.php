@@ -52,9 +52,9 @@ class PICController extends BaseController
     public function store(PICRequest $req) {
         $data = array(
             'user_id'       => $req->input('user_id'),
-            'id_mk_area'    => $req->input('id_mk_area'),
-            'id_mk_cabang'  => $req->input('id_mk_cabang'),
-            'id_mj_pic'     => $req->input('id_mj_pic'),
+            'id_mk_area'    => $req->input('id_area'),
+            'id_mk_cabang'  => $req->input('id_cabang'),
+            'id_mj_pic'     => $req->input('id_jenis_pic'),
             'nama'          => $req->input('nama')
         );
 
@@ -88,6 +88,7 @@ class PICController extends BaseController
             $res = [
                 "id"             => $query->id,
                 "nama_pic"       => $query->nama,
+                "user_id"        => $query->user_id,
                 "id_jenis_pic"   => $query->id_mj_pic,
                 "nama_jenis_pic" => $query->jpic['nama_jenis'],
                 "id_area"        => $query->id_mk_area,

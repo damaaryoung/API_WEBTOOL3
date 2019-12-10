@@ -25,4 +25,8 @@ class VerifModel extends Model implements AuthenticatableContract, AuthorizableC
     protected $fillable = [
         'id_trans_so', 'id_calon_debitur', 'ver_ktp_debt', 'ver_kk_debt', 'ver_akta_cerai_debt', 'ver_akta_kematian_debt', 'ver_rek_tabungan_debt', 'ver_sertifikat_debt', 'ver_sttp_pbb_debt', 'ver_imb_debt', 'ver_ktp_pasangan', 'ver_akta_nikah_pasangan', 'ver_data_penjamin', 'ver_sku_debt', 'ver_pembukuan_usaha_debt', 'catatan'
     ];
+
+    public function debt(){
+        return $this->belongsTo('App\Models\CC\Debitur', 'id_calon_debitur');
+    }
 }

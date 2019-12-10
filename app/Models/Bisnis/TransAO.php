@@ -23,7 +23,7 @@ class TransAO extends Model implements AuthenticatableContract, AuthorizableCont
     protected $primaryKey = 'id';
 
     protected $fillable = [
-        'nomor_ao', 'id_trans_so', 'user_id', 'kode_kantor', 'nama_ao', 'produk', 'plafon_kredit', 'jangka_waktu', 'suku_bunga', 'pembayaran_bunga', 'akad_kredit', 'ikatan_agunan', 'analisa_ao', 'biaya_provinsi', 'biaya_administrasi', 'biaya_credit_checking', 'biaya_tabungan', 'catatan_ao', 'status_ao', 'flg_aktif'
+        'nomor_ao', 'id_trans_so', 'user_id', 'kode_kantor', 'nama_ao', 'produk', 'plafon_kredit', 'jangka_waktu', 'suku_bunga', 'pembayaran_bunga', 'akad_kredit', 'ikatan_agunan', 'analisa_ao', 'biaya_provisi', 'biaya_administrasi', 'biaya_credit_checking', 'biaya_tabungan', 'catatan_ao', 'status_ao', 'flg_aktif'
     ];
 
     public function so(){

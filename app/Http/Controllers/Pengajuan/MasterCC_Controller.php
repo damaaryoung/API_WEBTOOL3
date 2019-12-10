@@ -9,6 +9,8 @@ use App\Http\Controllers\Controller as Helper;
 use App\Http\Requests\Debt\FasPinRequest;
 use App\Http\Requests\Debt\DebtRequest;
 use App\Models\CC\FasilitasPinjaman;
+use App\Models\AreaKantor\Cabang;
+use App\Models\AreaKantor\JPIC;
 use App\Models\AreaKantor\PIC;
 use App\Models\Bisnis\TransSo;
 use App\Models\KeuanganUsaha;
@@ -24,41 +26,49 @@ use DB;
 
 class MasterCC_Controller extends BaseController
 {
-    public function index(){
-        $check = TransSo::get();
+    // public function index(){
+    //     $check = TransSo::get();
 
-        if ($check == '[]') {
-            return response()->json([
-                'code'    => 404,
-                'status'  => 'not found',
-                'message' => 'Data kosong'
-            ], 404);
-        }
+    //     if ($check == '[]') {
+    //         return response()->json([
+    //             'code'    => 404,
+    //             'status'  => 'not found',
+    //             'message' => 'Data kosong'
+    //         ], 404);
+    //     }
 
-        try {
-            return response()->json([
-                'code'   => 200,
-                'status' => 'success',
-                'data'   => $check
-            ], 200);
-        } catch (Exception $e) {
-            return response()->json([
-                "code"    => 501,
-                "status"  => "error",
-                "message" => $e
-            ], 501);
-        }
-    }
+    //     try {
+    //         return response()->json([
+    //             'code'   => 200,
+    //             'status' => 'success',
+    //             'data'   => $check
+    //         ], 200);
+    //     } catch (Exception $e) {
+    //         return response()->json([
+    //             "code"    => 501,
+    //             "status"  => "error",
+    //             "message" => $e
+    //         ], 501);
+    //     }
+    // }
 
     public function store(Request $req, FasPinRequest $reqFasPin, DebtRequest $reqDebt, DebtPasanganRequest $reqPas, DebtPenjaminRequest $reqPen) {
 
+        // $user_id     = 1199;
         $user_id     = $req->auth->user_id;
+        $username    = $req->auth->user;
         // $kode_kantor = $req->auth->kd_cabang;
         // $so_name     = $req->auth->nama;
 
         $PIC = PIC::where('user_id', $user_id)->first();
 
-        dd($PIC);
+        if ($PIC == null) {
+            return response()->json([
+                "code"    => 404,
+                "status"  => "not found",
+                "message" => "User_ID anda adalah '".$user_id."' dengan username '".$username."' . Namun anda belum terdaftar sebagai PIC. Harap daftarkan diri sebagai PIC pada form PIC atau hubungi bagian IT"
+            ], 404);
+        }
 
         $countTSO = TransSo::count();
 
@@ -73,13 +83,15 @@ class MasterCC_Controller extends BaseController
         $year  = $now->year;
         $month = $now->month;
 
+        $JPIC   = JPIC::where('id', $PIC->id_mj_pic)->first();
+
         //  ID-Cabang - AO / CA / SO - Bulan - Tahun - NO. Urut
-        $nomor_so = $kode_kantor.'-SO-'.$month.'-'.$year.'-'.$no; //  ID-Cabang - AO / CA / SO - Bulan - Tahun - NO. Urut
+        $nomor_so = $PIC->id_mk_cabang.'-'.$JPIC->nama_jenis.'-'.$month.'-'.$year.'-'.$no; //  ID-Cabang - AO / CA / SO - Bulan - Tahun - NO. Urut
         $dataTr = array(
             'nomor_so'       => $nomor_so,
             'user_id'        => $user_id,
-            'kode_kantor'    => $kode_kantor,
-            'nama_so'        => $so_name,
+            'kode_kantor'    => $PIC->id_mk_cabang,
+            'nama_so'        => $PIC->nama,
             'id_asal_data'   => $req->input('id_asal_data'),
             'nama_marketing' => $req->input('nama_marketing')
         );

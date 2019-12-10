@@ -26,14 +26,7 @@ class KeuanganUsaha extends Model implements AuthenticatableContract, Authorizab
        'id_calon_debitur', 'pemasukan_tunai', 'pemasukan_kredit', 'biaya_sewa', 'biaya_gaji_pegawai', 'biaya_belanja_brg', 'biaya_telp_listr_air', 'biaya_sampah_kemanan', 'biaya_kirim_barang', 'biaya_hutang_dagang', 'biaya_angsuran', 'biaya_lain_lain', 'total_pemasukan', 'total_pengeluaran', 'laba_usaha', 'flg_aktif'
     ];
 
-    /**
-     * The attributes excluded from the model's JSON form.
-     *
-     * @var array
-     */
-    // protected $hidden = [
-
-    // ];
-
-    // public $timestamps = false;
+    public function debt(){
+        return $this->belongsTo('App\Models\CC\Debitur', 'id_calon_debitur');
+    }
 }

@@ -38,20 +38,20 @@ class HMController extends BaseController
         $data = array();
         foreach ($query as $key => $val) {
 
-            if ($val->status_das == 0) {
-                $status_das = 'waiting';
-            }elseif($val->status_das == 1){
+            if ($val->status_das == 1) {
                 $status_das = 'complete';
-            }else{
+            }elseif($val->status_das == 2){
                 $status_das = 'not complete';
+            }else{
+                $status_das = 'waiting';
             }
 
-            if ($val->status_hm == 0) {
-                $status_hm = 'waiting';
-            }elseif ($val->status_hm == 1) {
+            if ($val->status_hm == 1) {
                 $status_hm = 'complete';
-            }else{
+            }elseif ($val->status_hm == 2) {
                 $status_hm = 'not complete';
+            }else{
+                $status_hm = 'waiting';
             }
 
             $data[$key] = [
@@ -139,20 +139,20 @@ class HMController extends BaseController
 
         foreach ($query as $key => $val) {
 
-            if ($val->status_das == 0) {
-                $status_das = 'waiting';
-            }elseif($val->status_das == 1){
+            if ($val->status_das == 1) {
                 $status_das = 'complete';
-            }else{
+            }elseif($val->status_das == 2){
                 $status_das = 'not complete';
+            }else{
+                $status_das = 'waiting';
             }
 
-            if ($val->status_hm == 0) {
-                $status_hm = 'waiting';
-            }elseif ($val->status_hm == 1) {
+            if ($val->status_hm == 1) {
                 $status_hm = 'complete';
-            }else{
+            }elseif ($val->status_hm == 2) {
                 $status_hm = 'not complete';
+            }else{
+                $status_hm = 'waiting';
             }
 
             $data[$key] = [
@@ -264,14 +264,32 @@ class HMController extends BaseController
             return response()->json([
                 "code"    => 422,
                 "status"  => "bad request",
-                "message" => "Catatan harus diinput!!"
+                "message" => "catatan harus diinput!!"
+            ], 422);
+        }
+
+        if($data['status_hm'] == null){
+            return response()->json([
+                "code"    => 422,
+                "status"  => "bad request",
+                "message" => "status harus diinput!!"
+            ], 422);
+        }
+
+        if (!preg_match("/^([1-2]{1})$/", $req->input('status_hm'))) {
+            response()->json([
+                "code"    => 422,
+                "status"  => "not valid request",
+                "message" => "status_das harus berupa angka 1 digit, range: 1-2"
             ], 422);
         }
 
         if ($data['status_hm'] == 1) {
             $msg = 'berhasil menyetujui data';
-        }else if ($data['status_hm'] == 0) {
+        }else if ($data['status_hm'] == 2) {
             $msg = 'berhasil menolak data';
+        }else{
+            $msg = 'waiting proccess';
         }
 
         TransSo::where('id', $id)->update($data);

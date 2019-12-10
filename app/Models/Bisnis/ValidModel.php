@@ -25,4 +25,8 @@ class ValidModel extends Model implements AuthenticatableContract, AuthorizableC
     protected $fillable = [
         'id_trans_so', 'id_calon_debitur', 'val_data_debt', 'val_lingkungan_debt', 'val_domisili_debt', 'val_pekerjaan_debt', 'val_data_pasangan', 'val_data_penjamin', 'val_agunan_tanah', 'val_agunan_kendaraan', 'val_usaha_debt', 'catatan'
     ];
+
+    public function debt(){
+        return $this->belongsTo('App\Models\CC\Debitur', 'id_calon_debitur');
+    }
 }

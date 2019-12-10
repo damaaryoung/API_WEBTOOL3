@@ -4,9 +4,19 @@ namespace App\Http\Controllers\Pengajuan;
 
 use Laravel\Lumen\Routing\Controller as BaseController;
 use App\Http\Controllers\Controller as Helper;
+use App\Models\AreaKantor\Cabang;
+use App\Models\Wilayah\Kabupaten;
+use App\Models\Wilayah\Kecamatan;
+use App\Models\Wilayah\Kelurahan;
+use App\Models\Wilayah\Provinsi;
+use App\Models\AreaKantor\JPIC;
+use App\Models\AreaKantor\PIC;
 use App\Models\Bisnis\TransAO;
 use App\Models\Bisnis\TransSo;
 use Illuminate\Http\Request;
+use App\Models\CC\Pasangan;
+use App\Models\CC\Penjamin;
+use App\Models\CC\Debitur;
 use App\Http\Requests;
 use App\Models\User;
 use Carbon\Carbon;
@@ -17,6 +27,7 @@ class MasterCA_Controller extends BaseController
     public function index(Request $req){
         // $user_id = $req->auth->user_id;
         $kode_kantor = $req->auth->kd_cabang;
+        // dd($kode_kantor);
         $query = TransAO::where('kode_kantor', $kode_kantor)->where('status_ao', 1)->get();
 
         if ($query == '[]') {
@@ -83,7 +94,7 @@ class MasterCA_Controller extends BaseController
             $kec_dom  = Kecamatan::where('id', $val->debt['id_kec_domisili'])->first();
             $kel_dom  = Kelurahan::where('id', $val->debt['id_kel_domisili'])->first();
 
-            // $penjamin = Penjamin::where('id_calon_debitur', $val->id_calon_debt)->get();
+            $penjamin = Penjamin::where('id_calon_debitur', $val->id_calon_debt)->get();
 
             $data[$key] = [
                 'nomor_so'       => $val->so['nomor_so'],
@@ -96,8 +107,8 @@ class MasterCA_Controller extends BaseController
                 'plafon'         => $val->so['faspin']['plafon'],
                 'tenor'          => $val->so['faspin']['tenor'],
                 'fasilitas_pinjaman'  => [
-                    'jenis_pinjaman'  => $val->faspin->jenis_pinjaman,
-                    'tujuan_pinjaman' => $val->faspin->tujuan_pinjaman
+                    'jenis_pinjaman'  => $val->faspin['jenis_pinjaman'],
+                    'tujuan_pinjaman' => $val->faspin['tujuan_pinjaman']
                 ],
                 'data_debitur' => [
                     'nama_lengkap'          => $val->debt['nama_lengkap'],
@@ -116,17 +127,17 @@ class MasterCA_Controller extends BaseController
                     'alamat_ktp'            => $val->debt['alamat_ktp'],
                     'rt_ktp'                => $val->debt['rt_ktp'],
                     'rw_ktp'                => $val->debt['rw_ktp'],
-                    'provinsi_ktp'          => $prov_ktp->nama,
-                    'kabupaten_ktp'         => $kab_ktp->nama,
-                    'kecamatan_ktp'         => $kec_ktp->nama,
-                    'kelurahan_ktp'         => $kel_ktp->nama,
+                    'provinsi_ktp'          => $prov_ktp['nama'],
+                    'kabupaten_ktp'         => $kab_ktp['nama'],
+                    'kecamatan_ktp'         => $kec_ktp['nama'],
+                    'kelurahan_ktp'         => $kel_ktp['nama'],
                     'alamat_domisili'       => $val->debt['alamat_domisili'],
                     'rt_domisili'           => $val->debt['rt_domisili'],
                     'rw_domisili'           => $val->debt['rw_domisili'],
-                    'provinsi_domisili'     => $prov_dom->nama,
-                    'kabupaten_domisili'    => $kab_dom->nama,
-                    'kecamatan_domisili'    => $kec_dom->nama,
-                    'kelurahan_domisili'    => $kel_dom->nama,
+                    'provinsi_domisili'     => $prov_dom['nama'],
+                    'kabupaten_domisili'    => $kab_dom['nama'],
+                    'kecamatan_domisili'    => $kec_dom['nama'],
+                    'kelurahan_domisili'    => $kel_dom['nama'],
                     'pendidikan_terakhir'   => $val->debt['pendidikan_terakhir'],
                     'jumlah_tanggungan'     => $val->debt['jumlah_tanggungan'],
                     'no_telp'               => $val->debt['no_telp'],
@@ -174,9 +185,28 @@ class MasterCA_Controller extends BaseController
 
     public function update($id, Request $req, FasPinRequest $reqFasPin, DebtRequest $reqDebt, DebtPasanganRequest $reqPas, DebtPenjaminRequest $reqPen, UsahaRequest $reqUs, AguTaReq $reqAta, AguKenReq $reqAk, PemAgTaReq $reqPAT, PemAgKeReq $reqPAK, KapBulananReq $reqkapBul, TrAoReq $reqAo) {
 
+        $Trans = TransSo::where('id', $id)->first();
+
+        if ($Trans == null) {
+            return response()->json([
+                'code'    => 404,
+                'status'  => 'not found',
+                'message' => 'Data kosong'
+            ], 404);
+        }
+
         $user_id     = $req->auth->user_id;
-        $kode_kantor = $req->auth->kd_cabang;
-        $so_name     = $req->auth->nama;
+        $username    = $req->auth->user;
+
+        $PIC = PIC::where('user_id', $user_id)->first();
+
+        if ($PIC == null) {
+            return response()->json([
+                "code"    => 404,
+                "status"  => "not found",
+                "message" => "User_ID anda adalah '".$user_id."' dengan username '".$username."' . Namun anda belum terdaftar sebagai PIC. Harap daftarkan diri sebagai PIC pada form PIC atau hubungi bagian IT"
+            ], 404);
+        }
 
         $countTSO = TransAo::count();
 
@@ -191,17 +221,10 @@ class MasterCA_Controller extends BaseController
         $year  = $nows->year;
         $month = $nows->month;
 
-        $noAO = $kode_kantor.'-SO-'.$month.'-'.$year.'-'.$no;
+        $JPIC   = JPIC::where('id', $PIC->id_mj_pic)->first();
 
-        $Trans = TransSo::where('id', $id)->first();
+        $nomor_so = $PIC->id_mk_cabang.'-'.$JPIC->nama_jenis.'-'.$month.'-'.$year.'-'.$no;
 
-        if ($Trans == null) {
-            return response()->json([
-                'code'    => 404,
-                'status'  => 'not found',
-                'message' => 'Data kosong'
-            ], 404);
-        }
 
         $debitur  = Debitur::select('lamp_buku_tabungan')->where('id', $Trans->id_calon_debt)->first();
         $pasangan = Pasangan::select('lamp_ktp', 'lamp_buku_nikah')->where('id', $Trans->id_pasangan)->first();
@@ -211,12 +234,10 @@ class MasterCA_Controller extends BaseController
 
         $lamp_dir = 'public/lamp_trans.'.$Trans->nomor_so;
 
-        $now   = Carbon::now()->toDateTimeString();
+        $now      = Carbon::now()->toDateTimeString();
 
         $idPenj   = $Trans->id_penjamin;
         $arIdPenj = explode (",",$idPenj);
-
-        // dd(sizeof($reqDebt->nama_anak));
 
         for ($i = 0; $i < count($reqDebt->nama_anak); $i++){
             $namaAnak[] = empty($reqDebt->nama_anak[$i]) ? null[$i] : $reqDebt->nama_anak[$i];
@@ -558,7 +579,7 @@ class MasterCA_Controller extends BaseController
             'akad_kredit'           => $reqAo->input('akad_kredit'),
             'ikatan_agunan'         => $reqAo->input('ikatan_agunan'),
             'analisa_ao'            => $reqAo->input('analisa_ao'),
-            'biaya_provinsi'        => $reqAo->input('biaya_provinsi'),
+            'biaya_provisi'         => $reqAo->input('biaya_provisi'),
             'biaya_administrasi'    => $reqAo->input('biaya_administrasi'),
             'biaya_credit_checking' => $reqAo->input('biaya_credit_checking'),
             'biaya_tabungan'        => $reqAo->input('biaya_tabungan')

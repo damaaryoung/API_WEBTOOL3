@@ -26,14 +26,7 @@ class AgunanKendaraan extends Model implements AuthenticatableContract, Authoriz
         'id_calon_debitur', 'no_bpkb', 'nama_pemilik', 'alamat_pemilik', 'merk', 'jenis', 'no_rangka', 'no_mesin', 'warna', 'tahun', 'no_polisi', 'no_stnk', 'tgl_kadaluarsa_pajak', 'tgl_kadaluarsa_stnk', 'no_faktur', 'lamp_agunan_depan', 'lamp_agunan_kanan', 'lamp_agunan_kiri', 'lamp_agunan_belakang', 'lamp_agunan_dalam', 'flg_aktif'
     ];
 
-    /**
-     * The attributes excluded from the model's JSON form.
-     *
-     * @var array
-     */
-    // protected $hidden = [
-
-    // ];
-
-    // public $timestamps = false;
+    public function debt(){
+        return $this->belongsTo('App\Models\CC\Debitur', 'id_calon_debitur');
+    }
 }

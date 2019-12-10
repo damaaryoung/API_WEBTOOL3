@@ -26,14 +26,11 @@ class PemeriksaanAgunKen extends Model implements AuthenticatableContract, Autho
         'id_calon_debitur', 'id_agunan_kendaraan', 'nama_pengguna', 'status_pengguna', 'jml_roda_kendaraan', 'kondisi_kendaraan', 'keberadaan_kendaraan', 'body', 'interior', 'km', 'modifikasi', 'aksesoris', 'flg_aktif'
     ];
 
-    /**
-     * The attributes excluded from the model's JSON form.
-     *
-     * @var array
-     */
-    // protected $hidden = [
+    public function debt(){
+        return $this->belongsTo('App\Models\CC\Debitur', 'id_calon_debitur');
+    }
 
-    // ];
-
-    // public $timestamps = false;
+    public function kendaraan(){
+        return $this->belongsTo('App\Models\CC\AgunanKendaraan', 'id_agunan_kendaraan');
+    }
 }

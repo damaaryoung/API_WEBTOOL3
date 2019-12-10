@@ -26,15 +26,5 @@ class MenuMaster extends Model implements AuthenticatableContract, AuthorizableC
        'nama', 'url', 'icon', 'flg_aktif'
     ];
 
-    public function mAccess()
-    {
-        return $this->hasMany('App\MenuAccess', 'id');
-    }
-
-    public function mSub()
-    {
-        return $this->hasMany('App\MenuSub', 'id');
-    }
-
     public $timestamps = false;
 }

@@ -26,14 +26,23 @@ class AgunanTanah extends Model implements AuthenticatableContract, Authorizable
         'id_calon_debitur', 'tipe_lokasi', 'alamat', 'id_povinsi', 'id_kabupaten', 'id_kecamatan', 'id_kelurahan', 'id_kabupaten', 'id_kecamatan', 'id_kelurahan', 'rt', 'rw', 'luas_tanah', 'luas_bangunan', 'nama_pemilik_sertifikat', 'jenis_sertifikat', 'no_sertifikat', 'tgl_ukur_sertifikat', 'tgl_berlaku_shgb', 'no_imb', 'njop', 'nop', 'lam_imb', 'lamp_agunan_depan', 'lamp_agunan_kanan', 'lamp_agunan_kiri', 'lamp_agunan_belakang', 'lamp_agunan_dalam', 'lamp_sertifikat', 'lamp_imb', 'lamp_pbb', 'flg_aktif'
     ];
 
-    /**
-     * The attributes excluded from the model's JSON form.
-     *
-     * @var array
-     */
-    // protected $hidden = [
+    public function debt(){
+        return $this->belongsTo('App\Models\CC\Debitur', 'id_calon_debitur');
+    }
 
-    // ];
+    public function prov(){
+        return $this->belongsTo('App\Models\Wilayah\Provinsi', 'id_provinsi')->select(['id', 'nama']);
+    }
 
-    // public $timestamps = false;
+    public function kab(){
+        return $this->belongsTo('App\Models\Wilayah\Kabupaten', 'id_kabupaten')->select(['id', 'nama']);
+    }
+
+    public function kec(){
+        return $this->belongsTo('App\Models\Wilayah\Kecamatan', 'id_kecamatan')->select(['id', 'nama']);
+    }
+
+    public function kel(){
+        return $this->belongsTo('App\Models\Wilayah\Kelurahan', 'id_kelurahan')->select(['id', 'nama', 'kode_pos']);
+    }
 }

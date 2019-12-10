@@ -24,7 +24,7 @@ class TrAoReq extends FormRequest
             'suku_bunga'            => 'numeric',
             'pembayaran_bunga'      => 'integer',
             'akad_kredit'           => 'in:ADENDUM,NOTARIS,INTERNAL',
-            'biaya_provinsi'        => 'integer',
+            'biaya_provisi'         => 'integer',
             'biaya_administrasi'    => 'integer',
             'biaya_credit_checking' => 'integer',
             'biaya_tabungan'        => 'integer'
@@ -38,7 +38,7 @@ class TrAoReq extends FormRequest
             'suku_bunga.numeric'            => ':attribute harus berupa angka',
             'pembayaran_bunga.integer'      => ':attribute harus berupa bilangan bulat',
             'akad_kredit.in'                => ':attribute harus salah satu dari jenis berikut :values',
-            'biaya_provinsi.integer'        => ':attribute harus berupa bilangan bulat',
+            'biaya_provisi.integer'         => ':attribute harus berupa bilangan bulat',
             'biaya_administrasi.integer'    => ':attribute harus berupa bilangan bulat',
             'biaya_credit_checking.integer' => ':attribute harus berupa bilangan bulat',
             'biaya_tabungan.integer'        => ':attribute harus berupa bilangan bulat'

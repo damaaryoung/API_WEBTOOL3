@@ -46,4 +46,24 @@ class TransSo extends Model implements AuthenticatableContract, AuthorizableCont
     public function penj(){
         return $this->belongsTo('App\Models\CC\Penjamin', 'id_penjamin');
     }
+
+    public function tanah(){
+        return $this->belongsTo('App\Models\CC\AgunanTanah', 'id_agunan_tanah');
+    }
+
+    public function kendaraan(){
+        return $this->belongsTo('App\Models\CC\AgunanKendaraan', 'id_agunan_kendaraan');
+    }
+
+    public function per_tanah(){
+        return $this->belongsTo('App\Models\CC\PemeriksaanAgunTan', 'id_periksa_agunan_tanah');
+    }
+
+    public function per_kendaraan(){
+        return $this->belongsTo('App\Models\CC\PemeriksaanAgunKen', 'id_periksa_agunan_kendaraan');
+    }
+
+    public function usaha(){
+        return $this->belongsTo('App\Models\CC\KeuanganUsaha', 'id_usaha');
+    }
 }

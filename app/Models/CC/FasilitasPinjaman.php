@@ -26,14 +26,7 @@ class FasilitasPinjaman extends Model implements AuthenticatableContract, Author
         'id_calon_debitur', 'jenis_pinjaman', 'tujuan_pinjaman', 'plafon', 'tenor', 'flg_aktif'
     ];
 
-    /**
-     * The attributes excluded from the model's JSON form.
-     *
-     * @var array
-     */
-    // protected $hidden = [
-
-    // ];
-
-    // public $timestamps = false;
+    public function debt(){
+        return $this->belongsTo('App\Models\CC\Debitur', 'id_calon_debitur');
+    }
 }

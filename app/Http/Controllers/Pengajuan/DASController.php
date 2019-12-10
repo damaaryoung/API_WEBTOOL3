@@ -50,12 +50,12 @@ class DASController extends BaseController
             $data[$key]['plafon']         = $val->faspin->plafon;
             $data[$key]['tenor']          = $val->faspin->tenor;
 
-            if ($val->status_das == 0) {
-                $status = 'waiting';
-            }elseif ($val->status_das == 1) {
+            if ($val->status_das == 1) {
                 $status = 'complete';
-            }else{
+            }elseif ($val->status_das == 2) {
                 $status = 'not complete';
+            }else{
+                $status = 'waiting';
             }
 
             $data[$key]['status']         = $status;
@@ -136,12 +136,12 @@ class DASController extends BaseController
         $data = array();
         foreach ($query as $key => $val) {
 
-            if ($val->status_das == 0) {
-                $status = 'waiting';
-            }elseif ($val->status_das == 1) {
+            if ($val->status_das == 1) {
                 $status = 'complete';
-            }else{
+            }elseif ($val->status_das == 2) {
                 $status = 'not complete';
+            }else{
+                $status = 'waiting';
             }
 
             $data[$key] = [
@@ -251,14 +251,32 @@ class DASController extends BaseController
             return response()->json([
                 "code"    => 422,
                 "status"  => "bad request",
-                "message" => "Catatan harus diinput!!"
+                "message" => "catatan harus diinput!!"
+            ], 422);
+        }
+
+        if($data['status_das'] == null){
+            return response()->json([
+                "code"    => 422,
+                "status"  => "bad request",
+                "message" => "status harus dipilih!!"
+            ], 422);
+        }
+
+        if (!preg_match("/^([1-2]{1})$/", $req->input('status_das'))) {
+            response()->json([
+                "code"    => 422,
+                "status"  => "not valid request",
+                "message" => "status_das harus berupa angka 1 digit, range: 1-2"
             ], 422);
         }
 
         if ($data['status_das'] == 1) {
             $msg = 'data lengkap';
-        }else if($data['status_das'] == 0){
+        }else if($data['status_das'] == 2){
             $msg = 'data perlu ditinjau';
+        }else{
+            $msg = 'waiting proccess';
         }
 
         TransSo::where('id', $id)->update($data);
