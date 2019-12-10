@@ -30,9 +30,7 @@ class PICController extends BaseController
                 "jenis_pic"   => $val->jpic['nama_jenis'],
                 "nama_pic"    => $val->nama,
                 "nama_area"   => $val->area['nama'],
-                "nama_cabang" => $val->cabang['nama'],
-                "flg_aktif"   => $val->flg_aktif,
-                "created_at"  => $val->created_at
+                "nama_cabang" => $val->cabang['nama']
             ];
         }
 
@@ -88,7 +86,7 @@ class PICController extends BaseController
             ], 404);
         }else{
             $res = [
-                "id_pic"         => $query->id,
+                "id"             => $query->id,
                 "nama_pic"       => $query->nama,
                 "id_jenis_pic"   => $query->id_mj_pic,
                 "nama_jenis_pic" => $query->jpic['nama_jenis'],
@@ -97,7 +95,7 @@ class PICController extends BaseController
                 "id_cabang"      => $query->id_mk_cabang,
                 "nama_cabang"    => $query->cabang['nama'],
                 "flg_aktif"      => $query->flg_aktif,
-                "created_at"     => $query->created_at
+                "created_at"     => date($query->created_at)
             ];
 
             try {

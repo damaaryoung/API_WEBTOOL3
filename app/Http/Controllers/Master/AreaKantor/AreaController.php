@@ -15,21 +15,7 @@ class AreaController extends BaseController
 {
     public function index() {
         // $query = Area::get();
-        $query = DB::connection('web')->table('mk_area')
-            ->join('master_provinsi', 'master_provinsi.id', '=', 'mk_area.id_provinsi')
-            ->join('master_kabupaten', 'master_kabupaten.id', '=', 'mk_area.id_kabupaten')
-            ->select(
-                'mk_area.id as id_area',
-                'mk_area.nama as nama_area',
-                'mk_area.id_provinsi',
-                'master_provinsi.nama as nama_provinsi',
-                'mk_area.id_kabupaten',
-                'master_kabupaten.nama as nama_kabupaten',
-                'mk_area.flg_aktif',
-                'mk_area.created_at',
-                'mk_area.updated_at'
-            )
-            ->get();
+        $query = Area::get();
 
         if ($query == '[]') {
             return response()->json([
@@ -39,11 +25,21 @@ class AreaController extends BaseController
             ], 404);
         }
 
+        $res = array();
+        foreach ($query as $key => $val) {
+            $res[$key] = [
+                "id"             => $val->id,
+                "nama_area"      => $val->nama,
+                "nama_provinsi"  => $val->prov['nama'],
+                "nama_kabupaten" => $val->kab['nama']
+            ];
+        }
+
         try {
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'data'   => $query
+                'data'   => $res
             ], 200);
         } catch (Exception $e) {
             return response()->json([
@@ -58,8 +54,7 @@ class AreaController extends BaseController
         $data = array(
             'nama'         => $req->input('nama'),
             'id_provinsi'  => $req->input('id_provinsi'),
-            'id_kabupaten' => $req->input('id_kabupaten'),
-            'flg_aktif'    => $req->input('flg_aktif')
+            'id_kabupaten' => $req->input('id_kabupaten')
         );
 
         Area::create($data);
@@ -80,45 +75,39 @@ class AreaController extends BaseController
     }
 
     public function show($id) {
-        $check = Area::where('id', $id)->first();
+        $val = Area::where('id', $id)->first();
 
-        if ($check == null) {
+        if ($val == null) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
                 'message' => 'Data tidak ada'
             ], 404);
-        }else{
-            $query = DB::connection('web')->table('mk_area')
-            ->join('master_provinsi', 'master_provinsi.id', '=', 'mk_area.id_provinsi')
-            ->join('master_kabupaten', 'master_kabupaten.id', '=', 'mk_area.id_kabupaten')
-            ->select(
-                'mk_area.id as id_area',
-                'mk_area.nama as nama_area',
-                'mk_area.id_provinsi',
-                'master_provinsi.nama as nama_provinsi',
-                'mk_area.id_kabupaten',
-                'master_kabupaten.nama as nama_kabupaten',
-                'mk_area.flg_aktif',
-                'mk_area.created_at',
-                'mk_area.updated_at'
-            )
-            ->where('mk_area.id', $id)
-            ->first();
+        }
 
-            try {
-                return response()->json([
-                    'code'   => 200,
-                    'status' => 'success',
-                    'data'   => $query
-                ], 200);
-            } catch (Exception $e) {
-                return response()->json([
-                    'code'   => 501,
-                    'status' => 'error',
-                    'data'   => $e
-                ], 501);
-            }
+        $res = array(
+            "id"             => $val->id,
+            "nama_area"      => $val->nama,
+            "id_provinsi"    => $val->id_provinsi,
+            "nama_provinsi"  => $val->prov['nama'],
+            "id_kabupaten"   => $val->id_kabupaten,
+            "nama_kabupaten" => $val->kab['nama'],
+            "flg_aktif"      => $val->flg_aktif,
+            "created_at"     => date($val->created_at)
+        );
+
+        try {
+            return response()->json([
+                'code'   => 200,
+                'status' => 'success',
+                'data'   => $res
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                'code'   => 501,
+                'status' => 'error',
+                'data'   => $e
+            ], 501);
         }
     }
 

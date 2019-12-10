@@ -16,33 +16,6 @@ use DB;
 class CabangController extends BaseController
 {
     public function index() {
-        // $query = DB::connection('web')->table('mk_cabang')
-        //     ->join('mk_area', 'mk_area.id', '=', 'mk_cabang.id_mk_area')
-        //     ->join('master_provinsi', 'master_provinsi.id', '=', 'mk_cabang.id_provinsi')
-        //     ->join('master_kabupaten', 'master_kabupaten.id', '=', 'mk_cabang.id_kabupaten')
-        //     ->join('master_kecamatan', 'master_kecamatan.id', '=', 'mk_cabang.id_kecamatan')
-        //     ->join('master_kelurahan', 'master_kelurahan.id', '=', 'mk_cabang.id_kelurahan')
-        //     ->select(
-        //         'mk_cabang.id_mk_area as id_area',
-        //         'mk_area.nama as nama_area',
-        //         'mk_cabang.id as id_cabang',
-        //         'mk_cabang.nama as nama_cabang',
-        //         'mk_cabang.id_provinsi',
-        //         'master_provinsi.nama as nama_provinsi',
-        //         'mk_cabang.id_kabupaten',
-        //         'master_kabupaten.nama as nama_kabupaten',
-        //         'mk_cabang.id_kecamatan',
-        //         'master_kecamatan.nama as nama_kecamatan',
-        //         'mk_cabang.id_kelurahan',
-        //         'master_kelurahan.nama as nama_kelurahan',
-        //         'master_kelurahan.kode_pos as kode_pos',
-        //         'mk_cabang.jenis_kantor',
-        //         'mk_cabang.flg_aktif',
-        //         'mk_cabang.created_at',
-        //         'mk_cabang.updated_at'
-        //     )
-        //     ->get();
-
         $query = Cabang::get();
 
         if ($query == '[]') {
@@ -56,14 +29,14 @@ class CabangController extends BaseController
         $res = array();
         foreach ($query as $key => $val) {
             $res[$key] = [
-                "id" => $val->id,
-                "nama_area" => $val->area['nama'],
-                "nama_cabang" => $val->nama,
-                // "nama_provinsi" => $val->kec,
-                // "id_kabupaten": 1,
-                // "id_kecamatan": 12,
-                "nama_kelurahan" => $val->kel,
-                "jenis_kantor" => $val->jenis_kantor
+                "id"             => $val->id,
+                "nama_area"      => $val->area['nama'],
+                "nama_cabang"    => $val->nama,
+                "nama_provinsi"  => $val->prov['nama'],
+                "nama_kabupaten" => $val->kab['nama'],
+                "nama_kecamatan" => $val->kec['nama'],
+                "nama_kelurahan" => $val->kel['nama'],
+                "jenis_kantor"   => $val->jenis_kantor
             ];
         }
 
@@ -85,12 +58,12 @@ class CabangController extends BaseController
     public function store(CabangRequest $req) {
         $data = array(
             'id_mk_area'   => $req->input('id_mk_area'),
-            'nama'          => $req->input('nama'),
-            'id_provinsi'   => $req->input('id_provinsi'),
-            'id_kabupaten'  => $req->input('id_kabupaten'),
-            'id_kecamatan'  => $req->input('id_kecamatan'),
-            'id_kelurahan'  => $req->input('id_kelurahan'),
-            'jenis_kantor'  => $req->input('jenis_kantor')
+            'nama'         => $req->input('nama'),
+            'id_provinsi'  => $req->input('id_provinsi'),
+            'id_kabupaten' => $req->input('id_kabupaten'),
+            'id_kecamatan' => $req->input('id_kecamatan'),
+            'id_kelurahan' => $req->input('id_kelurahan'),
+            'jenis_kantor' => $req->input('jenis_kantor')
         );
 
         $store = Cabang::create($data);
@@ -119,48 +92,39 @@ class CabangController extends BaseController
                 'status'  => 'not found',
                 'message' => 'Data tidak ada'
             ], 404);
-        }else{
-            $query = DB::connection('web')->table('mk_cabang')
-            ->join('mk_area', 'mk_area.id', '=', 'mk_cabang.id_mk_area')
-            ->join('master_provinsi', 'master_provinsi.id', '=', 'mk_cabang.id_provinsi')
-            ->join('master_kabupaten', 'master_kabupaten.id', '=', 'mk_cabang.id_kabupaten')
-            ->join('master_kecamatan', 'master_kecamatan.id', '=', 'mk_cabang.id_kecamatan')
-            ->join('master_kelurahan', 'master_kelurahan.id', '=', 'mk_cabang.id_kelurahan')
-            ->select(
-                'mk_cabang.id_mk_area as id_area',
-                'mk_area.nama as nama_area',
-                'mk_cabang.id as id_cabang',
-                'mk_cabang.nama as nama_cabang',
-                'mk_cabang.id_provinsi',
-                'master_provinsi.nama as nama_provinsi',
-                'mk_cabang.id_kabupaten',
-                'master_kabupaten.nama as nama_kabupaten',
-                'mk_cabang.id_kecamatan',
-                'master_kecamatan.nama as nama_kecamatan',
-                'mk_cabang.id_kelurahan',
-                'master_kelurahan.nama as nama_kelurahan',
-                'master_kelurahan.kode_pos as kode_pos',
-                'mk_cabang.jenis_kantor',
-                'mk_cabang.flg_aktif',
-                'mk_cabang.created_at',
-                'mk_cabang.updated_at'
-            )
-            ->where('mk_cabang.id', $id)
-            ->first();
+        }
 
-            try {
-                return response()->json([
-                    'code'   => 200,
-                    'status' => 'success',
-                    'data'   => $query
-                ], 200);
-            } catch (Exception $e) {
-                return response()->json([
-                    'code'   => 501,
-                    'status' => 'error',
-                    'data'   => $e
-                ], 501);
-            }
+        $res = array(
+            "id"             => $check->id,
+            "nama_cabang"    => $check->nama,
+            "id_area"        => $check->id_mk_area,
+            "nama_area"      => $check->area['nama'],
+            "id_provinsi"    => $check->id_provinsi,
+            "nama_provinsi"  => $check->prov['nama'],
+            "id_kabupaten"   => $check->kab['id_kabupaten'],
+            "nama_kabupaten" => $check->kab['nama'],
+            "id_kecamatan"   => $check->kec['id_kecamatan'],
+            "nama_kecamatan" => $check->kec['nama'],
+            "id_kelurahan"   => $check->kel['id_kelurahan'],
+            "nama_kelurahan" => $check->kel['nama'],
+            "kode_pos"       => $check->kel['kode_pos'],
+            "jenis_kantor"   => $check->jenis_kantor,
+            "flg_aktif"      => $val->flg_aktif,
+            "created_at"     => date($check->created_at)
+        );
+
+        try {
+            return response()->json([
+                'code'   => 200,
+                'status' => 'success',
+                'data'   => $res
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                'code'   => 501,
+                'status' => 'error',
+                'data'   => $e
+            ], 501);
         }
     }
 

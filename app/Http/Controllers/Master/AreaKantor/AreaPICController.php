@@ -23,8 +23,7 @@ class AreaPICController extends BaseController
                 "nama_kantor_cabang"=> $val->cabang['nama'],
                 "nama_area_pic"     => $val->nama_area_pic,
                 "nama_kelurahan"    => $val->kel['nama'],
-                "kode_pos"          => $val->kel['kode_pos'],
-                "created_at"        => $val->created_at
+                "kode_pos"          => $val->kel['kode_pos']
             ];
         }
 
@@ -99,7 +98,8 @@ class AreaPICController extends BaseController
                 "id_kelurahan"      => $val->id_kelurahan,
                 "nama_kelurahan"    => $val->kel['nama'],
                 "kode_pos"          => $val->kel['kode_pos'],
-                "created_at"        => $val->created_at
+                "flg_aktif"         => $val->flg_aktif,
+                "created_at"        => date($val->created_at)
             ];
         }
 

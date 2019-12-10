@@ -238,6 +238,7 @@ class MasterAO_Controller extends BaseController
                     'tgl_lahir'        => $val->pas['tgl_lahir'],
                     'alamat_ktp'       => $val->pas['alamat_ktp'],
                     'no_telp'          => $val->pas['no_telp'],
+                    'lamp_ktp'         => $val->pas['lamp_ktp'],
                     'lamp_buku_nikah'  => $val->pas['lamp_buku_nikah']
                 ],
                 'data_penjamin' => $penjamin,
