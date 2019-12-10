@@ -48,7 +48,7 @@ class Controller extends BaseController
         ];
 
 
-        $ch= \curl_init();
+        $ch= curl_init();
         curl_setopt($ch, CURLOPT_URL,$fcmUrl);
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
