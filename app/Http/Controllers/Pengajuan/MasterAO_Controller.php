@@ -729,9 +729,6 @@ class MasterAO_Controller extends BaseController
                 $pen = Penjamin::where('id', $arIdPenj[$i])->update($dataPenjamin[$i]);
             }
 
-            VerifModel::updateOrCreate($dataVerifikasi);
-            ValidModel::updateOrCreate($dataValidasi);
-
             if (!empty($reqAta->input('tipe_lokasi_agunan'))){
                 $tts = AgunanTanah::create($daAguTa);
 
@@ -841,6 +838,14 @@ class MasterAO_Controller extends BaseController
             $KB = KapBulanan::updateOrCreate($kapBul);
             $KU = KeuanganUsaha::updateOrCreate($dataKeUsaha);
             $RAO = TransAO::updateOrCreate($TransAO);
+
+            $id_tr_ao = array('id_trans_ao' => $RAO->id);
+
+            $NewVerif = array_merge($id_tr_ao, $dataVerifikasi);
+            $NewValid = array_merge($id_tr_ao, $dataValidasi);
+
+            VerifModel::updateOrCreate($NewVerif);
+            ValidModel::updateOrCreate($NewValid);
 
             TransSo::where('id', $Trans->id)->update([
                 'id_agunan_tanah'             => $id_AguTa,

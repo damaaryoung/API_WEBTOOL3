@@ -26,7 +26,7 @@ class CabangRequest extends FormRequest
             'id_kecamatan' => 'required',
             'id_kelurahan' => 'required',
             'jenis_kantor' => 'in:CABANG,KAS',
-            'flg_aktif'    => 'in:0,1'
+            'flg_aktif'    => 'in:false,true'
         ];
     }
 

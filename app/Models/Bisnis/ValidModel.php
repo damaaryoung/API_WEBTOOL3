@@ -23,10 +23,18 @@ class ValidModel extends Model implements AuthenticatableContract, AuthorizableC
     protected $primaryKey = 'id';
 
     protected $fillable = [
-        'id_trans_so', 'id_calon_debitur', 'val_data_debt', 'val_lingkungan_debt', 'val_domisili_debt', 'val_pekerjaan_debt', 'val_data_pasangan', 'val_data_penjamin', 'val_agunan_tanah', 'val_agunan_kendaraan', 'val_usaha_debt', 'catatan'
+        'id_trans_so', 'id_trans_ao', 'id_calon_debitur', 'val_data_debt', 'val_lingkungan_debt', 'val_domisili_debt', 'val_pekerjaan_debt', 'val_data_pasangan', 'val_data_penjamin', 'val_agunan_tanah', 'val_agunan_kendaraan', 'val_usaha_debt', 'catatan'
     ];
 
     public function debt(){
         return $this->belongsTo('App\Models\CC\Debitur', 'id_calon_debitur');
+    }
+
+    public function so(){
+        return $this->belongsTo('App\Models\Bisnis\TransSo', 'id_trans_so');
+    }
+
+    public function ao(){
+        return $this->belongsTo('App\Models\Bisnis\TransAo', 'id_trans_ao');
     }
 }

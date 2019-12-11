@@ -92,7 +92,7 @@ $router->group(['middleware' => 'jwt.auth'], function () use ($router) {
             $router->delete('/asal_data/{id}', 'Master\Bisnis\AsalDataController@delete');
 
             $router->get('/mitra', 'Master\Bisnis\MitraController@index');
-            $router->get('/mitra/{id}', 'Master\Bisnis\MitraController@show');
+            $router->get('/mitra/{kode_mitra}', 'Master\Bisnis\MitraController@show');
 
             //Area Kantor
             $router->get('/area_kerja', 'Master\AreaKantor\AreaController@index');
@@ -153,18 +153,6 @@ $router->group(['middleware' => 'jwt.auth'], function () use ($router) {
             $router->post('/mca/{id}', 'Pengajuan\MasterCA_Controller@update'); //Update CA BY ID
 
             // $router->get('/mitra', 'Pengajuan\MasterCC_Controller@mitra');
-
-            $router->get('/kode_area/ao', 'Master\CodeController@ao'); // AO -> dpm_online.kre_kode_group2
-            $router->get('/kode_area/so', 'Master\CodeController@so'); // SO -> dpm_online.kre_kode_so
-            $router->get('/kode_area/col', 'Master\CodeController@col'); // COL -> dpm_online.kre_kode_group3
-            $router->get('/kode_area/mb', 'Master\CodeController@mb'); // MB -> dpm_online.kre_kode_group5
-            $router->get('/kode_area/ca', 'Master\CodeController@ca'); // CA -> dpm_online.kre_kode_group6
-
-            $router->get('/kode_area/ao/{username}', 'Master\CodeController@ao_user'); // AO -> dpm_online.kre_kode_group2 - Berdasarkan Nama User
-            $router->get('/kode_area/so/{username}', 'Master\CodeController@so_user'); // SO -> dpm_online.kre_kode_so - Berdasarkan Nama User
-            $router->get('/kode_area/col/{username}', 'Master\CodeController@col_user'); // COL -> dpm_online.kre_kode_group3 - Berdasarkan Nama User
-            $router->get('/kode_area/mb/{username}', 'Master\CodeController@mb_user'); // MB -> dpm_online.kre_kode_group5 - Berdasarkan Nama User
-            $router->get('/kode_area/ca/{username}', 'Master\CodeController@ca_user'); // CA -> dpm_online.kre_kode_group6 - Berdasarkan Nama User
         });
 
         $router->group(['prefix' => '/menu'], function () use ($router) {
@@ -174,18 +162,18 @@ $router->group(['middleware' => 'jwt.auth'], function () use ($router) {
             $router->put('/akses/{id}', 'Menu\MenuAccessController@update'); // Update Data based on Id User
             $router->delete('/akses/{id}', 'Menu\MenuAccessController@delete'); // Delete Data based on Id User
 
-            $router->get('/', ['as' => 'menu', 'uses' => 'Menu\MenuMasterController@index']); //Get Data
-            $router->post('/', 'Menu\MenuMasterController@store'); // Create Data
-            // $router->get('/master', function () use ($router) {return redirect('/api/menu');});
-            $router->get('/master/{slug}', ['as' => 'mastermenu', 'uses' => 'Menu\MenuMasterController@show']);
-            $router->put('/master/{slug}', 'Menu\MenuMasterController@edit');
-            $router->delete('/master/{slug}', 'Menu\MenuMasterController@delete'); // Delete Data based on slug (URL)
+            $router->get('/master', ['as' => 'menu', 'uses' => 'Menu\MenuMasterController@index']); //Get Data
+            $router->post('/master', 'Menu\MenuMasterController@store'); // Create Data
+            $router->get('/', function () use ($router) {return redirect('/api/menu/master');});
+            $router->get('/master/{IdOrSlug}', ['as' => 'mastermenu', 'uses' => 'Menu\MenuMasterController@show']);
+            $router->put('/master/{IdOrSlug}', 'Menu\MenuMasterController@edit');
+            $router->delete('/master/{IdOrSlug}', 'Menu\MenuMasterController@delete'); // Delete Data based on slug (URL)
 
             $router->get('/sub', 'Menu\MenuSubController@index');
             $router->post('/sub', 'Menu\MenuSubController@store');
-            $router->get('/sub/{slug}', ['as' => 'submenu', 'uses' => 'Menu\MenuSubController@show']);
-            $router->put('/sub/{slug}', 'Menu\MenuSubController@edit');
-            $router->delete('/sub/{slug}', 'Menu\MenuSubController@delete'); // Delete Data based on slug(URL)
+            $router->get('/sub/{IdOrSlug}', ['as' => 'submenu', 'uses' => 'Menu\MenuSubController@show']);
+            $router->put('/sub/{IdOrSlug}', 'Menu\MenuSubController@edit');
+            $router->delete('/sub/{IdOrSlug}', 'Menu\MenuSubController@delete'); // Delete Data based on slug(URL)
         });
 
         $router->get('/pinjaman', 'PinjamanController@index');

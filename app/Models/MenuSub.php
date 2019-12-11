@@ -21,9 +21,9 @@ class MenuSub extends Model implements AuthenticatableContract, AuthorizableCont
        'id_menu_master', 'nama', 'url', 'flg_aktif'
     ];
 
-    public function mMaster()
+    public function menu_master()
     {
-        return $this->belongsTo('App\MenuMaster', 'id');
+        return $this->belongsTo('App\Models\MenuMaster', 'id_menu_master');
     }
 
     public $timestamps = false;

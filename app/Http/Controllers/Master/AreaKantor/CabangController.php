@@ -109,7 +109,7 @@ class CabangController extends BaseController
             "nama_kelurahan" => $check->kel['nama'],
             "kode_pos"       => $check->kel['kode_pos'],
             "jenis_kantor"   => $check->jenis_kantor,
-            "flg_aktif"      => $val->flg_aktif,
+            "flg_aktif"      => $check->flg_aktif == 0 ? "false" : "true",
             "created_at"     => date($check->created_at)
         );
 
@@ -147,7 +147,7 @@ class CabangController extends BaseController
             'id_kecamatan'   => empty($req->input('id_kecamatan')) ? $check->id_kecamatan : $req->input('id_kecamatan'),
             'id_kelurahan'   => empty($req->input('id_kelurahan')) ? $check->id_kelurahan : $req->input('id_kelurahan'),
             'jenis_kantor'   => empty($req->input('jenis_kantor')) ? $check->jenis_kantor : $req->input('jenis_kantor'),
-            'flg_aktif'      => empty($req->input('flg_aktif')) ? $check->flg_aktif : $req->input('flg_aktif')
+            'flg_aktif'      => empty($req->input('flg_aktif')) ? $check->flg_aktif : ($req->input('flg_aktif') == 'false' ? 0 : 1)
         );
 
         Cabang::where('id', $id)->update($data);

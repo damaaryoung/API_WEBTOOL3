@@ -13,7 +13,7 @@ use Carbon\Carbon;
 class JPICController extends BaseController
 {
     public function index() {
-        $query = JPIC::get();
+        $query = JPIC::select('id', 'nama_jenis','keterangan')->get();
 
         if ($query == '[]') {
             return response()->json([

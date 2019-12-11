@@ -19,27 +19,27 @@ class AreaPICReq extends FormRequest
     public function rules()
     {
         return [
-            'id_area_kerja' => 'required',
-            'id_area_cabang'=> 'required',
+            'id_area'       => 'required',
+            'id_cabang'     => 'required',
             'nama_area_pic' => 'required',
             'id_prov'       => 'required',
             'id_kab'        => 'required',
             'id_kec'        => 'required',
             'id_kel'        => 'required',
-            'flg_aktif'     => 'in:0,1'
+            'flg_aktif'     => 'in:false,true'
         ];
     }
 
     public function messages(){
         return [
-            'id_area_kerja.required'  => ':attribute belum diisi',
-            'id_area_cabang.required' => ':attribute belum diisi',
-            'nama_area_pic.required'  => ':attribute belum diisi',
-            'id_prov.required'        => ':attribute belum diisi',
-            'id_kab.required'         => ':attribute belum diisi',
-            'id_kec.required'         => ':attribute belum diisi',
-            'id_kel.required'         => ':attribute belum diisi',
-            'flg_aktif.in'            => ':attribute harus salah satu dari jenis berikut :values'
+            'id_area.required'      => ':attribute belum diisi',
+            'id_cabang.required'    => ':attribute belum diisi',
+            'nama_area_pic.required'=> ':attribute belum diisi',
+            'id_prov.required'      => ':attribute belum diisi',
+            'id_kab.required'       => ':attribute belum diisi',
+            'id_kec.required'       => ':attribute belum diisi',
+            'id_kel.required'       => ':attribute belum diisi',
+            'flg_aktif.in'          => ':attribute harus salah satu dari jenis berikut :values'
         ];
     }
 

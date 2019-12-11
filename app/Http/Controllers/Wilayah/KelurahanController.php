@@ -26,7 +26,7 @@ class KelurahanController extends BaseController
             foreach ($query as $key => $val) {
                 $res[$key] = [
                     "id"             => $val->id,
-                    "nama_kelurahan" => $val->nama,
+                    "nama"           => $val->nama,
                     "nama_kecamatan" => $val->kec['nama']
                 ];
             }
@@ -105,15 +105,15 @@ class KelurahanController extends BaseController
 
     public function show($IdOrName) {
         $res = array();
-        if(preg_match("/^([0-9])$/", $IdOrName)){
+        if(preg_match("/^[0-9]{1,}$/", $IdOrName)){
             $query = Kelurahan::where('id', $IdOrName)->first();
 
             $res = [
                 'id'             => $query->id,
-                'nama_kelurahan' => $query->nama,
+                'nama'           => $query->nama,
                 'id_kecamatan'   => $query->id_kecamatan,
                 'nama_kecamatan' => $query->kec['nama'],
-                'flg_aktif'      => $query->flg_aktif
+                'flg_aktif'      => $query->flg_aktif == 0 ? "false" : "true"
             ];
         }else{
             $query = Kelurahan::where('nama','like','%'.$IdOrName.'%')->get();
@@ -164,7 +164,17 @@ class KelurahanController extends BaseController
         $nama      = empty($req->input('nama')) ? $check->nama : $req->input('nama');
         $kode_pos  = empty($req->input('kode_pos')) ? $check->kode_pos : $req->input('kode_pos');
         $kecamatan = empty($req->input('id_kecamatan')) ? $check->id_kecamatan : $req->input('id_kecamatan');
-        $flg_aktif = empty($req->input('flg_aktif')) ? $check->flg_aktif : $req->input('flg_aktif');
+        $flg_aktif = empty($req->input('flg_aktif')) ? $check->flg_aktif : ($req->input('flg_aktif') == 'false' ? 0 : 1);
+
+        if ($req->input('flg_aktif') != "false" && $req->input('flg_aktif') != "true" && $req->input('flg_aktif') != "") {
+            return response()->json([
+                "code"    => 422,
+                "status"  => "not valid request",
+                "message" => [
+                    "flg_aktif" => ["flg aktif harus salah satu dari jenis berikut false, true"]
+                ]
+            ], 422);
+        }
 
         if (strlen($kode_pos) != 5) {
             return response()->json([

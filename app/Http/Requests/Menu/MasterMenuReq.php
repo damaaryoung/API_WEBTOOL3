@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\AreaKantor;
+namespace App\Http\Requests\Menu;
 
 use Illuminate\Http\JsonResponse;
 use Urameshibr\Requests\FormRequest;
@@ -9,7 +9,7 @@ use Illuminate\Validation\ValidationException;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Foundation\Http\FormRequest as LaravelFormRequest;
 
-class PICRequest extends FormRequest
+class MasterMenuReq extends FormRequest
 {
     public function authorize()
     {
@@ -19,23 +19,15 @@ class PICRequest extends FormRequest
     public function rules()
     {
         return [
-            'user_id'      => 'numeric',
-            'id_mk_area'   => 'required',
-            'id_mk_cabang' => 'required',
-            'id_mj_pic'    => 'required',
-            'nama'         => 'required',
-            'flg_aktif'    => 'in:false,true'
-       ];
+            'nama' => 'required',
+            'url'  => 'unique:web.menu_master,url'
+        ];
     }
 
     public function messages(){
         return [
-            'id_mk_area.required'   => ':attribute belum diisi',
-            'id_mk_cabang.required' => ':attribute belum diisi',
-            'user_id.numeric'       => ':attribute harus berupa angka',
-            'id_mj_pic.required'    => ':attribute belum diisi',
-            'nama.required'         => ':attribute belum diisi',
-            'flg_aktif.in'          => ':attribute harus salah satu dari jenis berikut :values'
+            'nama.required' => ':attribute belum diisi',
+            'url.unique'    => ':attribute sudah ada yang menggunakan',
         ];
     }
 

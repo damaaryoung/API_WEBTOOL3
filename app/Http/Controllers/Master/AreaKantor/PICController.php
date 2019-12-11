@@ -27,8 +27,8 @@ class PICController extends BaseController
         foreach ($query as $key => $val) {
             $res[$key]= [
                 "id"          => $val->id,
+                "nama"        => $val->nama,
                 "jenis_pic"   => $val->jpic['nama_jenis'],
-                "nama_pic"    => $val->nama,
                 "nama_area"   => $val->area['nama'],
                 "nama_cabang" => $val->cabang['nama']
             ];
@@ -52,9 +52,9 @@ class PICController extends BaseController
     public function store(PICRequest $req) {
         $data = array(
             'user_id'       => $req->input('user_id'),
-            'id_mk_area'    => $req->input('id_area'),
-            'id_mk_cabang'  => $req->input('id_cabang'),
-            'id_mj_pic'     => $req->input('id_jenis_pic'),
+            'id_mk_area'    => $req->input('id_mk_area'),
+            'id_mk_cabang'  => $req->input('id_mk_cabang'),
+            'id_mj_pic'     => $req->input('id_mj_pic'),
             'nama'          => $req->input('nama')
         );
 
@@ -87,7 +87,7 @@ class PICController extends BaseController
         }else{
             $res = [
                 "id"             => $query->id,
-                "nama_pic"       => $query->nama,
+                "nama"           => $query->nama,
                 "user_id"        => $query->user_id,
                 "id_jenis_pic"   => $query->id_mj_pic,
                 "nama_jenis_pic" => $query->jpic['nama_jenis'],
@@ -95,7 +95,7 @@ class PICController extends BaseController
                 "nama_area"      => $query->area['nama'],
                 "id_cabang"      => $query->id_mk_cabang,
                 "nama_cabang"    => $query->cabang['nama'],
-                "flg_aktif"      => $query->flg_aktif,
+                "flg_aktif"      => $query->flg_aktif == 0 ? "false" : "true",
                 "created_at"     => date($query->created_at)
             ];
 
@@ -127,12 +127,12 @@ class PICController extends BaseController
         }
 
         $data = array(
+            'nama'         => empty($req->input('nama')) ? $check->nama : $req->input('nama'),
             'user_id'      => empty($req->input('user_id')) ? $check->user_id : $req->input('user_id'),
             'id_mk_area'   => empty($req->input('id_mk_area')) ? $check->id_mk_area : $req->input('id_mk_area'),
             'id_mk_cabang' => empty($req->input('id_mk_cabang')) ? $check->id_mk_cabang : $req->input('id_mk_cabang'),
             'id_mj_pic'    => empty($req->input('id_mj_pic')) ? $check->id_mj_pic : $req->input('id_mj_pic'),
-            'nama'         => empty($req->input('nama')) ? $check->nama : $req->input('nama'),
-            'flg_aktif'    => empty($req->input('flg_aktif')) ? $check->flg_aktif : $req->input('flg_aktif')
+            'flg_aktif'    => empty($req->input('flg_aktif')) ? $check->flg_aktif : ($req->input('flg_aktif') == 'false' ? 0 : 1)
         );
 
         PIC::where('id', $id)->update($data);

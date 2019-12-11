@@ -21,9 +21,14 @@ class MenuAccess extends Model implements AuthenticatableContract, AuthorizableC
        'id_user', 'id_menu_master', 'id_menu_sub', 'print_access', 'add_access', 'edit_access', 'delete_access', 'flg_aktif'
     ];
 
-    public function mMaster()
+    public function menu_master()
     {
-        return $this->belongsTo('App\MenuMaster', 'id');
+        return $this->belongsTo('App\Models\MenuMaster', 'id_menu_master');
+    }
+
+    public function menu_sub()
+    {
+        return $this->belongsTo('App\Models\MenuSub', 'id_menu_sub');
     }
 
     public $timestamps = false;

@@ -25,9 +25,9 @@ class KabupatenController extends BaseController
             $res = array();
             foreach ($query as $key => $val) {
                 $res[$key] = [
-                    "id"    => $val->id,
-                    "nama_kabupaten" => $val->nama,
-                    "nama_provinsi"  => $val->prov['nama']
+                    "id"            => $val->id,
+                    "nama"          => $val->nama,
+                    "nama_provinsi" => $val->prov['nama']
                 ];
             }
 
@@ -87,15 +87,15 @@ class KabupatenController extends BaseController
     public function show($IdOrName) {
         $res = array();
 
-        if(preg_match("/^([0-9])$/", $IdOrName)){
+        if(preg_match("/^[0-9]{1,}$/", $IdOrName)){
             $query = Kabupaten::where('id', $IdOrName)->first();
 
             $res = [
                 'id'             => $query->id,
-                'nama_kabupaten' => $query->nama,
+                'nama'           => $query->nama,
                 'id_provinsi'    => $query->id_provinsi,
                 'nama_provinsi'  => $query->prov['nama'],
-                'flg_aktif'      => $query->flg_aktif
+                'flg_aktif'      => $query->flg_aktif == 0 ? "false" : "true"
             ];
         }else{
             $query = Kabupaten::where('nama','like','%'.$IdOrName.'%')->get();
@@ -145,7 +145,18 @@ class KabupatenController extends BaseController
 
         $nama      = empty($req->input('nama')) ? $check->nama : $req->input('nama');
         $provinsi  = empty($req->input('id_provinsi')) ? $check->id_provinsi : $req->input('id_provinsi');
-        $flg_aktif = empty($req->input('flg_aktif')) ? $check->flg_aktif : $req->input('flg_aktif');
+        $flg_aktif = empty($req->input('flg_aktif')) ? $check->flg_aktif : ($req->input('flg_aktif') == 'false' ? 0 : 1);
+
+
+        if ($req->input('flg_aktif') != "false" && $req->input('flg_aktif') != "true" && $req->input('flg_aktif') != "") {
+            return response()->json([
+                "code"    => 422,
+                "status"  => "not valid request",
+                "message" => [
+                    "flg_aktif" => ["flg aktif harus salah satu dari jenis berikut false, true"]
+                ]
+            ], 422);
+        }
 
         try {
             $query = DB::connection('web')->table('master_kabupaten')->where('id', $id)->update([
@@ -169,7 +180,7 @@ class KabupatenController extends BaseController
     }
 
     public function delete($id) {
-        $check = Kabupaten::->where('id', $id)->first();
+        $check = Kabupaten::where('id', $id)->first();
 
         if ($check == null) {
             return response()->json([

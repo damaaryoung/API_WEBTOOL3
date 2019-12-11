@@ -37,9 +37,9 @@ class MitraController extends BaseController
         }
     }
 
-    public function show($id) {
+    public function show($kode_mitra) {
         try {
-            $query = DB::connection('dpm')->table('kre_kode_group5')->select('kode_group5 as kode_mitra','deskripsi_group5 as nama_mitra', 'jenis_mitra')->where('jenis_mitra', 'MB')->where('kode_group5', $id)->first();
+            $query = DB::connection('dpm')->table('kre_kode_group5')->select('kode_group5 as kode_mitra','deskripsi_group5 as nama_mitra', 'jenis_mitra')->where('jenis_mitra', 'MB')->where('kode_group5', $kode_mitra)->first();
 
             return response()->json([
                 'code'   => 200,

@@ -26,7 +26,7 @@ class KecamatanController extends BaseController
             foreach ($query as $key => $val) {
                 $res[$key] = [
                     "id"             => $val->id,
-                    "nama_kecamatan" => $val->nama,
+                    "nama"           => $val->nama,
                     "nama_kabupaten" => $val->kab['nama']
                 ];
             }
@@ -87,15 +87,15 @@ class KecamatanController extends BaseController
 
     public function show($IdOrName) {
         $res = array();
-        if(preg_match("/^([0-9])$/", $IdOrName)){
+        if(preg_match("/^[0-9]{1,}$/", $IdOrName)){
             $query = Kecamatan::where('id', $IdOrName)->first();
 
             $res = [
                 'id'             => $query->id,
-                'nama_kecamatan' => $query->nama,
+                'nama'           => $query->nama,
                 'id_kabupaten'   => $query->id_kabupaten,
                 'nama_kabupaten' => $query->kab['nama'],
-                'flg_aktif'      => $query->flg_aktif
+                'flg_aktif'      => $query->flg_aktif == 0 ? "false" : "true"
             ];
         }else{
             $query = Kecamatan::where('nama','like','%'.$IdOrName.'%')->get();
@@ -146,7 +146,18 @@ class KecamatanController extends BaseController
 
         $nama      = empty($req->input('nama')) ? $check->nama : $req->input('nama');
         $kabupaten = empty($req->input('id_kabupaten')) ? $check->id_kabupaten : $req->input('id_kabupaten');
-        $flg_aktif = empty($req->input('flg_aktif')) ? $check->flg_aktif : $req->input('flg_aktif');
+        $flg_aktif = empty($req->input('flg_aktif')) ? $check->flg_aktif : ($req->input('flg_aktif') == 'false' ? 0 : 1);
+
+
+        if ($req->input('flg_aktif') != "false" && $req->input('flg_aktif') != "true" && $req->input('flg_aktif') != "") {
+            return response()->json([
+                "code"    => 422,
+                "status"  => "not valid request",
+                "message" => [
+                    "flg_aktif" => ["flg aktif harus salah satu dari jenis berikut false, true"]
+                ]
+            ], 422);
+        }
 
         try {
             $query = DB::connection('web')->table('master_kecamatan')->where('id', $id)->update([
