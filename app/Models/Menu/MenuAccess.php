@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Menu;
 
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
@@ -23,12 +23,12 @@ class MenuAccess extends Model implements AuthenticatableContract, AuthorizableC
 
     public function menu_master()
     {
-        return $this->belongsTo('App\Models\MenuMaster', 'id_menu_master');
+        return $this->belongsTo('App\Models\Menu\MenuMaster', 'id_menu_master');
     }
 
     public function menu_sub()
     {
-        return $this->belongsTo('App\Models\MenuSub', 'id_menu_sub');
+        return $this->belongsTo('App\Models\Menu\MenuSub', 'id_menu_sub');
     }
 
     public $timestamps = false;

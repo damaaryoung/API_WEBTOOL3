@@ -12,7 +12,7 @@ class ProvinsiController extends BaseController
 {
     public function index() {
         try {
-            $query = Provinsi::get();
+            $query = Provinsi::select('id', 'nama')->get();
 
             if ($query == '[]') {
                 return response()->json([
@@ -75,14 +75,14 @@ class ProvinsiController extends BaseController
     public function show($IdOrName) {
         $res = array();
         if(preg_match("/^[0-9]{1,}$/", $IdOrName)){
-            $query = Provinsi::where('id', $IdOrName)->first();
+            $query = Provinsi::select('id','nama','flg_aktif')->where('id', $IdOrName)->first();
             $res = array(
                 "id"            => $query->id,
                 "nama_provinsi" => $query->nama,
                 "flg_aktif"     => $query->flg_aktif == 0 ? "false" : "true"
             );
         }else{
-            $query = Provinsi::where('nama','like','%'.$IdOrName.'%')->get();
+            $query = Provinsi::select('id','nama','flg_aktif')->where('nama','like','%'.$IdOrName.'%')->get();
             foreach ($query as $key => $val) {
                 $res[$key] = [
                     "id"            => $val->id,

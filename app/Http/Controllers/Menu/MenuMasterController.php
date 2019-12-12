@@ -5,8 +5,8 @@ namespace App\Http\Controllers\Menu;
 use Laravel\Lumen\Routing\Controller as BaseController;
 use App\Http\Controllers\Controller as Helper;
 use App\Http\Requests\Menu\MasterMenuReq;
+use App\Models\Menu\MenuMaster;
 use Illuminate\Http\Request;
-use App\Models\MenuMaster;
 use App\Models\User;
 use Carbon\Carbon;
 use DB;
@@ -94,13 +94,9 @@ class MenuMasterController extends BaseController
     }
 
     public function show($IdOrSlug) {
-        if(preg_match("/^[0-9]{1,}$/", $IdOrSlug)){
-            $query = MenuMaster::where('id', $IdOrSlug)->first();
-        }else{
-            $query = MenuMaster::where('url', $IdOrSlug)->first();
-        }
+        $query = MenuMaster::where('id', $IdOrSlug)->orWhere('url', $IdOrSlug)->first();
 
-        if ($query == null) {
+        if (!$query) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
@@ -132,11 +128,7 @@ class MenuMasterController extends BaseController
     }
 
     public function edit($IdOrSlug, Request $req) {
-        if(preg_match("/^[0-9]{1,}$/", $IdOrSlug)){
-            $query = MenuMaster::where('id', $IdOrSlug)->first();
-        }else{
-            $query = MenuMaster::where('url', $IdOrSlug)->first();
-        }
+        $query = MenuMaster::where('id', $IdOrSlug)->orWhere('url', $IdOrSlug)->first();
 
         if (!$query) {
             return response()->json([
@@ -147,26 +139,13 @@ class MenuMasterController extends BaseController
         }
 
         $data = array(
-            'nama' => empty($req->input('nama')) ? $query->nama : $req->input('nama'),
-            'icon' => empty($req->input('icon')) ? $check->icon : $req->input('icon'),
-            'url'  => preg_replace("/[- ]/", "_", strtolower(empty($req->input('nama')) ? $query->nama : $req->input('nama')))
+            'nama' => empty($req->input('nama')) ? $query->nama : ($req->input('nama') == $query->nama ? $query->nama : $req->input('nama')),
+            'icon' => empty($req->input('icon')) ? $query->icon : $req->input('icon'),
+            'url'  => preg_replace("/[- ]/", "_", strtolower(empty($req->input('nama')) ? $query->nama : $req->input('nama'))),
+            'flg_aktif' => empty($req->input('flg_aktif')) ? $query->flg_aktif : ($req->input('flg_aktif') == 'false' ? 0 : 1)
         );
 
-        $check = MenuMaster::where('url', $data['url'])->first();
-
-        if ($check != null) {
-            return response()->json([
-                "code"    => 422,
-                "status"  => "bad request",
-                "message" => "url telah ada, harap ganti nama menu yang dimasukan"
-            ], 422);
-        }
-
-        if(preg_match("/^[0-9]{1,}$/", $IdOrSlug)){
-            $query = MenuMaster::where('id', $IdOrSlug)->update($data);
-        }else{
-            $query = MenuMaster::where('url', $IdOrSlug)->update($data);
-        }
+        MenuMaster::where('id', $IdOrSlug)->orWhere('url', $IdOrSlug)->update($data);
 
         try {
             return response()->json([
@@ -184,7 +163,7 @@ class MenuMasterController extends BaseController
     }
 
     public function delete($IdOrSlug) {
-        $check = MenuMaster::where('url', $IdOrSlug)->first();
+        $check = MenuMaster::where('id', $IdOrSlug)->orWhere('url', $IdOrSlug)->first();
 
         if (!$check) {
             return response()->json([
@@ -194,10 +173,9 @@ class MenuMasterController extends BaseController
             ], 404);
         }
 
-        try {
-            $query = MenuMaster::where('url', $IdOrSlug);
-            $query->delete();
+        MenuMaster::where('id', $IdOrSlug)->where('url', $IdOrSlug)->delete();
 
+        try {
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',

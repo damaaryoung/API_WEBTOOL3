@@ -133,7 +133,8 @@ $router->group(['middleware' => 'jwt.auth'], function () use ($router) {
 
 
             $router->post('/mcc', 'Pengajuan\MasterCC_Controller@store'); // Memorandum Credit Checking
-            // $router->get('/mcc', 'Pengajuan\MasterCC_Controller@index'); // Memorandum Credit Checking
+            $router->get('/mcc', 'Pengajuan\MasterCC_Controller@index');
+            $router->get('/mcc/{id}', 'Pengajuan\MasterCC_Controller@show');
 
             $router->get('/das', 'Pengajuan\DASController@index'); //Cek HM
             $router->get('/das/{id}', 'Pengajuan\DASController@show'); //Cek HM
@@ -151,8 +152,6 @@ $router->group(['middleware' => 'jwt.auth'], function () use ($router) {
             $router->get('/mca', 'Pengajuan\MasterCA_Controller@index'); // All Memorandum Credit Analyst
             $router->get('/mca/{id}', 'Pengajuan\MasterCA_Controller@show'); //GEt CA BY ID
             $router->post('/mca/{id}', 'Pengajuan\MasterCA_Controller@update'); //Update CA BY ID
-
-            // $router->get('/mitra', 'Pengajuan\MasterCC_Controller@mitra');
         });
 
         $router->group(['prefix' => '/menu'], function () use ($router) {

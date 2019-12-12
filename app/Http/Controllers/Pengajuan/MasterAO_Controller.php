@@ -283,27 +283,32 @@ class MasterAO_Controller extends BaseController
             ], 404);
         }
 
-        $countTSO = TransAo::count();
+        #######
+        $countTAO = TransAo::latest('id','nomor_ao')->first();
 
-        if (!$countTSO) {
-            $no = 1;
+        if (!$countTAO) {
+            $lastNumb = 1;
         }else{
-            $no = $countTSO + 1;
-        }
+            $no = $countTAO->nomor_ao;
 
+            $arr = explode("-", $no, 5);
+
+            $lastNumb = $arr[4] + 1;
+
+            // $no = $countTSO + 1;
+        }
         //Data Transaksi SO
         $nows  = Carbon::now();
-        $year  = $nows->year;
-        $month = $nows->month;
+        $year  = $now->year;
+        $month = $now->month;
 
         $JPIC   = JPIC::where('id', $PIC->id_mj_pic)->first();
 
         //  ID-Cabang - AO / CA / SO - Bulan - Tahun - NO. Urut
-        $nomor_ao = $PIC->id_mk_cabang.'-'.$JPIC->nama_jenis.'-'.$month.'-'.$year.'-'.$no; //  ID-Cabang - AO / CA / SO - Bulan - Tahun - NO. Urut
+        $nomor_ao = $PIC->id_mk_cabang.'-'.$JPIC->nama_jenis.'-'.$month.'-'.$year.'-'.$lastNumb;
+        #######
 
-        $Trans = TransSo::where('id', $id)->first();
-
-        if ($Trans == null) {
+        if (!$countTAO) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',

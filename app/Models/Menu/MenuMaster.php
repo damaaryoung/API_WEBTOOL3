@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Menu;
 
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
@@ -8,23 +8,23 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Lumen\Auth\Authorizable;
 
-class MenuSub extends Model implements AuthenticatableContract, AuthorizableContract
+class MenuMaster extends Model implements AuthenticatableContract, AuthorizableContract
 {
     use Authenticatable, Authorizable;
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
     protected $connection = 'web';
 
-    protected $table = 'menu_sub';
+    protected $table = 'menu_master';
     protected $primaryKey = 'id';
 
     protected $fillable = [
-       'id_menu_master', 'nama', 'url', 'flg_aktif'
+       'nama', 'url', 'icon', 'flg_aktif'
     ];
-
-    public function menu_master()
-    {
-        return $this->belongsTo('App\Models\MenuMaster', 'id_menu_master');
-    }
 
     public $timestamps = false;
 }

@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Menu;
 
 use Laravel\Lumen\Routing\Controller as BaseController;
 use App\Http\Controllers\Controller as Helper;
+use App\Models\Menu\MenuAccess;
 use Illuminate\Http\Request;
-use App\Models\MenuAccess;
 use App\Models\User;
 use Carbon\Carbon;
 use DB;
@@ -14,7 +14,7 @@ class MenuAccessController extends BaseController
 {
     public function index() {
         try {
-            $query = MenuAccess::get();
+            $query = MenuAccess::with('menu_master','menu_sub')->select('id','id_user', 'id_menu_master', 'id_menu_sub')->get();
 
             if ($query == '[]') {
                 return response()->json([
@@ -24,10 +24,19 @@ class MenuAccessController extends BaseController
                 ], 404);
             }
 
+            foreach ($query as $key => $val) {
+                $res[$key] = [
+                    'id'          => $val->id,
+                    'id_user'     => $val->id_user,
+                    'menu_master' => $val->menu_master['nama'],
+                    'menu_sub'    => $val->menu_sub['nama']
+                ];
+            }
+
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'data'   => $query
+                'data'   => $res
             ], 200);
         } catch (Exception $e) {
             return response()->json([
@@ -39,13 +48,35 @@ class MenuAccessController extends BaseController
     }
 
     public function show($id) {
-        try {
-            $query = MenuAccess::where('id', $id)->first();
+        $val = MenuAccess::with('menu_master','menu_sub')->where('id', $id)->first();
 
+        if (!$val) {
+            return response()->json([
+                "code"    => 404,
+                "status"  => "not found",
+                "message" => "Data kosong"
+            ], 404);
+        }
+
+        $res = [
+            'id'            => $val->id,
+            'id_user'       => $val->id_user,
+            'id_menu_master'=> $val->id_menu_master,
+            'menu_master'   => $val->menu_master['nama'],
+            'id_menu_sub'   => $val->id_menu_sub,
+            'menu_sub'      => $val->menu_sub['nama'],
+            'print_access'  => $val->print_access,
+            'add_access'    => $val->add_access,
+            'edit_access'   => $val->edit_access,
+            'delete_access' => $val->delete_access,
+            'flg_aktif'     => $val->flg_aktif == 0 ? "false" : "true"
+        ];
+
+        try {
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'data'   => $query
+                'data'   => $res
             ], 200);
         } catch (Exception $e) {
             return response()->json([
@@ -146,8 +177,8 @@ class MenuAccessController extends BaseController
         }
     }
 
-    public function update($id_user, Request $req) {
-        $check = MenuAccess::where('id_user', $id_user)->first();
+    public function update($id, Request $req) {
+        $check = MenuAccess::where('id', $id)->first();
 
         if (!$check) {
             return response()->json([
@@ -163,14 +194,16 @@ class MenuAccessController extends BaseController
         $add_access     = empty($req->input('add_access')) ? $check->add_access : $req->input('add_access');   //Enum('Y','N')
         $edit_access    = empty($req->input('edit_access')) ? $check->edit_access : $req->input('edit_access');  //Enum('Y','N')
         $delete_access  = empty($req->input('delete_access')) ? $check->delete_access : $req->input('delete_access'); //Enum('Y','N')
+        $flg_aktif      = empty($req->input('flg_aktif')) ? $check->flg_aktif : ($req->input('flg_aktif') == 'false' ? 0 : 1);
 
-        $query = MenuAccess::where('id_user', $id_user)->update([
+        $query = MenuAccess::where('id', $id)->update([
             'id_menu_master'=> $id_menu_master,
             'id_menu_sub'   => $id_menu_sub,
             'print_access'  => $print_access, //Enum('Y','N')
             'add_access'    => $add_access,   //Enum('Y','N')
             'edit_access'   => $edit_access,  //Enum('Y','N')
-            'delete_access' => $delete_access //Enum('Y','N')
+            'delete_access' => $delete_access, //Enum('Y','N')
+            'flg_aktif'     => $flg_aktif
         ]);
 
         try {

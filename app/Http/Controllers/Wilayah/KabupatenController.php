@@ -12,7 +12,7 @@ class KabupatenController extends BaseController
 {
     public function index() {
         try {
-            $query = Kabupaten::get();
+            $query = Kabupaten::with('prov')->select('id', 'nama', 'id_provinsi')->get();
 
             if ($query == '[]') {
                 return response()->json([
@@ -88,7 +88,7 @@ class KabupatenController extends BaseController
         $res = array();
 
         if(preg_match("/^[0-9]{1,}$/", $IdOrName)){
-            $query = Kabupaten::where('id', $IdOrName)->first();
+            $query = Kabupaten::with('prov')->select('id', 'nama', 'id_provinsi', 'flg_aktif')->where('id', $IdOrName)->first();
 
             $res = [
                 'id'             => $query->id,
@@ -98,7 +98,7 @@ class KabupatenController extends BaseController
                 'flg_aktif'      => $query->flg_aktif == 0 ? "false" : "true"
             ];
         }else{
-            $query = Kabupaten::where('nama','like','%'.$IdOrName.'%')->get();
+            $query = Kabupaten::with('prov')->select('id', 'nama', 'id_provinsi', 'flg_aktif')->where('nama','like','%'.$IdOrName.'%')->get();
 
             foreach ($query as $key => $val) {
                 $res[$key] = [
@@ -159,7 +159,7 @@ class KabupatenController extends BaseController
         }
 
         try {
-            $query = DB::connection('web')->table('master_kabupaten')->where('id', $id)->update([
+            $query = Kabupaten::where('id', $id)->update([
                 'nama'        => $nama,
                 'id_provinsi' => $provinsi,
                 'flg_aktif'   => $flg_aktif

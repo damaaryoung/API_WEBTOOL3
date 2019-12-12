@@ -12,7 +12,7 @@ class KecamatanController extends BaseController
 {
     public function index() {
         try {
-            $query = Kecamatan::get();
+            $query = Kecamatan::with('kab')->select('id', 'nama', 'id_kabupaten')->get();
 
             if ($query == '[]') {
                 return response()->json([
@@ -88,7 +88,7 @@ class KecamatanController extends BaseController
     public function show($IdOrName) {
         $res = array();
         if(preg_match("/^[0-9]{1,}$/", $IdOrName)){
-            $query = Kecamatan::where('id', $IdOrName)->first();
+            $query = Kecamatan::with('kab')->select('id', 'nama', 'id_kabupaten', 'flg_aktif')->where('id', $IdOrName)->first();
 
             $res = [
                 'id'             => $query->id,
@@ -98,7 +98,7 @@ class KecamatanController extends BaseController
                 'flg_aktif'      => $query->flg_aktif == 0 ? "false" : "true"
             ];
         }else{
-            $query = Kecamatan::where('nama','like','%'.$IdOrName.'%')->get();
+            $query = Kecamatan::with('kab')->select('id', 'nama', 'id_kabupaten', 'flg_aktif')->where('nama','like','%'.$IdOrName.'%')->get();
 
             foreach ($query as $key => $val) {
                 $res[$key] = [

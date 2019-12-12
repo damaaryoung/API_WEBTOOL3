@@ -26,39 +26,196 @@ use DB;
 
 class MasterCC_Controller extends BaseController
 {
-    // public function index(){
-    //     $check = TransSo::get();
+    public function index(Request $req){
+        $user_id = $req->auth->user_id;
+        $query = TransSo::with('asaldata','debt')
+                ->select('id', 'nomor_so', 'kode_kantor', 'nama_so', 'id_asal_data', 'nama_marketing',
+        'id_calon_debt')
+                ->where('user_id', $user_id)
+                ->get();
 
-    //     if ($check == '[]') {
-    //         return response()->json([
-    //             'code'    => 404,
-    //             'status'  => 'not found',
-    //             'message' => 'Data kosong'
-    //         ], 404);
-    //     }
+        if (!$query) {
+            return response()->json([
+                "code"    => 404,
+                "status"  => "not found",
+                "message" => "Data kosong!!"
+            ], 404);
+        }
 
-    //     try {
-    //         return response()->json([
-    //             'code'   => 200,
-    //             'status' => 'success',
-    //             'data'   => $check
-    //         ], 200);
-    //     } catch (Exception $e) {
-    //         return response()->json([
-    //             "code"    => 501,
-    //             "status"  => "error",
-    //             "message" => $e
-    //         ], 501);
-    //     }
-    // }
+        foreach ($query as $key => $val) {
+            $res[$key] = [
+                'id'            => $val->id,
+                'nomor_so'      => $val->nomor_so,
+                'kode_kantor'   => $val->kode_kantor,
+                'nama_so'       => $val->nama_so,
+                'id_asal_data'  => $val->asaldata['nama'],
+                'nama_marketing'=> $val->nama_marketing,
+                'nama_calon_debt' => $val->debt['nama_lengkap']
+            ];
+        }
+
+        try {
+            return response()->json([
+                'code'   => 200,
+                'status' => 'success',
+                'data'   => $res
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                "code"    => 501,
+                "status"  => "error",
+                "message" => $e
+            ], 501);
+        }
+    }
+
+    public function show($id, Request $req){
+        $user_id = $req->auth->user_id;
+        $val = TransSo::with('asaldata','debt')
+                ->where('id', $id)
+                ->where('user_id', $user_id)
+                ->first();
+
+        if (!$val) {
+            return response()->json([
+                "code"    => 404,
+                "status"  => "not found",
+                "message" => "Data kosong!!"
+            ], 404);
+        }
+
+        $nama_anak = explode (",",$val->debt['nama_anak']);
+        $tgl_anak = explode (",",$val->debt['tgl_lahir_anak']);
+
+        for ($i = 0; $i < count($nama_anak); $i++) {
+            $anak[] = [
+                'nama'  => $nama_anak[$i],
+                'tgl_lahir' => $tgl_anak[$i]
+            ];
+        }
+
+        $debt = Debitur::with('prov_ktp','kab_ktp', 'kec_ktp','kel_ktp','prov_dom','kab_dom','kec_dom','kel_dom','prov_kerja','kab_kerja','kec_kerja','kel_kerja')
+            ->where('id', $val->id_calon_debt)->first();
+
+        // $penjamin = Penjamin::where('id_calon_debitur', $query[0]->id_calon_debt)->get();
+
+        $res = [
+            'id'                    => $val->id,
+            'nomor_so'              => $val->nomor_so,
+            'kode_kantor'           => $val->kode_kantor,
+            'nama_so'               => $val->nama_so,
+            'id_asal_data'          => $val->id_asal_data,
+            'asal_data'             => $val->asaldata['nama'],
+            'nama_marketing'        => $val->nama_marketing,
+            'id_fasilitas_pinjaman' => $val->id_fasilitas_pinjaman,
+            'jenis_pinjaman'        => $val->faspin['jenis_pinjaman'],
+            'tujuan_pinjaman'       => $val->faspin['tujuan_pinjaman'],
+            'plafon'                => $val->faspin['plafon'],
+            'tenor'                 => $val->faspin['tenor'],
+            'id_calon_debt'         => $val->id_calon_debt,
+            'nama_calon_debt'       => $val->debt['nama_lengkap'],
+
+            // 'debt_all'              => $val->debt,
+
+            'gelar_keagamaan'       => $val->debt['gelar_keagamaan'],
+            'gelar_pendidikan'      => $val->debt['gelar_pendidikan'],
+            'jenis_kelamin'         => $val->debt['jenis_kelamin'],
+            'status_nikah'          => $val->debt['status_nikah'],
+            'ibu_kandung'           => $val->debt['ibu_kandung'],
+            'no_ktp'                => $val->debt['no_ktp'],
+            'no_ktp_kk'             => $val->debt['no_ktp_kk'],
+            'no_kk'                 => $val->debt['no_kk'],
+            'no_npwp'               => $val->debt['no_npwp'],
+            'tempat_lahir'          => $val->debt['tempat_lahir'],
+            'tgl_lahir'             => $val->debt['tgl_lahir'],
+            'agama'                 => $val->debt['agama'],
+            'alamat_ktp'            => $val->debt['alamat_ktp'],
+            'rt_ktp'                => $val->debt['rt_ktp'],
+            'rw_ktp'                => $val->debt['rw_ktp'],
+
+            'id_prov_ktp'           => $val->debt['id_prov_ktp'],
+            'nama_prov_ktp'         => $val->prov['nama'],
+            'id_prov_ktp2'          => $debt->id_provinsi_ktp,
+            'nama_prov_ktp2'        => $debt->kab_ktp['nama'],
+
+            'id_kab_ktp'            => $val->debt['id_kab_ktp'],
+            'id_kec_ktp'            => $val->debt['id_kec_ktp'],
+            'id_kel_ktp'            => $val->debt['id_kel_ktp'],
+
+            'alamat_domisili'       => $val->debt['alamat_domisili'],
+            'rt_domisili'           => $val->debt['rt_domisili'],
+            'rw_domisili'           => $val->debt['rw_domisili'],
+
+            'id_prov_domisili'      => $val->debt['id_prov_domisili'],
+            'id_kab_domisili'       => $val->debt['id_kab_domisili'],
+            'id_kec_domisili'       => $val->debt['id_kec_domisili'],
+            'id_kel_domisili'       => $val->debt['id_kel_domisili'],
+
+            'pendidikan_terakhir'   => $val->debt['pendidikan_terakhir'],
+            'jumlah_tanggungan'     => $val->debt['jumlah_tanggungan'],
+            'no_telp'               => $val->debt['no_telp'],
+            'no_hp'                 => $val->debt['no_hp'],
+            'alamat_surat'          => $val->debt['alamat_surat'],
+
+            'anak'                  => $anak,
+
+            'tinggi_badan'          => $val->debt['tinggi_badan'],
+            'berat_badan'           => $val->debt['berat_badan'],
+            'pekerjaan'             => $val->debt['pekerjaan'],
+            'posisi'                => $val->debt['posisi'],
+            'nama_tempat_kerja'     => $val->debt['nama_tempat_kerja'],
+            'jenis_pekerjaan'       => $val->debt['jenis_pekerjaan'],
+            'alamat_tempat_kerja'   => $val->debt['alamat_tempat_kerja'],
+
+            'id_prov_tempat_kerja'  => $val->debt['id_prov_tempat_kerja'],
+            'id_kab_tempat_kerja'   => $val->debt['id_kab_tempat_kerja'],
+            'id_kec_tempat_kerja'   => $val->debt['id_kec_tempat_kerja'],
+            'id_kel_tempat_kerja'   => $val->debt['id_kel_tempat_kerja'],
+
+            'rt_tempat_kerja'       => $val->debt['rt_tempat_kerja'],
+            'rw_tempat_kerja'       => $val->debt['rw_tempat_kerja'],
+            'tgl_mulai_kerja'       => $val->debt['tgl_mulai_kerja'],
+            'no_telp_tempat_kerja'  => $val->debt['no_telp_tempat_kerja'],
+            'lamp_surat_cerai'      => $val->debt['lamp_surat_cerai'],
+            'lamp_ktp'              => $val->debt['lamp_ktp'],
+            'lamp_kk'               => $val->debt['lamp_kk'],
+            'lamp_buku_tabungan'    => $val->debt['lamp_buku_tabungan'],
+            'lamp_sttp_pbb'         => $val->debt['lamp_sttp_pbb'],
+            'lamp_sertifikat'       => $val->debt['lamp_sertifikat'],
+            'lamp_imb'              => $val->debt['lamp_imb'],
+            'lamp_sku'              => $val->debt['lamp_sku'],
+            'lamp_slip_gaji'        => $val->debt['lamp_slip_gaji'],
+            'lamp_foto_usaha'       => $val->debt['lamp_foto_usaha'],
+
+            'id_pasangan'           => $val->id_pasangan,
+            'id_penjamin'           => $val->id_pasangan,
+            'id_agunan_tanah'       => $val->id_agunan_tanah,
+            'id_agunan_kendaraan'   => $val->id_agunan_kendaraan,
+            'id_periksa_agunan_tanah'=> $val->id_periksa_agunan_tanah,
+            'id_periksa_agunan_kendaraan'=>$val->id_periksa_agunan_tanah,
+            'id_usaha'              => $val->id_usaha,
+            'flg_aktif'             => $val->flg_aktif == 0 ? "true" : "false"
+        ];
+
+        try {
+            return response()->json([
+                'code'   => 200,
+                'status' => 'success',
+                'data'   => $res
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                "code"    => 501,
+                "status"  => "error",
+                "message" => $e
+            ], 501);
+        }
+    }
 
     public function store(Request $req, FasPinRequest $reqFasPin, DebtRequest $reqDebt, DebtPasanganRequest $reqPas, DebtPenjaminRequest $reqPen) {
 
-        // $user_id     = 1199;
         $user_id     = $req->auth->user_id;
         $username    = $req->auth->user;
-        // $kode_kantor = $req->auth->kd_cabang;
-        // $so_name     = $req->auth->nama;
 
         $PIC = PIC::where('user_id', $user_id)->first();
 
@@ -70,14 +227,19 @@ class MasterCC_Controller extends BaseController
             ], 404);
         }
 
-        $countTSO = TransSo::count();
+        $countTSO = TransSo::latest('id','nomor_so')->first();
 
         if (!$countTSO) {
-            $no = 1;
+            $lastNumb = 1;
         }else{
-            $no = $countTSO + 1;
-        }
+            $no = $countTSO->nomor_so;
 
+            $arr = explode("-", $no, 5);
+
+            $lastNumb = $arr[4] + 1;
+
+            // $no = $countTSO + 1;
+        }
         //Data Transaksi SO
         $now   = Carbon::now();
         $year  = $now->year;
@@ -86,7 +248,7 @@ class MasterCC_Controller extends BaseController
         $JPIC   = JPIC::where('id', $PIC->id_mj_pic)->first();
 
         //  ID-Cabang - AO / CA / SO - Bulan - Tahun - NO. Urut
-        $nomor_so = $PIC->id_mk_cabang.'-'.$JPIC->nama_jenis.'-'.$month.'-'.$year.'-'.$no; //  ID-Cabang - AO / CA / SO - Bulan - Tahun - NO. Urut
+        $nomor_so = $PIC->id_mk_cabang.'-'.$JPIC->nama_jenis.'-'.$month.'-'.$year.'-'.$lastNumb; //  ID-Cabang - AO / CA / SO - Bulan - Tahun - NO. Urut
         $dataTr = array(
             'nomor_so'       => $nomor_so,
             'user_id'        => $user_id,

@@ -19,7 +19,7 @@ class PICRequest extends FormRequest
     public function rules()
     {
         return [
-            'user_id'      => 'numeric',
+            'user_id'      => 'required|numeric',
             'id_mk_area'   => 'required',
             'id_mk_cabang' => 'required',
             'id_mj_pic'    => 'required',
@@ -30,6 +30,8 @@ class PICRequest extends FormRequest
 
     public function messages(){
         return [
+            'user_id.required'      => ':attribute belum diisi',
+            'user_id.numeric'       => ':attribute harus berupa angka',
             'id_mk_area.required'   => ':attribute belum diisi',
             'id_mk_cabang.required' => ':attribute belum diisi',
             'user_id.numeric'       => ':attribute harus berupa angka',

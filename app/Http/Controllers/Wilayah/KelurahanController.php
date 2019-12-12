@@ -12,7 +12,7 @@ class KelurahanController extends BaseController
 {
     public function index() {
         try {
-            $query = Kelurahan::get();
+            $query = Kelurahan::with('kec')->select('id', 'nama', 'id_kecamatan','kode_pos')->get();
 
             if ($query == '[]') {
                 return response()->json([
@@ -27,7 +27,8 @@ class KelurahanController extends BaseController
                 $res[$key] = [
                     "id"             => $val->id,
                     "nama"           => $val->nama,
-                    "nama_kecamatan" => $val->kec['nama']
+                    "nama_kecamatan" => $val->kec['nama'],
+                    'kode_pos'       => $val->kode_pos
                 ];
             }
 
@@ -106,7 +107,7 @@ class KelurahanController extends BaseController
     public function show($IdOrName) {
         $res = array();
         if(preg_match("/^[0-9]{1,}$/", $IdOrName)){
-            $query = Kelurahan::where('id', $IdOrName)->first();
+            $query = Kelurahan::with('kec')->select('id', 'nama', 'id_kecamatan', 'flg_aktif')->where('id', $IdOrName)->first();
 
             $res = [
                 'id'             => $query->id,
@@ -116,7 +117,7 @@ class KelurahanController extends BaseController
                 'flg_aktif'      => $query->flg_aktif == 0 ? "false" : "true"
             ];
         }else{
-            $query = Kelurahan::where('nama','like','%'.$IdOrName.'%')->get();
+            $query = Kelurahan::with('kec')->select('id', 'nama', 'id_kecamatan', 'flg_aktif')->where('nama','like','%'.$IdOrName.'%')->get();
 
             foreach ($query as $key => $val) {
                 $res[$key] = [
