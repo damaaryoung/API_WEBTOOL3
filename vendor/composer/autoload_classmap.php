@@ -47,6 +47,7 @@ return array(
     'App\\Http\\Requests\\AreaKantor\\JenisPICReq' => $baseDir . '/app/Http/Requests/AreaKantor/JenisPICReq.php',
     'App\\Http\\Requests\\AreaKantor\\PICRequest' => $baseDir . '/app/Http/Requests/AreaKantor/PICRequest.php',
     'App\\Http\\Requests\\Bisnis\\AsalDataReq' => $baseDir . '/app/Http/Requests/Bisnis/AsalDataReq.php',
+    'App\\Http\\Requests\\Bisnis\\MCC\\UpdateMCCReq' => $baseDir . '/app/Http/Requests/Bisnis/MCC/UpdateMCCReq.php',
     'App\\Http\\Requests\\Bisnis\\TrAoReq' => $baseDir . '/app/Http/Requests/Bisnis/TrAoReq.php',
     'App\\Http\\Requests\\Bisnis\\TrSoReq' => $baseDir . '/app/Http/Requests/Bisnis/TrSoReq.php',
     'App\\Http\\Requests\\Bisnis\\ValidRequest' => $baseDir . '/app/Http/Requests/Bisnis/ValidRequest.php',

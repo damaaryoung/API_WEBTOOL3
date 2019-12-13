@@ -28,7 +28,7 @@ class KelurahanController extends BaseController
                     "id"             => $val->id,
                     "nama"           => $val->nama,
                     "nama_kecamatan" => $val->kec['nama'],
-                    'kode_pos'       => $val->kode_pos
+                    'kode_pos'       => (string) $val->kode_pos
                 ];
             }
 

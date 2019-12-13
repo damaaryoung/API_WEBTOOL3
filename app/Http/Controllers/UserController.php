@@ -22,13 +22,37 @@ class UserController extends BaseController
         ], 200);
     }
 
-    public function search($search){
-        $data = DB::connection('dpm')->select("SELECT user_id, user as username, level, kode_area, kd_cabang, nama, divisi_id, kode_jabatan, user_id_induk, email, no_hp  FROM user WHERE flg_block='N' AND tgl_expired > CURDATE() AND nama LIKE '%".$search."%' ORDER BY tgl_expired desc");
+    public function IdOrSearch($IdOrSearch){
+        if(preg_match("/^[0-9]{1,}$/", $IdOrSearch)){
+            $data = DB::connection('dpm')->select("SELECT * FROM user WHERE flg_block='N' AND tgl_expired > CURDATE() AND user_id=? ORDER BY tgl_expired DESC",[$IdOrSearch]);
+
+            if (!$data) {
+                return response()->json([
+                    "code"    => 404,
+                    "status"  => "not found",
+                    "message" => "Data kosong!!"
+                ], 404);
+            }
+
+            $res = $data[0];
+        }else{
+            $data = DB::connection('dpm')->select("SELECT user_id, user as username, level, kode_area, kd_cabang, nama, divisi_id, kode_jabatan, user_id_induk, email, no_hp  FROM user WHERE flg_block='N' AND tgl_expired > CURDATE() AND nama LIKE '%".$IdOrSearch."%' ORDER BY tgl_expired desc");
+
+            if (!$data) {
+                return response()->json([
+                    "code"    => 404,
+                    "status"  => "not found",
+                    "message" => "Data kosong!!"
+                ], 404);
+            }
+
+            $res = $data;
+        }
 
         return response()->json([
             "code"   => 200,
             'status' => 'success',
-            'data'   => $data
+            'data'   => $res
         ], 200);
     }
 

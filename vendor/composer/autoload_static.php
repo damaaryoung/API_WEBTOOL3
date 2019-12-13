@@ -486,6 +486,7 @@ class ComposerStaticInitc001a60f02ccbcb1ce59b19fdba85d18
         'App\\Http\\Requests\\AreaKantor\\JenisPICReq' => __DIR__ . '/../..' . '/app/Http/Requests/AreaKantor/JenisPICReq.php',
         'App\\Http\\Requests\\AreaKantor\\PICRequest' => __DIR__ . '/../..' . '/app/Http/Requests/AreaKantor/PICRequest.php',
         'App\\Http\\Requests\\Bisnis\\AsalDataReq' => __DIR__ . '/../..' . '/app/Http/Requests/Bisnis/AsalDataReq.php',
+        'App\\Http\\Requests\\Bisnis\\MCC\\UpdateMCCReq' => __DIR__ . '/../..' . '/app/Http/Requests/Bisnis/MCC/UpdateMCCReq.php',
         'App\\Http\\Requests\\Bisnis\\TrAoReq' => __DIR__ . '/../..' . '/app/Http/Requests/Bisnis/TrAoReq.php',
         'App\\Http\\Requests\\Bisnis\\TrSoReq' => __DIR__ . '/../..' . '/app/Http/Requests/Bisnis/TrSoReq.php',
         'App\\Http\\Requests\\Bisnis\\ValidRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Bisnis/ValidRequest.php',

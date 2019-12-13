@@ -61,7 +61,7 @@ $router->group(['middleware' => 'jwt.auth'], function () use ($router) {
         $router->get('/logs/search/{search}', 'LogsController@search'); //Log History Search
 
         $router->get('/users', 'UserController@getUsers');
-        $router->get('/users/{search}', 'UserController@search');
+        $router->get('/users/{IdOrSearch}', 'UserController@IdOrSearch');
         $router->get('/user', 'UserController@index');
         $router->put('/user/change_password', 'UserController@changePassword');
 
@@ -135,6 +135,7 @@ $router->group(['middleware' => 'jwt.auth'], function () use ($router) {
             $router->post('/mcc', 'Pengajuan\MasterCC_Controller@store'); // Memorandum Credit Checking
             $router->get('/mcc', 'Pengajuan\MasterCC_Controller@index');
             $router->get('/mcc/{id}', 'Pengajuan\MasterCC_Controller@show');
+            $router->post('/mcc/{id}', 'Pengajuan\MasterCC_Controller@update');
 
             $router->get('/das', 'Pengajuan\DASController@index'); //Cek HM
             $router->get('/das/{id}', 'Pengajuan\DASController@show'); //Cek HM
