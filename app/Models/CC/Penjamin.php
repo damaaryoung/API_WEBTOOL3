@@ -23,7 +23,7 @@ class Penjamin extends Model implements AuthenticatableContract, AuthorizableCon
     protected $primaryKey = 'id';
 
     protected $fillable = [
-        'id_calon_debitur', 'nama_ktp', 'nama_ibu_kandung', 'no_ktp', 'no_npwp', 'tempat_lahir', 'tgl_lahir', 'jenis_kelamin', 'alamat_ktp', 'no_telp', 'hubungan_debitur', 'pekerjaan', 'posisi_pekerjaan', 'nama_tempat_kerja', 'jenis_pekerjaan', 'alamat_tempat_kerja', 'id_prov_tempat_kerja', 'id_kab_tempat_kerja', 'id_kec_tempat_kerja', 'id_kelurahan', 'rt_tempat_kerja', 'rw_tempat_kerja', 'tgl_mulai_kerja', 'no_telp_tempat_kerja', 'lamp_ktp', 'lamp_ktp_pasangan', 'lamp_kk', 'lamp_buku_nikah', 'flg_aktif'
+        'id_calon_debitur', 'nama_ktp', 'nama_ibu_kandung', 'no_ktp', 'no_npwp', 'tempat_lahir', 'tgl_lahir', 'jenis_kelamin', 'alamat_ktp', 'no_telp', 'hubungan_debitur', 'pekerjaan', 'posisi_pekerjaan', 'nama_tempat_kerja', 'jenis_pekerjaan', 'alamat_tempat_kerja', 'id_prov_tempat_kerja', 'id_kab_tempat_kerja', 'id_kec_tempat_kerja', 'id_kel_tempat_kerja', 'rt_tempat_kerja', 'rw_tempat_kerja', 'tgl_mulai_kerja', 'no_telp_tempat_kerja', 'lamp_ktp', 'lamp_ktp_pasangan', 'lamp_kk', 'lamp_buku_nikah', 'flg_aktif'
     ];
 
     public function debt(){

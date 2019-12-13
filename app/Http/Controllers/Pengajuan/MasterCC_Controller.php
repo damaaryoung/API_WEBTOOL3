@@ -84,8 +84,8 @@ class MasterCC_Controller extends BaseController
             ], 404);
         }
 
-        $nama_anak = explode (",",$val->debt['nama_anak']);
-        $tgl_anak = explode (",",$val->debt['tgl_lahir_anak']);
+        $nama_anak = explode (",",$val->nama_anak);
+        $tgl_anak  = explode (",",$val->tgl_lahir_anak);
 
         for ($i = 0; $i < count($nama_anak); $i++) {
             $anak[] = [
@@ -94,106 +94,235 @@ class MasterCC_Controller extends BaseController
             ];
         }
 
-        $debt = Debitur::with('prov_ktp','kab_ktp', 'kec_ktp','kel_ktp','prov_dom','kab_dom','kec_dom','kel_dom','prov_kerja','kab_kerja','kec_kerja','kel_kerja')
-            ->where('id', $val->id_calon_debt)->first();
+        $pen = Penjamin::select('id','nama_ktp','nama_ibu_kandung','no_ktp','no_npwp','tempat_lahir','tgl_lahir','jenis_kelamin','alamat_ktp','no_telp','hubungan_debitur','lamp_ktp','lamp_ktp_pasangan','lamp_kk','lamp_buku_nikah')
+            ->where('id_calon_debitur', $val->id_calon_debt)
+            ->get();
 
-        // $penjamin = Penjamin::where('id_calon_debitur', $query[0]->id_calon_debt)->get();
+        foreach ($pen as $key => $value) {
+            $penjamin[$key] = [
+                "id"               => $value->id,
+                "nama"             => $value->nama_ktp,
+                "nama_ibu_kandung" => $value->nama_ibu_kandung,
+                "no_ktp"           => $value->no_ktp,
+                "no_npwp"          => $value->no_npwp,
+                "tempat_lahir"     => $value->tempat_lahir,
+                "tgl_lahir"        => $value->tgl_lahir,
+                "jenis_kelamin"    => $value->jenis_kelamin,
+                "alamat_ktp"       => $value->alamat_ktp,
+                "no_telp"          => $value->no_telp,
+                "hubungan_debitur" => $value->hubungan_debitur,
+                "lampiran" => [
+                    "lamp_ktp"          => $value->lamp_ktp,
+                    "lamp_ktp_pasangan" => $value->lamp_ktp_pasangan,
+                    "lamp_kk"           => $value->lamp_kk,
+                    "lamp_buku_nikah"   => $value->lamp_buku_nikah
+                ]
+            ];
+        }
 
         $res = [
             'id'                    => $val->id,
             'nomor_so'              => $val->nomor_so,
             'kode_kantor'           => $val->kode_kantor,
             'nama_so'               => $val->nama_so,
-            'id_asal_data'          => $val->id_asal_data,
-            'asal_data'             => $val->asaldata['nama'],
-            'nama_marketing'        => $val->nama_marketing,
-            'id_fasilitas_pinjaman' => $val->id_fasilitas_pinjaman,
-            'jenis_pinjaman'        => $val->faspin['jenis_pinjaman'],
-            'tujuan_pinjaman'       => $val->faspin['tujuan_pinjaman'],
-            'plafon'                => $val->faspin['plafon'],
-            'tenor'                 => $val->faspin['tenor'],
-            'id_calon_debt'         => $val->id_calon_debt,
-            'nama_calon_debt'       => $val->debt['nama_lengkap'],
+            'asal_data' => [
+                'id'   => $val->id_asal_data,
+                'nama' => $val->asaldata['nama'],
+            ],
+            'nama_marketing'    => $val->nama_marketing,
+            'fasilitas_pinjaman'  => [
+                'id'              => $val->id_fasilitas_pinjaman,
+                'jenis_pinjaman'  => $val->faspin['jenis_pinjaman'],
+                'tujuan_pinjaman' => $val->faspin['tujuan_pinjaman'],
+                'plafon'          => $val->faspin['plafon'],
+                'tenor'           => $val->faspin['tenor']
+            ],
+            'calon_debitur'          => [
+                'id'                => $val->id_calon_debt,
+                'nama_lengkap'      => $val->debt['nama_lengkap'],
+                'gelar_keagamaan'   => $val->debt['gelar_keagamaan'],
+                'gelar_pendidikan'  => $val->debt['gelar_pendidikan'],
+                'jenis_kelamin'     => $val->debt['jenis_kelamin'],
+                'status_nikah'      => $val->debt['status_nikah'],
+                'ibu_kandung'       => $val->debt['ibu_kandung'],
+                'no_ktp'            => $val->debt['no_ktp'],
+                'no_ktp_kk'         => $val->debt['no_ktp_kk'],
+                'no_kk'             => $val->debt['no_kk'],
+                'no_npwp'           => $val->debt['no_npwp'],
+                'tempat_lahir'      => $val->debt['tempat_lahir'],
+                'tgl_lahir'         => $val->debt['tgl_lahir'],
+                'agama'             => $val->debt['agama'],
+                'alamat_ktp' => [
+                    'alamat_singkat' => $val->debt['alamat_ktp'],
+                    'rt'     => $val->debt['rt_ktp'],
+                    'rw'     => $val->debt['rw_ktp'],
+                    'kelurahan' => [
+                        'id'    => $val->debt['kel_ktp']['id'],
+                        'nama'  => $val->debt['kel_ktp']['nama']
+                    ],
+                    'kecamatan' => [
+                        'id'    => $val->debt['kec_ktp']['id'],
+                        'nama'  => $val->debt['kec_ktp']['nama']
+                    ],
+                    'kabupaten' => [
+                        'id'    => $val->debt['kab_ktp']['id'],
+                        'nama'  => $val->debt['kab_ktp']['nama'],
+                    ],
+                    'povinsi'  => [
+                        'id'   => $val->debt['prov_ktp']['id'],
+                        'nama' => $val->debt['prov_ktp']['nama'],
+                    ],
+                    'kode_pos' => $val->debt['kel_ktp']['kode_pos']
+                ],
+                'alamat_domisili' => [
+                    'alamat_singkat' => $val->debt['alamat_domisili'],
+                    'rt'             => $val->debt['rt_domisili'],
+                    'rw'             => $val->debt['rw_domisili'],
+                    'kelurahan' => [
+                        'id'    => $val->debt['kel_dom']['id'],
+                        'nama'  => $val->debt['kel_dom']['nama']
+                    ],
+                    'kecamatan' => [
+                        'id'    => $val->debt['kec_dom']['id'],
+                        'nama'  => $val->debt['kec_dom']['nama']
+                    ],
+                    'kabupaten' => [
+                        'id'    => $val->debt['kab_dom']['id'],
+                        'nama'  => $val->debt['kab_dom']['nama'],
+                    ],
+                    'povinsi'  => [
+                        'id'   => $val->debt['prov_dom']['id'],
+                        'nama' => $val->debt['prov_dom']['nama'],
+                    ],
+                    'kode_pos' => $val->debt['kel_dom']['kode_pos']
+                ],
 
-            // 'debt_all'              => $val->debt,
 
-            'gelar_keagamaan'       => $val->debt['gelar_keagamaan'],
-            'gelar_pendidikan'      => $val->debt['gelar_pendidikan'],
-            'jenis_kelamin'         => $val->debt['jenis_kelamin'],
-            'status_nikah'          => $val->debt['status_nikah'],
-            'ibu_kandung'           => $val->debt['ibu_kandung'],
-            'no_ktp'                => $val->debt['no_ktp'],
-            'no_ktp_kk'             => $val->debt['no_ktp_kk'],
-            'no_kk'                 => $val->debt['no_kk'],
-            'no_npwp'               => $val->debt['no_npwp'],
-            'tempat_lahir'          => $val->debt['tempat_lahir'],
-            'tgl_lahir'             => $val->debt['tgl_lahir'],
-            'agama'                 => $val->debt['agama'],
-            'alamat_ktp'            => $val->debt['alamat_ktp'],
-            'rt_ktp'                => $val->debt['rt_ktp'],
-            'rw_ktp'                => $val->debt['rw_ktp'],
+                'pendidikan_terakhir'   => $val->debt['pendidikan_terakhir'],
+                'jumlah_tanggungan'     => $val->debt['jumlah_tanggungan'],
+                'no_telp'               => $val->debt['no_telp'],
+                'no_hp'                 => $val->debt['no_hp'],
+                'alamat_surat'          => $val->debt['alamat_surat'],
 
-            'id_prov_ktp'           => $val->debt['id_prov_ktp'],
-            'nama_prov_ktp'         => $val->prov['nama'],
-            'id_prov_ktp2'          => $debt->id_provinsi_ktp,
-            'nama_prov_ktp2'        => $debt->kab_ktp['nama'],
+                // 'anak'                  => $anak,
 
-            'id_kab_ktp'            => $val->debt['id_kab_ktp'],
-            'id_kec_ktp'            => $val->debt['id_kec_ktp'],
-            'id_kel_ktp'            => $val->debt['id_kel_ktp'],
+                /*'tinggi_badan'          => $val->debt['tinggi_badan'],
+                'berat_badan'           => $val->debt['berat_badan'],
+                'pekerjaan'             => $val->debt['pekerjaan'],
+                'posisi'                => $val->debt['posisi'],
+                'jenis_pekerjaan'       => $val->debt['jenis_pekerjaan'],
+                'tempat_kerja' => [
+                    'nama_tempat_kerja' => $val->debt['nama_tempat_kerja'],
+                    'alamat'   => $val->debt['alamat_tempat_kerja'],
+                    'rt'       => $val->debt['rt_tempat_kerja'],
+                    'rw'       => $val->debt['rw_tempat_kerja'],
+                    'kelurahan' => [
+                        'id'    => $debt->id_kel_tempat_kerja,
+                        'nama'  => $debt->kel_kerja['nama']
+                    ],
+                    'kecamatan' => [
+                        'id'    => $debt->id_kec_tempat_kerja,
+                        'nama'  => $debt->kec_kerja['nama']
+                    ],
+                    'kabupaten' => [
+                        'id'    => $debt->id_kab_tempat_kerja,
+                        'nama'  => $debt->kab_kerja['nama'],
+                    ],
+                    'povinsi'  => [
+                        'id'   => $debt->id_prov_tempat_kerjap,
+                        'nama' => $debt->prov_kerja['nama'],
+                    ],
+                    'kode_pos' => $debt->kel_kerja['kode_pos']
+                ],*/
+                // 'tgl_mulai_kerja'       => $val->debt['tgl_mulai_kerja'],
+                // 'no_telp_tempat_kerja'  => $val->debt['no_telp_tempat_kerja'],
+                'lampiran' => [
+                    // 'lamp_surat_cerai'      => $val->debt['lamp_surat_cerai'],
+                    'lamp_ktp'              => $val->debt['lamp_ktp'],
+                    'lamp_kk'               => $val->debt['lamp_kk'],
+                    // 'lamp_buku_tabungan'    => $val->debt['lamp_buku_tabungan'],
+                    'lamp_sttp_pbb'         => $val->debt['lamp_sttp_pbb'],
+                    'lamp_sertifikat'       => $val->debt['lamp_sertifikat'],
+                    'lamp_imb'              => $val->debt['lamp_imb'],
+                    // 'lamp_sku'              => $val->debt['lamp_sku'],
+                    // 'lamp_slip_gaji'        => $val->debt['lamp_slip_gaji'],
+                    'lamp_foto_usaha'       => $val->debt['lamp_foto_usaha']
+                ]
+            ],
 
-            'alamat_domisili'       => $val->debt['alamat_domisili'],
-            'rt_domisili'           => $val->debt['rt_domisili'],
-            'rw_domisili'           => $val->debt['rw_domisili'],
+            'pasangan'         => [
+                'id'                => $val->id_pasangan,
+                'nama'              => $val->pas['nama_lengkap'],
+                'nama_ibu_kandung'    => $val->pas['nama_ibu_kandung'],
+                // 'gelar_keagamaan'     => $pas['gelar_keagamaan'],
+                // 'gelar_pendidikan'    => $pas['gelar_pendidikan'],
+                'jenis_kelamin'       => $val->pas['jenis_kelamin'],
+                'no_ktp'              => $val->pas['no_ktp'],
+                'no_ktp_kk'           => $val->pas['no_ktp_kk'],
+                'no_npwp'             => $val->pas['no_npwp'],
+                'tempat_lahir'        => $val->pas['tempat_lahir'],
+                'tgl_lahir'           => $val->pas['tgl_lahir'],
+                'alamat_ktp'          => $val->pas['alamat_ktp'],
+                'no_telp'             => $val->pas['no_telp'],
+                /*'pekerjaan'           => $pas['pekerjaan'],
+                'posisi_pekerjaan'    => $pas['posisi_pekerjaan'],
+                'nama_tempat_kerja'   => $pas['nama_tempat_kerja'],
+                'jenis_pekerjaan'     => $pas['jenis_pekerjaan'],
+                'tempat_kerja' => [
+                    'nama_tempat_kerja' => $pas['nama_tempat_kerja'],
+                    'alamat'   => $pas['alamat_tempat_kerja'],
+                    'rt'       => $pas['rt_tempat_kerja'],
+                    'rw'       => $pas['rw_tempat_kerja'],
+                    'kelurahan' => [
+                        'id'    => $pas->id_kel_tempat_kerja,
+                        'nama'  => $pas->kel_kerja['nama']
+                    ],
+                    'kecamatan' => [
+                        'id'    => $pas->id_kec_tempat_kerja,
+                        'nama'  => $pas->kec_kerja['nama']
+                    ],
+                    'kabupaten' => [
+                        'id'    => $pas->id_kab_tempat_kerja,
+                        'nama'  => $pas->kab_kerja['nama'],
+                    ],
+                    'povinsi'  => [
+                        'id'   => $pas->id_prov_tempat_kerja,
+                        'nama' => $pas->prov_kerja['nama'],
+                    ],
+                    'kode_pos' => $pas->kel_kerja['kode_pos']
+                ],
+                'tgl_mulai_kerja'     => $pas['tgl_mulai_kerja'],
+                'no_telp_tempat_kerja'=> $pas['no_telp_tempat_kerja'],*/
+                'lampiran' => [
+                    'lamp_ktp'        => $val->pas['lamp_ktp'],
+                    'lamp_buku_nikah' => $val->pas['lamp_buku_nikah']
+                ]
+            ],
+            'penjamin' => $penjamin,
+            // "penjamin" => [
+            //     "nama"             => $val->penj['nama_ktp'],
+            //     "nama_ibu_kandung" => $val->penj['nama_ibu_kandung'],
+            //     "no_ktp"           => $val->penj['no_ktp'],
+            //     "no_npwp"          => $val->penj['no_npwp'],
+            //     "tempat_lahir"     => $val->penj['tempat_lahir'],
+            //     "tgl_lahir"        => $val->penj['tgl_lahir'],
+            //     "jenis_kelamin"    => $val->penj['jenis_kelamin'],
+            //     "alamat_ktp"       => $val->penj['alamat_ktp'],
+            //     "no_telp"          => $val->penj['no_telp'],
+            //     "hubungan_debitur" => $val->penj['hubungan_debitur'],
+            //     "lampiran" => [
+            //         "lamp_ktp"          => $val->penj['lamp_ktp'],
+            //         "lamp_ktp_pasangan" => $val->penj['lamp_ktp_pasangan'],
+            //         "lamp_kk"           => $val->penj['lamp_kk'],
+            //         "lamp_buku_nikah"   => $val->penj['lamp_buku_nikah']
+            //     ],
+            // ],
 
-            'id_prov_domisili'      => $val->debt['id_prov_domisili'],
-            'id_kab_domisili'       => $val->debt['id_kab_domisili'],
-            'id_kec_domisili'       => $val->debt['id_kec_domisili'],
-            'id_kel_domisili'       => $val->debt['id_kel_domisili'],
-
-            'pendidikan_terakhir'   => $val->debt['pendidikan_terakhir'],
-            'jumlah_tanggungan'     => $val->debt['jumlah_tanggungan'],
-            'no_telp'               => $val->debt['no_telp'],
-            'no_hp'                 => $val->debt['no_hp'],
-            'alamat_surat'          => $val->debt['alamat_surat'],
-
-            'anak'                  => $anak,
-
-            'tinggi_badan'          => $val->debt['tinggi_badan'],
-            'berat_badan'           => $val->debt['berat_badan'],
-            'pekerjaan'             => $val->debt['pekerjaan'],
-            'posisi'                => $val->debt['posisi'],
-            'nama_tempat_kerja'     => $val->debt['nama_tempat_kerja'],
-            'jenis_pekerjaan'       => $val->debt['jenis_pekerjaan'],
-            'alamat_tempat_kerja'   => $val->debt['alamat_tempat_kerja'],
-
-            'id_prov_tempat_kerja'  => $val->debt['id_prov_tempat_kerja'],
-            'id_kab_tempat_kerja'   => $val->debt['id_kab_tempat_kerja'],
-            'id_kec_tempat_kerja'   => $val->debt['id_kec_tempat_kerja'],
-            'id_kel_tempat_kerja'   => $val->debt['id_kel_tempat_kerja'],
-
-            'rt_tempat_kerja'       => $val->debt['rt_tempat_kerja'],
-            'rw_tempat_kerja'       => $val->debt['rw_tempat_kerja'],
-            'tgl_mulai_kerja'       => $val->debt['tgl_mulai_kerja'],
-            'no_telp_tempat_kerja'  => $val->debt['no_telp_tempat_kerja'],
-            'lamp_surat_cerai'      => $val->debt['lamp_surat_cerai'],
-            'lamp_ktp'              => $val->debt['lamp_ktp'],
-            'lamp_kk'               => $val->debt['lamp_kk'],
-            'lamp_buku_tabungan'    => $val->debt['lamp_buku_tabungan'],
-            'lamp_sttp_pbb'         => $val->debt['lamp_sttp_pbb'],
-            'lamp_sertifikat'       => $val->debt['lamp_sertifikat'],
-            'lamp_imb'              => $val->debt['lamp_imb'],
-            'lamp_sku'              => $val->debt['lamp_sku'],
-            'lamp_slip_gaji'        => $val->debt['lamp_slip_gaji'],
-            'lamp_foto_usaha'       => $val->debt['lamp_foto_usaha'],
-
-            'id_pasangan'           => $val->id_pasangan,
-            'id_penjamin'           => $val->id_pasangan,
-            'id_agunan_tanah'       => $val->id_agunan_tanah,
-            'id_agunan_kendaraan'   => $val->id_agunan_kendaraan,
-            'id_periksa_agunan_tanah'=> $val->id_periksa_agunan_tanah,
-            'id_periksa_agunan_kendaraan'=>$val->id_periksa_agunan_tanah,
-            'id_usaha'              => $val->id_usaha,
+            // 'id_agunan_tanah'       => $val->id_agunan_tanah,
+            // 'id_agunan_kendaraan'   => $val->id_agunan_kendaraan,
+            // 'id_periksa_agunan_tanah'=> $val->id_periksa_agunan_tanah,
+            // 'id_periksa_agunan_kendaraan'=>$val->id_periksa_agunan_tanah,
+            // 'id_usaha'              => $val->id_usaha,
             'flg_aktif'             => $val->flg_aktif == 0 ? "true" : "false"
         ];
 

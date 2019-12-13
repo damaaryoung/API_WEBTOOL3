@@ -66,8 +66,4 @@ class TransSo extends Model implements AuthenticatableContract, AuthorizableCont
     public function usaha(){
         return $this->belongsTo('App\Models\CC\KeuanganUsaha', 'id_usaha');
     }
-
-    public function prov(){
-        return $this->belongsTo('App\Models\Wilayah\Provinsi');
-    }
 }

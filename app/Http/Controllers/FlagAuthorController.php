@@ -16,7 +16,6 @@ class FlagAuthorController extends BaseController
     // Otorisasi
     public function otoIndex(Request $req) {
         $user_id = $req->auth->user_id;
-        // $user_id = '1131';
 
         try {
             $query = FlgOto::where('id_modul',0)
@@ -83,7 +82,6 @@ class FlagAuthorController extends BaseController
 
     public function otoShow($id, Request $req) {
         $user_id = $req->auth->user_id;
-        // $user_id = '1131';
 
         try {
             $query = FlgOto::where('id_modul',0)
@@ -149,9 +147,7 @@ class FlagAuthorController extends BaseController
     }
 
     public function otoUpdate($id, Request $req) {
-        // $user_id = $req->auth->user_id;
-        // $user_id = '1131';
-        $user_id = '1130';
+        $user_id = $req->auth->user_id;
 
         $Now = Carbon::now()->toDateTimeString();
 
@@ -169,8 +165,7 @@ class FlagAuthorController extends BaseController
         //     'user_id' => $user_id
         // );
 
-        $fcm   = "cqqsX8VcUd0:APA91bFsJfGRuPnRaLUSphLLGSKHhYesHHtzo1QRYkla4mVWe1DEiBWjPChZ_Opd8VRUit1Lek1fESlY1tSd_wFS98imEMirZyBaXTjuzR2LWBAZvWbKgIiLdM1-TqraBC6aREwa8Zs";
-        // $fcm   = $checkFCM->fcm_token;
+        $fcm   = $checkFCM->fcm_token;
         $title = $checkFLG->subject;
         $msg   = 'Otorisasi berhasil di setujui';
 
@@ -188,8 +183,6 @@ class FlagAuthorController extends BaseController
             }else{
                 $push = null;
             }
-
-            // dd($push);
 
             DB::connection('web')->commit();
 
@@ -219,7 +212,6 @@ class FlagAuthorController extends BaseController
     // Approval
     public function aproIndex(Request $req) {
         $user_id = $req->auth->user_id;
-        // $user_id = '1131';
 
         try {
             $query = FlgOto::where('id_modul', '>',0)
@@ -286,7 +278,6 @@ class FlagAuthorController extends BaseController
 
     public function aproShow($id, Request $req) {
         $user_id = $req->auth->user_id;
-        // $user_id = '1131';
 
         try {
             $query = FlgOto::where('id_modul', '>',0)
@@ -352,7 +343,6 @@ class FlagAuthorController extends BaseController
 
     public function aproUpdate($id, Request $req) {
         $user_id = $req->auth->user_id;
-        // $user_id = '1131';
 
         $Now = Carbon::now()->toDateTimeString();
 
@@ -407,7 +397,6 @@ class FlagAuthorController extends BaseController
     // Count Otorisasi
     public function countOto(Request $req){
         $user_id = $req->auth->user_id;
-        // $user_id = '1131';
 
         $query = FlgOto::where('id_modul',0)
                 ->where('user_id', $user_id)
@@ -432,7 +421,6 @@ class FlagAuthorController extends BaseController
     // Count Approval
     public function countApro(Request $req){
         $user_id = $req->auth->user_id;
-        // $user_id = '1131';
 
         $query = FlgOto::where('id_modul', '>',0)
                     ->where('user_id', $user_id)
@@ -457,7 +445,6 @@ class FlagAuthorController extends BaseController
     // Historisasi After AOtorisasi
     public function AfterOto(Request $req) {
         $user_id = $req->auth->user_id;
-        // $user_id = '1131';
 
         try {
             $query = FlgOto::where('id_modul',0)
@@ -526,7 +513,6 @@ class FlagAuthorController extends BaseController
     // Detail Historisasi After Otorisasi
     public function DetailAfterOto($id, Request $req) {
         $user_id = $req->auth->user_id;
-        // $user_id = '1131';
 
         try {
             $query = FlgOto::where('id_modul',0)
@@ -594,7 +580,6 @@ class FlagAuthorController extends BaseController
     // Historisasi After Approval
     public function AfterApro(Request $req) {
         $user_id = $req->auth->user_id;
-        // $user_id = '1131';
 
         try {
             $query = FlgOto::where('id_modul', '>',0)
@@ -663,7 +648,6 @@ class FlagAuthorController extends BaseController
     // Detail Historisasi After Approval
     public function DetailAfterApro($id, Request $req) {
         $user_id = $req->auth->user_id;
-        // $user_id = '1131';
 
         try {
             $query = FlgOto::where('id_modul', '>',0)
@@ -732,7 +716,6 @@ class FlagAuthorController extends BaseController
     // Rejected Otorisasi
     public function rejectOto($id, Request $req) {
         $user_id = $req->auth->user_id;
-        // $user_id = '1131';
 
         $Now = Carbon::now()->toDateTimeString();
 
@@ -804,14 +787,6 @@ class FlagAuthorController extends BaseController
 
         $because = empty($req->input('keterangan')) ? $checkFLG->keterangan : $req->input('keterangan');
 
-        // if (!$because) {
-        //     return response()->json([
-        //         "code"    => 422,
-        //         "status"  => "not valid request",
-        //         "message" => "keterangan harus diisi"
-        //     ], 422);
-        // }
-
         $fcm   = $checkFCM->fcm_token;
         $title = $checkFLG->subject;
         $msg   = 'Approval berhasil ditolak';
@@ -858,7 +833,6 @@ class FlagAuthorController extends BaseController
     // Reset Otorisasi
     public function otoReset($id, Request $req) {
         $user_id = $req->auth->user_id;
-        // $user_id = '1131';
 
         $Now = Carbon::now()->toDateTimeString();
 
@@ -887,7 +861,6 @@ class FlagAuthorController extends BaseController
     // Reset Approval
     public function aproReset($id, Request $req) {
         $user_id = $req->auth->user_id;
-        // $user_id = '1131';
 
         $Now = Carbon::now()->toDateTimeString();
 
