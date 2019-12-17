@@ -25,9 +25,7 @@ use DB;
 class MasterCA_Controller extends BaseController
 {
     public function index(Request $req){
-        // $user_id = $req->auth->user_id;
         $kode_kantor = $req->auth->kd_cabang;
-        // dd($kode_kantor);
         $query = TransAO::where('kode_kantor', $kode_kantor)->where('status_ao', 1)->get();
 
         if ($query == '[]') {
@@ -70,7 +68,6 @@ class MasterCA_Controller extends BaseController
     }
 
     public function show($id, Request $req){
-        // $user_id = $req->auth->user_id;
         $kode_kantor = $req->auth->kd_cabang;
         $query = TransAO::where('id_trans_so', $id)->where('kode_kantor', $kode_kantor)->where('status_ao', 1)->get();
 
@@ -118,11 +115,11 @@ class MasterCA_Controller extends BaseController
                     'status_nikah'          => $val->debt['status_nikah'],
                     'ibu_kandung'           => $val->debt['ibu_kandung'],
                     'no_ktp'                => $val->debt['no_ktp'],
-                    'no_ktp_kk'             => $val->debt[''],
-                    'no_kk'                 => $val->debt['no_ktp_kk'],
+                    'no_ktp_kk'             => $val->debt['no_ktp_kk'],
+                    'no_kk'                 => $val->debt['no_ktp'],
                     'no_npwp'               => $val->debt['no_npwp'],
                     'tempat_lahir'          => $val->debt['tempat_lahir'],
-                    'tgl_lahir'             => $val->debt['tgl_lahir'],
+                    'tgl_lahir'             => Carbon::parse($val->debt['tgl_lahir'])->format('d-m-Y'),
                     'agama'                 => $val->debt['agama'],
                     'alamat_ktp'            => $val->debt['alamat_ktp'],
                     'rt_ktp'                => $val->debt['rt_ktp'],
@@ -157,7 +154,7 @@ class MasterCA_Controller extends BaseController
                     'no_ktp_kk'        => $val->pas['no_ktp_kk'],
                     'no_npwp'          => $val->pas['no_npwp'],
                     'tempat_lahir'     => $val->pas['tempat_lahir'],
-                    'tgl_lahir'        => $val->pas['tgl_lahir'],
+                    'tgl_lahir'        => Carbon::parse($val->pas['tgl_lahir'])->format('d-m-Y'),
                     'alamat_ktp'       => $val->pas['alamat_ktp'],
                     'no_telp'          => $val->pas['no_telp'],
                     'lamp_buku_nikah'  => $val->pas['lamp_buku_nikah']
@@ -293,7 +290,7 @@ class MasterCA_Controller extends BaseController
             'tinggi_badan'          => empty($reqDebt->input('tinggi_badan')) ? $debitur->tinggi_badan : $reqDebt->input('tinggi_badan'),
             'berat_badan'           => empty($reqDebt->input('berat_badan')) ? $debitur->berat_badan : $reqDebt->input('berat_badan'),
             'nama_anak'             => $nama_anak,
-            'tgl_lahir_anak'        => $tgl_lhr_anak,
+            'tgl_lahir_anak'        => Carbon::parse($tgl_lhr_anak)->format('d-m-Y'),
             'alamat_surat'          => empty($reqDebt->input('alamat_surat')) ? $debitur->alamat_surat : $reqDebt->input('alamat_surat'),
             'pekerjaan'             => empty($reqDebt->input('pekerjaan')) ? $debitur->pekerjaan : $reqDebt->input('pekerjaan'),
             'posisi_pekerjaan'      => empty($reqDebt->input('posisi_pekerjaan')) ? $debitur->posisi_pekerjaan : $reqDebt->input('posisi_pekerjaan'),
@@ -306,7 +303,7 @@ class MasterCA_Controller extends BaseController
             'id_kel_tempat_kerja'   => $reqDebt->input('id_kel_tempat_kerja'),
             'rt_tempat_kerja'       => $reqDebt->input('rt_tempat_kerja'),
             'rw_tempat_kerja'       => $reqDebt->input('rw_tempat_kerja'),
-            'tgl_mulai_kerja'       => $reqDebt->input('tgl_mulai_kerja'),
+            'tgl_mulai_kerja'       => Carbon::parse($reqDebt->input('tgl_mulai_kerja'))->format('Y-m-d'),
             'no_telp_tempat_kerja'  => $reqDebt->input('no_telp_tempat_kerja'),
             'lamp_buku_tabungan'    => $tabungan,
             'lamp_sku'              => $sku,
@@ -325,7 +322,7 @@ class MasterCA_Controller extends BaseController
             'id_kel_tempat_kerja'   => $reqPas->input('id_kel_tempat_kerja_pas'),
             'rt_tempat_kerja'       => $reqPas->input('rt_tempat_kerja_pas'),
             'rw_tempat_kerja'       => $reqPas->input('rw_tempat_kerja_pas'),
-            'tgl_mulai_kerja'       => $reqPas->input('tgl_mulai_kerja_pas'),
+            'tgl_mulai_kerja'       => Carbon::parse($reqPas->input('tgl_mulai_kerja_pas'))->format('Y-m-d'),
             'no_telp_tempat_kerja'  => $reqPas->input('no_telp_tempat_kerja_pas')
         );
 
@@ -622,7 +619,7 @@ class MasterCA_Controller extends BaseController
                     'id_kel_tempat_kerja'   => empty($reqPen->id_kel_tempat_kerja_pen[$i]) ? null[$i] : $reqPen->id_kel_tempat_kerja_pen[$i],
                     'rt_tempat_kerja'       => empty($reqPen->rt_tempat_kerja_pen[$i]) ? null[$i] : $reqPen->rt_tempat_kerja_pen[$i],
                     'rw_tempat_kerja'       => empty($reqPen->rw_tempat_kerja_pen[$i]) ? null[$i] : $reqPen->rw_tempat_kerja_pen[$i],
-                    'tgl_mulai_kerja'       => empty($reqPen->tgl_mulai_kerja_pen[$i]) ? null[$i] : $reqPen->tgl_mulai_kerja_pen[$i],
+                    'tgl_mulai_kerja'       => empty($reqPen->tgl_mulai_kerja_pen[$i]) ? null[$i] : Carbon::parse($reqPen->tgl_mulai_kerja_pen[$i])->format('Y-m-d'),,
                     'no_telp_tempat_kerja'  => empty($reqPen->no_telp_tempat_kerja_pen[$i]) ? null[$i] : $reqPen->no_telp_tempat_kerja_pen[$i]
                 );
 

@@ -107,13 +107,14 @@ class KelurahanController extends BaseController
     public function show($IdOrName) {
         $res = array();
         if(preg_match("/^[0-9]{1,}$/", $IdOrName)){
-            $query = Kelurahan::with('kec')->select('id', 'nama', 'id_kecamatan', 'flg_aktif')->where('id', $IdOrName)->first();
+            $query = Kelurahan::with('kec')->select('id', 'nama', 'id_kecamatan', 'kode_pos', 'flg_aktif')->where('id', $IdOrName)->first();
 
             $res = [
                 'id'             => $query->id,
                 'nama'           => $query->nama,
                 'id_kecamatan'   => $query->id_kecamatan,
                 'nama_kecamatan' => $query->kec['nama'],
+                'kode_pos'       => $query->kode_pos,
                 'flg_aktif'      => $query->flg_aktif == 0 ? "false" : "true"
             ];
         }else{

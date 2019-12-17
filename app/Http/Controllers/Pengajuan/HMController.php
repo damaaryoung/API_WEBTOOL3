@@ -22,8 +22,6 @@ use DB;
 class HMController extends BaseController
 {
     public function index(Request $req){
-        // $user_id = $req->auth->user_id;
-
         $kode_kantor = $req->auth->kd_cabang;
         $query = TransSo::where('kode_kantor', $kode_kantor)->get();
 
@@ -84,7 +82,7 @@ class HMController extends BaseController
                 "message" => $e
             ], 501);
         }
-    }
+    }use App\Http\Requests\Bisnis\BlankRequest;
 
     // public function whereKode($kode, Request $req){
     //     $query = TransSo::where('kode_kantor', '=', $kode)->get();
@@ -113,7 +111,6 @@ class HMController extends BaseController
     // }
 
     public function show($id, Request $req){
-        // $user_id = $req->auth->user_id;
         $kode_kantor = $req->auth->kd_cabang;
         $query = TransSo::where('id', $id)->where('kode_kantor', $kode_kantor)->get();
 
@@ -180,7 +177,7 @@ class HMController extends BaseController
                     'no_kk'                 => $val->debt['no_ktp_kk'],
                     'no_npwp'               => $val->debt['no_npwp'],
                     'tempat_lahir'          => $val->debt['tempat_lahir'],
-                    'tgl_lahir'             => $val->debt['tgl_lahir'],
+                    'tgl_lahir'             => Carbon::parse($val->debt['tgl_lahir'])->format('d-m-Y'),
                     'agama'                 => $val->debt['agama'],
                     'alamat_ktp'            => $val->debt['alamat_ktp'],
                     'rt_ktp'                => $val->debt['rt_ktp'],
@@ -215,7 +212,7 @@ class HMController extends BaseController
                     'no_ktp_kk'        => $val->pas['no_ktp_kk'],
                     'no_npwp'          => $val->pas['no_npwp'],
                     'tempat_lahir'     => $val->pas['tempat_lahir'],
-                    'tgl_lahir'        => $val->pas['tgl_lahir'],
+                    'tgl_lahir'        => Carbon::parse($val->pas['tgl_lahir'])->format('d-m-Y'),
                     'alamat_ktp'       => $val->pas['alamat_ktp'],
                     'no_telp'          => $val->pas['no_telp'],
                     'lamp_ktp'         => $val->pas['lamp_ktp'],

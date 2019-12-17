@@ -135,11 +135,11 @@ $router->group(['middleware' => 'jwt.auth'], function () use ($router) {
             $router->post('/mcc', 'Pengajuan\MasterCC_Controller@store'); // Memorandum Credit Checking
             $router->get('/mcc', 'Pengajuan\MasterCC_Controller@index');
             $router->get('/mcc/{id}', 'Pengajuan\MasterCC_Controller@show');
-            $router->post('/mcc/{id}', 'Pengajuan\MasterCC_Controller@update');
+            $router->post('/mcc/{id}', 'Pengajuan\MasterCC_Controller@update'); // Update MCC
 
             $router->get('/das', 'Pengajuan\DASController@index'); //Cek HM
             $router->get('/das/{id}', 'Pengajuan\DASController@show'); //Cek HM
-            $router->get('/das/kode_area/{kode}', 'Pengajuan\DASController@whereKode'); //Cek HM
+            //$router->get('/das/kode_area/{kode}', 'Pengajuan\DASController@whereKode'); //Cek HM
             $router->put('/das/{id}', 'Pengajuan\DASController@update'); //Cek HM
 
             $router->get('/hm', 'Pengajuan\HMController@index'); //Cek HM

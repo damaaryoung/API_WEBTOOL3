@@ -26,4 +26,20 @@ class Kelurahan extends Model implements AuthenticatableContract, AuthorizableCo
     public function kec(){
         return $this->belongsTo('App\Models\Wilayah\Kecamatan', 'id_kecamatan')->select(['id', 'nama']);
     }
+
+    public function debt(){
+        return $this->hasMany('App\Models\CC\Debitur');
+    }
+
+    public function pas(){
+        return $this->hasMany('App\Models\CC\Pasangan');
+    }
+
+    public function penj(){
+        return $this->hasMany('App\Models\CC\Penjamin');
+    }
+
+    public function tanah(){
+        return $this->hasMany('App\Models\CC\AgunanTanah');
+    }
 }

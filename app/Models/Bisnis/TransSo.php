@@ -35,6 +35,7 @@ class TransSo extends Model implements AuthenticatableContract, AuthorizableCont
         return $this->belongsTo('App\Models\CC\Debitur', 'id_calon_debt');
     }
 
+
     public function faspin(){
         return $this->belongsTo('App\Models\CC\FasilitasPinjaman', 'id_fasilitas_pinjaman');
     }
@@ -43,15 +44,15 @@ class TransSo extends Model implements AuthenticatableContract, AuthorizableCont
         return $this->belongsTo('App\Models\CC\Pasangan', 'id_pasangan');
     }
 
-    public function penj(){
-        return $this->belongsTo('App\Models\CC\Penjamin', 'id_penjamin');
-    }
+    // public function penj(){
+    //     return $this->belongsTo('App\Models\CC\Penjamin', 'id_penjamin');
+    // }
 
-    public function tanah(){
+    public function tan(){
         return $this->belongsTo('App\Models\CC\AgunanTanah', 'id_agunan_tanah');
     }
 
-    public function kendaraan(){
+    public function ken(){
         return $this->belongsTo('App\Models\CC\AgunanKendaraan', 'id_agunan_kendaraan');
     }
 
