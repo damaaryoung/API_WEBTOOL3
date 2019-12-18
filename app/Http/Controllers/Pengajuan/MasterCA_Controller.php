@@ -489,7 +489,7 @@ class MasterCA_Controller extends BaseController
                     'id_calon_debitur'        => $Trans->id_calon_debt,
                     'tipe_lokasi'             => empty($reqAta->tipe_lokasi_agunan[$i]) ? null[$i] : strtoupper($reqAta->tipe_lokasi_agunan[$i]),
                     'alamat'                  => empty($reqAta->alamat_agunan[$i]) ? null[$i] : $reqAta->alamat_agunan[$i],
-                    'id_povinsi'              => empty($reqAta->id_prov_agunan[$i]) ? null[$i] : $reqAta->id_prov_agunan[$i],
+                    'id_provinsi'              => empty($reqAta->id_prov_agunan[$i]) ? null[$i] : $reqAta->id_prov_agunan[$i],
                     'id_kabupaten'            => empty($reqAta->id_kab_agunan[$i]) ? null[$i] : $reqAta->id_kab_agunan[$i],
                     'id_kecamatan'            => empty($reqAta->id_kec_agunan[$i]) ? null[$i] : $reqAta->id_kec_agunan[$i],
                     'id_kelurahan'            => empty($reqAta->id_kel_agunan[$i]) ? null[$i] : $reqAta->id_kel_agunan[$i],

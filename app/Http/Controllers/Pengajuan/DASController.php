@@ -77,32 +77,6 @@ class DASController extends BaseController
         }
     }
 
-    // public function whereKode($kode, Request $req){
-    //     $query = TransSo::where('kode_kantor', '=', $kode)->get();
-
-    //     if ($query == '[]') {
-    //         return response()->json([
-    //             'code'    => 404,
-    //             'status'  => 'not found',
-    //             'message' => 'Data kosong'
-    //         ], 404);
-    //     }
-
-    //     try {
-    //         return response()->json([
-    //             'code'   => 200,
-    //             'status' => 'success',
-    //             'data'   => $query
-    //         ], 200);
-    //     } catch (Exception $e) {
-    //         return response()->json([
-    //             "code"    => 501,
-    //             "status"  => "error",
-    //             "message" => $e
-    //         ], 501);
-    //     }
-    // }
-
     public function show($id, Request $req){
         $kode_kantor = $req->auth->kd_cabang;
         $val = TransSo::where('id', $id)->where('kode_kantor', $kode_kantor)->first();
@@ -114,39 +88,36 @@ class DASController extends BaseController
             ], 404);
         }
 
-        // $prov_ktp = Provinsi::where('id', $query[0]->debt['id_prov_ktp'])->first();
-        // $kab_ktp  = Kabupaten::where('id', $query[0]->debt['id_kab_ktp'])->first();
-        // $kec_ktp  = Kecamatan::where('id', $query[0]->debt['id_kec_ktp'])->first();
-        // $kel_ktp  = Kelurahan::where('id', $query[0]->debt['id_kel_ktp'])->first();
+        $id_penj = explode (",",$val->id_penjamin);
 
-        // $prov_dom = Provinsi::where('id', $query[0]->debt['id_prov_domisili'])->first();
-        // $kab_dom  = Kabupaten::where('id', $query[0]->debt['id_kab_domisili'])->first();
-        // $kec_dom  = Kecamatan::where('id', $query[0]->debt['id_kec_domisili'])->first();
-        // $kel_dom  = Kelurahan::where('id', $query[0]->debt['id_kel_domisili'])->first();
+        $pen = Penjamin::whereIn('id', $id_penj)->get();
 
-        $pen = Penjamin::where('id_calon_debitur', $val->id_calon_debt)->get();
-
-        foreach ($pen as $key => $value) {
-            $penjamin[$key] = [
-                "id"               => $value->id,
-                "nama_ktp"         => $value->nama_ktp,
-                "nama_ibu_kandung" => $value->nama_ibu_kandung,
-                "no_ktp"           => $value->no_ktp,
-                "no_npwp"          => $value->no_npwp,
-                "tempat_lahir"     => $value->tempat_lahir,
-                "tgl_lahir"        => Carbon::parse($value->tgl_lahir)->format('d-m-Y'),
-                "jenis_kelamin"    => $value->jenis_kelamin,
-                "alamat_ktp"       => $value->alamat_ktp,
-                "no_telp"          => $value->no_telp,
-                "hubungan_debitur" => $value->hubungan_debitur,
-                "lampiran" => [
-                    "lamp_ktp"          => $value->lamp_ktp,
-                    "lamp_ktp_pasangan" => $value->lamp_ktp_pasangan,
-                    "lamp_kk"           => $value->lamp_kk,
-                    "lamp_buku_nikah"   => $value->lamp_buku_nikah
-                ]
-            ];
+        if ($pen != '[]') {
+            foreach ($pen as $key => $value) {
+                $penjamin[$key] = [
+                    "id"               => $value->id,
+                    "nama_ktp"         => $value->nama_ktp,
+                    "nama_ibu_kandung" => $value->nama_ibu_kandung,
+                    "no_ktp"           => $value->no_ktp,
+                    "no_npwp"          => $value->no_npwp,
+                    "tempat_lahir"     => $value->tempat_lahir,
+                    "tgl_lahir"        => Carbon::parse($value->tgl_lahir)->format('d-m-Y'),
+                    "jenis_kelamin"    => $value->jenis_kelamin,
+                    "alamat_ktp"       => $value->alamat_ktp,
+                    "no_telp"          => $value->no_telp,
+                    "hubungan_debitur" => $value->hubungan_debitur,
+                    "lampiran" => [
+                        "lamp_ktp"          => $value->lamp_ktp,
+                        "lamp_ktp_pasangan" => $value->lamp_ktp_pasangan,
+                        "lamp_kk"           => $value->lamp_kk,
+                        "lamp_buku_nikah"   => $value->lamp_buku_nikah
+                    ]
+                ];
+            }
+        }else{
+            $penjamin = null;
         }
+
 
         if ($val->status_das == 1) {
             $status = 'complete';

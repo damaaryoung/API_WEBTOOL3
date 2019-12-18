@@ -5,18 +5,24 @@ namespace App\Http\Controllers\Pengajuan;
 use Laravel\Lumen\Routing\Controller as BaseController;
 use App\Http\Controllers\Controller as Helper;
 use App\Http\Requests\Bisnis\BlankRequest;
-use Illuminate\Support\Facades\File;
 use App\Models\CC\PemeriksaanAgunTan;
 use App\Models\CC\PemeriksaanAgunKen;
+use Illuminate\Support\Facades\File;
 use App\Models\CC\AgunanKendaraan;
-use App\Models\CC\AgunanTanah;
+use App\Models\Bisnis\ValidModel;
+use App\Models\Bisnis\VerifModel;
 use App\Models\AreaKantor\Cabang;
+use App\Models\CC\KeuanganUsaha;
 use App\Models\AreaKantor\JPIC;
 use App\Models\AreaKantor\PIC;
 use App\Models\Bisnis\TransAO;
 use App\Models\Bisnis\TransSo;
+use App\Models\CC\AgunanTanah;
+use App\Models\CC\KapBulanan;
 use Illuminate\Http\Request;
 use App\Models\CC\Penjamin;
+use App\Models\CC\Pasangan;
+use App\Models\CC\Debitur;
 use App\Http\Requests;
 use App\Models\User;
 use Carbon\Carbon;
@@ -103,43 +109,48 @@ class MasterAO_Controller extends BaseController
 
         $penjamin = Penjamin::whereIn('id', $id_penj)->get();
 
-        foreach ($penjamin as $key => $value) {
-            $pen[$key] = [
-                "id"                    => $value->id,
-                "nama_ktp"              => $value->nama_ktp,
-                "nama_ibu_kandung"      => $value->nama_ibu_kandung,
-                "no_ktp"                => $value->no_ktp,
-                "no_npwp"               => $value->no_npwp,
-                "tempat_lahir"          => $value->tempat_lahir,
-                "tgl_lahir"             => Carbon::parse($value->tgl_lahir)->format('d-m-Y'),
-                "jenis_kelamin"         => $value->jenis_kelamin,
-                "alamat_ktp"            => $value->alamat_ktp,
-                "no_telp"               => $value->no_telp,
-                "hubungan_debitur"      => $value->hubungan_debitur,
-                "pekerjaan"             => $value->pekerjaan,
-                "posisi_pekerjaan"      => $value->posisi_pekerjaan,
-                "nama_tempat_kerja"     => $value->nama_tempat_kerja,
-                "jenis_pekerjaan"       => $value->jenis_pekerjaan,
-                "alamat_tempat_kerja"   => $value->alamat_tempat_kerja,
-                "id_prov_tempat_kerja"  => $value->id_prov_tempat_kerja,
-                "nama_prov_tempat_kerja"=> $value->prov_kerja['nama'],
-                "id_kab_tempat_kerja"   => $value->id_kab_tempat_kerja,
-                "nama_kab_tempat_kerja" => $value->kab_kerja['nama'],
-                "id_kec_tempat_kerja"   => $value->id_kec_tempat_kerja,
-                "nama_kec_tempat_kerja" => $value->kec_kerja['nama'],
-                "id_kel_tempat_kerja"   => $value->id_kel_tempat_kerja,
-                "nama_kel_tempat_kerja" => $value->kel_kerja['nama'],
-                "kode_pos_tempat_kerja" => $value->kel_kerja['kode_pos'],
-                "rt_tempat_kerja"       => $value->rt_tempat_kerja,
-                "rw_tempat_kerja"       => $value->rw_tempat_kerja,
-                "tgl_mulai_kerja"       => Carbon::parse($value->tgl_mulai_kerja)->format('d-m-Y'),
-                "no_telp_tempat_kerja"  => $value->no_telp_tempat_kerja,
-                "lamp_ktp"              => $value->lamp_ktp,
-                "lamp_ktp_pasangan"     => $value->lamp_ktp_pasangan,
-                "lamp_kk"               => $value->lamp_kk,
-                "lamp_buku_nikah"       => $value->lamp_buku_nikah
-            ];
+        if ($penjamin != '[]') {
+            foreach ($penjamin as $key => $value) {
+                $pen[$key] = [
+                    "id"                    => $value->id,
+                    "nama_ktp"              => $value->nama_ktp,
+                    "nama_ibu_kandung"      => $value->nama_ibu_kandung,
+                    "no_ktp"                => $value->no_ktp,
+                    "no_npwp"               => $value->no_npwp,
+                    "tempat_lahir"          => $value->tempat_lahir,
+                    "tgl_lahir"             => Carbon::parse($value->tgl_lahir)->format('d-m-Y'),
+                    "jenis_kelamin"         => $value->jenis_kelamin,
+                    "alamat_ktp"            => $value->alamat_ktp,
+                    "no_telp"               => $value->no_telp,
+                    "hubungan_debitur"      => $value->hubungan_debitur,
+                    "pekerjaan"             => $value->pekerjaan,
+                    "posisi_pekerjaan"      => $value->posisi_pekerjaan,
+                    "nama_tempat_kerja"     => $value->nama_tempat_kerja,
+                    "jenis_pekerjaan"       => $value->jenis_pekerjaan,
+                    "alamat_tempat_kerja"   => $value->alamat_tempat_kerja,
+                    "id_prov_tempat_kerja"  => $value->id_prov_tempat_kerja,
+                    "nama_prov_tempat_kerja"=> $value->prov_kerja['nama'],
+                    "id_kab_tempat_kerja"   => $value->id_kab_tempat_kerja,
+                    "nama_kab_tempat_kerja" => $value->kab_kerja['nama'],
+                    "id_kec_tempat_kerja"   => $value->id_kec_tempat_kerja,
+                    "nama_kec_tempat_kerja" => $value->kec_kerja['nama'],
+                    "id_kel_tempat_kerja"   => $value->id_kel_tempat_kerja,
+                    "nama_kel_tempat_kerja" => $value->kel_kerja['nama'],
+                    "kode_pos_tempat_kerja" => $value->kel_kerja['kode_pos'],
+                    "rt_tempat_kerja"       => $value->rt_tempat_kerja,
+                    "rw_tempat_kerja"       => $value->rw_tempat_kerja,
+                    "tgl_mulai_kerja"       => Carbon::parse($value->tgl_mulai_kerja)->format('d-m-Y'),
+                    "no_telp_tempat_kerja"  => $value->no_telp_tempat_kerja,
+                    "lamp_ktp"              => $value->lamp_ktp,
+                    "lamp_ktp_pasangan"     => $value->lamp_ktp_pasangan,
+                    "lamp_kk"               => $value->lamp_kk,
+                    "lamp_buku_nikah"       => $value->lamp_buku_nikah
+                ];
+            }
+        }else{
+            $pen = null;
         }
+
 
         if ($val->status_das == 1) {
             $status_das = 'complete';
@@ -336,8 +347,6 @@ class MasterAO_Controller extends BaseController
         }else{
             $msg = 'waiting proccess';
         }
-
-        $penjamin = Penjamin::whereIn('id', $id_penj)->get();
 
         $lamp_dir = 'public/lamp_trans.'.$check->nomor_so;
 
@@ -622,7 +631,7 @@ class MasterAO_Controller extends BaseController
                     'id_calon_debitur'        => $check->id_calon_debt,
                     'tipe_lokasi'             => empty($req->tipe_lokasi_agunan[$i]) ? null[$i] : strtoupper($req->tipe_lokasi_agunan[$i]),
                     'alamat'                  => empty($req->alamat_agunan[$i]) ? null[$i] : $req->alamat_agunan[$i],
-                    'id_povinsi'              => empty($req->id_prov_agunan[$i]) ? null[$i] : $req->id_prov_agunan[$i],
+                    'id_provinsi'              => empty($req->id_prov_agunan[$i]) ? null[$i] : $req->id_prov_agunan[$i],
                     'id_kabupaten'            => empty($req->id_kab_agunan[$i]) ? null[$i] : $req->id_kab_agunan[$i],
                     'id_kecamatan'            => empty($req->id_kec_agunan[$i]) ? null[$i] : $req->id_kec_agunan[$i],
                     'id_kelurahan'            => empty($req->id_kel_agunan[$i]) ? null[$i] : $req->id_kel_agunan[$i],
@@ -730,26 +739,177 @@ class MasterAO_Controller extends BaseController
             'penghasilan_bersih'    => ((empty($req->input('pemasukan_debitur')) ? 0 : $req->input('pemasukan_debitur')) + (empty($req->input('pemasuk + an_pasangan')) ? 0 : $req->input('pemasukan_pasangan')) + (empty($req->input('pemasukan_penjamin')) ? 0 : $req->input('pemasukan_penjamin'))) - ((empty($req->input('biaya_rumah_tangga')) ? 0 : $req->input('biaya_rumah_tangga')) + (empty($req->input('biaya_transport')) ? 0 : $req->input('biaya_transport')) + (empty($req->input('biaya_pendidikan')) ? 0 : $req->input('biaya_pendidikan')) + (empty($req->input('biaya_telp_listr_air')) ? 0 : $req->input('biaya_telp_listr_air')) + (empty($req->input('biaya_lain')) ? 0 : $req->input('biaya_lain')))
         );
 
-        $dataKeUsaha = array(
-            'id_calon_debitur'     => $check->id_calon_debt,
-            'pemasukan_tunai'      => empty($req->input('pemasukan_tunai')) ? null : (int) $req->input('pemasukan_tunai'),
-            'pemasukan_kredit'     => empty($req->input('pemasukan_kredit')) ? null : (int) $req->input('pemasukan_kredit'),
-            'biaya_sewa'           => empty($req->input('biaya_sewa')) ? null : (int) $req->input('biaya_sewa'),
-            'biaya_gaji_pegawai'   => empty($req->input('biaya_gaji_pegawai')) ? null : (int) $req->input('biaya_gaji_pegawai'),
-            'biaya_belanja_brg'    => empty($req->input('biaya_belanja_brg')) ? null : (int) $req->input('biaya_belanja_brg'),
-            'biaya_telp_listr_air' => empty($req->input('biaya_telp_listr_air')) ? null : (int) $req->input('biaya_telp_listr_air'),
-            'biaya_sampah_kemanan' => empty($req->input('biaya_sampah_kemanan')) ? null : (int) $req->input('biaya_sampah_kemanan'),
-            'biaya_kirim_barang'   => empty($req->input('biaya_kirim_barang')) ? null : (int) $req->input('biaya_kirim_barang'),
-            'biaya_hutang_dagang'  => empty($req->input('biaya_hutang_dagang')) ? null : (int) $req->input('biaya_hutang_dagang'),
-            'biaya_angsuran'       => empty($req->input('biaya_angsuran')) ? null : (int) $req->input('biaya_angsuran'),
-            'biaya_lain_lain'      => empty($req->input('biaya_lain_lain')) ? null : (int) $req->input('biaya_lain_lain'),
-            'total_pemasukan'      => (empty($req->input('pemasukan_tunai')) ? 0 : $req->input('pemasukan_tunai')) + (empty($req->input('pemasukan_kredit')) ? 0 : $req->input('pemasukan_kredit')),
-            'total_pengeluaran'    => (empty($req->input('biaya_sewa')) ? 0 : $req->input('biaya_sewa')) + (empty($req->input('biaya_gaji_pegawai')) ? 0 : $req->input('biaya_gaji_pegawai')) + (empty($req->input('biaya_belanja_brg')) ? 0 : $req->input('biaya_belanja_brg')) + (empty($req->input('biaya_telp_listr_air')) ? 0 : $req->input('biaya_telp_listr_air')) + (empty($req->input('biaya_sampah_kemanan')) ? 0 : $req->input('biaya_sampah_kemanan')) + (empty($req->input('biaya_kirim_barang')) ? 0 : $req->input('biaya_kirim_barang')) + (empty($req->input('biaya_hutang_dagang')) ? 0 : $req->input('biaya_hutang_dagang')) + (empty($req->input('biaya_angsuran')) ? 0 : $req->input('biaya_angsuran')) + (empty($req->input('biaya_lain_lain')) ? 0 : $req->input('biaya_lain_lain')),
-            'laba_usaha'           => ((empty($req->input('pemasukan_tunai')) ? 0 : $req->input('pemasukan_tunai')) + (empty($req->input('pemasukan_kredit')) ? 0 : $req->input('pemasukan_kredit'))) - ((empty($req->input('biaya_sewa')) ? 0 : $req->input('biaya_sewa')) + (empty($req->input('biaya_gaji_pegawai')) ? 0 : $req->input('biaya_gaji_pegawai')) + (empty($req->input('biaya_belanja_brg')) ? 0 : $req->input('biaya_belanja_brg')) + (empty($req->input('biaya_telp_listr_air')) ? 0 : $req->input('biaya_telp_listr_air')) + (empty($req->input('biaya_sampah_kemanan')) ? 0 : $req->input('biaya_sampah_kemanan')) + (empty($req->input('biaya_kirim_barang')) ? 0 : $req->input('biaya_kirim_barang')) + (empty($req->input('biaya_hutang_dagang')) ? 0 : $req->input('biaya_hutang_dagang')) + (empty($req->input('biaya_angsuran')) ? 0 : $req->input('biaya_angsuran')) + (empty($req->input('biaya_lain_lain')) ? 0 : $req->input('biaya_lain_lain')))
-        );
+        if (!empty($req->input('pemasukan_tunai'))) {
+            $dataKeUsaha = array(
+                'id_calon_debitur'     => $check->id_calon_debt,
+                'pemasukan_tunai'      => empty($req->input('pemasukan_tunai')) ? null : (int) $req->input('pemasukan_tunai'),
+                'pemasukan_kredit'     => empty($req->input('pemasukan_kredit')) ? null : (int) $req->input('pemasukan_kredit'),
+                'biaya_sewa'           => empty($req->input('biaya_sewa')) ? null : (int) $req->input('biaya_sewa'),
+                'biaya_gaji_pegawai'   => empty($req->input('biaya_gaji_pegawai')) ? null : (int) $req->input('biaya_gaji_pegawai'),
+                'biaya_belanja_brg'    => empty($req->input('biaya_belanja_brg')) ? null : (int) $req->input('biaya_belanja_brg'),
+                'biaya_telp_listr_air' => empty($req->input('biaya_telp_listr_air')) ? null : (int) $req->input('biaya_telp_listr_air'),
+                'biaya_sampah_kemanan' => empty($req->input('biaya_sampah_kemanan')) ? null : (int) $req->input('biaya_sampah_kemanan'),
+                'biaya_kirim_barang'   => empty($req->input('biaya_kirim_barang')) ? null : (int) $req->input('biaya_kirim_barang'),
+                'biaya_hutang_dagang'  => empty($req->input('biaya_hutang_dagang')) ? null : (int) $req->input('biaya_hutang_dagang'),
+                'biaya_angsuran'       => empty($req->input('biaya_angsuran')) ? null : (int) $req->input('biaya_angsuran'),
+                'biaya_lain_lain'      => empty($req->input('biaya_lain_lain')) ? null : (int) $req->input('biaya_lain_lain'),
+                'total_pemasukan'      => (empty($req->input('pemasukan_tunai')) ? 0 : $req->input('pemasukan_tunai')) + (empty($req->input('pemasukan_kredit')) ? 0 : $req->input('pemasukan_kredit')),
+                'total_pengeluaran'    => (empty($req->input('biaya_sewa')) ? 0 : $req->input('biaya_sewa')) + (empty($req->input('biaya_gaji_pegawai')) ? 0 : $req->input('biaya_gaji_pegawai')) + (empty($req->input('biaya_belanja_brg')) ? 0 : $req->input('biaya_belanja_brg')) + (empty($req->input('biaya_telp_listr_air')) ? 0 : $req->input('biaya_telp_listr_air')) + (empty($req->input('biaya_sampah_kemanan')) ? 0 : $req->input('biaya_sampah_kemanan')) + (empty($req->input('biaya_kirim_barang')) ? 0 : $req->input('biaya_kirim_barang')) + (empty($req->input('biaya_hutang_dagang')) ? 0 : $req->input('biaya_hutang_dagang')) + (empty($req->input('biaya_angsuran')) ? 0 : $req->input('biaya_angsuran')) + (empty($req->input('biaya_lain_lain')) ? 0 : $req->input('biaya_lain_lain')),
+                'laba_usaha'           => ((empty($req->input('pemasukan_tunai')) ? 0 : $req->input('pemasukan_tunai')) + (empty($req->input('pemasukan_kredit')) ? 0 : $req->input('pemasukan_kredit'))) - ((empty($req->input('biaya_sewa')) ? 0 : $req->input('biaya_sewa')) + (empty($req->input('biaya_gaji_pegawai')) ? 0 : $req->input('biaya_gaji_pegawai')) + (empty($req->input('biaya_belanja_brg')) ? 0 : $req->input('biaya_belanja_brg')) + (empty($req->input('biaya_telp_listr_air')) ? 0 : $req->input('biaya_telp_listr_air')) + (empty($req->input('biaya_sampah_kemanan')) ? 0 : $req->input('biaya_sampah_kemanan')) + (empty($req->input('biaya_kirim_barang')) ? 0 : $req->input('biaya_kirim_barang')) + (empty($req->input('biaya_hutang_dagang')) ? 0 : $req->input('biaya_hutang_dagang')) + (empty($req->input('biaya_angsuran')) ? 0 : $req->input('biaya_angsuran')) + (empty($req->input('biaya_lain_lain')) ? 0 : $req->input('biaya_lain_lain')))
+            );
+        }
+
+        // Penjamin
+        if (!empty($check->id_penjamin)) {
+            $id_penj = explode (",",$check->id_penjamin);
+
+            $penjamin = Penjamin::whereIn('id', $id_penj)->get();
+
+            $a = 1; $b = 1; $c = 1; $d = 1;
+
+            if($files = $req->file('lamp_ktp_pen')){
+                foreach($files as $file){
+
+                    $name = 'ktp_penjamin'.$a.'.'.$file->getClientOriginalExtension();
+
+                    foreach ($penjamin as $key => $val) {
+                        $no_so = $val->lamp_ktp;
+
+                        $arrPath = explode("/", $no_so, 4);
+
+                        $path = $arrPath[0].'/'.$arrPath[1].'/'.$arrPath[2];
+
+                        if(!empty($val->lamp_ktp))
+                        {
+                            File::delete($val->lamp_ktp);
+                        }
+                    }
+
+                    $file->move($path,$name);
+
+                    $a++;
+
+                    $ktpPen[] = $path.'/'.$name;
+                }
+            }
+
+            if($files = $req->file('lamp_ktp_pasangan_pen')){
+                foreach($files as $file){
+
+                    $name = 'ktp_pasangan'.$b.'.'.$file->getClientOriginalExtension();
+
+                    foreach ($penjamin as $key => $val) {
+                        $no_so = $val->lamp_ktp_pasangan;
+
+                        $arrPath = explode("/", $no_so, 4);
+
+                        $path = $arrPath[0].'/'.$arrPath[1].'/'.$arrPath[2];
+
+                        if(!empty($val->lamp_ktp_pasangan))
+                        {
+                            File::delete($val->lamp_ktp_pasangan);
+                        }
+                    }
+
+                    $file->move($path,$name);
+
+                    $b++;
+
+                    $ktpPenPAS[] = $path.'/'.$name;
+                }
+            }
+
+            if($files = $req->file('lamp_kk_pen')){
+                foreach($files as $file){
+
+                    $name = 'kk_penjamin'.$c.'.'.$file->getClientOriginalExtension();
+
+                    foreach ($penjamin as $key => $val) {
+                        $no_so = $val->lamp_kk;
+
+                        $arrPath = explode("/", $no_so, 4);
+
+                        $path = $arrPath[0].'/'.$arrPath[1].'/'.$arrPath[2];
+
+                        if(!empty($val->lamp_kk))
+                        {
+                            File::delete($val->lamp_kk);
+                        }
+                    }
+
+                    $file->move($path,$name);
+
+                    $c++;
+
+                    $kkPen[] = $path.'/'.$name;
+                }
+            }
+
+            if($files = $req->file('lamp_buku_nikah_pen')){
+                foreach($files as $file){
+
+                    $name = 'buku_nikah_penjamin'.$d.'.'.$file->getClientOriginalExtension();
+
+                    foreach ($penjamin as $key => $val) {
+                        $no_so = $val->lamp_buku_nikah;
+
+                        $arrPath = explode("/", $no_so, 4);
+
+                        $path = $arrPath[0].'/'.$arrPath[1].'/'.$arrPath[2];
+
+                        if(!empty($val->lamp_buku_nikah))
+                        {
+                            File::delete($val->lamp_buku_nikah);
+                        }
+                    }
+
+                    $file->move($path,$name);
+
+                    $d++;
+
+                    $bukuNikahPen[] = $path.'/'.$name;
+                }
+            }
+
+            foreach ($penjamin as $key => $value) {
+                $DP[] = [
+                    'id_calon_debitur' => $value->id_calon_debitur,
+                    'nama_ktp'         => empty($req->input('nama_ktp_pen')[$key]) ? $value->nama_ktp : $req->input('nama_ktp_pen')[$key],
+                    'nama_ibu_kandung' => empty($req->input('nama_ibu_kandung_pen')[$key]) ? $value->nama_ibu_kandung : $req->input('nama_ibu_kandung_pen')[$key],
+                    'no_ktp'           => empty($req->input('no_ktp_pen')[$key]) ? $value->no_ktp : $req->input('no_ktp_pen')[$key],
+                    'no_npwp'          => empty($req->input('no_npwp_pen')[$key]) ? $value->no_npwp : $req->input('no_npwp_pen')[$key],
+                    'tempat_lahir'     => empty($req->input('tempat_lahir_pen')[$key]) ? $value->tempat_lahir : $req->input('tempat_lahir_pen')[$key],
+                    'tgl_lahir'        => empty($req->input('tgl_lahir_pen')[$key]) ? $value->tgl_lahir : Carbon::parse($req->input('tgl_lahir_pen')[$key])->format('Y-m-d'),
+                    'jenis_kelamin'    => empty($req->input('jenis_kelamin_pen')[$key]) ? $value->jenis_kelamin : strtoupper($req->input('jenis_kelamin_pen')[$key]),
+                    'alamat_ktp'       => empty($req->input('alamat_ktp_pen')[$key]) ? $value->alamat_ktp : $req->input('alamat_ktp_pen')[$key],
+                    'no_telp'          => empty($req->input('no_telp_pen')[$key]) ? $value->no_telp : $req->input('no_telp_pen')[$key],
+                    'hubungan_debitur' => empty($req->input('hubungan_debitur_pen')[$key]) ? $value->hubungan_debitur : $req->input('hubungan_debitur_pen')[$key],
+
+                    'pekerjaan'             => empty($req->input('pekerjaan_pen')[$key]) ? $check->pekerjaan : $req->input('pekerjaan_pen')[$key],
+                    'nama_tempat_kerja'     => empty($req->input('nama_tempat_kerja_pen')[$key]) ? $check->nama_tempat_kerja : $req->input('nama_tempat_kerja_pen')[$key],
+                    'posisi_pekerjaan'      => empty($req->input('posisi_pekerjaan_pen')[$key]) ? $check->posisi_pekerjaan : $req->input('posisi_pekerjaan_pen')[$key],
+                    'jenis_pekerjaan'       => empty($req->input('jenis_pekerjaan_pen')[$key]) ? $check->jenis_pekerjaan : $req->input('jenis_pekerjaan_pen')[$key],
+                    'alamat_tempat_kerja'   => empty($req->input('alamat_tempat_kerja_pen')[$key]) ? $check->alamat_tempat_kerja : $req->input('alamat_tempat_kerja_pen')[$key],
+                    'id_prov_tempat_kerja'  => empty($req->input('id_prov_tempat_kerja_pen')[$key]) ? $check->id_prov_tempat_kerja : $req->input('id_prov_tempat_kerja_pen')[$key],
+                    'id_kab_tempat_kerja'   => empty($req->input('id_kab_tempat_kerja_pen')[$key]) ? $check->id_kab_tempat_kerja : $req->input('id_kab_tempat_kerja_pen')[$key],
+                    'id_kec_tempat_kerja'   => empty($req->input('id_kec_tempat_kerja_pen')[$key]) ? $check->id_kec_tempat_kerja : $req->input('id_kec_tempat_kerja_pen')[$key],
+                    'id_kel_tempat_kerja'   => empty($req->input('id_kel_tempat_kerja_pen')[$key]) ? $check->id_kel_tempat_kerja : $req->input('id_kel_tempat_kerja_pen')[$key],
+                    'rt_tempat_kerja'       => empty($req->input('rt_tempat_kerja_pen')[$key]) ? $check->rt_tempat_kerja : $req->input('rt_tempat_kerja_pen')[$key],
+                    'rw_tempat_kerja'       => empty($req->input('rw_tempat_kerja_pen')[$key]) ? $check->rw_tempat_kerja : $req->input('rw_tempat_kerja_pen')[$key],
+                    'tgl_mulai_kerja'       => empty($req->input('tgl_mulai_kerja_pen')[$key]) ? $check->tgl_mulai_kerja : $req->input('tgl_mulai_kerja_pen')[$key],
+                    'no_telp_tempat_kerja'  => empty($req->input('no_telp_tempat_kerja_pen')[$key]) ? $check->no_telp_tempat_kerja : $req->input('no_telp_tempat_kerja_pen')[$key],
+                    'lamp_ktp'         => empty($ktpPen[$i]) ? $value->lamp_ktp : $ktpPen[$i],
+                    'lamp_ktp_pasangan'=> empty($ktpPenPAS[$i]) ? $value->lamp_ktp_pasangan : $ktpPenPAS[$i],
+                    'lamp_kk'          => empty($kkPen[$i]) ? $value->lamp_kk : $kkPen[$i],
+                    'lamp_buku_nikah'  => empty($bukuNikahPen[$i]) ? $value->lamp_buku_nikah : $bukuNikahPen[$i],
+                    'updated_at'       => Carbon::now()->toDateTimeString()
+                ];
+                $i++;
+            }
+        }
 
         DB::connection('web')->beginTransaction();
-        // try{
+        try{
 
             for ($i = 0; $i < count($daAguTa); $i++) {
                 $tanah = AgunanTanah::create($daAguTa[$i]);
@@ -785,63 +945,30 @@ class MasterAO_Controller extends BaseController
             $p_tanID = implode(",", $id_pem_tan['id']);
             $p_kenID = implode(",", $id_pem_ken['id']);
 
+            Debitur::where('id', $check->id_calon_debt)->update($dataDebitur);
+
+            Pasangan::where('id', $check->id_pasangan)->update($dataPasangan);
+
+            VerifModel::create($dataVerifikasi);
+            ValidModel::create($dataValidasi);
+
+            KapBulanan::create($kapBul);
+
+            if (!empty($req->input('pemasukan_tunai'))) {
+                $usaha = KeuanganUsaha::create($dataKeUsaha);
+                $id_usaha = $usaha->id;
+            }else{
+                $id_usaha = null;
+            }
+
 
             TransSo::where('id', $id)->update([
                 'id_agunan_tanah'             => $tanID,
                 'id_agunan_kendaraan'         => $kenID,
                 'id_periksa_agunan_tanah'     => $p_tanID,
                 'id_periksa_agunan_kendaraan' => $p_kenID,
-                'id_usaha'                    => $KU->id
+                'id_usaha'                    => $id_usaha
             ]);
-
-
-
-        //     $getAguTa = PemeriksaanAgunTan::select('id')->where('id_calon_debitur', $Trans->id_calon_debt)->get();
-
-        //     if ($getAguTa != '[]') {
-        //         foreach ($getAguTa as $val) {
-        //             $PAT['id'][$i] = $val->id;
-        //             $i++;
-        //         }
-
-        //         $id_PAT = implode(",", $PAT['id']);
-        //     }else{
-        //         $id_PAT = null;
-        //     }
-
-        //     $getAguKe = PemeriksaanAgunKen::select('id')->where('id_calon_debitur', $Trans->id_calon_debt)->get();
-
-        //     if ($getAguKe != '[]') {
-        //         foreach ($getAguKe as $val) {
-        //             $PAK['id'][$i] = $val->id;
-        //             $i++;
-        //         }
-
-        //         $id_PAK = implode(",", $PAK['id']);
-        //     }else{
-        //         $id_PAK = null;
-        //     }
-
-
-        //     $KB = KapBulanan::updateOrCreate($kapBul);
-        //     $KU = KeuanganUsaha::updateOrCreate($dataKeUsaha);
-        //     $RAO = TransAO::updateOrCreate($TransAO);
-
-        //     $id_tr_ao = array('id_trans_ao' => $RAO->id);
-
-        //     $NewVerif = array_merge($id_tr_ao, $dataVerifikasi);
-        //     $NewValid = array_merge($id_tr_ao, $dataValidasi);
-
-        //     VerifModel::updateOrCreate($NewVerif);
-        //     ValidModel::updateOrCreate($NewValid);
-
-        //     TransSo::where('id', $Trans->id)->update([
-        //         'id_agunan_tanah'             => $id_AguTa,
-        //         'id_agunan_kendaraan'         => $id_AguKe,
-        //         'id_periksa_agunan_tanah'     => $id_PAT,
-        //         'id_periksa_agunan_kendaraan' => $id_PAK,
-        //         'id_usaha'                    => $KU->id
-        //     ]);
 
             DB::connection('web')->commit();
 
@@ -850,13 +977,13 @@ class MasterAO_Controller extends BaseController
                 'status' => 'success',
                 'message'=> $msg
             ], 200);
-        // } catch (\Exception $e) {
-        //     $err = DB::connection('web')->rollback();
-        //     return response()->json([
-        //         'code'    => 501,
-        //         'status'  => 'error',
-        //         'message' => $err
-        //     ], 501);
-        // }
+        } catch (\Exception $e) {
+            $err = DB::connection('web')->rollback();
+            return response()->json([
+                'code'    => 501,
+                'status'  => 'error',
+                'message' => $err
+            ], 501);
+        }
     }
 }

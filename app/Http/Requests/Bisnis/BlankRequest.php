@@ -26,7 +26,36 @@ class BlankRequest extends FormRequest
         if (!empty($single)) {
             $trans = TransSo::where('id', $single)->first();
 
-            $id_penj = explode (",",$trans->id_penjamin);
+            if ($trans != null) {
+                if ($trans->id_penjamin != null) {
+                    $id_penj = explode (",",$trans->id_penjamin);
+
+                    for ($i = 0; $i < count($id_penj); $i++) {
+                        $rules['no_ktp_pen.'.$i]  = 'digits:16|unique:web.penjamin_calon_debitur,no_ktp,' . $id_penj[$i];
+                        $rules['no_npwp_pen.'.$i] = 'digits:15|unique:web.penjamin_calon_debitur,no_npwp,' . $id_penj[$i];
+                        $rules['no_telp_pen.'.$i] = 'between:11,13|unique:web.penjamin_calon_debitur,no_telp,' . $id_penj[$i];
+                    }
+                }
+
+                if ($trans->id_pasangan != null) {
+                    $rules['no_ktp_pas']    = 'digits:16|unique:web.pasangan_calon_debitur,no_ktp,'.$trans->id_pasangan;
+                    $rules['no_ktp_kk_pas'] = 'digits:16|unique:web.pasangan_calon_debitur,no_ktp_kk,'.$trans->id_pasangan;
+                    $rules['no_kk_pas']     = 'digits:16|unique:web.pasangan_calon_debitur,no_kk,'.$trans->id_pasangan;
+                    $rules['no_npwp_pas']   = 'digits:15|unique:web.pasangan_calon_debitur,no_npwp,'.$trans->id_pasangan;
+                    $rules['tgl_lahir_pas'] = 'date_format:d-m-Y';
+                    $rules['no_telp_pas']   = 'between:11,13|unique:web.pasangan_calon_debitur,no_telp,'.$trans->id_pasangan;
+                }
+
+                if ($trans->id_calon_debt != null) {
+                    $rules['no_ktp']    = 'digits:16|unique:web.calon_debitur,no_ktp,'.$trans->id_calon_debt;
+                    $rules['no_ktp_kk'] = 'digits:16|unique:web.calon_debitur,no_ktp_kk,'.$trans->id_calon_debt;
+                    $rules['no_kk']     = 'digits:16|unique:web.calon_debitur,no_kk,'.$trans->id_calon_debt;
+                    $rules['no_npwp']   = 'digits:15|unique:web.calon_debitur,no_npwp,'.$trans->id_calon_debt;
+                    $rules['no_telp']   = 'between:11,13|unique:web.calon_debitur,no_telp,'.$trans->id_calon_debt;
+                    $rules['no_hp']     = 'between:11,13|unique:web.calon_debitur,no_hp,'.$trans->id_calon_debt;
+                }
+            }
+
 
             $rules = [
                 // Fasilitas Pinjaman
@@ -37,10 +66,10 @@ class BlankRequest extends FormRequest
                 // Debitur
                 'jenis_kelamin'         => 'in:L,P',
                 'status_nikah'          => 'in:SINGLE,NIKAH,CERAI',
-                'no_ktp'                => 'digits:16|unique:web.calon_debitur,no_ktp,'.$trans->id_calon_debt,
-                'no_ktp_kk'             => 'digits:16|unique:web.calon_debitur,no_ktp_kk,'.$trans->id_calon_debt,
-                'no_kk'                 => 'digits:16|unique:web.calon_debitur,no_kk,'.$trans->id_calon_debt,
-                'no_npwp'               => 'digits:15|unique:web.calon_debitur,no_npwp,'.$trans->id_calon_debt,
+                // 'no_ktp'                => 'digits:16|unique:web.calon_debitur,no_ktp,'.$trans->id_calon_debt,
+                // 'no_ktp_kk'             => 'digits:16|unique:web.calon_debitur,no_ktp_kk,'.$trans->id_calon_debt,
+                // 'no_kk'                 => 'digits:16|unique:web.calon_debitur,no_kk,'.$trans->id_calon_debt,
+                // 'no_npwp'               => 'digits:15|unique:web.calon_debitur,no_npwp,'.$trans->id_calon_debt,
                 'tgl_lahir'             => 'date_format:d-m-Y',
                 'agama'                 => 'in:ISLAM,KRISTEN,KHATOLIK,HINDU,BUDHA',
                 'rt_ktp'                => 'numeric',
@@ -56,8 +85,8 @@ class BlankRequest extends FormRequest
                 'id_kecamatan_domisili' => 'numeric',
                 'id_kelurahan_domisili' => 'numeric',
                 'jumlah_tanggungan'     => 'numeric',
-                'no_telp'               => 'between:11,13|unique:web.calon_debitur,no_telp,'.$trans->id_calon_debt,
-                'no_hp'                 => 'between:11,13|unique:web.calon_debitur,no_hp,'.$trans->id_calon_debt,
+                // 'no_telp'               => 'between:11,13|unique:web.calon_debitur,no_telp,'.$trans->id_calon_debt,
+                // 'no_hp'                 => 'between:11,13|unique:web.calon_debitur,no_hp,'.$trans->id_calon_debt,
 
                 'tgl_lahir_anak.*'      => 'date_format:d-m-Y',
                 'tinggi_badan'          => 'numeric',
@@ -81,12 +110,12 @@ class BlankRequest extends FormRequest
 
                 // Pasangan
                 'jenis_kelamin_pas'         => 'in:L,P',
-                'no_ktp_pas'                => 'digits:16|unique:web.pasangan_calon_debitur,no_ktp,'.$trans->id_pasangan,
-                'no_ktp_kk_pas'             => 'digits:16|unique:web.pasangan_calon_debitur,no_ktp_kk,'.$trans->id_pasangan,
-                'no_kk_pas'                 => 'digits:16|unique:web.pasangan_calon_debitur,no_kk,'.$trans->id_pasangan,
-                'no_npwp_pas'               => 'digits:15|unique:web.pasangan_calon_debitur,no_npwp,'.$trans->id_pasangan,
-                'tgl_lahir_pas'             => 'date_format:d-m-Y',
-                'no_telp_pas'               => 'between:11,13|unique:web.pasangan_calon_debitur,no_telp,'.$trans->id_pasangan,
+                // 'no_ktp_pas'                => 'digits:16|unique:web.pasangan_calon_debitur,no_ktp,'.$trans->id_pasangan,
+                // 'no_ktp_kk_pas'             => 'digits:16|unique:web.pasangan_calon_debitur,no_ktp_kk,'.$trans->id_pasangan,
+                // 'no_kk_pas'                 => 'digits:16|unique:web.pasangan_calon_debitur,no_kk,'.$trans->id_pasangan,
+                // 'no_npwp_pas'               => 'digits:15|unique:web.pasangan_calon_debitur,no_npwp,'.$trans->id_pasangan,
+                // 'tgl_lahir_pas'             => 'date_format:d-m-Y',
+                // 'no_telp_pas'               => 'between:11,13|unique:web.pasangan_calon_debitur,no_telp,'.$trans->id_pasangan,
                 'lamp_ktp_pas'              => 'mimes:jpg,jpeg,png,pdf|max:2048',
                 'lamp_kk_pas'               => 'mimes:jpg,jpeg,png,pdf|max:2048',
                 'pekerjaan_pas'             => 'in:KARYAWAN,PNS,WIRASWASTA,PENGURUS_RT',
@@ -108,16 +137,12 @@ class BlankRequest extends FormRequest
                 'lamp_ktp_pasangan_pen.*'    => 'mimes:jpg,jpeg,png,pdf|max:2048',
                 'lamp_kk_pen.*'              => 'mimes:jpg,jpeg,png,pdf|max:2048',
                 'lamp_buku_nikah_pen.*'      => 'mimes:jpg,jpeg,png,pdf|max:2048',
-                'pekerjaan_pen.*'            => 'in:KARYAWAN,PNS,WIRASWASTA,PENGURUS_RT',
-                'rt_tempat_kerja_pen.*'      => 'numeric',
-                'rw_tempat_kerja_pen.*'      => 'numeric',
-                'tgl_mulai_kerja_pen.*'      => 'date_format:d-m-Y',
-                'no_telp_tempat_kerja_pen.*' => 'numeric',
 
+                'pekerjaan_pen.*'            => 'in:KARYAWAN,PNS,WIRASWASTA,PENGURUS_RT',
                 'rt_tempat_kerja_pen.*'       => 'numeric',
                 'rw_tempat_kerja_pen.*'       => 'numeric',
                 'tgl_mulai_kerja_pen.*'       => 'date_format:d-m-Y',
-                'no_telp_tempat_kerja_pen.*'  => 'integer',
+                'no_telp_tempat_kerja_pen.*'  => 'numeric',
 
                 // Transaksi AO
                 'jangka_waktu'          => 'integer',
@@ -218,12 +243,6 @@ class BlankRequest extends FormRequest
                 'tgl_taksasi.*'           => 'date_format:d-m-Y',
                 'nilai_likuidasi.*'       => 'integer'
             ];
-
-            for ($i = 0; $i < count($id_penj); $i++) {
-                $rules['no_ktp_pen.'.$i]  = 'digits:16|unique:web.penjamin_calon_debitur,no_ktp,' . $id_penj[$i];
-                $rules['no_npwp_pen.'.$i] = 'digits:15|unique:web.penjamin_calon_debitur,no_npwp,' . $id_penj[$i];
-                $rules['no_telp_pen.'.$i] = 'between:11,13|unique:web.penjamin_calon_debitur,no_telp,' . $id_penj[$i];
-            }
         }else{
             $rules = [
                 // Fasilitas Pinjaman
@@ -433,7 +452,7 @@ class BlankRequest extends FormRequest
             'rt_tempat_kerja_pen.*.numeric'      => ':attribute harus berupa angka',
             'rw_tempat_kerja_pen.*.numeric'      => ':attribute harus berupa angka',
             'tgl_mulai_kerja_pen.*.date_format'  => ':attribute harus berupa angka dengan format :format',
-            'no_telp_tempat_kerja_pen.*.numeric' => ':attribute harus berupa angka / bilangan bulat',
+            'no_telp_tempat_kerja_pen.*.numeric' => ':attribute harus berupa angka',
 
             // Transaksi AO
             'jangka_waktu.integer'          => ':attribute harus berupa angka',

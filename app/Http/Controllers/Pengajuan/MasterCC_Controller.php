@@ -11,6 +11,7 @@ use App\Models\AreaKantor\Cabang;
 use App\Models\AreaKantor\JPIC;
 use App\Models\AreaKantor\PIC;
 use App\Models\Bisnis\TransSo;
+use App\Models\Bisnis\TransAO;
 use App\Models\KeuanganUsaha;
 use Illuminate\Http\Request;
 use App\Models\CC\Pasangan;
@@ -71,8 +72,10 @@ class MasterCC_Controller extends BaseController
         $user_id = $req->auth->user_id;
         $val = TransSo::with('asaldata','debt')
                 ->where('id', $id)
-                ->where('user_id', $user_id)
+                // ->where('user_id', $user_id)
                 ->first();
+
+        $ao = TransAO::where('id_trans_so', $val->id)->first();
 
         if (!$val) {
             return response()->json([
@@ -92,9 +95,9 @@ class MasterCC_Controller extends BaseController
             ];
         }
 
-        $pen = Penjamin::select('id','nama_ktp','nama_ibu_kandung','no_ktp','no_npwp','tempat_lahir','tgl_lahir','jenis_kelamin','alamat_ktp','no_telp','hubungan_debitur','lamp_ktp','lamp_ktp_pasangan','lamp_kk','lamp_buku_nikah')
-            ->where('id_calon_debitur', $val->id_calon_debt)
-            ->get();
+        $id_penj = explode (",",$val->id_penjamin);
+
+        $pen = Penjamin::whereIn('id', $id_penj)->get();
 
         if ($pen == '[]') {
             $penjamin = null;
@@ -122,12 +125,46 @@ class MasterCC_Controller extends BaseController
             }
         }
 
+        if ($val->status_das == 1) {
+            $status_das = 'complete';
+        }elseif($val->status_das == 2){
+            $status_das = 'not complete';
+        }else{
+            $status_das = 'waiting';
+        }
+
+        if ($val->status_hm == 1) {
+            $status_hm = 'complete';
+        }elseif ($val->status_hm == 2) {
+            $status_hm = 'not complete';
+        }else{
+            $status_hm = 'waiting';
+        }
+
+        if (!empty($ao)) {
+            if ($ao->status_ao == 1) {
+                $status_ao = 'complete';
+            }elseif ($ao->status_ao == 2) {
+                $status_ao = 'not complete';
+            }else{
+                $status_ao = 'waiting';
+            }
+        }else{
+            $status_ao = 'waiting';
+        }
+
+
 
         $res = [
             'id'                    => $val->id,
             'nomor_so'              => $val->nomor_so,
             'kode_kantor'           => $val->kode_kantor,
             'nama_so'               => $val->nama_so,
+            'tracking'  => [
+                'das' => $status_das,
+                'hm'  => $status_hm,
+                'ao'  => $status_ao
+            ],
             'asal_data' => [
                 'id'   => $val->id_asal_data,
                 'nama' => $val->asaldata['nama'],
@@ -171,7 +208,7 @@ class MasterCC_Controller extends BaseController
                         'id'    => $val->debt['kab_ktp']['id'],
                         'nama'  => $val->debt['kab_ktp']['nama'],
                     ],
-                    'povinsi'  => [
+                    'provinsi'  => [
                         'id'   => $val->debt['prov_ktp']['id'],
                         'nama' => $val->debt['prov_ktp']['nama'],
                     ],
@@ -193,7 +230,7 @@ class MasterCC_Controller extends BaseController
                         'id'    => $val->debt['kab_dom']['id'],
                         'nama'  => $val->debt['kab_dom']['nama'],
                     ],
-                    'povinsi'  => [
+                    'provinsi'  => [
                         'id'   => $val->debt['prov_dom']['id'],
                         'nama' => $val->debt['prov_dom']['nama'],
                     ],
@@ -836,135 +873,142 @@ class MasterCC_Controller extends BaseController
 
             $penjamin = Penjamin::whereIn('id', $id_penj)->get();
 
-            $a = 1; $b = 1; $c = 1; $d = 1;
+            if ($penjamin != '[]') {
 
-            if($files = $req->file('lamp_ktp_pen')){
-                foreach($files as $file){
+                $a = 1; $b = 1; $c = 1; $d = 1;
 
-                    $name = 'ktp_penjamin'.$a.'.'.$file->getClientOriginalExtension();
+                if($files = $req->file('lamp_ktp_pen')){
+                    foreach($files as $file){
 
-                    foreach ($penjamin as $key => $val) {
-                        $no_so = $val->lamp_ktp;
+                        $name = 'ktp_penjamin'.$a.'.'.$file->getClientOriginalExtension();
 
-                        $arrPath = explode("/", $no_so, 4);
+                        foreach ($penjamin as $key => $val) {
 
-                        $path = $arrPath[0].'/'.$arrPath[1].'/'.$arrPath[2];
+                            if ($val->lamp_ktp != null) {
+                                $no_so = $val->lamp_ktp;
+                            }else{
+                                $no_so = $val->lamp_ktp;
+                            }
 
-                        if(!empty($val->lamp_ktp))
-                        {
-                            File::delete($val->lamp_ktp);
+                            $arrPath = explode("/", $no_so, 4);
+
+                            $path = $arrPath[0].'/'.$arrPath[1].'/'.$arrPath[2];
+
+                            if(!empty($val->lamp_ktp))
+                            {
+                                File::delete($val->lamp_ktp);
+                            }
                         }
+
+                        $file->move($path,$name);
+
+                        $a++;
+
+                        $ktpPen[] = $path.'/'.$name;
                     }
+                }
 
-                    $file->move($path,$name);
+                if($files = $req->file('lamp_ktp_pasangan_pen')){
+                    foreach($files as $file){
 
-                    $a++;
+                        $name = 'ktp_pasangan'.$b.'.'.$file->getClientOriginalExtension();
 
-                    $ktpPen[] = $path.'/'.$name;
+                        foreach ($penjamin as $key => $val) {
+                            $no_so = $val->lamp_ktp_pasangan;
+
+                            $arrPath = explode("/", $no_so, 4);
+
+                            $path = $arrPath[0].'/'.$arrPath[1].'/'.$arrPath[2];
+
+                            if(!empty($val->lamp_ktp_pasangan))
+                            {
+                                File::delete($val->lamp_ktp_pasangan);
+                            }
+                        }
+
+                        $file->move($path,$name);
+
+                        $b++;
+
+                        $ktpPenPAS[] = $path.'/'.$name;
+                    }
+                }
+
+                if($files = $req->file('lamp_kk_pen')){
+                    foreach($files as $file){
+
+                        $name = 'kk_penjamin'.$c.'.'.$file->getClientOriginalExtension();
+
+                        foreach ($penjamin as $key => $val) {
+                            $no_so = $val->lamp_kk;
+
+                            $arrPath = explode("/", $no_so, 4);
+
+                            $path = $arrPath[0].'/'.$arrPath[1].'/'.$arrPath[2];
+
+                            if(!empty($val->lamp_kk))
+                            {
+                                File::delete($val->lamp_kk);
+                            }
+                        }
+
+                        $file->move($path,$name);
+
+                        $c++;
+
+                        $kkPen[] = $path.'/'.$name;
+                    }
+                }
+
+                if($files = $req->file('lamp_buku_nikah_pen')){
+                    foreach($files as $file){
+
+                        $name = 'buku_nikah_penjamin'.$d.'.'.$file->getClientOriginalExtension();
+
+                        foreach ($penjamin as $key => $val) {
+                            $no_so = $val->lamp_buku_nikah;
+
+                            $arrPath = explode("/", $no_so, 4);
+
+                            $path = $arrPath[0].'/'.$arrPath[1].'/'.$arrPath[2];
+
+                            if(!empty($val->lamp_buku_nikah))
+                            {
+                                File::delete($val->lamp_buku_nikah);
+                            }
+                        }
+
+                        $file->move($path,$name);
+
+                        $d++;
+
+                        $bukuNikahPen[] = $path.'/'.$name;
+                    }
+                }
+
+                $i = 0;
+                foreach ($penjamin as $key => $value) {
+                    $DP[$key] = [
+                        'id_calon_debitur' => $value->id_calon_debitur,
+                        'nama_ktp'         => empty($req->input('nama_ktp_pen')[$i]) ? $value->nama_ktp : $req->input('nama_ktp_pen')[$i],
+                        'nama_ibu_kandung' => empty($req->input('nama_ibu_kandung_pen')[$i]) ? $value->nama_ibu_kandung : $req->input('nama_ibu_kandung_pen')[$i],
+                        'no_ktp'           => empty($req->input('no_ktp_pen')[$i]) ? $value->no_ktp : $req->input('no_ktp_pen')[$i],
+                        'no_npwp'          => empty($req->input('no_npwp_pen')[$i]) ? $value->no_npwp : $req->input('no_npwp_pen')[$i],
+                        'tempat_lahir'     => empty($req->input('tempat_lahir_pen')[$i]) ? $value->tempat_lahir : $req->input('tempat_lahir_pen')[$i],
+                        'tgl_lahir'        => empty($req->input('tgl_lahir_pen')[$i]) ? $value->tgl_lahir : Carbon::parse($req->input('tgl_lahir_pen')[$i])->format('Y-m-d'),
+                        'jenis_kelamin'    => empty($req->input('jenis_kelamin_pen')[$i]) ? $value->jenis_kelamin : strtoupper($req->input('jenis_kelamin_pen')[$i]),
+                        'alamat_ktp'       => empty($req->input('alamat_ktp_pen')[$i]) ? $value->alamat_ktp : $req->input('alamat_ktp_pen')[$i],
+                        'no_telp'          => empty($req->input('no_telp_pen')[$i]) ? $value->no_telp : $req->input('no_telp_pen')[$i],
+                        'hubungan_debitur' => empty($req->input('hubungan_debitur_pen')[$i]) ? $value->hubungan_debitur : $req->input('hubungan_debitur_pen')[$i],
+                        'lamp_ktp'         => empty($ktpPen[$i]) ? $value->lamp_ktp : $ktpPen[$i],
+                        'lamp_ktp_pasangan'=> empty($ktpPenPAS[$i]) ? $value->lamp_ktp_pasangan : $ktpPenPAS[$i],
+                        'lamp_kk'          => empty($kkPen[$i]) ? $value->lamp_kk : $kkPen[$i],
+                        'lamp_buku_nikah'  => empty($bukuNikahPen[$i]) ? $value->lamp_buku_nikah : $bukuNikahPen[$i],
+                        'updated_at'       => Carbon::now()->toDateTimeString()
+                    ];
+                    $i++;
                 }
             }
-
-            if($files = $req->file('lamp_ktp_pasangan_pen')){
-                foreach($files as $file){
-
-                    $name = 'ktp_pasangan'.$b.'.'.$file->getClientOriginalExtension();
-
-                    foreach ($penjamin as $key => $val) {
-                        $no_so = $val->lamp_ktp_pasangan;
-
-                        $arrPath = explode("/", $no_so, 4);
-
-                        $path = $arrPath[0].'/'.$arrPath[1].'/'.$arrPath[2];
-
-                        if(!empty($val->lamp_ktp_pasangan))
-                        {
-                            File::delete($val->lamp_ktp_pasangan);
-                        }
-                    }
-
-                    $file->move($path,$name);
-
-                    $b++;
-
-                    $ktpPenPAS[] = $path.'/'.$name;
-                }
-            }
-
-            if($files = $req->file('lamp_kk_pen')){
-                foreach($files as $file){
-
-                    $name = 'kk_penjamin'.$c.'.'.$file->getClientOriginalExtension();
-
-                    foreach ($penjamin as $key => $val) {
-                        $no_so = $val->lamp_kk;
-
-                        $arrPath = explode("/", $no_so, 4);
-
-                        $path = $arrPath[0].'/'.$arrPath[1].'/'.$arrPath[2];
-
-                        if(!empty($val->lamp_kk))
-                        {
-                            File::delete($val->lamp_kk);
-                        }
-                    }
-
-                    $file->move($path,$name);
-
-                    $c++;
-
-                    $kkPen[] = $path.'/'.$name;
-                }
-            }
-
-            if($files = $req->file('lamp_buku_nikah_pen')){
-                foreach($files as $file){
-
-                    $name = 'buku_nikah_penjamin'.$d.'.'.$file->getClientOriginalExtension();
-
-                    foreach ($penjamin as $key => $val) {
-                        $no_so = $val->lamp_buku_nikah;
-
-                        $arrPath = explode("/", $no_so, 4);
-
-                        $path = $arrPath[0].'/'.$arrPath[1].'/'.$arrPath[2];
-
-                        if(!empty($val->lamp_buku_nikah))
-                        {
-                            File::delete($val->lamp_buku_nikah);
-                        }
-                    }
-
-                    $file->move($path,$name);
-
-                    $d++;
-
-                    $bukuNikahPen[] = $path.'/'.$name;
-                }
-            }
-
-            $i = 0;
-            foreach ($penjamin as $key => $value) {
-                $DP[$key] = [
-                    'id_calon_debitur' => $value->id_calon_debitur,
-                    'nama_ktp'         => empty($req->input('nama_ktp_pen')[$i]) ? $value->nama_ktp : $req->input('nama_ktp_pen')[$i],
-                    'nama_ibu_kandung' => empty($req->input('nama_ibu_kandung_pen')[$i]) ? $value->nama_ibu_kandung : $req->input('nama_ibu_kandung_pen')[$i],
-                    'no_ktp'           => empty($req->input('no_ktp_pen')[$i]) ? $value->no_ktp : $req->input('no_ktp_pen')[$i],
-                    'no_npwp'          => empty($req->input('no_npwp_pen')[$i]) ? $value->no_npwp : $req->input('no_npwp_pen')[$i],
-                    'tempat_lahir'     => empty($req->input('tempat_lahir_pen')[$i]) ? $value->tempat_lahir : $req->input('tempat_lahir_pen')[$i],
-                    'tgl_lahir'        => empty($req->input('tgl_lahir_pen')[$i]) ? $value->tgl_lahir : Carbon::parse($req->input('tgl_lahir_pen')[$i])->format('Y-m-d'),
-                    'jenis_kelamin'    => empty($req->input('jenis_kelamin_pen')[$i]) ? $value->jenis_kelamin : strtoupper($req->input('jenis_kelamin_pen')[$i]),
-                    'alamat_ktp'       => empty($req->input('alamat_ktp_pen')[$i]) ? $value->alamat_ktp : $req->input('alamat_ktp_pen')[$i],
-                    'no_telp'          => empty($req->input('no_telp_pen')[$i]) ? $value->no_telp : $req->input('no_telp_pen')[$i],
-                    'hubungan_debitur' => empty($req->input('hubungan_debitur_pen')[$i]) ? $value->hubungan_debitur : $req->input('hubungan_debitur_pen')[$i],
-                    'lamp_ktp'         => empty($ktpPen[$i]) ? $value->lamp_ktp : $ktpPen[$i],
-                    'lamp_ktp_pasangan'=> empty($ktpPenPAS[$i]) ? $value->lamp_ktp_pasangan : $ktpPenPAS[$i],
-                    'lamp_kk'          => empty($kkPen[$i]) ? $value->lamp_kk : $kkPen[$i],
-                    'lamp_buku_nikah'  => empty($bukuNikahPen[$i]) ? $value->lamp_buku_nikah : $bukuNikahPen[$i],
-                    'updated_at'       => Carbon::now()->toDateTimeString()
-                ];
-                $i++;
-            }
-
         }
 
 
