@@ -196,8 +196,8 @@ class CabangController extends BaseController
     }
 
     // Get Cabang By Id Kelurahan
-    public function get_cabang($id_kab, $id_kec, $id_kel){
-        if(!preg_match("/^[0-9]{1,}$/", $id_kab) || !preg_match("/^[0-9]{1,}$/", $id_kec) || !preg_match("/^[0-9]{1,}$/", $id_kel)){
+    public function get_cabang($id_kel){
+        if(!preg_match("/^[0-9]{1,}$/", $id_kel)){
 
             return response()->json([
                 "code"    => 422,
@@ -207,19 +207,18 @@ class CabangController extends BaseController
         }
 
         $check = DB::connection('web')->table('mk_cabang')
-            ->where('id_kabupaten', $id_kab)
-            ->where('id_kecamatan', $id_kec)
+            ->select('id', 'nama')
             ->where('id_kelurahan', $id_kel)
-            ->first();
+            ->groupBy('id')
+            ->get();
 
-        if (!$check) {
+        if ($check == '[]') {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
                 'message' => 'Data tidak ada'
             ], 404);
         }
-
 
         try {
             return response()->json([

@@ -34,12 +34,12 @@ class AreaPICReq extends FormRequest
         return [
             'id_area_kerja.required' => ':attribute belum diisi',
             'id_area_cabang.required'=> ':attribute belum diisi',
-            'nama_area_pic.required'=> ':attribute belum diisi',
-            'id_prov.required'      => ':attribute belum diisi',
-            'id_kab.required'       => ':attribute belum diisi',
-            'id_kec.required'       => ':attribute belum diisi',
-            'id_kel.required'       => ':attribute belum diisi',
-            'flg_aktif.in'          => ':attribute harus salah satu dari jenis berikut :values'
+            'nama_area_pic.required' => ':attribute belum diisi',
+            'id_prov.required'       => ':attribute belum diisi',
+            'id_kab.required'        => ':attribute belum diisi',
+            'id_kec.required'        => ':attribute belum diisi',
+            'id_kel.required'        => ':attribute belum diisi',
+            'flg_aktif.in'           => ':attribute harus salah satu dari jenis berikut :values'
         ];
     }
 

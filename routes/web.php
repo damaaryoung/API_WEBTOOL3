@@ -18,7 +18,7 @@ $router->group(['prefix' => '/wilayah'], function () use ($router) {
         return 'add parameters after slash';
     });
 
-    $router->get('/area_cabang/filter/{id_kab}/{id_kec}/{id_kel}', 'Master\AreaKantor\CabangController@get_cabang');
+    $router->get('/area_cabang/filter/{id_kel}', 'Master\AreaKantor\CabangController@get_cabang');
 
     $router->get('/provinsi', 'Wilayah\ProvinsiController@index');
     $router->post('/provinsi', 'Wilayah\ProvinsiController@store');
