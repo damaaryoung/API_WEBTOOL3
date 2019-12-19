@@ -27,6 +27,7 @@ $app->withFacades();
 $app->register(Intervention\Image\ImageServiceProvider::class); //Intervention Image
 $app->withEloquent();
 
+
 /*
 |--------------------------------------------------------------------------
 | Register Container Bindings
@@ -85,6 +86,9 @@ $app->register(App\Providers\AuthServiceProvider::class);
 $app->register(App\Providers\EventServiceProvider::class);
 
 $app->register(Urameshibr\Providers\FormRequestServiceProvider::class); // Form-Request To Validator
+
+$app->register(Illuminate\Redis\RedisServiceProvider::class); // Redis Cache
+$app->configure('database'); //file to ensure the Redis database configuration is properly loaded.
 
 // $app->register(App\Helpers\LogActivity::class);
 // class_alias(App\Helpers\LogActivity::class, 'LogActivity'); // Aliases

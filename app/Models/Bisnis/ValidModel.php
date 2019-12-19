@@ -23,7 +23,7 @@ class ValidModel extends Model implements AuthenticatableContract, AuthorizableC
     protected $primaryKey = 'id';
 
     protected $fillable = [
-        'id_trans_so', 'id_trans_ao', 'id_calon_debitur', 'val_data_debt', 'val_lingkungan_debt', 'val_domisili_debt', 'val_pekerjaan_debt', 'val_data_pasangan', 'val_data_penjamin', 'val_agunan_tanah', 'val_agunan_kendaraan', 'val_usaha_debt', 'catatan'
+        'id_trans_so', 'id_trans_ao', 'id_calon_debitur', 'val_data_debt', 'val_lingkungan_debt', 'val_domisili_debt', 'val_pekerjaan_debt', 'val_data_pasangan', 'val_data_penjamin', 'val_agunan', 'catatan'
     ];
 
     public function debt(){

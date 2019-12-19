@@ -174,8 +174,8 @@ class MasterCC_Controller extends BaseController
                 'id'              => $val->id_fasilitas_pinjaman,
                 'jenis_pinjaman'  => $val->faspin['jenis_pinjaman'],
                 'tujuan_pinjaman' => $val->faspin['tujuan_pinjaman'],
-                'plafon'          => $val->faspin['plafon'],
-                'tenor'           => $val->faspin['tenor']
+                'plafon'          => (int) $val->faspin['plafon'],
+                'tenor'           => (int) $val->faspin['tenor']
             ],
             'calon_debitur'          => [
                 'id'                => $val->id_calon_debt,

@@ -14,7 +14,8 @@ return [
     |            "memcached", "redis", "dynamodb", "array"
     |
     */
-    'driver' => env('SESSION_DRIVER', 'file'),
+    // 'driver' => env('SESSION_DRIVER', 'file'),
+    'driver' => env('SESSION_DRIVER', 'redis'),
     /*
     |--------------------------------------------------------------------------
     | Session Lifetime

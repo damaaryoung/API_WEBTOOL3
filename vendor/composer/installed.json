@@ -1438,6 +1438,56 @@
         "homepage": "https://laravel.com"
     },
     {
+        "name": "illuminate/redis",
+        "version": "v6.8.0",
+        "version_normalized": "6.8.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/illuminate/redis.git",
+            "reference": "6812f9edb632995795fb5a4765181444a44d0afe"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/illuminate/redis/zipball/6812f9edb632995795fb5a4765181444a44d0afe",
+            "reference": "6812f9edb632995795fb5a4765181444a44d0afe",
+            "shasum": ""
+        },
+        "require": {
+            "illuminate/contracts": "^6.0",
+            "illuminate/support": "^6.0",
+            "php": "^7.2"
+        },
+        "suggest": {
+            "ext-redis": "Required to use the phpredis connector.",
+            "predis/predis": "Required to use the predis connector (^1.0)."
+        },
+        "time": "2019-12-06T16:56:13+00:00",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "6.0-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Illuminate\\Redis\\": ""
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Taylor Otwell",
+                "email": "taylor@laravel.com"
+            }
+        ],
+        "description": "The Illuminate Redis package.",
+        "homepage": "https://laravel.com"
+    },
+    {
         "name": "illuminate/session",
         "version": "v6.6.0",
         "version_normalized": "6.6.0.0",
@@ -3113,6 +3163,58 @@
             "phpunit",
             "testing",
             "xunit"
+        ]
+    },
+    {
+        "name": "predis/predis",
+        "version": "v1.1.1",
+        "version_normalized": "1.1.1.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/nrk/predis.git",
+            "reference": "f0210e38881631afeafb56ab43405a92cafd9fd1"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/nrk/predis/zipball/f0210e38881631afeafb56ab43405a92cafd9fd1",
+            "reference": "f0210e38881631afeafb56ab43405a92cafd9fd1",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3.9"
+        },
+        "require-dev": {
+            "phpunit/phpunit": "~4.8"
+        },
+        "suggest": {
+            "ext-curl": "Allows access to Webdis when paired with phpiredis",
+            "ext-phpiredis": "Allows faster serialization and deserialization of the Redis protocol"
+        },
+        "time": "2016-06-16T16:22:20+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Predis\\": "src/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Daniele Alessandri",
+                "email": "suppakilla@gmail.com",
+                "homepage": "http://clorophilla.net"
+            }
+        ],
+        "description": "Flexible and feature-complete Redis client for PHP and HHVM",
+        "homepage": "http://github.com/nrk/predis",
+        "keywords": [
+            "nosql",
+            "predis",
+            "redis"
         ]
     },
     {
@@ -5413,6 +5515,52 @@
             "dotenv",
             "env",
             "environment"
+        ]
+    },
+    {
+        "name": "watson/rememberable",
+        "version": "3.2.1",
+        "version_normalized": "3.2.1.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/dwightwatson/rememberable.git",
+            "reference": "d225d1c6733a4b47ad037df275f144858a968325"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/dwightwatson/rememberable/zipball/d225d1c6733a4b47ad037df275f144858a968325",
+            "reference": "d225d1c6733a4b47ad037df275f144858a968325",
+            "shasum": ""
+        },
+        "require": {
+            "illuminate/database": "^5.0|^6.0",
+            "illuminate/support": "^5.0|^6.0",
+            "php": ">=5.4.0"
+        },
+        "time": "2019-10-04T00:29:10+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Watson\\Rememberable\\": "src/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Dwight Watson",
+                "email": "dwight@studiousapp.com"
+            }
+        ],
+        "description": "Query caching for Laravel 5",
+        "keywords": [
+            "caching",
+            "eloquent",
+            "laravel",
+            "remember"
         ]
     },
     {

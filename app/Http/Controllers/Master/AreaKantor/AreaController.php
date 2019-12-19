@@ -14,7 +14,6 @@ use DB;
 class AreaController extends BaseController
 {
     public function index() {
-        // $query = Area::get();
         $query = Area::get();
 
         if ($query == '[]') {

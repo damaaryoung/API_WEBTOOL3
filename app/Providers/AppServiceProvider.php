@@ -13,8 +13,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        // $app->bind('path.public', function() {
-        //     return __DIR__;
-        // });
+        // Configs to Redis
+        $this->app->configure('database');
+
+        // Enable queues
+        $this->app->make('queue');
     }
 }

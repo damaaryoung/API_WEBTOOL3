@@ -177,9 +177,7 @@ class BlankRequest extends FormRequest
                 'val_pekerjaan_debt'  => 'numeric',
                 'val_data_pasangan'   => 'numeric',
                 'val_data_penjamin'   => 'numeric',
-                'val_agunan_tanah'    => 'numeric',
-                'val_agunan_kendaraan'=> 'numeric',
-                'val_usaha_debt'      => 'numeric',
+                'val_agunan'          => 'numeric',
 
                 // Agunan Tanah
                 'tipe_lokasi_agunan.*'  => 'in:PERUM,BIASA',
@@ -487,9 +485,7 @@ class BlankRequest extends FormRequest
             'val_pekerjaan_debt.numeric'  => ':attribute harus berupa angka',
             'val_data_pasangan.numeric'   => ':attribute harus berupa angka',
             'val_data_penjamin.numeric'   => ':attribute harus berupa angka',
-            'val_agunan_tanah.numeric'    => ':attribute harus berupa angka',
-            'val_agunan_kendaraan.numeric'=> ':attribute harus berupa angka',
-            'val_usaha_debt.numeric'      => ':attribute harus berupa angka',
+            'val_agunan.numeric'          => ':attribute harus berupa angka',
 
             // Agunan Tanah
             'tipe_lokasi_agunan.*.in'           => ':attribute harus salah satu dari jenis berikut :values',

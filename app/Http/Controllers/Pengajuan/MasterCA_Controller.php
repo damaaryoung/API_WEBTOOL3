@@ -354,9 +354,7 @@ class MasterCA_Controller extends BaseController
             'val_pekerjaan_debt'  => $req->input('val_pekerjaan_debt'),
             'val_data_pasangan'   => $req->input('val_data_pasangan'),
             'val_data_penjamin'   => $req->input('val_data_penjamin'),
-            'val_agunan_tanah'    => $req->input('val_agunan_tanah'),
-            'val_agunan_kendaraan'=> $req->input('val_agunan_kendaraan'),
-            'val_usaha_debt'      => $req->input('val_usaha_debt'),
+            'val_agunan'          => $req->input('val_agunan'),
             'catatan'             => $req->input('catatan_validasi')
         );
 

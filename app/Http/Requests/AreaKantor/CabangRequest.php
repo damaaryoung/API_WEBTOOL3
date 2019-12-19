@@ -19,12 +19,12 @@ class CabangRequest extends FormRequest
     public function rules()
     {
         return [
-            'id_mk_area'   => 'required',
+            'id_mk_area'   => 'required|numeric',
             'nama'         => 'required',
-            'id_provinsi'  => 'required',
-            'id_kabupaten' => 'required',
-            'id_kecamatan' => 'required',
-            'id_kelurahan' => 'required',
+            'id_provinsi'  => 'required|numeric',
+            'id_kabupaten' => 'required|numeric',
+            'id_kecamatan' => 'required|numeric',
+            'id_kelurahan' => 'required|numeric',
             'jenis_kantor' => 'in:CABANG,KAS',
             'flg_aktif'    => 'in:false,true'
         ];
@@ -38,9 +38,13 @@ class CabangRequest extends FormRequest
             'id_kabupaten.required' => ':attribute belum diisi',
             'id_kecamatan.required' => ':attribute belum diisi',
             'id_kelurahan.required' => ':attribute belum diisi',
-            'flg_aktif.required'    => ':attribute belum diisi',
             'jenis_kantor.in'       => ':attribute harus salah satu dari jenis berikut :values',
-            'flg_aktif.in'          => ':attribute harus salah satu dari jenis berikut :values'
+            'flg_aktif.in'          => ':attribute harus salah satu dari jenis berikut :values',
+            'id_mk_area'            => ':attribute harus berupa angka',
+            'id_provinsi'           => ':attribute harus berupa angka',
+            'id_kabupaten'          => ':attribute harus berupa angka',
+            'id_kecamatan'          => ':attribute harus berupa angka',
+            'id_kelurahan'          => ':attribute harus berupa angka'
         ];
     }
 

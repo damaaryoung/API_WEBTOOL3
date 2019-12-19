@@ -194,4 +194,45 @@ class CabangController extends BaseController
             ], 501);
         }
     }
+
+    // Get Cabang By Id Kelurahan
+    public function get_cabang($id_kab, $id_kec, $id_kel){
+        if(!preg_match("/^[0-9]{1,}$/", $id_kab) || !preg_match("/^[0-9]{1,}$/", $id_kec) || !preg_match("/^[0-9]{1,}$/", $id_kel)){
+
+            return response()->json([
+                "code"    => 422,
+                "status"  => "not valid request",
+                "message" => "parameter harus berupa angka"
+            ], 422);
+        }
+
+        $check = DB::connection('web')->table('mk_cabang')
+            ->where('id_kabupaten', $id_kab)
+            ->where('id_kecamatan', $id_kec)
+            ->where('id_kelurahan', $id_kel)
+            ->first();
+
+        if (!$check) {
+            return response()->json([
+                'code'    => 404,
+                'status'  => 'not found',
+                'message' => 'Data tidak ada'
+            ], 404);
+        }
+
+
+        try {
+            return response()->json([
+                'code'    => 200,
+                'status'  => 'success',
+                'data'    => $check
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                'code'   => 501,
+                'status' => 'error',
+                'data'   => $e
+            ], 501);
+        }
+    }
 }
