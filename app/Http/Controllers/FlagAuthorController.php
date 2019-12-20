@@ -58,7 +58,7 @@ class FlagAuthorController extends BaseController
                     $data[$i]['id']      = $val->id;
                     $data[$i]['email']   = $val->email;
                     $data[$i]['no_hp']   = $val->no_hp;
-                    $data[$i]['subject'] = 'Pengambilan Tabungan Tunai';
+                    $data[$i]['subject'] = $val->subject; //'Pengambilan Tabungan Tunai';
                     $data[$i]['pesan']   = $pesan;
                     $data[$i]['tgl']     = $val->tgl;
                     $data[$i]['jam']     = $val->jam;
@@ -123,7 +123,7 @@ class FlagAuthorController extends BaseController
                     $data[$i]['id']      = $val->id;
                     $data[$i]['email']   = $val->email;
                     $data[$i]['no_hp']   = $val->no_hp;
-                    $data[$i]['subject'] = 'Pengambilan Tabungan Tunai';
+                    $data[$i]['subject'] = $val->subject; //'Pengambilan Tabungan Tunai';
                     $data[$i]['pesan']   = $pesan;
                     $data[$i]['tgl']     = $val->tgl;
                     $data[$i]['jam']     = $val->jam;
@@ -254,7 +254,7 @@ class FlagAuthorController extends BaseController
                     $data[$i]['id']              = $val->id;
                     $data[$i]['email']           = $val->email;
                     $data[$i]['no_hp']           = $val->no_hp;
-                    $data[$i]['subject']         = 'Pengambilan Tabungan Tunai';
+                    $data[$i]['subject']         = $val->subject; //'Pengambilan Tabungan Tunai';
                     $data[$i]['pesan']           = $pesan;
                     $data[$i]['tgl']             = $val->tgl;
                     $data[$i]['jam']             = $val->jam;
@@ -319,7 +319,7 @@ class FlagAuthorController extends BaseController
                     $data[$i]['id']              = $val->id;
                     $data[$i]['email']           = $val->email;
                     $data[$i]['no_hp']           = $val->no_hp;
-                    $data[$i]['subject']         = 'Pengambilan Tabungan Tunai';
+                    $data[$i]['subject']         = $val->subject; //'Pengambilan Tabungan Tunai';
                     $data[$i]['pesan']           = $pesan;
                     $data[$i]['tgl']             = $val->tgl;
                     $data[$i]['jam']             = $val->jam;
@@ -488,7 +488,7 @@ class FlagAuthorController extends BaseController
                     $data[$i]['id']      = $val->id;
                     $data[$i]['email']   = $val->email;
                     $data[$i]['no_hp']   = $val->no_hp;
-                    $data[$i]['subject'] = 'Pengambilan Tabungan Tunai';
+                    $data[$i]['subject'] = $val->subject; //'Pengambilan Tabungan Tunai';
                     $data[$i]['pesan']   = $pesan;
                     $data[$i]['tgl']     = $val->tgl;
                     $data[$i]['jam']     = $val->jam;
@@ -555,7 +555,7 @@ class FlagAuthorController extends BaseController
                     $data[$i]['id']      = $val->id;
                     $data[$i]['email']   = $val->email;
                     $data[$i]['no_hp']   = $val->no_hp;
-                    $data[$i]['subject'] = 'Pengambilan Tabungan Tunai';
+                    $data[$i]['subject'] = $val->subject; //'Pengambilan Tabungan Tunai';
                     $data[$i]['pesan']   = $pesan;
                     $data[$i]['tgl']     = $val->tgl;
                     $data[$i]['jam']     = $val->jam;
@@ -623,7 +623,7 @@ class FlagAuthorController extends BaseController
                     $data[$i]['id']      = $val->id;
                     $data[$i]['email']   = $val->email;
                     $data[$i]['no_hp']   = $val->no_hp;
-                    $data[$i]['subject'] = 'Pengambilan Tabungan Tunai';
+                    $data[$i]['subject'] = $val->subject; //'Pengambilan Tabungan Tunai';
                     $data[$i]['pesan']   = $pesan;
                     $data[$i]['tgl']     = $val->tgl;
                     $data[$i]['jam']     = $val->jam;
@@ -691,7 +691,7 @@ class FlagAuthorController extends BaseController
                     $data[$i]['id']      = $val->id;
                     $data[$i]['email']   = $val->email;
                     $data[$i]['no_hp']   = $val->no_hp;
-                    $data[$i]['subject'] = 'Pengambilan Tabungan Tunai';
+                    $data[$i]['subject'] = $val->subject; //'Pengambilan Tabungan Tunai';
                     $data[$i]['pesan']   = $pesan;
                     $data[$i]['tgl']     = $val->tgl;
                     $data[$i]['jam']     = $val->jam;

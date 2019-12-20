@@ -196,21 +196,23 @@ class CabangController extends BaseController
     }
 
     // Get Cabang By Id Kelurahan
-    public function get_cabang($id_kel){
-        if(!preg_match("/^[0-9]{1,}$/", $id_kel)){
+    public function get_cabang(){
+        // if(!preg_match("/^[0-9]{1,}$/", $id_kel)){
 
-            return response()->json([
-                "code"    => 422,
-                "status"  => "not valid request",
-                "message" => "parameter harus berupa angka"
-            ], 422);
-        }
+        //     return response()->json([
+        //         "code"    => 422,
+        //         "status"  => "not valid request",
+        //         "message" => "parameter harus berupa angka"
+        //     ], 422);
+        // }
 
-        $check = DB::connection('web')->table('mk_cabang')
-            ->select('id', 'nama')
-            ->where('id_kelurahan', $id_kel)
-            ->groupBy('id')
-            ->get();
+        $check = Cabang::with('kel')->get();
+
+        // $check = DB::connection('web')->table('mk_cabang')
+        //     ->select('id', 'nama', 'id_kelurahan')
+        //     ->where('id_kelurahan', $id_kel)
+        //     ->groupBy('id')
+        //     ->get();
 
         if ($check == '[]') {
             return response()->json([
@@ -220,11 +222,19 @@ class CabangController extends BaseController
             ], 404);
         }
 
+        foreach ($check as $val) {
+            $res[] = [
+                'id'             => $val->id,
+                'nama'           => $val->nama,
+                'nama_kelurahan' => $val->kel['nama']
+            ];
+        }
+
         try {
             return response()->json([
                 'code'    => 200,
                 'status'  => 'success',
-                'data'    => $check
+                'data'    => $res
             ], 200);
         } catch (Exception $e) {
             return response()->json([
