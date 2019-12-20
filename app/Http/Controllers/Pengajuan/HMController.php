@@ -65,7 +65,7 @@ class HMController extends BaseController
                 'tenor'          => (int) $val->faspin->tenor,
                 'das_status'     => $status_das,
                 'das_note'       => $val->catatan_das,
-                'hm_status'      => $status_das,
+                'hm_status'      => $status_hm,
                 'hm_note'        => $val->catatan_hm
             ];
         }
@@ -220,7 +220,7 @@ class HMController extends BaseController
             'data_penjamin' => $penjamin,
             'das_status'    => $status_das,
             'das_note'      => $val->catatan_das,
-            'hm_status'     => $status_das,
+            'hm_status'     => $status_hm,
             'hm_note'       => $val->catatan_hm
         ];
 
@@ -254,6 +254,8 @@ class HMController extends BaseController
             'catatan_hm' => $req->input('catatan_hm'),
             'status_hm'  => $req->input('status_hm')
         );
+
+        // dd($data);
 
         if($data['catatan_hm'] == null){
             return response()->json([

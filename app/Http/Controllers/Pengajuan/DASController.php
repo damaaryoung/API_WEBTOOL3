@@ -6,6 +6,7 @@ use Laravel\Lumen\Routing\Controller as BaseController;
 use App\Http\Requests\Debt\DebtPenjaminRequest;
 use App\Http\Requests\Debt\DebtPasanganRequest;
 use App\Http\Controllers\Controller as Helper;
+use Illuminate\Support\Facades\File;
 use App\Models\Wilayah\Kabupaten;
 use App\Models\Wilayah\Kecamatan;
 use App\Models\Wilayah\Kelurahan;
@@ -203,7 +204,11 @@ class DASController extends BaseController
             ],
             'data_penjamin' => $penjamin,
             'status'        => $status,
-            'note'          => $val->catatan_das
+            'note'          => $val->catatan_das,
+            'lampiran'  => [
+                'lamp_ideb'    => $val->lamp_ideb,
+                'lamp_pefindo' => $val->lamp_pefindo
+            ]
         ];
 
         try {
@@ -232,34 +237,70 @@ class DASController extends BaseController
             ], 404);
         }
 
-        $data = array(
-            'catatan_das' => $req->input('catatan_das'),
-            'status_das'  => $req->input('status_das')
-        );
+        // $validator = \Validator::make(
+        //   [
+        //       'file'      => $req->file,
+        //       'extension' => strtolower($request->file->getClientOriginalExtension()),
+        //   ],
+        //   [
+        //       'file'          => 'required',
+        //       'extension'      => 'required|in:doc,csv,xlsx,xls,docx,ppt,odt,ods,odp',
+        //   ]
+        // );
 
-        if($data['catatan_das'] == null){
+        $validator = \Validator::make($req->all(),[
+            'status_das'=> 'numeric'
+        ],$messages = [
+            'numeric'=> 'Status harus berupa digit'
+        ]);
+
+        if ($validator->fails()) {
             return response()->json([
-                "code"    => 422,
-                "status"  => "bad request",
-                "message" => "catatan harus diinput!!"
-            ], 422);
-        }
-
-        if($data['status_das'] == null){
-            return response()->json([
-                "code"    => 422,
-                "status"  => "bad request",
-                "message" => "status harus dipilih!!"
-            ], 422);
-        }
-
-        if (!preg_match("/^([1-2]{1})$/", $req->input('status_das'))) {
-            response()->json([
                 "code"    => 422,
                 "status"  => "not valid request",
-                "message" => "status_das harus berupa angka 1 digit, range: 1-2"
+                "message" => $validator->errors()
             ], 422);
         }
+
+        $exIdeb = $req->file('lamp_ideb')->getClientOriginalExtension();
+        // $exPef  = $req->file('lamp_ideb')->getClientOriginalExtension();
+
+        if ($exIdeb != 'ideb') {
+            return response()->json([
+                "code"    => 422,
+                "status"  => "not valid request",
+                "message" => "file ideb harus berupa format ideb"
+            ], 422);
+        }
+
+        $lamp_dir = 'public/lamp_trans.'.$check->nomor_so;
+
+        if($file = $req->file('lamp_ideb')){
+            $path = $lamp_dir.'/ideb';
+            $name = $file->getClientOriginalName(); //'ktp.'.$file->getClientOriginalExtension();
+            $file->move($path,$name);
+
+            $ideb = $path.'/'.$name;
+        }else{
+            $ideb = null;
+        }
+
+        if($file = $req->file('lamp_pefindo')){
+            $path = $lamp_dir.'/pefindo';
+            $name = $file->getClientOriginalName(); //'ktp.'.$file->getClientOriginalExtension();
+            $file->move($path,$name);
+
+            $pefindo = $path.'/'.$name;
+        }else{
+            $pefindo = null;
+        }
+
+        $data = array(
+            'catatan_das' => $req->input('catatan_das'),
+            'status_das'  => $req->input('status_das'),
+            'lamp_ideb'   => $ideb,
+            'lamp_pefindo'=> $pefindo
+        );
 
         if ($data['status_das'] == 1) {
             $msg = 'data lengkap';

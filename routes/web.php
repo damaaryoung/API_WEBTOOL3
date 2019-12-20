@@ -141,7 +141,7 @@ $router->group(['middleware' => 'jwt.auth'], function () use ($router) {
 
             $router->get('/das', 'Pengajuan\DASController@index'); //Cek HM
             $router->get('/das/{id}', 'Pengajuan\DASController@show'); //Cek HM
-            $router->put('/das/{id}', 'Pengajuan\DASController@update'); //Cek HM
+            $router->post('/das/{id}', 'Pengajuan\DASController@update'); //Cek HM
 
             $router->get('/hm', 'Pengajuan\HMController@index'); //Cek HM
             $router->get('/hm/{id}', 'Pengajuan\HMController@show'); //Cek HM
