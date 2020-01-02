@@ -27,10 +27,11 @@ class MasterCC_Controller extends BaseController
 {
     public function index(Request $req){
         $user_id = $req->auth->user_id;
+        $pic     = PIC::where('user_id', $user_id)->first();
+        $id_cabang = $pic->id_mk_cabang;
 
-        $query = TransSo::with('asaldata','debt','pic')
-                ->select('id', 'nomor_so', 'id_pic', 'nama_so', 'id_asal_data', 'nama_marketing',
-        'id_calon_debt')
+        $query = TransSo::with('asaldata','debt')
+                ->where('id_cabang', $id_cabang)
                 ->where('user_id', $user_id)
                 ->get();
 
@@ -46,7 +47,7 @@ class MasterCC_Controller extends BaseController
                     'id'            => $val->id,
                     'nomor_so'      => $val->nomor_so,
                     'id_pic'        => $val->id_pic,
-                    'id_cabang'     => $val->pic['id_mk_cabang'],
+                    'id_cabang'     => $val->id_cabang,
                     'nama_so'       => $val->nama_so,
                     'id_asal_data'  => $val->asaldata['nama'],
                     'nama_marketing'=> $val->nama_marketing,
@@ -304,7 +305,7 @@ class MasterCC_Controller extends BaseController
     public function store(Request $request, Request $req) {
 
         $user_id     = $request->auth->user_id;
-        $username    = $request->auth->user;
+        $username    = $request->auth->usename;
 
         $PIC = PIC::where('user_id', $user_id)->first();
 
@@ -342,7 +343,7 @@ class MasterCC_Controller extends BaseController
             'nomor_so'       => $nomor_so,
             'user_id'        => $user_id,
             'id_pic'         => $PIC->id,
-            // 'kode_kantor'    => $PIC->id_mk_cabang,
+            'id_cabang'      => $PIC->id_mk_cabang,
             'nama_so'        => $PIC->nama,
             'id_asal_data'   => $req->input('id_asal_data'),
             'nama_marketing' => $req->input('nama_marketing')

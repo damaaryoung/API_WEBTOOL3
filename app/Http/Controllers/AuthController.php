@@ -7,6 +7,7 @@ use Firebase\JWT\ExpiredException;
 use Illuminate\Http\Request;
 use Firebase\JWT\JWT;
 use App\Models\User;
+use App\Models\AreaKantor\PIC;
 use Carbon\Carbon;
 
 class AuthController extends Controller
@@ -20,12 +21,20 @@ class AuthController extends Controller
     private $request;
 
     protected function jwt(User $user) {
-         $payload = [
+        $pic = PIC::where('user_id', $user->user_id)->first();
+
+        if ($pic != null) {
+            $cabang = $pic->id_mk_cabang;
+        }else{
+            $cabang = null;
+        }
+
+        $payload = [
          	'iss'       => "BPR Kredit Mandiri Indonesia",
             'id'        => $user->user_id,
             'nik'       => $user->nik,
             'usename'   => $user->user,
-            'kd_cabang' => $user->kd_cabang,
+            'kd_cabang' => $cabang,
             'divisi_id' => $user->divisi_id,
             'jabatan'   => $user->jabatan,
             'email'     => $user->email,

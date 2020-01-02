@@ -32,8 +32,22 @@ class MasterAO_Controller extends BaseController
 {
     public function index(Request $req){
         // $kode_kantor = $req->auth->kd_cabang;
+        $user_id  = $req->auth->user_id;
+        $username = $req->auth->username;
 
-        $query = TransSo::with('asaldata','debt')->where('status_hm', 1)->get();
+        $pic = PIC::where('user_id', $user_id)->first();
+
+        if ($pic == null) {
+            return response()->json([
+                "code"    => 404,
+                "status"  => "not found",
+                "message" => "User_ID anda adalah '".$user_id."' dengan username '".$username."' . Namun anda belum terdaftar sebagai PIC(AO). Harap daftarkan diri sebagai PIC(AO) pada form PIC atau hubungi bagian IT"
+            ], 404);
+        }
+
+        $id_cabang = $pic->id_mk_cabang;
+
+        $query = TransSo::with('asaldata','debt')->where('id_cabang', $id_cabang)->where('status_hm', 1)->get();
 
         if ($query == '[]') {
             return response()->json([
@@ -66,7 +80,7 @@ class MasterAO_Controller extends BaseController
                 'nomor_so'       => $val->nomor_so,
                 'user_id'        => $val->user_id,
                 'id_pic'         => $val->id_pic,
-                'id_cabang'      => $val->pic['id_mk_cabang'],
+                'id_cabang'      => $id_cabang,
                 'asal_data'      => $val->asaldata['nama'],
                 'nama_marketing' => $val->nama_marketing,
                 'nama_so'        => $val->nama_so,
@@ -96,7 +110,11 @@ class MasterAO_Controller extends BaseController
     }
 
     public function show($id, Request $req){
-        $val = TransSo::where('id', $id)->first();
+        $user_id = $req->auth->user_id;
+        $pic     = PIC::where('user_id', $user_id)->first();
+        $id_cabang = $pic->id_mk_cabang;
+
+        $val = TransSo::where('id', $id)->where('id_cabang', $id_cabang)->first();
 
         if (!$val) {
             return response()->json([

@@ -25,7 +25,7 @@ class HMController extends BaseController
     public function index(Request $req){
         // $kode_kantor = $req->auth->kd_cabang;
         // $query = TransSo::where('kode_kantor', $kode_kantor)->get();
-        // $query = TransSo::with('asaldata','debt', 'pic')->get();
+        $query = TransSo::with('asaldata','debt', 'pic')->get();
 
         if ($query == '[]') {
             return response()->json([
