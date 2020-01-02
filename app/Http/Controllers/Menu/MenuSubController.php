@@ -171,7 +171,7 @@ class MenuSubController extends BaseController
     }
 
     public function delete($IdOrSlug) {
-        $check = MenuSub::where('id', $IdOrSlug)->where('url', $IdOrSlug)->first();
+        $check = MenuSub::where('id', $IdOrSlug)->orWhere('url', $IdOrSlug)->first();
 
         if (!$check) {
             return response()->json([
@@ -181,7 +181,7 @@ class MenuSubController extends BaseController
             ], 404);
         }
 
-        MenuSub::where('id', $IdOrSlug)->where('url', $IdOrSlug)->delete();
+        MenuSub::where('id', $IdOrSlug)->orWhere('url', $IdOrSlug)->delete();
 
         try {
             return response()->json([

@@ -173,7 +173,7 @@ class MenuMasterController extends BaseController
             ], 404);
         }
 
-        MenuMaster::where('id', $IdOrSlug)->where('url', $IdOrSlug)->delete();
+        MenuMaster::where('id', $IdOrSlug)->orWhere('url', $IdOrSlug)->delete();
 
         try {
             return response()->json([

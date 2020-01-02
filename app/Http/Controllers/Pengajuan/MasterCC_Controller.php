@@ -27,55 +27,59 @@ class MasterCC_Controller extends BaseController
 {
     public function index(Request $req){
         $user_id = $req->auth->user_id;
-        $query = TransSo::with('asaldata','debt')
-                ->select('id', 'nomor_so', 'kode_kantor', 'nama_so', 'id_asal_data', 'nama_marketing',
+
+        $query = TransSo::with('asaldata','debt','pic')
+                ->select('id', 'nomor_so', 'id_pic', 'nama_so', 'id_asal_data', 'nama_marketing',
         'id_calon_debt')
                 ->where('user_id', $user_id)
                 ->get();
 
-        if (!$query) {
+        if ($query == '[]') {
             return response()->json([
                 "code"    => 404,
                 "status"  => "not found",
                 "message" => "Data kosong!!"
             ], 404);
+        }else{
+            foreach ($query as $key => $val) {
+                $res[$key] = [
+                    'id'            => $val->id,
+                    'nomor_so'      => $val->nomor_so,
+                    'id_pic'        => $val->id_pic,
+                    'id_cabang'     => $val->pic['id_mk_cabang'],
+                    'nama_so'       => $val->nama_so,
+                    'id_asal_data'  => $val->asaldata['nama'],
+                    'nama_marketing'=> $val->nama_marketing,
+                    'nama_calon_debt' => $val->debt['nama_lengkap']
+                ];
+
+            }
+
+            try {
+                return response()->json([
+                    'code'   => 200,
+                    'status' => 'success',
+                    'data'   => $res
+                ], 200);
+            } catch (Exception $e) {
+                return response()->json([
+                    "code"    => 501,
+                    "status"  => "error",
+                    "message" => $e
+                ], 501);
+            }
         }
 
-        foreach ($query as $key => $val) {
-            $res[$key] = [
-                'id'            => $val->id,
-                'nomor_so'      => $val->nomor_so,
-                'kode_kantor'   => $val->kode_kantor,
-                'nama_so'       => $val->nama_so,
-                'id_asal_data'  => $val->asaldata['nama'],
-                'nama_marketing'=> $val->nama_marketing,
-                'nama_calon_debt' => $val->debt['nama_lengkap']
-            ];
-        }
-
-        try {
-            return response()->json([
-                'code'   => 200,
-                'status' => 'success',
-                'data'   => $res
-            ], 200);
-        } catch (Exception $e) {
-            return response()->json([
-                "code"    => 501,
-                "status"  => "error",
-                "message" => $e
-            ], 501);
-        }
     }
 
     public function show($id, Request $req){
         $user_id = $req->auth->user_id;
-        $val = TransSo::with('asaldata','debt')
+
+        $val = TransSo::with('asaldata','debt', 'pic')
                 ->where('id', $id)
-                // ->where('user_id', $user_id)
+                ->where('user_id', $user_id)
                 ->first();
 
-        $ao = TransAO::where('id_trans_so', $val->id)->first();
 
         if (!$val) {
             return response()->json([
@@ -84,6 +88,8 @@ class MasterCC_Controller extends BaseController
                 "message" => "Data kosong!!"
             ], 404);
         }
+
+        $ao = TransAO::where('id_trans_so', $val->id)->first();
 
         $nama_anak = explode (",",$val->nama_anak);
         $tgl_anak  = explode (",",$val->tgl_lahir_anak);
@@ -153,13 +159,13 @@ class MasterCC_Controller extends BaseController
             $status_ao = 'waiting';
         }
 
-
-
         $res = [
-            'id'                    => $val->id,
-            'nomor_so'              => $val->nomor_so,
-            'kode_kantor'           => $val->kode_kantor,
-            'nama_so'               => $val->nama_so,
+            'id'        => $val->id,
+            'nomor_so'  => $val->nomor_so,
+            'id_pic'    => $val->id_pic,
+            'id_cabang' => $val->pic['id_mk_cabang'],
+            'nama_cabang'=> $val->pic['cabang']['nama'],
+            'nama_so'   => $val->nama_so,
             'tracking'  => [
                 'das' => $status_das,
                 'hm'  => $status_hm,
@@ -295,7 +301,7 @@ class MasterCC_Controller extends BaseController
         }
     }
 
-    public function store(Request $request, BlankRequest $req) {
+    public function store(Request $request, Request $req) {
 
         $user_id     = $request->auth->user_id;
         $username    = $request->auth->user;
@@ -335,10 +341,11 @@ class MasterCC_Controller extends BaseController
         $dataTr = array(
             'nomor_so'       => $nomor_so,
             'user_id'        => $user_id,
-            'kode_kantor'    => $PIC->id_mk_cabang,
+            'id_pic'         => $PIC->id,
+            // 'kode_kantor'    => $PIC->id_mk_cabang,
             'nama_so'        => $PIC->nama,
-            'id_asal_data'   => $request->input('id_asal_data'),
-            'nama_marketing' => $request->input('nama_marketing')
+            'id_asal_data'   => $req->input('id_asal_data'),
+            'nama_marketing' => $req->input('nama_marketing')
         );
 
         // Data Fasilitas Pinjaman

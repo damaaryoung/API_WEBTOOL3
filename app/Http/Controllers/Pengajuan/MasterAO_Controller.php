@@ -31,9 +31,9 @@ use DB;
 class MasterAO_Controller extends BaseController
 {
     public function index(Request $req){
-        $kode_kantor = $req->auth->kd_cabang;
+        // $kode_kantor = $req->auth->kd_cabang;
 
-        $query = TransSo::where('kode_kantor', $kode_kantor)->where('status_hm', 1)->get();
+        $query = TransSo::with('asaldata','debt')->where('status_hm', 1)->get();
 
         if ($query == '[]') {
             return response()->json([
@@ -65,7 +65,8 @@ class MasterAO_Controller extends BaseController
                 'id'             => $val->id,
                 'nomor_so'       => $val->nomor_so,
                 'user_id'        => $val->user_id,
-                'kode_kantor'    => $val->kode_kantor,
+                'id_pic'         => $val->id_pic,
+                'id_cabang'      => $val->pic['id_mk_cabang'],
                 'asal_data'      => $val->asaldata['nama'],
                 'nama_marketing' => $val->nama_marketing,
                 'nama_so'        => $val->nama_so,
@@ -183,9 +184,11 @@ class MasterAO_Controller extends BaseController
         }
 
         $data[] = [
-            'id'             => $val->id,
-            'nomor_so'       => $val->nomor_so,
-            'kode_kantor'    => $val->kode_kantor,
+            'id'        => $val->id,
+            'nomor_so'  => $val->nomor_so,
+            'id_pic'      => $val->id_pic,
+            'id_cabang'   => $val->pic['id_mk_cabang'],
+            'nama_cabang' => $val->pic['cabang']['nama'],
             'asaldata'  => [
                 'id'   => $val->asaldata['id'],
                 'nama' => $val->asaldata['nama']
@@ -412,7 +415,6 @@ class MasterAO_Controller extends BaseController
         $nomor_ao = $PIC->id_mk_cabang.'-'.$JPIC->nama_jenis.'-'.$month.'-'.$year.'-'.$lastNumb;
 
         $check = TransSo::where('id',$id)->first();
-        $id_penj = explode (",",$check->id_penjamin);
 
         if (!$check) {
             return response()->json([
@@ -422,11 +424,13 @@ class MasterAO_Controller extends BaseController
             ], 404);
         }
 
+        $id_penj = explode (",",$check->id_penjamin);
+
         $TransAO = array(
             'nomor_ao'              => $nomor_ao,
             'id_trans_so'           => $id,
             'user_id'               => $user_id,
-            'kode_kantor'           => $PIC->id_mk_cabang,
+            'id_cabang'             => $PIC->id_mk_cabang,
             'nama_ao'               => $PIC->nama,
             'produk'                => $req->input('produk'),
             'plafon_kredit'         => $req->input('plafon_kredit'),
@@ -467,6 +471,89 @@ class MasterAO_Controller extends BaseController
         $nama_anak    = implode(",", $namaAnak);
         $tgl_lhr_anak = implode(",", $tglLahirAnak);
 
+        // Lampiran Lama
+
+        if($file = $req->file('lamp_ktp')){
+            $path = $lamp_dir.'/debitur';
+            $name = 'ktp.'.$file->getClientOriginalExtension();
+
+            if(!empty($check->debt['lamp_ktp']))
+            {
+                File::delete($check->debt['lamp_ktp']);
+            }
+
+            $file->move($path,$name);
+
+            $ktpDebt = $path.'/'.$name;
+        }else{
+            $ktpDebt = $check->debt['lamp_ktp'];
+        }
+
+        if($file = $req->file('lamp_kk')){
+            $path = $lamp_dir.'/debitur';
+            $name = 'kk.'.$file->getClientOriginalExtension();
+
+            if(!empty($check->debt['lamp_kk']))
+            {
+                File::delete($check->debt['lamp_kk']);
+            }
+
+            $file->move($path,$name);
+
+            $kkDebt = $path.'/'.$name;
+        }else{
+            $kkDebt = $check->debt['lamp_kk'];
+        }
+
+        if($file = $req->file('lamp_sertifikat')){
+            $path = $lamp_dir.'/debitur';
+            $name = 'sertifikat.'.$file->getClientOriginalExtension();
+
+            if(!empty($check->debt['lamp_sertifikat']))
+            {
+                File::delete($check->debt['lamp_sertifikat']);
+            }
+
+            $file->move($path,$name);
+
+            $sertifikatDebt = $path.'/'.$name;
+        }else{
+            $sertifikatDebt = $check->debt['lamp_sertifikat'];
+        }
+
+        if($file = $req->file('lamp_pbb')){
+            $path = $lamp_dir.'/debitur';
+            $name = 'pbb.'.$file->getClientOriginalExtension();
+
+            if(!empty($check->debt['lamp_pbb']))
+            {
+                File::delete($check->debt['lamp_pbb']);
+            }
+
+            $file->move($path,$name);
+
+            $pbbDebt = $path.'/'.$name;
+        }else{
+            $pbbDebt = $check->debt['lamp_pbb'];
+        }
+
+        if($file = $req->file('lamp_imb')){
+            $path = $lamp_dir.'/debitur';
+            $name = 'imb.'.$file->getClientOriginalExtension();
+
+            if(!empty($check->debt['lamp_imb']))
+            {
+                File::delete($check->debt['lamp_imb']);
+            }
+
+            $file->move($path,$name);
+
+            $imbDebt = $path.'/'.$name;
+        }else{
+            $imbDebt = $check->debt['lamp_imb'];
+        }
+
+        // Lampiran Baru
         if($file = $req->file('lamp_buku_tabungan')){
             $path = $lamp_dir.'/debitur';
             $name = 'buku_tabungan.'.$file->getClientOriginalExtension();
@@ -532,7 +619,47 @@ class MasterAO_Controller extends BaseController
         }
 
         // Data Calon Debitur
+        // Data Lama
         $dataDebitur = array(
+            'nama_lengkap'          => empty($req->input('nama_lengkap')) ? $check->debt['nama_lengkap'] : $req->input('nama_lengkap'),
+            'gelar_keagamaan'       => empty($req->input('gelar_keagamaan')) ? $check->debt['gelar_keagamaan'] : $req->input('gelar_keagamaan'),
+            'gelar_pendidikan'      => empty($req->input('gelar_pendidikan')) ? $check->debt['gelar_pendidikan'] : $req->input('gelar_pendidikan'),
+            'jenis_kelamin'         => empty($req->input('jenis_kelamin')) ? strtoupper($check->debt['jenis_kelamin']) : strtoupper($req->input('jenis_kelamin')),
+            'status_nikah'          => empty($req->input('status_nikah')) ? strtoupper($check->debt['status_nikah']) : strtoupper($req->input('status_nikah')),
+            'ibu_kandung'           => empty($req->input('ibu_kandung')) ? $check->debt['ibu_kandung'] : $req->input('ibu_kandung'),
+            'no_ktp'                => empty($req->input('no_ktp')) ? $check->debt['no_ktp'] : $req->input('no_ktp'),
+            'no_ktp_kk'             => empty($req->input('no_ktp_kk')) ? $check->debt['no_ktp_kk'] : $req->input('no_ktp_kk'),
+            'no_kk'                 => empty($req->input('no_kk')) ? $check->debt['no_kk'] : $req->input('no_kk'),
+            'no_npwp'               => empty($req->input('no_npwp')) ? $check->debt['no_npwp'] : $req->input('no_npwp'),
+            'tempat_lahir'          => empty($req->input('tempat_lahir')) ? $check->debt['tempat_lahir'] : $req->input('tempat_lahir'),
+            'tgl_lahir'             => empty($req->input('tgl_lahir')) ? $check->debt['tgl_lahir'] : Carbon::parse($req->input('tgl_lahir'))->format('Y-m-d'),
+            'agama'                 => empty($req->input('agama')) ? $check->debt['agama'] : strtoupper($req->input('agama')),
+            'alamat_ktp'            => empty($req->input('alamat_ktp')) ? $check->debt['alamat_ktp'] : $req->input('alamat_ktp'),
+            'rt_ktp'                => empty($req->input('rt_ktp')) ? $check->debt['rt_ktp'] : $req->input('rt_ktp'),
+            'rw_ktp'                => empty($req->input('rw_ktp')) ? $check->debt['rw_ktp'] : $req->input('rw_ktp'),
+            'id_prov_ktp'           => empty($req->input('id_provinsi_ktp')) ? $check->debt['id_provinsi_ktp'] : $req->input('id_provinsi_ktp'),
+            'id_kab_ktp'            => empty($req->input('id_kabupaten_ktp')) ? $check->debt['id_kabupaten_ktp'] : $req->input('id_kabupaten_ktp'),
+            'id_kec_ktp'            => empty($req->input('id_kecamatan_ktp')) ? $check->debt['id_kecamatan_ktp'] : $req->input('id_kecamatan_ktp'),
+            'id_kel_ktp'            => empty($req->input('id_kelurahan_ktp')) ? $check->debt['id_kelurahan_ktp'] : $req->input('id_kelurahan_ktp'),
+            'alamat_domisili'       => empty($req->input('alamat_domisili')) ? $check->debt['alamat_domisili'] : $req->input('alamat_domisili'),
+            'rt_domisili'           => empty($req->input('rt_domisili')) ? $check->debt['rt_domisili'] : $req->input('rt_domisili'),
+            'rw_domisili'           => empty($req->input('rw_domisili')) ? $check->debt['rw_domisili'] : $req->input('rw_domisili'),
+            'id_prov_domisili'      => empty($req->input('id_provinsi_domisili')) ? $check->debt['id_provinsi_domisili'] : $req->input('id_provinsi_domisili'),
+            'id_kab_domisili'       => empty($req->input('id_kabupaten_domisili')) ? $check->debt['id_kabupaten_domisili'] : $req->input('id_kabupaten_domisili'),
+            'id_kec_domisili'       => empty($req->input('id_kecamatan_domisili')) ? $check->debt['id_kecamatan_domisili'] : $req->input('id_kecamatan_domisili'),
+            'id_kel_domisili'       => empty($req->input('id_kelurahan_domisili')) ? $check->debt['id_kelurahan_domisili'] : $req->input('id_kelurahan_domisili'),
+            'pendidikan_terakhir'   => empty($req->input('pendidikan_terakhir')) ? $check->debt['pendidikan_terakhir'] : $req->input('pendidikan_terakhir'),
+            'jumlah_tanggungan'     => empty($req->input('jumlah_tanggungan')) ? $check->debt['jumlah_tanggungan'] : $req->input('jumlah_tanggungan'),
+            'no_telp'               => empty($req->input('no_telp')) ? $check->debt['no_telp'] : $req->input('no_telp'),
+            'no_hp'                 => empty($req->input('no_hp')) ? $check->debt['no_hp'] : $req->input('no_hp'),
+            'alamat_surat'          => empty($req->input('alamat_surat')) ? $check->debt['alamat_surat'] : $req->input('alamat_surat'),
+            'lamp_ktp'              => $ktpDebt,
+            'lamp_kk'               => $kkDebt,
+            'lamp_sertifikat'       => $sertifikatDebt,
+            'lamp_sttp_pbb'         => $pbbDebt,
+            'lamp_imb'              => $imbDebt,
+
+        // Data BAru
             'tinggi_badan'          => empty($req->input('tinggi_badan')) ? $check->debt['tinggi_badan'] : $req->input('tinggi_badan'),
             'berat_badan'           => empty($req->input('berat_badan')) ? $check->debt['berat_badan'] : $req->input('berat_badan'),
             'nama_anak'             => $nama_anak,
@@ -557,8 +684,55 @@ class MasterAO_Controller extends BaseController
             'lamp_foto_usaha'       => $fotoUsaha
         );
 
+        if($file = $req->file('lamp_ktp_pas')){
+            $path = $lamp_dir.'/pasangan';
+            $name = 'ktp.'.$file->getClientOriginalExtension();
+
+            if(!empty($check->pas['lamp_ktp']))
+            {
+                File::delete($check->pas['lamp_ktp']);
+            }
+
+            $file->move($path,$name);
+
+            $ktpPass = $path.'/'.$name;
+        }else{
+            $ktpPass = $check->pas['lamp_ktp'];
+        }
+
+        if($file = $req->file('lamp_buku_nikah_pas')){
+            $path = $lamp_dir.'/pasangan';
+            $name = 'buku_nikah.'.$file->getClientOriginalExtension();
+
+            if(!empty($check->pas['lamp_buku_nikah']))
+            {
+                File::delete($check->pas['lamp_buku_nikah']);
+            }
+
+            $file->move($path,$name);
+
+            $bukuNikahPass = $path.'/'.$name;
+        }else{
+            $bukuNikahPass = $check->pas['lamp_buku_nikah'];
+        }
+
         // Data Usaha Calon Debitur
+        // Pasangan Lama
         $dataPasangan = array(
+            'nama_lengkap'     => empty($req->input('nama_lengkap_pas')) ? $check->pas['nama_lengkap'] : $req->input('nama_lengkap_pas'),
+            'nama_ibu_kandung' => empty($req->input('nama_ibu_kandung_pas')) ? $check->pas['nama_ibu_kandung'] : $req->input('nama_ibu_kandung_pas'),
+            'jenis_kelamin'    => empty($req->input('jenis_kelamin_pas')) ? strtoupper($check->pas['jenis_kelamin']) : strtoupper($req->input('jenis_kelamin_pas')),
+            'no_ktp'           => empty($req->input('no_ktp_pas')) ? $check->pas['no_ktp'] : $req->input('no_ktp_pas'),
+            'no_ktp_kk'        => empty($req->input('no_ktp_kk_pas')) ? $check->pas['no_ktp_kk'] : $req->input('no_ktp_kk_pas'),
+            'no_npwp'          => empty($req->input('no_npwp_pas')) ? $check->pas['no_npwp'] : $req->input('no_npwp_pas'),
+            'tempat_lahir'     => empty($req->input('tempat_lahir_pas')) ? $check->pas['tempat_lahir'] : $req->input('tempat_lahir_pas'),
+            'tgl_lahir'        => empty($req->input('tgl_lahir_pas')) ? $check->pas['tgl_lahir'] : Carbon::parse($req->input('tgl_lahir_pas'))->format('Y-m-d'),
+            'alamat_ktp'       => empty($req->input('alamat_ktp_pas')) ? $check->alamat_ktp : $req->input('alamat_ktp_pas'),
+            'no_telp'          => empty($req->input('no_telp_pas')) ? $check->no_telp : $req->input('no_telp_pas'),
+            'lamp_ktp'         => $ktpPass,
+            'lamp_buku_nikah'  => $bukuNikahPass,
+
+            // Pasangan Baru
             'nama_tempat_kerja'     => $req->input('nama_tempat_kerja_pas'),
             'jenis_pekerjaan'       => $req->input('jenis_pekerjaan_pas'),
             'alamat_tempat_kerja'   => $req->input('alamat_tempat_kerja_pas'),
@@ -973,9 +1147,10 @@ class MasterAO_Controller extends BaseController
                 }
             }
 
+            // Data Penjamin
             foreach ($penjamin as $key => $value) {
                 $DP[] = [
-                    'id_calon_debitur' => $value->id_calon_debitur,
+                    // 'id_calon_debitur' => $value->id_calon_debitur,
                     'nama_ktp'         => empty($req->input('nama_ktp_pen')[$key]) ? $value->nama_ktp : $req->input('nama_ktp_pen')[$key],
                     'nama_ibu_kandung' => empty($req->input('nama_ibu_kandung_pen')[$key]) ? $value->nama_ibu_kandung : $req->input('nama_ibu_kandung_pen')[$key],
                     'no_ktp'           => empty($req->input('no_ktp_pen')[$key]) ? $value->no_ktp : $req->input('no_ktp_pen')[$key],

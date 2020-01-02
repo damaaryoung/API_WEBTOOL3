@@ -24,10 +24,10 @@ class DASController extends BaseController
 {
     public function index(Request $req){
         $user_id = $req->auth->user_id;
-        $kode_kantor = $req->auth->kd_cabang;
+        // $kode_kantor = $req->auth->kd_cabang;
 
         // $query = DB::connection('web')->table('trans_so')->where('kode_kantor', $kode_kantor)->get();
-        $query = TransSo::where('kode_kantor', $kode_kantor)->get();
+        $query = TransSo::with('asaldata','debt', 'pic')->get();
         // $query = DB::connection('web')->select("SELECT * FROM trans_so WHERE kode_kantor=?",[$kode_kantor]);
 
         if ($query == '[]') {
@@ -43,7 +43,7 @@ class DASController extends BaseController
 
             $data[$key]['id']             = $val->id;
             $data[$key]['nomor_so']       = $val->nomor_so;
-            $data[$key]['kode_kantor']    = $val->kode_kantor;
+            // $data[$key]['id_cabang']      = $val->pic['id_mk_cabang'];
             $data[$key]['asal_data']      = $val->asaldata['nama'];
             $data[$key]['nama_marketing'] = $val->nama_marketing;
             $data[$key]['nama_so']        = $val->nama_so;
@@ -79,8 +79,9 @@ class DASController extends BaseController
     }
 
     public function show($id, Request $req){
-        $kode_kantor = $req->auth->kd_cabang;
-        $val = TransSo::where('id', $id)->where('kode_kantor', $kode_kantor)->first();
+        // $kode_kantor = $req->auth->kd_cabang;
+        // $val = TransSo::where('id', $id)->where('kode_kantor', $kode_kantor)->first();
+        $val = TransSo::with('asaldata','debt', 'pic')->where('id', $id)->first();
         if (!$val) {
             return response()->json([
                 'code'    => 404,
@@ -131,7 +132,8 @@ class DASController extends BaseController
         $data = [
             'id'             => $val->id,
             'nomor_so'       => $val->nomor_so,
-            'kode_kantor'    => $val->kode_kantor,
+            'id_cabang'      => $val->pic['id_mk_cabang'],
+            'nama_cabang'    => $val->pic['cabang']['nama'],
             'asal_data'      => $val->asaldata['nama'],
             'nama_marketing' => $val->nama_marketing,
             'nama_so'        => $val->nama_so,

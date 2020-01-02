@@ -23,8 +23,9 @@ use DB;
 class HMController extends BaseController
 {
     public function index(Request $req){
-        $kode_kantor = $req->auth->kd_cabang;
-        $query = TransSo::where('kode_kantor', $kode_kantor)->get();
+        // $kode_kantor = $req->auth->kd_cabang;
+        // $query = TransSo::where('kode_kantor', $kode_kantor)->get();
+        // $query = TransSo::with('asaldata','debt', 'pic')->get();
 
         if ($query == '[]') {
             return response()->json([
@@ -56,7 +57,7 @@ class HMController extends BaseController
             $data[$key] = [
                 'id'             => $val->id,
                 'nomor_so'       => $val->nomor_so,
-                'kode_kantor'    => $val->kode_kantor,
+                'id_cabang'      => $val->pic['id_mk_cabang'],
                 'asal_data'      => $val->asaldata['nama'],
                 'nama_marketing' => $val->nama_marketing,
                 'nama_so'        => $val->nama_so,
@@ -86,8 +87,9 @@ class HMController extends BaseController
     }
 
     public function show($id, Request $req){
-        $kode_kantor = $req->auth->kd_cabang;
-        $val = TransSo::where('id', $id)->where('kode_kantor', $kode_kantor)->first();
+        // $kode_kantor = $req->auth->kd_cabang;
+        // $val = TransSo::where('id', $id)->where('kode_kantor', $kode_kantor)->first();
+        $val = TransSo::with('asaldata','debt', 'pic')->where('id', $id)->first();
         if (!$val) {
             return response()->json([
                 'code'    => 404,
@@ -146,7 +148,8 @@ class HMController extends BaseController
         $data = [
             'id'             => $val->id,
             'nomor_so'       => $val->nomor_so,
-            'kode_kantor'    => $val->kode_kantor,
+            'id_cabang'      => $val->pic['id_mk_cabang'],
+            'nama_cabang'    => $val->pic['cabang']['nama'],
             'asal_data'      => $val->asaldata['nama'],
             'nama_marketing' => $val->nama_marketing,
             'nama_so'        => $val->nama_so,
@@ -221,7 +224,11 @@ class HMController extends BaseController
             'das_status'    => $status_das,
             'das_note'      => $val->catatan_das,
             'hm_status'     => $status_hm,
-            'hm_note'       => $val->catatan_hm
+            'hm_note'       => $val->catatan_hm,
+            'lampiran'  => [
+                'lamp_ideb'    => $val->lamp_ideb,
+                'lamp_pefindo' => $val->lamp_pefindo
+            ]
         ];
 
         try {
@@ -254,8 +261,6 @@ class HMController extends BaseController
             'catatan_hm' => $req->input('catatan_hm'),
             'status_hm'  => $req->input('status_hm')
         );
-
-        // dd($data);
 
         if($data['catatan_hm'] == null){
             return response()->json([

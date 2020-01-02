@@ -310,12 +310,12 @@ class BlankRequest extends FormRequest
         return [
             // Fasilitas Pinjaman
             'jenis_pinjaman.required'  => ':attribute wajib diisi',
-            'plafon.required'          => ':attribute wajib diisi',
-            'tenor.required'           => ':attribute wajib diisi',
+            'plafon_pinjaman.required' => ':attribute wajib diisi',
+            'tenor_pinjaman.required'  => ':attribute wajib diisi',
 
             'jenis_pinjaman.in'        => ':attribute harus bertipe :values',
-            'plafon.integer'           => ':attribute harus berupa bilangan bulat',
-            'tenor.numeric'            => ':attribute harus berupa angka',
+            'plafon_pinjaman.integer'  => ':attribute harus berupa bilangan bulat',
+            'tenor_pinjaman.numeric'   => ':attribute harus berupa angka',
 
             // Debitur
             'jenis_kelamin.required'          => ':attribute wajib diisi',
