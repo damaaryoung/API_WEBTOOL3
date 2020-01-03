@@ -1220,6 +1220,9 @@ class MasterAO_Controller extends BaseController
         // Cek Kapasitas Bulanan
         $check_kapbul = KapBulanan::where('id_calon_debitur', $check->id_calon_debt)->first();
 
+        // Cek KKeuangan Usaha
+        $check_keuangan = KeuanganUsaha::where('id_calon_debitur', $check->id_calon_debt)->first();
+
         DB::connection('web')->beginTransaction();
         // try{
 
@@ -1325,8 +1328,13 @@ class MasterAO_Controller extends BaseController
             }
 
             if (!empty($req->input('pemasukan_tunai'))) {
-                $usaha = KeuanganUsaha::create($dataKeUsaha);
-                $id_usaha = $usaha->id;
+                if ($check_keuangan == null) {
+                    $keuangan = KeuanganUsaha::create($dataKeUsaha);
+                    $id_usaha = $keuangan->id;
+                }else{
+                    KeuanganUsaha::where('id', $check_keuangan->id)->update($dataKeUsaha);
+                    $id_usaha = $check_keuangan->id;
+                }
             }else{
                 $id_usaha = null;
             }
