@@ -68,7 +68,11 @@ class MasterCA_Controller extends BaseController
     }
 
     public function show($id, Request $req){
-        $kode_kantor = $req->auth->kd_cabang;
+        // $kode_kantor = $req->auth->kd_cabang;
+        $user_id = $req->auth->user_id;
+        $pic     = PIC::where('user_id', $user_id)->first();
+        $id_cabang = $pic->id_mk_cabang;
+
         $query = TransAO::where('id_trans_so', $id)->where('kode_kantor', $kode_kantor)->where('status_ao', 1)->get();
 
         if ($query == '[]') {

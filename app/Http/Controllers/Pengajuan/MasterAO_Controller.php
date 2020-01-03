@@ -173,10 +173,10 @@ class MasterAO_Controller extends BaseController
                         ]
                     ],
                     "lampiran" => [
-                        "lamp_ktp"              => $value->lamp_ktp,
-                        "lamp_ktp_pasangan"     => $value->lamp_ktp_pasangan,
-                        "lamp_kk"               => $value->lamp_kk,
-                        "lamp_buku_nikah"       => $value->lamp_buku_nikah
+                        "lamp_ktp"          => $value->lamp_ktp,
+                        "lamp_ktp_pasangan" => $value->lamp_ktp_pasangan,
+                        "lamp_kk"           => $value->lamp_kk,
+                        "lamp_buku_nikah"   => $value->lamp_buku_nikah
                     ]
                 ];
             }
@@ -377,7 +377,11 @@ class MasterAO_Controller extends BaseController
             'das_status'    => $status_das,
             'das_note'      => $val->catatan_das,
             'hm_status'     => $status_das,
-            'hm_note'       => $val->catatan_hm
+            'hm_note'       => $val->catatan_hm,
+            'lampiran'  => [
+                "ideb"      => explode(";", $val->lamp_ideb),
+                "pefindo"   => explode(";", $val->lamp_pefindo)
+            ]
         ];
 
         try {
@@ -448,6 +452,7 @@ class MasterAO_Controller extends BaseController
             'nomor_ao'              => $nomor_ao,
             'id_trans_so'           => $id,
             'user_id'               => $user_id,
+            'id_pic'                => $PIC->id,
             'id_cabang'             => $PIC->id_mk_cabang,
             'nama_ao'               => $PIC->nama,
             'produk'                => $req->input('produk'),
@@ -925,7 +930,7 @@ class MasterAO_Controller extends BaseController
                     'id_calon_debitur'        => $check->id_calon_debt,
                     'tipe_lokasi'             => empty($req->tipe_lokasi_agunan[$i]) ? null[$i] : strtoupper($req->tipe_lokasi_agunan[$i]),
                     'alamat'                  => empty($req->alamat_agunan[$i]) ? null[$i] : $req->alamat_agunan[$i],
-                    'id_provinsi'              => empty($req->id_prov_agunan[$i]) ? null[$i] : $req->id_prov_agunan[$i],
+                    'id_provinsi'             => empty($req->id_prov_agunan[$i]) ? null[$i] : $req->id_prov_agunan[$i],
                     'id_kabupaten'            => empty($req->id_kab_agunan[$i]) ? null[$i] : $req->id_kab_agunan[$i],
                     'id_kecamatan'            => empty($req->id_kec_agunan[$i]) ? null[$i] : $req->id_kec_agunan[$i],
                     'id_kelurahan'            => empty($req->id_kel_agunan[$i]) ? null[$i] : $req->id_kel_agunan[$i],
@@ -936,7 +941,7 @@ class MasterAO_Controller extends BaseController
                     'nama_pemilik_sertifikat' => empty($req->nama_pemilik_sertifikat[$i]) ? null[$i] : $req->nama_pemilik_sertifikat[$i],
                     'jenis_sertifikat'        => empty($req->jenis_sertifikat[$i]) ? null[$i] : strtoupper($req->jenis_sertifikat[$i]),
                     'no_sertifikat'           => empty($req->no_sertifikat[$i]) ? null[$i] : $req->no_sertifikat[$i],
-                    'tgl_ukur_sertifikat'     => empty($req->tgl_ukur_sertifikat[$i]) ? null[$i] : Carbon::parse($req->tgl_ukur_sertifikat[$i])->format('Y-m-d'),
+                    'tgl_ukur_sertifikat'     => empty($req->tgl_ukur_sertifikat[$i]) ? null[$i] : $req->tgl_ukur_sertifikat[$i],
                     'tgl_berlaku_shgb'        => empty($req->tgl_berlaku_shgb[$i]) ? null[$i] : Carbon::parse($req->tgl_berlaku_shgb[$i])->format('Y-m-d'),
                     'no_imb'                  => empty($req->no_imb[$i]) ? null[$i] : $req->no_imb[$i],
                     'njop'                    => empty($req->njop[$i]) ? null[$i] : $req->njop[$i],
@@ -1203,36 +1208,76 @@ class MasterAO_Controller extends BaseController
             }
         }
 
+        // Cek Transaksi AO
+        $check_ao = TransAO::where('id', $id)->first();
+
+        // Cek Verifikasi
+        $check_verif = VerifModel::where('id_trans_so', $id)->first();
+
+        // Cek Validasi
+        $check_valid = ValidModel::where('id_trans_so', $id)->first();
+
+        // Cek Kapasitas Bulanan
+        $check_kapbul = KapBulanan::where('id_calon_debitur', $check->id_calon_debt)->first();
+
         DB::connection('web')->beginTransaction();
-        try{
+        // try{
 
             for ($i = 0; $i < count($daAguTa); $i++) {
-                $tanah = AgunanTanah::create($daAguTa[$i]);
+                if (empty($check->id_agunan_tanah)) {
+                    $tanah = AgunanTanah::create($daAguTa[$i]);
 
-                $id_tanah['id'][$i] = $tanah->id;
+                    $id_tanah['id'][$i] = $tanah->id;
+                }else{
+                    $id_aguta = explode(",", $check->id_agunan_tanah);
+                    $tanah = AgunanTanah::where('id', $id_aguta)->update($daAguTa[$i]);
+
+                    $id_tanah['id'][$i] = $id_aguta[$i];
+                }
             }
 
 
             for ($i = 0; $i < count($daAguKe); $i++) {
-                $kendaraan = AgunanKendaraan::create($daAguKe[$i]);
+                if (empty($check->id_agunan_kendaraan)) {
+                    $kendaraan = AgunanKendaraan::create($daAguKe[$i]);
 
-                $id_kendaraan['id'][$i] = $kendaraan->id;
+                    $id_kendaraan['id'][$i] = $kendaraan->id;
+                }else{
+                    $id_aguke = explode(",", $check->id_agunan_kendaraan);
+                    $tanah = AgunanKendaraan::where('id', $id_aguke)->update($daAguKe[$i]);
+
+                    $id_kendaraan['id'][$i] = $id_aguke[$i];
+                }
             }
 
             for ($i = 0; $i < count($pemAguTa); $i++) {
                 $pemAguTa_N[$i] = array_merge(array('id_agunan_tanah' => $id_tanah['id'][$i]), $pemAguTa[$i]);
 
-                $pemTanah = PemeriksaanAgunTan::create($pemAguTa_N[$i]);
+                if (empty($check->id_periksa_agunan_tanah)) {
+                    $pemTanah = PemeriksaanAgunTan::create($pemAguTa_N[$i]);
 
-                $id_pem_tan['id'][$i] = $pemTanah->id;
+                    $id_pem_tan['id'][$i] = $pemTanah->id;
+                }else{
+                    $id_pe_aguta = explode(",", $check->id_periksa_agunan_tanah);
+                    $tanah = PemeriksaanAgunTan::where('id', $id_pe_aguta)->update($pemAguTa_N[$i]);
+
+                    $id_pem_tan['id'][$i] = $id_pe_aguta[$i];
+                }
             }
 
             for ($i = 0; $i < count($pemAguKe); $i++) {
                 $pemAguKe_N[$i] = array_merge(array('id_agunan_kendaraan' => $id_kendaraan['id'][$i]), $pemAguKe[$i]);
 
-                $pemKendaraan = PemeriksaanAgunKen::create($pemAguKe_N[$i]);
+                if (empty($check->id_periksa_agunan_kendaraan)) {
+                    $pemKendaraan = PemeriksaanAgunKen::create($pemAguKe_N[$i]);
 
-                $id_pem_ken['id'][$i] = $pemKendaraan->id;
+                    $id_pem_ken['id'][$i] = $pemKendaraan->id;
+                }else{
+                    $id_pe_aguke = explode(",", $check->id_periksa_agunan_kendaraan);
+                    $tanah = PemeriksaanAgunKen::where('id', $id_pe_aguke)->update($pemAguKe_N[$i]);
+
+                    $id_pem_ken['id'][$i] = $id_pe_aguke[$i];
+                }
             }
 
             $tanID   = implode(",", $id_tanah['id']);
@@ -1244,10 +1289,40 @@ class MasterAO_Controller extends BaseController
 
             Pasangan::where('id', $check->id_pasangan)->update($dataPasangan);
 
-            VerifModel::create($dataVerifikasi);
-            ValidModel::create($dataValidasi);
+            if ($check_ao == null) {
+                $AO = TransAO::create($TransAO);
+                $id_ao = $AO->id;
+            }else{
+                TransAO::where('id', $check_ao->id)->update($TransAO);
+                $id_ao = $check_ao->id;
+            }
 
-            KapBulanan::create($kapBul);
+            $newVerif = array_merge(array('id_trans_ao' => $id_ao), $dataVerifikasi);
+            $newValid = array_merge(array('id_trans_ao' => $id_ao), $dataValidasi);
+
+            if ($check_verif == null) {
+                $verif = VerifModel::create($newVerif);
+                $id_verif = $verif->id;
+            }else{
+                VerifModel::where('id', $check_verif->id)->update($newVerif);
+                $id_verif = $check_verif->id;
+            }
+
+            if ($check_valid == null) {
+                $valid = ValidModel::create($newValid);
+                $id_verif = $valid->id;
+            }else{
+                ValidModel::where('id', $check_valid->id)->update($newValid);
+                $id_valid = $check_valid->id;
+            }
+
+            if ($check_kapbul == null) {
+                $kap = KapBulanan::create($kapBul);
+                $id_kapbul = $kap->id;
+            }else{
+                KapBulanan::where('id', $check_kapbul->id)->update($kapBul);
+                $id_kapbul = $check_kapbul->id;
+            }
 
             if (!empty($req->input('pemasukan_tunai'))) {
                 $usaha = KeuanganUsaha::create($dataKeUsaha);
@@ -1255,7 +1330,6 @@ class MasterAO_Controller extends BaseController
             }else{
                 $id_usaha = null;
             }
-
 
             TransSo::where('id', $id)->update([
                 'id_agunan_tanah'             => $tanID,
@@ -1272,13 +1346,13 @@ class MasterAO_Controller extends BaseController
                 'status' => 'success',
                 'message'=> $msg
             ], 200);
-        } catch (\Exception $e) {
-            $err = DB::connection('web')->rollback();
-            return response()->json([
-                'code'    => 501,
-                'status'  => 'error',
-                'message' => $err
-            ], 501);
-        }
+        // } catch (\Exception $e) {
+        //     $err = DB::connection('web')->rollback();
+        //     return response()->json([
+        //         'code'    => 501,
+        //         'status'  => 'error',
+        //         'message' => $err
+        //     ], 501);
+        // }
     }
 }

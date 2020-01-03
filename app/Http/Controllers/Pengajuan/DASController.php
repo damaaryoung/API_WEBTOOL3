@@ -208,8 +208,8 @@ class DASController extends BaseController
             'status'        => $status,
             'note'          => $val->catatan_das,
             'lampiran'  => [
-                'lamp_ideb'    => $val->lamp_ideb,
-                'lamp_pefindo' => $val->lamp_pefindo
+                'ideb'    => explode(";", $val->lamp_ideb),
+                'pefindo' => explode(";", $val->lamp_pefindo)
             ]
         ];
 
@@ -264,44 +264,63 @@ class DASController extends BaseController
             ], 422);
         }
 
-        $exIdeb = $req->file('lamp_ideb')->getClientOriginalExtension();
+        // $exIdeb = $req->file('lamp_ideb')->getClientOriginalExtension();
         // $exPef  = $req->file('lamp_ideb')->getClientOriginalExtension();
 
-        if ($exIdeb != 'ideb') {
-            return response()->json([
-                "code"    => 422,
-                "status"  => "not valid request",
-                "message" => "file ideb harus berupa format ideb"
-            ], 422);
-        }
+        // if ($exIdeb != 'ideb') {
+        //     return response()->json([
+        //         "code"    => 422,
+        //         "status"  => "not valid request",
+        //         "message" => "file ideb harus berupa format ideb"
+        //     ], 422);
+        // }
 
         $lamp_dir = 'public/lamp_trans.'.$check->nomor_so;
 
-        if($file = $req->file('lamp_ideb')){
-            $path = $lamp_dir.'/ideb';
-            $name = $file->getClientOriginalName(); //'ktp.'.$file->getClientOriginalExtension();
-            $file->move($path,$name);
+        if($files = $req->file('lamp_ideb')){
+            foreach($files as $key => $file){
+                $path = $lamp_dir.'/ideb';
+                $exIdeb = $file->getClientOriginalExtension();
 
-            $ideb = $path.'/'.$name;
+                if ($exIdeb != 'ideb') {
+                    return response()->json([
+                        "code"    => 422,
+                        "status"  => "not valid request",
+                        "message" => "file ideb harus berupa format ideb"
+                    ], 422);
+                }
+
+                $name = $file->getClientOriginalName(); //'ktp.'.$file->getClientOriginalExtension();
+
+                $file->move($path,$name);
+
+                $ideb[] = $path.'/'.$name;
+
+                $im_ideb = implode(";", $ideb);
+            }
         }else{
-            $ideb = null;
+            $im_ideb = null;
         }
 
-        if($file = $req->file('lamp_pefindo')){
-            $path = $lamp_dir.'/pefindo';
-            $name = $file->getClientOriginalName(); //'ktp.'.$file->getClientOriginalExtension();
-            $file->move($path,$name);
+        if($files = $req->file('lamp_pefindo')){
+            foreach($files as $file){
+                $path = $lamp_dir.'/pefindo';
 
-            $pefindo = $path.'/'.$name;
+                $name = $file->getClientOriginalName(); //'ktp.'.$file->getClientOriginalExtension();
+                $file->move($path,$name);
+
+                $pefindo[] = $path.'/'.$name;
+                $im_pef = implode(";", $pefindo);
+            }
         }else{
-            $pefindo = null;
+            $im_pef = null;
         }
 
         $data = array(
             'catatan_das' => $req->input('catatan_das'),
             'status_das'  => $req->input('status_das'),
-            'lamp_ideb'   => $ideb,
-            'lamp_pefindo'=> $pefindo
+            'lamp_ideb'   => empty($im_ideb) ? null : $im_ideb,
+            'lamp_pefindo'=> empty($im_pef) ? null : $im_pef
         );
 
         if ($data['status_das'] == 1) {

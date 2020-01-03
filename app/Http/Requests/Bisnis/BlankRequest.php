@@ -186,7 +186,7 @@ class BlankRequest extends FormRequest
                 'luas_tanah.*'          => 'numeric',
                 'luas_bangunan.*'       => 'numeric',
                 'jenis_sertifikat.*'    => 'in:SHM,SHGB',
-                'tgl_ukur_sertifikat.*' => 'date_format:d-m-Y',
+                // 'tgl_ukur_sertifikat.*' => 'date_format:d-m-Y',
                 'tgl_berlaku_shgb.*'    => 'date_format:d-m-Y',
                 'lamp_agunan_depan.*'   => 'mimes:jpg,jpeg,png,pdf|max:2048',
                 'lamp_agunan_kanan.*'   => 'mimes:jpg,jpeg,png,pdf|max:2048',
@@ -239,7 +239,19 @@ class BlankRequest extends FormRequest
                 'nilai_taksasi_agunan.*'  => 'integer',
                 'nilai_taksasi_bangunan.*'=> 'integer',
                 'tgl_taksasi.*'           => 'date_format:d-m-Y',
-                'nilai_likuidasi.*'       => 'integer'
+                'nilai_likuidasi.*'       => 'integer',
+
+                // Transaksi AO
+                'plafon_kredit'         => 'integer',
+                'jangka_waktu'          => 'integer',
+                'suku_bunga'            => 'integer',
+                'pembayaran_bunga'      => 'integer',
+                'akad_kredit'           => 'in:ADENDUM,NOTARIS,INTERNAL',
+                'ikatan_agunan'         => 'integer',
+                'biaya_provisi'         => 'integer',
+                'biaya_administrasi'    => 'integer',
+                'biaya_credit_checking' => 'integer',
+                'biaya_tabungan'        => 'integer'
             ];
         }else{
             $rules = [
@@ -494,7 +506,7 @@ class BlankRequest extends FormRequest
             'luas_tanah.*.numeric'              => ':attribute harus berupa angka',
             'luas_bangunan.*.numeric'           => ':attribute harus berupa angka',
             'jenis_sertifikat.*.in'             => ':attribute harus salah satu dari jenis berikut :values',
-            'tgl_ukur_sertifikat.*.date_format' => ':attribute harus berupa angka dengan format :format',
+            // 'tgl_ukur_sertifikat.*.date_format' => ':attribute harus berupa angka dengan format :format',
             'tgl_berlaku_shgb.*.date_format'    => ':attribute harus berupa angka dengan format :format',
 
             'lamp_agunan_depan.*.mimes'         => ':attribute harus bertipe :values',
@@ -561,7 +573,19 @@ class BlankRequest extends FormRequest
             'nilai_taksasi_agunan.*.integer'    => ':attribute harus berupa angka / bilangan bulat',
             'nilai_taksasi_bangunan.*.integer'  => ':attribute harus berupa angka / bilangan bulat',
             'tgl_taksasi.*.date_format'         => ':attribute harus berupa angka dengan format :format',
-            'nilai_likuidasi.*.integer'         => ':attribute harus berupa angka / bilangan bulat'
+            'nilai_likuidasi.*.integer'         => ':attribute harus berupa angka / bilangan bulat',
+
+            // Transaksi AO
+            'plafon_kredit'         => ':attribute harus berupa angka / bilangan bulat',
+            'jangka_waktu'          => ':attribute harus berupa angka / bilangan bulat',
+            'suku_bunga'            => ':attribute harus berupa angka / bilangan bulat',
+            'pembayaran_bunga'      => ':attribute harus berupa angka / bilangan bulat',
+            'akad_kredit'           => ':attribute harus salah satu dari jenis berikut :values',
+            'ikatan_agunan'         => ':attribute harus berupa angka / bilangan bulat',
+            'biaya_provisi'         => ':attribute harus berupa angka / bilangan bulat',
+            'biaya_administrasi'    => ':attribute harus berupa angka / bilangan bulat',
+            'biaya_credit_checking' => ':attribute harus berupa angka / bilangan bulat',
+            'biaya_tabungan'        => ':attribute harus berupa angka / bilangan bulat'
         ];
     }
 

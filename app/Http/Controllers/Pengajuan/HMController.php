@@ -226,8 +226,8 @@ class HMController extends BaseController
             'hm_status'     => $status_hm,
             'hm_note'       => $val->catatan_hm,
             'lampiran'  => [
-                'lamp_ideb'    => $val->lamp_ideb,
-                'lamp_pefindo' => $val->lamp_pefindo
+                'ideb'    => explode(";", $val->lamp_ideb),
+                'pefindo' => explode(";", $val->lamp_pefindo)
             ]
         ];
 
