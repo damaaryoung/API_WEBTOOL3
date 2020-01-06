@@ -74,6 +74,7 @@ class MasterCA_Controller extends BaseController
         $id_cabang = $pic->id_mk_cabang;
 
         $query = TransAO::where('id_trans_so', $id)->where('kode_kantor', $kode_kantor)->where('status_ao', 1)->get();
+        TransSo::where('id', $id)->where('id_cabang', $id_cabang)->first();
 
         if ($query == '[]') {
             return response()->json([
