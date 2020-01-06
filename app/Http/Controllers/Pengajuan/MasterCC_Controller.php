@@ -556,7 +556,7 @@ class MasterCC_Controller extends BaseController
                     'updated_at'       => Carbon::now()->toDateTimeString()
                 ];
 
-                if ($DP[$i]['lamp_ktp'] == null) {
+                /*if ($DP[$i]['lamp_ktp'] == null) {
                     return response()->json([
                         "code"    => 422,
                         "status"  => "not valid request",
@@ -586,7 +586,7 @@ class MasterCC_Controller extends BaseController
                         "status"  => "not valid request",
                         "message" => "lamp_buku_nikah ada yang belum diisi"
                     ], 422);
-                }
+                }*/
             }
         }
 

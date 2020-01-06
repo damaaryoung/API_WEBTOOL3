@@ -80,6 +80,67 @@ class FlagAuthorController extends BaseController
         }
     }
 
+    // Limit
+    // Otorisasi
+    public function otoLimit(Request $req, Helper $help, $limit) {
+        $user_id = $req->auth->user_id;
+
+        try {
+            $query = FlgOto::where('id_modul',0)
+                    ->where('user_id', $user_id)
+                    ->where('otorisasi', '!=', 1)
+                    ->orderBy('tgl','asc')
+                    ->orderBy('jam', 'asc')
+                    ->limit($limit)
+                    ->get();
+
+            $i = 0;
+            $j = 0;
+
+            foreach ($query as $key => $val) {
+
+                if ($val->otorisasi == 0) {
+                    $arrData[$i]['status'] = 'new';
+                }elseif ($val->otorisasi == 2) {
+                    $arrData[$i]['status'] = 'rejected';
+                    $arrData[$i]['info']   = $val->keterangan;
+                }
+
+                $arrData[$i]['id']      = $val->id;
+                $arrData[$i]['email']   = $val->email;
+                $arrData[$i]['no_hp']   = $val->no_hp;
+                $arrData[$i]['subject'] = $val->subject; //'Pengambilan Tabungan Tunai';
+                $arrData[$i]['pesan']   = str_replace("="," = ",explode("\r\n",$val->pesan));
+
+                $arrData[$i]['tgl']     = $val->tgl;
+                $arrData[$i]['jam']     = $val->jam;
+                $i++;
+
+            }
+
+            // Group data by the "tgl_trans" key
+            $byGroup = $help->group_by("tgl", $arrData);
+
+            foreach ($byGroup as $key => $val) {
+                $data[$j]['tgl'] = $val['tgl'];
+                $data[$j] = $val;
+                $j++;
+            }
+
+            return response()->json([
+                'code'    => 200,
+                'status'  => 'success',
+                'data'    => $data
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                "code"    => 501,
+                "status"  => "error",
+                "message" => $e
+            ], 501);
+        }
+    }
+
     public function otoShow($id, Request $req) {
         $user_id = $req->auth->user_id;
 
@@ -267,6 +328,67 @@ class FlagAuthorController extends BaseController
                     'data'    => $data
                 ], 200);
             }
+        } catch (Exception $e) {
+            return response()->json([
+                "code"    => 501,
+                "status"  => "error",
+                "message" => $e
+            ], 501);
+        }
+    }
+
+    // lImit
+    // Aproval
+    public function aproLimit(Request $req, Helper $help, $limit) {
+        $user_id = $req->auth->user_id;
+
+        try {
+            $query = FlgOto::where('id_modul', '>',0)
+                    ->where('user_id', $user_id)
+                    ->where('approval', '!=', 1)
+                    ->orderBy('tgl','asc')
+                    ->orderBy('jam', 'asc')
+                    ->limit($limit)
+                    ->get();
+
+            $i = 0;
+            $j = 0;
+
+            foreach ($query as $key => $val) {
+
+                if ($val->approval == 0 || $val->approval == null || $val->approval == '') {
+                    $arrData[$i]['status'] = 'new';
+                }elseif ($val->approval == 2) {
+                    $arrData[$i]['status'] = 'rejected';
+                    $arrData[$i]['info']   = $val->keterangan;
+                }
+
+                $arrData[$i]['id']      = $val->id;
+                $arrData[$i]['email']   = $val->email;
+                $arrData[$i]['no_hp']   = $val->no_hp;
+                $arrData[$i]['subject'] = $val->subject; //'Pengambilan Tabungan Tunai';
+                $arrData[$i]['pesan']   = str_replace("="," = ",explode("\r\n",$val->pesan));
+
+                $arrData[$i]['tgl']     = $val->tgl;
+                $arrData[$i]['jam']     = $val->jam;
+                $i++;
+
+            }
+
+            // Group data by the "tgl_trans" key
+            $byGroup = $help->group_by("tgl", $arrData);
+
+            foreach ($byGroup as $key => $val) {
+                $data[$j]['tgl'] = $val['tgl'];
+                $data[$j] = $val;
+                $j++;
+            }
+
+            return response()->json([
+                'code'    => 200,
+                'status'  => 'success',
+                'data'    => $data
+            ], 200);
         } catch (Exception $e) {
             return response()->json([
                 "code"    => 501,

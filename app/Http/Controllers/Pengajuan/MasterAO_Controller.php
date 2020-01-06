@@ -456,7 +456,7 @@ class MasterAO_Controller extends BaseController
             'id_cabang'             => $PIC->id_mk_cabang,
             'nama_ao'               => $PIC->nama,
             'produk'                => $req->input('produk'),
-            'plafon_kredit'         => $req->input('plafon_kredit'),
+            'plafon_kredit'         => empty($req->input('plafon_kredit')) ? $check->faspin['plafon'] : $req->input('plafon_kredit'),
             'jangka_waktu'          => $req->input('jangka_waktu'),
             'suku_bunga'            => $req->input('suku_bunga'),
             'pembayaran_bunga'      => $req->input('pembayaran_bunga'),
@@ -485,14 +485,19 @@ class MasterAO_Controller extends BaseController
 
         // dd(sizeof($req->nama_anak));
 
-        for ($i = 0; $i < count($req->nama_anak); $i++){
-            $namaAnak[] = empty($req->nama_anak[$i]) ? null[$i] : $req->nama_anak[$i];
+        if ($req->input('nama_anak')) {
+            for ($i = 0; $i < count($req->nama_anak); $i++){
+                $namaAnak[] = empty($req->nama_anak[$i]) ? null[$i] : $req->nama_anak[$i];
 
-            $tglLahirAnak[] = empty($req->tgl_lahir_anak[$i]) ? null[$i] : Carbon::parse($req->tgl_lahir_anak[$i])->format('Y-m-d');
+                $tglLahirAnak[] = empty($req->tgl_lahir_anak[$i]) ? null[$i] : Carbon::parse($req->tgl_lahir_anak[$i])->format('Y-m-d');
+            }
+
+            $nama_anak    = implode(",", $namaAnak);
+            $tgl_lhr_anak = implode(",", $tglLahirAnak);
+        }else{
+            $nama_anak = $check->debt['nama_anak'];
+            $tgl_lhr_anak = $check->debt['tgl_lhr_anak'];
         }
-
-        $nama_anak    = implode(",", $namaAnak);
-        $tgl_lhr_anak = implode(",", $tglLahirAnak);
 
         // Lampiran Lama
 
@@ -1031,11 +1036,12 @@ class MasterAO_Controller extends BaseController
             'biaya_transport'       => empty($req->input('biaya_transport')) ? null : (int) $req->input('biaya_transport'),
             'biaya_pendidikan'      => empty($req->input('biaya_pendidikan')) ? null : (int) $req->input('biaya_pendidikan'),
             'biaya_telp_listr_air'  => empty($req->input('biaya_telp_listr_air')) ? null : (int) $req->input('biaya_telp_listr_air'),
+            'angsuran'              => empty($req->input('angsuran')) ? null : $req->input('angsuran'),
             'biaya_lain'            => empty($req->input('biaya_lain')) ? null : (int) $req->input('biaya_lain'),
 
             'total_pemasukan'       => (empty($req->input('pemasukan_debitur')) ? 0 : $req->input('pemasukan_debitur')) + (empty($req->input('pemasuk + an_pasangan')) ? 0 : $req->input('pemasukan_pasangan')) + (empty($req->input('pemasukan_penjamin')) ? 0 : $req->input('pemasukan_penjamin')),
-            'total_pengeluaran'     => (empty($req->input('biaya_rumah_tangga')) ? 0 : $req->input('biaya_rumah_tangga')) + (empty($req->input('biaya_transport')) ? 0 : $req->input('biaya_transport')) + (empty($req->input('biaya_pendidikan')) ? 0 : $req->input('biaya_pendidikan')) + (empty($req->input('biaya_telp_listr_air')) ? 0 : $req->input('biaya_telp_listr_air')) + (empty($req->input('biaya_lain')) ? 0 : $req->input('biaya_lain')),
-            'penghasilan_bersih'    => ((empty($req->input('pemasukan_debitur')) ? 0 : $req->input('pemasukan_debitur')) + (empty($req->input('pemasuk + an_pasangan')) ? 0 : $req->input('pemasukan_pasangan')) + (empty($req->input('pemasukan_penjamin')) ? 0 : $req->input('pemasukan_penjamin'))) - ((empty($req->input('biaya_rumah_tangga')) ? 0 : $req->input('biaya_rumah_tangga')) + (empty($req->input('biaya_transport')) ? 0 : $req->input('biaya_transport')) + (empty($req->input('biaya_pendidikan')) ? 0 : $req->input('biaya_pendidikan')) + (empty($req->input('biaya_telp_listr_air')) ? 0 : $req->input('biaya_telp_listr_air')) + (empty($req->input('biaya_lain')) ? 0 : $req->input('biaya_lain')))
+            'total_pengeluaran'     => (empty($req->input('biaya_rumah_tangga')) ? 0 : $req->input('biaya_rumah_tangga')) + (empty($req->input('biaya_transport')) ? 0 : $req->input('biaya_transport')) + (empty($req->input('biaya_pendidikan')) ? 0 : $req->input('biaya_pendidikan')) + (empty($req->input('biaya_telp_listr_air')) ? 0 : $req->input('biaya_telp_listr_air')) + (empty($req->input('angsuran')) ? 0 : $req->input('angsuran')) + (empty($req->input('biaya_lain')) ? 0 : $req->input('biaya_lain')),
+            'penghasilan_bersih'    => ((empty($req->input('pemasukan_debitur')) ? 0 : $req->input('pemasukan_debitur')) + (empty($req->input('pemasuk + an_pasangan')) ? 0 : $req->input('pemasukan_pasangan')) + (empty($req->input('pemasukan_penjamin')) ? 0 : $req->input('pemasukan_penjamin'))) - ((empty($req->input('biaya_rumah_tangga')) ? 0 : $req->input('biaya_rumah_tangga')) + (empty($req->input('biaya_transport')) ? 0 : $req->input('biaya_transport')) + (empty($req->input('biaya_pendidikan')) ? 0 : $req->input('biaya_pendidikan')) + (empty($req->input('biaya_telp_listr_air')) ? 0 : $req->input('biaya_telp_listr_air')) + (empty($req->input('angsuran')) ? 0 : $req->input('angsuran')) + (empty($req->input('biaya_lain')) ? 0 : $req->input('biaya_lain')))
         );
 
         if (!empty($req->input('pemasukan_tunai'))) {

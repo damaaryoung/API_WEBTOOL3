@@ -94,4 +94,19 @@ class Controller extends BaseController
 
         return $base64;
     }
+
+    public static function group_by($key, $array) {
+        $result = array();
+        $q = 0;
+        foreach($array as $keys =>  $val) {
+            if(array_key_exists($key, $val)){
+                $result[$val[$key]]['tgl'] = $val[$key];
+                $result[$val[$key]]['list'][] = $val;
+            }else{
+                $result[""][] = $val;
+            }
+        }
+
+        return $result;
+    }
 }

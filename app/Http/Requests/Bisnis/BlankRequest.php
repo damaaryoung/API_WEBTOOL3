@@ -468,7 +468,7 @@ class BlankRequest extends FormRequest
             'jangka_waktu.integer'          => ':attribute harus berupa angka',
             'suku_bunga.integer'            => ':attribute harus berupa angka',
             'pembayaran_bunga.integer'      => ':attribute harus berupa angka',
-            'akad_kredit.integer'           => ':attribute harus salah satu dari jenis berikut :values',
+            'akad_kredit.in'                => ':attribute harus salah satu dari jenis berikut :values',
             'ikatan_agunan.integer'         => ':attribute harus berupa angka',
             'biaya_provisi.integer'         => ':attribute harus berupa angka',
             'biaya_administrasi.integer'    => ':attribute harus berupa angka',
@@ -576,16 +576,15 @@ class BlankRequest extends FormRequest
             'nilai_likuidasi.*.integer'         => ':attribute harus berupa angka / bilangan bulat',
 
             // Transaksi AO
-            'plafon_kredit'         => ':attribute harus berupa angka / bilangan bulat',
-            'jangka_waktu'          => ':attribute harus berupa angka / bilangan bulat',
-            'suku_bunga'            => ':attribute harus berupa angka / bilangan bulat',
-            'pembayaran_bunga'      => ':attribute harus berupa angka / bilangan bulat',
-            'akad_kredit'           => ':attribute harus salah satu dari jenis berikut :values',
-            'ikatan_agunan'         => ':attribute harus berupa angka / bilangan bulat',
-            'biaya_provisi'         => ':attribute harus berupa angka / bilangan bulat',
-            'biaya_administrasi'    => ':attribute harus berupa angka / bilangan bulat',
-            'biaya_credit_checking' => ':attribute harus berupa angka / bilangan bulat',
-            'biaya_tabungan'        => ':attribute harus berupa angka / bilangan bulat'
+            'jangka_waktu.integer'          => ':attribute harus berupa angka / bilangan bulat',
+            'suku_bunga.integer'            => ':attribute harus berupa angka / bilangan bulat',
+            'pembayaran_bunga.integer'      => ':attribute harus berupa angka / bilangan bulat',
+            'akad_kredit.in'                => ':attribute harus salah satu dari jenis berikut :values',
+            'ikatan_agunan.integer'         => ':attribute harus berupa lamp_agunan_kanan/ bilangan bulat',
+            'biaya_provisi.integer'         => ':attribute harus berupa lamp_agunan_kanan/ bilangan bulat',
+            'biaya_administrasi.integer'    => ':attribute harus berupa lamp_agunan_kanan/ bilangan bulat',
+            'biaya_credit_checking.integer' => ':attribute harus berupa lamp_agunan_kanan/ bilangan bulat',
+            'biaya_tabungan.integer'        => ':attribute harus berupa lamp_agunan_kanan/ bilangan bulat',
         ];
     }
 
