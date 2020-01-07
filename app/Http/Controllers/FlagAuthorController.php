@@ -16,6 +16,7 @@ class FlagAuthorController extends BaseController
     // Otorisasi
     public function otoIndex(Request $req) {
         $user_id = $req->auth->user_id;
+        // $user_id = 1131;
 
         try {
             $query = FlgOto::where('id_modul',0)
@@ -953,17 +954,20 @@ class FlagAuthorController extends BaseController
     }
 
     // Reset Otorisasi
-    public function otoReset($id, Request $req) {
+    public function otoReset(Request $req) {
         $user_id = $req->auth->user_id;
 
         $Now = Carbon::now()->toDateTimeString();
 
-        FlgOto::where([
-            ['id', $id],
-            ['user_id', $user_id],
-            ['id_modul',0],
-            ['otorisasi', '!=', 1]
-        ])->update(['otorisasi' => 0]);
+        $check_FLG = FlgOto::where('user_id', $user_id)->where('id_modul', '<=', 0)->get();
+
+        foreach ($check_FLG as $value) {
+            $ids[] = array(
+                'id' => $value->id
+            );
+        }
+
+        FlgOto::whereIn('id', $ids)->update(['otorisasi' => 0]);
 
         try {
             return response()->json([
@@ -981,17 +985,20 @@ class FlagAuthorController extends BaseController
     }
 
     // Reset Approval
-    public function aproReset($id, Request $req) {
+    public function aproReset(Request $req) {
         $user_id = $req->auth->user_id;
 
         $Now = Carbon::now()->toDateTimeString();
 
-        FlgOto::where([
-            ['id', $id],
-            ['user_id', $user_id],
-            ['id_modul', '>',0],
-            ['approval','!=', 1]
-        ])->update(['approval' => 0]);
+        $check_FLG = FlgOto::where('user_id', $user_id)->where('id_modul', '>', 0)->get();
+
+        foreach ($check_FLG as $value) {
+            $ids[] = array(
+                'id' => $value->id
+            );
+        }
+
+        FlgOto::whereIn('id', $ids)->update(['approval' => 0]);
 
         try {
             return response()->json([

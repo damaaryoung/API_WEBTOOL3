@@ -85,8 +85,8 @@ $router->group(['middleware' => 'jwt.auth'], function () use ($router) {
         $router->get('/count_apro', 'FlagAuthorController@countApro');
         $router->put('/apro/{id}/reject', 'FlagAuthorController@rejectApro');
 
-        // $router->get('/oto/{id}/reset', 'FlagAuthorController@otoReset'); // Reset Otorisasi
-        // $router->get('/apro/{id}/reset', 'FlagAuthorController@aproReset'); // Reset Otorisasi
+        $router->post('/oto/all/reset', 'FlagAuthorController@otoReset'); // Reset Otorisasi
+        $router->post('/apro/all/reset', 'FlagAuthorController@aproReset'); // Reset Otorisasi
 
         $router->group(['prefix' => '/master'], function () use ($router) {
             $router->get('/asal_data', 'Master\Bisnis\AsalDataController@index');

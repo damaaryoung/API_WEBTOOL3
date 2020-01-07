@@ -98,7 +98,7 @@ class BlankRequest extends FormRequest
                 'id_kel_tempat_kerja'   => 'numeric',
                 'rt_tempat_kerja'       => 'numeric',
                 'rw_tempat_kerja'       => 'numeric',
-                'tgl_mulai_kerja'       => 'date_format:d-m-Y',
+                // 'tgl_mulai_kerja'       => 'date_format:d-m-Y',
                 'no_telp_tempat_kerja'  => 'numeric',
                 'lamp_surat_cerai'      => 'mimes:jpg,jpeg,png,pdf|max:2048',
                 'lamp_buku_tabungan'    => 'mimes:jpg,jpeg,png,pdf|max:2048',
@@ -121,13 +121,13 @@ class BlankRequest extends FormRequest
                 'pekerjaan_pas'             => 'in:KARYAWAN,PNS,WIRASWASTA,PENGURUS_RT',
                 'rt_tempat_kerja_pas'       => 'numeric',
                 'rw_tempat_kerja_pas'       => 'numeric',
-                'tgl_mulai_kerja_pas'       => 'date_format:d-m-Y',
+                // 'tgl_mulai_kerja_pas'       => 'date_format:d-m-Y',
                 'no_telp_tempat_kerja_pas'  => 'numeric',
 
                 // AO
                 'rt_tempat_kerja_pas'       => 'numeric',
                 'rw_tempat_kerja_pas'       => 'numeric',
-                'tgl_mulai_kerja_pas'       => 'date_format:d-m-Y',
+                // 'tgl_mulai_kerja_pas'       => 'date_format:d-m-Y',
                 'no_telp_tempat_kerja_pas'  => 'numeric',
 
                 // Penjamin
@@ -141,7 +141,7 @@ class BlankRequest extends FormRequest
                 'pekerjaan_pen.*'            => 'in:KARYAWAN,PNS,WIRASWASTA,PENGURUS_RT',
                 'rt_tempat_kerja_pen.*'       => 'numeric',
                 'rw_tempat_kerja_pen.*'       => 'numeric',
-                'tgl_mulai_kerja_pen.*'       => 'date_format:d-m-Y',
+                // 'tgl_mulai_kerja_pen.*'       => 'date_format:d-m-Y',
                 'no_telp_tempat_kerja_pen.*'  => 'numeric',
 
                 // Transaksi AO
@@ -395,7 +395,7 @@ class BlankRequest extends FormRequest
             'id_kel_tempat_kerja'            => ':attribute harus berupa angka',
             'rt_tempat_kerja.numeric'        => ':attribute harus berupa angka',
             'rw_tempat_kerja.numeric'        => ':attribute harus berupa angka',
-            'tgl_mulai_kerja.date_format'    => ':attribute harus berupa angka dengan format :format',
+            // 'tgl_mulai_kerja.date_format'    => ':attribute harus berupa angka dengan format :format',
             'no_telp_tempat_kerja.numeric'   => ':attribute harus berupa angka',
             'lamp_surat_cerai.mimes'         => ':attribute harus bertipe :values',
             'lamp_buku_tabungan.mimes'       => ':attribute harus bertipe :values',
@@ -438,7 +438,7 @@ class BlankRequest extends FormRequest
             'pekerjaan_pas'                    => 'in:KARYAWAN,PNS,WIRASWASTA,PENGURUS_RT',
             'rt_tempat_kerja_pas.numeric'      => ':attribute harus berupa angka',
             'rw_tempat_kerja_pas.numeric'      => ':attribute harus berupa angka',
-            'tgl_mulai_kerja_pas.date_format'  => ':attribute harus berupa angka dengan format :format',
+            // 'tgl_mulai_kerja_pas.date_format'  => ':attribute harus berupa angka dengan format :format',
             'no_telp_tempat_kerja_pas.numeric' => ':attribute harus berupa angka / bilangan bulat',
 
             // Penjamin
@@ -461,7 +461,7 @@ class BlankRequest extends FormRequest
             'pekerjaan_pen.*.in'                 => ':attribute harus salah satu dari jenis berikut :values',
             'rt_tempat_kerja_pen.*.numeric'      => ':attribute harus berupa angka',
             'rw_tempat_kerja_pen.*.numeric'      => ':attribute harus berupa angka',
-            'tgl_mulai_kerja_pen.*.date_format'  => ':attribute harus berupa angka dengan format :format',
+            // 'tgl_mulai_kerja_pen.*.date_format'  => ':attribute harus berupa angka dengan format :format',
             'no_telp_tempat_kerja_pen.*.numeric' => ':attribute harus berupa angka',
 
             // Transaksi AO

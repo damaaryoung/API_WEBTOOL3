@@ -147,7 +147,7 @@ class MasterAO_Controller extends BaseController
                         "posisi_pekerjaan"      => $value->posisi_pekerjaan,
                         "nama_tempat_kerja"     => $value->nama_tempat_kerja,
                         "jenis_pekerjaan"       => $value->jenis_pekerjaan,
-                        "tgl_mulai_kerja"       => Carbon::parse($value->tgl_mulai_kerja)->format('d-m-Y'),
+                        "tgl_mulai_kerja"       => $value->tgl_mulai_kerja, //Carbon::parse($value->tgl_mulai_kerja)->format('d-m-Y'),
                         "no_telp_tempat_kerja"  => $value->no_telp_tempat_kerja,
                         'alamat' => [
                             'alamat_singkat' => $value->alamat_tempat_kerja,
@@ -287,7 +287,7 @@ class MasterAO_Controller extends BaseController
                     "posisi_pekerjaan"      => $val->debt['posisi_pekerjaan'],
                     "nama_tempat_kerja"     => $val->debt['nama_tempat_kerja'],
                     "jenis_pekerjaan"       => $val->debt['jenis_pekerjaan'],
-                    "tgl_mulai_kerja"       => Carbon::parse($val->debt['tgl_mulai_kerja'])->format('d-m-Y'),
+                    "tgl_mulai_kerja"       => $val->debt['tgl_mulai_kerja'], //Carbon::parse($val->debt['tgl_mulai_kerja'])->format('d-m-Y'),
                     "no_telp_tempat_kerja"  => $val->debt['no_telp_tempat_kerja'],
                     'alamat' => [
                         'alamat_singkat' => $val->debt['alamat_tempat_kerja'],
@@ -343,7 +343,7 @@ class MasterAO_Controller extends BaseController
                     "posisi_pekerjaan"      => $val->pas['posisi_pekerjaan'],
                     "nama_tempat_kerja"     => $val->pas['nama_tempat_kerja'],
                     "jenis_pekerjaan"       => $val->pas['jenis_pekerjaan'],
-                    "tgl_mulai_kerja"       => Carbon::parse($val->pas['tgl_mulai_kerja'])->format('d-m-Y'),
+                    "tgl_mulai_kerja"       => $val=>pas['tgl_mulai_kerja'], //Carbon::parse($val->pas['tgl_mulai_kerja'])->format('d-m-Y'),
                     "no_telp_tempat_kerja"  => $val->pas['no_telp_tempat_kerja'],
                     'alamat' => [
                         'alamat_singkat' => $val->pas['alamat_tempat_kerja'],
@@ -704,7 +704,7 @@ class MasterAO_Controller extends BaseController
             'id_kel_tempat_kerja'   => $req->input('id_kel_tempat_kerja'),
             'rt_tempat_kerja'       => $req->input('rt_tempat_kerja'),
             'rw_tempat_kerja'       => $req->input('rw_tempat_kerja'),
-            'tgl_mulai_kerja'       => Carbon::parse($req->input('tgl_mulai_kerja'))->format('Y-m-d'),
+            'tgl_mulai_kerja'       => $req->input('tgl_mulai_kerja'), //Carbon::parse($req->input('tgl_mulai_kerja'))->format('Y-m-d'),
             'no_telp_tempat_kerja'  => $req->input('no_telp_tempat_kerja'),
             'lamp_buku_tabungan'    => $tabungan,
             'lamp_sku'              => $sku,
@@ -770,7 +770,7 @@ class MasterAO_Controller extends BaseController
             'id_kel_tempat_kerja'   => $req->input('id_kel_tempat_kerja_pas'),
             'rt_tempat_kerja'       => $req->input('rt_tempat_kerja_pas'),
             'rw_tempat_kerja'       => $req->input('rw_tempat_kerja_pas'),
-            'tgl_mulai_kerja'       => Carbon::parse($req->input('tgl_mulai_kerja_pas'))->format('Y-m-d'),
+            'tgl_mulai_kerja'       => $req->input('tgl_mulai_kerja_pas'), //Carbon::parse($req->input('tgl_mulai_kerja_pas'))->format('Y-m-d'),
             'no_telp_tempat_kerja'  => $req->input('no_telp_tempat_kerja_pas')
         );
 
@@ -928,6 +928,43 @@ class MasterAO_Controller extends BaseController
             }
         }
 
+        // Tambahan Agunan Tanah
+        if ($files = $req->file('lamp_imb')) {
+            $a = 1;
+            foreach($files as $file){
+                $path = $lamp_dir.'/agunan_tanah';
+                $name = 'lamp_imb'.$a.'.'.$file->getClientOriginalExtension();
+                $file->move($path,$name);
+                $a++;
+
+                $lamp_imb[] = $path.'/'.$name;
+            }
+        }
+
+        if ($files = $req->file('lamp_pbb')) {
+            $a = 1;
+            foreach($files as $file){
+                $path = $lamp_dir.'/agunan_tanah';
+                $name = 'lamp_pbb'.$a.'.'.$file->getClientOriginalExtension();
+                $file->move($path,$name);
+                $a++;
+
+                $lamp_pbb[] = $path.'/'.$name;
+            }
+        }
+
+        if ($files = $req->file('lamp_sertifikat')) {
+            $a = 1;
+            foreach($files as $file){
+                $path = $lamp_dir.'/agunan_tanah';
+                $name = 'lamp_sertifikat'.$a.'.'.$file->getClientOriginalExtension();
+                $file->move($path,$name);
+                $a++;
+
+                $lamp_sertifikat[] = $path.'/'.$name;
+            }
+        }
+
 
         if (!empty($req->input('tipe_lokasi_agunan'))) {
             for ($i = 0; $i < count($req->input('tipe_lokasi_agunan')); $i++){
@@ -957,6 +994,11 @@ class MasterAO_Controller extends BaseController
                     'lamp_agunan_kiri'        => empty($agunanKiri[$i]) ? null[$i] : $agunanKiri[$i],
                     'lamp_agunan_belakang'    => empty($agunanBelakang[$i]) ? null[$i] : $agunanBelakang[$i],
                     'lamp_agunan_dalam'       => empty($agunanDalam[$i]) ? null[$i] : $agunanDalam[$i],
+
+                    'lamp_imb'                => empty($lamp_imb[$i]) ? null[$i] : $lamp_imb[$i],
+                    'lamp_pbb'                => empty($lamp_pbb[$i]) ? null[$i] : $lamp_pbb[$i],
+                    'lamp_sertifikat'         => empty($lamp_sertifikat[$i]) ? null[$i] : $lamp_sertifikat[$i],
+
                     'created_at'              => $now,
                     'updated_at'              => $now
                 ];
@@ -1191,26 +1233,25 @@ class MasterAO_Controller extends BaseController
                     'no_telp'          => empty($req->input('no_telp_pen')[$key]) ? $value->no_telp : $req->input('no_telp_pen')[$key],
                     'hubungan_debitur' => empty($req->input('hubungan_debitur_pen')[$key]) ? $value->hubungan_debitur : $req->input('hubungan_debitur_pen')[$key],
 
-                    'pekerjaan'             => empty($req->input('pekerjaan_pen')[$key]) ? $check->pekerjaan : $req->input('pekerjaan_pen')[$key],
-                    'nama_tempat_kerja'     => empty($req->input('nama_tempat_kerja_pen')[$key]) ? $check->nama_tempat_kerja : $req->input('nama_tempat_kerja_pen')[$key],
-                    'posisi_pekerjaan'      => empty($req->input('posisi_pekerjaan_pen')[$key]) ? $check->posisi_pekerjaan : $req->input('posisi_pekerjaan_pen')[$key],
-                    'jenis_pekerjaan'       => empty($req->input('jenis_pekerjaan_pen')[$key]) ? $check->jenis_pekerjaan : $req->input('jenis_pekerjaan_pen')[$key],
-                    'alamat_tempat_kerja'   => empty($req->input('alamat_tempat_kerja_pen')[$key]) ? $check->alamat_tempat_kerja : $req->input('alamat_tempat_kerja_pen')[$key],
-                    'id_prov_tempat_kerja'  => empty($req->input('id_prov_tempat_kerja_pen')[$key]) ? $check->id_prov_tempat_kerja : $req->input('id_prov_tempat_kerja_pen')[$key],
-                    'id_kab_tempat_kerja'   => empty($req->input('id_kab_tempat_kerja_pen')[$key]) ? $check->id_kab_tempat_kerja : $req->input('id_kab_tempat_kerja_pen')[$key],
-                    'id_kec_tempat_kerja'   => empty($req->input('id_kec_tempat_kerja_pen')[$key]) ? $check->id_kec_tempat_kerja : $req->input('id_kec_tempat_kerja_pen')[$key],
-                    'id_kel_tempat_kerja'   => empty($req->input('id_kel_tempat_kerja_pen')[$key]) ? $check->id_kel_tempat_kerja : $req->input('id_kel_tempat_kerja_pen')[$key],
-                    'rt_tempat_kerja'       => empty($req->input('rt_tempat_kerja_pen')[$key]) ? $check->rt_tempat_kerja : $req->input('rt_tempat_kerja_pen')[$key],
-                    'rw_tempat_kerja'       => empty($req->input('rw_tempat_kerja_pen')[$key]) ? $check->rw_tempat_kerja : $req->input('rw_tempat_kerja_pen')[$key],
-                    'tgl_mulai_kerja'       => empty($req->input('tgl_mulai_kerja_pen')[$key]) ? $check->tgl_mulai_kerja : $req->input('tgl_mulai_kerja_pen')[$key],
-                    'no_telp_tempat_kerja'  => empty($req->input('no_telp_tempat_kerja_pen')[$key]) ? $check->no_telp_tempat_kerja : $req->input('no_telp_tempat_kerja_pen')[$key],
-                    'lamp_ktp'         => empty($ktpPen[$i]) ? $value->lamp_ktp : $ktpPen[$i],
-                    'lamp_ktp_pasangan'=> empty($ktpPenPAS[$i]) ? $value->lamp_ktp_pasangan : $ktpPenPAS[$i],
-                    'lamp_kk'          => empty($kkPen[$i]) ? $value->lamp_kk : $kkPen[$i],
-                    'lamp_buku_nikah'  => empty($bukuNikahPen[$i]) ? $value->lamp_buku_nikah : $bukuNikahPen[$i],
+                    'pekerjaan'             => empty($req->input('pekerjaan_pen')[$key]) ? $value->pekerjaan : $req->input('pekerjaan_pen')[$key],
+                    'nama_tempat_kerja'     => empty($req->input('nama_tempat_kerja_pen')[$key]) ? $value->nama_tempat_kerja : $req->input('nama_tempat_kerja_pen')[$key],
+                    'posisi_pekerjaan'      => empty($req->input('posisi_pekerjaan_pen')[$key]) ? $value->posisi_pekerjaan : $req->input('posisi_pekerjaan_pen')[$key],
+                    'jenis_pekerjaan'       => empty($req->input('jenis_pekerjaan_pen')[$key]) ? $value->jenis_pekerjaan : $req->input('jenis_pekerjaan_pen')[$key],
+                    'alamat_tempat_kerja'   => empty($req->input('alamat_tempat_kerja_pen')[$key]) ? $value->alamat_tempat_kerja : $req->input('alamat_tempat_kerja_pen')[$key],
+                    'id_prov_tempat_kerja'  => empty($req->input('id_prov_tempat_kerja_pen')[$key]) ? $value->id_prov_tempat_kerja : $req->input('id_prov_tempat_kerja_pen')[$key],
+                    'id_kab_tempat_kerja'   => empty($req->input('id_kab_tempat_kerja_pen')[$key]) ? $value->id_kab_tempat_kerja : $req->input('id_kab_tempat_kerja_pen')[$key],
+                    'id_kec_tempat_kerja'   => empty($req->input('id_kec_tempat_kerja_pen')[$key]) ? $value->id_kec_tempat_kerja : $req->input('id_kec_tempat_kerja_pen')[$key],
+                    'id_kel_tempat_kerja'   => empty($req->input('id_kel_tempat_kerja_pen')[$key]) ? $value->id_kel_tempat_kerja : $req->input('id_kel_tempat_kerja_pen')[$key],
+                    'rt_tempat_kerja'       => empty($req->input('rt_tempat_kerja_pen')[$key]) ? $value->rt_tempat_kerja : $req->input('rt_tempat_kerja_pen')[$key],
+                    'rw_tempat_kerja'       => empty($req->input('rw_tempat_kerja_pen')[$key]) ? $value->rw_tempat_kerja : $req->input('rw_tempat_kerja_pen')[$key],
+                    'tgl_mulai_kerja'       => empty($req->input('tgl_mulai_kerja_pen')[$key]) ? $value->tgl_mulai_kerja : $req->input('tgl_mulai_kerja_pen')[$key],
+                    'no_telp_tempat_kerja'  => empty($req->input('no_telp_tempat_kerja_pen')[$key]) ? $value->no_telp_tempat_kerja : $req->input('no_telp_tempat_kerja_pen')[$key],
+                    'lamp_ktp'         => empty($ktpPen[$key]) ? $value->lamp_ktp : $ktpPen[$key],
+                    'lamp_ktp_pasangan'=> empty($ktpPenPAS[$key]) ? $value->lamp_ktp_pasangan : $ktpPenPAS[$key],
+                    'lamp_kk'          => empty($kkPen[$key]) ? $value->lamp_kk : $kkPen[$key],
+                    'lamp_buku_nikah'  => empty($bukuNikahPen[$key]) ? $value->lamp_buku_nikah : $bukuNikahPen[$key],
                     'updated_at'       => Carbon::now()->toDateTimeString()
                 ];
-                $i++;
             }
         }
 
