@@ -56,7 +56,6 @@ class BlankRequest extends FormRequest
                 }
             }
 
-
             $rules = [
                 // Fasilitas Pinjaman
                 'jenis_pinjaman'        => 'in:KONSUMTIF,MODAL,INVESTASI',
@@ -435,7 +434,7 @@ class BlankRequest extends FormRequest
             'lamp_kk_pas.mimes'                => ':attribute harus bertipe :values',
             'lamp_ktp_pas.max'                 => 'ukuran :attribute max :max kb',
             'lamp_kk_pas.max'                  => 'ukuran :attribute max :max kb',
-            'pekerjaan_pas'                    => 'in:KARYAWAN,PNS,WIRASWASTA,PENGURUS_RT',
+            'pekerjaan_pas.in'                 => ':attribute harus salah satu dari jenis berikut :values',
             'rt_tempat_kerja_pas.numeric'      => ':attribute harus berupa angka',
             'rw_tempat_kerja_pas.numeric'      => ':attribute harus berupa angka',
             // 'tgl_mulai_kerja_pas.date_format'  => ':attribute harus berupa angka dengan format :format',

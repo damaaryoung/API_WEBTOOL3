@@ -4,12 +4,14 @@ namespace App\Http\Controllers\Pengajuan;
 
 use Laravel\Lumen\Routing\Controller as BaseController;
 use App\Http\Controllers\Controller as Helper;
+use App\Http\Requests\Bisnis\BlankRequest;
 use App\Models\CC\PemeriksaanAgunTan;
 use App\Models\CC\PemeriksaanAgunKen;
 use App\Models\CC\AgunanKendaraan;
 use App\Models\CC\AgunanTanah;
 use App\Models\CC\KapBulanan;
 use App\Models\CC\KeuanganUsaha;
+use Illuminate\Support\Facades\File;
 // use App\Models\AreaKantor\Cabang;
 // use App\Models\Wilayah\Kabupaten;
 // use App\Models\Wilayah\Kecamatan;
@@ -568,9 +570,9 @@ class MasterCA_Controller extends BaseController
         }
     }
 
-    public function update($id, Request $req) {
-        $user_id  = $req->auth->user_id;
-        $username = $req->auth->user;
+    public function update($id, Request $request, BlankRequest $req) {
+        $user_id  = $request->auth->user_id;
+        $username = $request->auth->user;
 
         $PIC = PIC::where('user_id', $user_id)->first();
 
@@ -785,7 +787,7 @@ class MasterCA_Controller extends BaseController
             'gelar_keagamaan'       => empty($req->input('gelar_keagamaan')) ? $check->debt['gelar_keagamaan'] : $req->input('gelar_keagamaan'),
             'gelar_pendidikan'      => empty($req->input('gelar_pendidikan')) ? $check->debt['gelar_pendidikan'] : $req->input('gelar_pendidikan'),
             'jenis_kelamin'         => empty($req->input('jenis_kelamin')) ? strtoupper($check->debt['jenis_kelamin']) : strtoupper($req->input('jenis_kelamin')),
-            'status_nikah'          => empty($req->input('status_nikah')) ? strtoupper($check->debt['status_nikah']) : strtoupper($req->input('status_nikah')),
+            'status_nikah'          => empty($req->input('status_nikah')) ? strtoupper($check->debt['status_nikah']) : $req->input('status_nikah'),
             'ibu_kandung'           => empty($req->input('ibu_kandung')) ? $check->debt['ibu_kandung'] : $req->input('ibu_kandung'),
             'no_ktp'                => empty($req->input('no_ktp')) ? $check->debt['no_ktp'] : $req->input('no_ktp'),
             'no_ktp_kk'             => empty($req->input('no_ktp_kk')) ? $check->debt['no_ktp_kk'] : $req->input('no_ktp_kk'),
@@ -825,7 +827,6 @@ class MasterCA_Controller extends BaseController
             'berat_badan'           => empty($req->input('berat_badan')) ? $check->debt['berat_badan'] : $req->input('berat_badan'),
             'nama_anak'             => $nama_anak,
             'tgl_lahir_anak'        => $tgl_lhr_anak,
-            'alamat_surat'          => empty($req->input('alamat_surat')) ? $check->debt['alamat_surat'] : $req->input('alamat_surat'),
             'pekerjaan'             => empty($req->input('pekerjaan')) ? $check->debt['pekerjaan'] : $req->input('pekerjaan'),
             'posisi_pekerjaan'      => empty($req->input('posisi_pekerjaan')) ? $check->debt['posisi_pekerjaan'] : $req->input('posisi_pekerjaan'),
             'nama_tempat_kerja'     => empty($req->input('nama_tempat_kerja')) ? $check->debt['nama_tempat_kerja'] : $req->input('nama_tempat_kerja'),
@@ -891,18 +892,18 @@ class MasterCA_Controller extends BaseController
             'tgl_lahir'        => empty($req->input('tgl_lahir_pas')) ? $check->pas['tgl_lahir'] : Carbon::parse($req->input('tgl_lahir_pas'))->format('Y-m-d'),
             'alamat_ktp'       => empty($req->input('alamat_ktp_pas')) ? $check->pas['alamat_ktp'] : $req->input('alamat_ktp_pas'),
             'no_telp'          => empty($req->input('no_telp_pas')) ? $check->pas['no_telp'] : $req->input('no_telp_pas'),
-
+            'pekerjaan'             => empty($req->input('pekerjaan_pas')) ? $check->pas['pekerjaan'] : $req->input('pekerjaan_pas'),
             'nama_tempat_kerja'     => empty($req->input('nama_tempat_kerja_pas')) ? $check->pas['nama_tempat_kerja'] : $req->input('nama_tempat_kerja_pas'),
-            'jenis_pekerjaan'       => empty($req->input('jenis_pekerjaan_pas')) ? $check->pas['jenis_pekerjaan'] : $req->input('jenis_pekerjaan_pas'),
-            'alamat_tempat_kerja'   => empty($req->input('alamat_tempat_kerja')) ? $check->pas['alamat_tempat_kerja'] : $req->input('alamat_tempat_kerja_pas'),
-            'id_prov_tempat_kerja'  => empty($req->input('id_prov_tempat_kerja')) ? $check->pas['id_prov_tempat_kerja'] : $req->input('id_prov_tempat_kerja_pas'),
-            'id_kab_tempat_kerja'   => empty($req->input('id_kab_tempat_kerja')) ? $check->pas['id_kab_tempat_kerja'] : $req->input('id_kab_tempat_kerja_pas'),
-            'id_kec_tempat_kerja'   => empty($req->input('id_kec_tempat_kerja')) ? $check->pas['id_kec_tempat_kerja'] : $req->input('id_kec_tempat_kerja_pas'),
-            'id_kel_tempat_kerja'   => empty($req->input('id_kel_tempat_kerja')) ? $check->pas['id_kel_tempat_kerja'] : $req->input('id_kel_tempat_kerja_pas'),
-            'rt_tempat_kerja'       => empty($req->input('rt_tempat_kerja')) ? $check->pas['rt_tempat_kerja'] : $req->input('rt_tempat_kerja_pas'),
-            'rw_tempat_kerja'       => empty($req->input('rw_tempat_kerja')) ? $check->pas['rw_tempat_kerja'] : $req->input('rw_tempat_kerja_pas'),
-            'tgl_mulai_kerja'       => Carbon::parse($req->input('tgl_mulai_kerja'))->format('Y-m-d'),
-            'no_telp_tempat_kerja'  => empty($req->input('no_telp_tempat_kerja')) ? $check->pas['no_telp_tempat_kerja'] : $req->input('no_telp_tempat_kerja'),
+            'jenis_pekerjaan'       => empty($req->input('jenis_pekerjaan_pas_pas')) ? $check->pas['jenis_pekerjaan'] : $req->input('jenis_pekerjaan_pas'),
+            'alamat_tempat_kerja'   => empty($req->input('alamat_tempat_kerja_pas')) ? $check->pas['alamat_tempat_kerja'] : $req->input('alamat_tempat_kerja_pas'),
+            'id_prov_tempat_kerja'  => empty($req->input('id_prov_tempat_kerja_pas')) ? $check->pas['id_prov_tempat_kerja'] : $req->input('id_prov_tempat_kerja_pas'),
+            'id_kab_tempat_kerja'   => empty($req->input('id_kab_tempat_kerja_pas')) ? $check->pas['id_kab_tempat_kerja'] : $req->input('id_kab_tempat_kerja_pas'),
+            'id_kec_tempat_kerja'   => empty($req->input('id_kec_tempat_kerja_pas')) ? $check->pas['id_kec_tempat_kerja'] : $req->input('id_kec_tempat_kerja_pas'),
+            'id_kel_tempat_kerja'   => empty($req->input('id_kel_tempat_kerja_pas')) ? $check->pas['id_kel_tempat_kerja'] : $req->input('id_kel_tempat_kerja_pas'),
+            'rt_tempat_kerja'       => empty($req->input('rt_tempat_kerja_pas')) ? $check->pas['rt_tempat_kerja'] : $req->input('rt_tempat_kerja_pas'),
+            'rw_tempat_kerja'       => empty($req->input('rw_tempat_kerja_pas')) ? $check->pas['rw_tempat_kerja'] : $req->input('rw_tempat_kerja_pas'),
+            'tgl_mulai_kerja'       => empty($req->input('tgl_mulai_kerja_pas')) ? $check->pas['tgl_mulai_kerja'] : $req->input('tgl_mulai_kerja_pas'),
+            'no_telp_tempat_kerja'  => empty($req->input('no_telp_tempat_kerja_pas')) ? $check->pas['no_telp_tempat_kerja'] : $req->input('no_telp_tempat_kerja_pas'),
 
             'lamp_ktp'         => $ktpPass,
             'lamp_buku_nikah'  => $bukuNikahPass,

@@ -19,11 +19,11 @@ class FlagAuthorController extends BaseController
         // $user_id = 1131;
 
         try {
-            $query = FlgOto::where('id_modul',0)
+            $query = FlgOto::where('id_modul', '<=', 0)
                     ->where('user_id', $user_id)
-                    ->where('otorisasi', '!=', 1)
-                    ->orderBy('tgl','asc')
-                    ->orderBy('jam', 'asc')
+                    ->where('otorisasi', 0)
+                    ->orderBy('tgl','desc')
+                    ->orderBy('jam', 'desc')
                     ->limit(5)
                     ->get();
 
@@ -48,14 +48,7 @@ class FlagAuthorController extends BaseController
                 $data = array();
                 $i = 0;
                 foreach ($query as $key => $val) {
-
-                    if ($val->otorisasi == 0) {
-                        $data[$i]['status'] = 'new';
-                    }elseif ($val->otorisasi == 2) {
-                        $data[$i]['status'] = 'rejected';
-                        $data[$i]['info']   = $val->keterangan;
-                    }
-
+                    $data[$i]['status']  = 'new';
                     $data[$i]['id']      = $val->id;
                     $data[$i]['email']   = $val->email;
                     $data[$i]['no_hp']   = $val->no_hp;
@@ -87,11 +80,11 @@ class FlagAuthorController extends BaseController
         $user_id = $req->auth->user_id;
 
         try {
-            $query = FlgOto::where('id_modul',0)
+            $query = FlgOto::where('id_modul', '<=', 0)
                     ->where('user_id', $user_id)
-                    ->where('otorisasi', '!=', 1)
-                    ->orderBy('tgl','asc')
-                    ->orderBy('jam', 'asc')
+                    ->where('otorisasi', 0)
+                    ->orderBy('tgl','desc')
+                    ->orderBy('jam', 'desc')
                     ->limit($limit)
                     ->get();
 
@@ -99,14 +92,7 @@ class FlagAuthorController extends BaseController
             $j = 0;
 
             foreach ($query as $key => $val) {
-
-                if ($val->otorisasi == 0) {
-                    $arrData[$i]['status'] = 'new';
-                }elseif ($val->otorisasi == 2) {
-                    $arrData[$i]['status'] = 'rejected';
-                    $arrData[$i]['info']   = $val->keterangan;
-                }
-
+                $arrData[$i]['status']  = 'new';
                 $arrData[$i]['id']      = $val->id;
                 $arrData[$i]['email']   = $val->email;
                 $arrData[$i]['no_hp']   = $val->no_hp;
@@ -142,63 +128,44 @@ class FlagAuthorController extends BaseController
         }
     }
 
-    public function otoShow($id, Request $req) {
+    public function otoShow($id, Request $req, Helper $help) {
         $user_id = $req->auth->user_id;
 
         try {
-            $query = FlgOto::where('id_modul',0)
+            $val = FlgOto::where('id_modul', '<=', 0)
                     ->where('user_id', $user_id)
-                    ->where('otorisasi', '!=', 1)
                     ->where('id', $id)
-                    ->get();
+                    ->first();
 
-            if ($query == '[]') {
+            if ($val == null) {
                 return response()->json([
                     'code'    => 404,
                     'status'  => 'not found',
                     'message' => 'Data kosong'
                 ], 404);
-            }else{
-                $pesan = array(
-                    "transaksi"     => "Pengambilan Tabungan Tunai",
-                    "tgl_transaksi" => "17-10-2013",
-                    "no_rekening"   => "32-02-00066",
-                    "nama_nasabah"  => "PONIMIN",
-                    "alamat"        => "VILA MUTIARA GADING 2 BLOK F04 NO 18 RT/RW 007/016",
-                    "jumlah"        => "7,000,000.00",
-                    "keterangan"    => "Pengambilan Tabungan Tunai an: 32-02-00066 PONIMIN",
-                    "nama_teller"   => "GRIS"
-                );
-
-                $data = array();
-                $i = 0;
-
-                foreach ($query as $key => $val) {
-
-                    if ($val->otorisasi == null || $val->otorisasi == '') {
-                        $data[$i]['status'] = 'new';
-                    }elseif ($val->otorisasi == 2) {
-                        $data[$i]['status'] = 'rejected';
-                        $data[$i]['info']   = $val->keterangan;
-                    }
-
-                    $data[$i]['id']      = $val->id;
-                    $data[$i]['email']   = $val->email;
-                    $data[$i]['no_hp']   = $val->no_hp;
-                    $data[$i]['subject'] = $val->subject; //'Pengambilan Tabungan Tunai';
-                    $data[$i]['pesan']   = $pesan;
-                    $data[$i]['tgl']     = $val->tgl;
-                    $data[$i]['jam']     = $val->jam;
-                    $i++;
-                }
-
-                return response()->json([
-                    'code'    => 200,
-                    'status'  => 'success',
-
-                    'data'    => $data[0]
-                ], 200);
             }
+
+            $data['id']      = $val->id;
+            $data['email']   = $val->email;
+            $data['no_hp']   = $val->no_hp;
+            $data['subject'] = $val->subject; //'Pengambilan Tabungan Tunai';
+            $data['pesan']   = str_replace("="," = ",explode("\r\n",$val->pesan));
+            $data['tgl']     = $val->tgl;
+            $data['jam']     = $val->jam;
+
+            if ($val->otorisasi == 1) {
+                $data['status'] = 'accepted';
+            }elseif ($val->otorisasi == 2) {
+                $data['status'] = 'rejected';
+            }else{
+                $data['status'] = 'new';
+            }
+
+            return response()->json([
+                'code'    => 200,
+                'status'  => 'success',
+                'data'    => $data
+            ], 200);
         } catch (Exception $e) {
             return response()->json([
                 "code"    => 501,
@@ -236,8 +203,7 @@ class FlagAuthorController extends BaseController
 
             FlgOto::where([
                 ['id', $id],
-                ['user_id', $user_id],
-                ['id_modul',0]
+                ['user_id', $user_id]
             ])->update(['otorisasi' => 1, 'keterangan' => $because, 'waktu_otorisasi' => $Now]);
 
             if ($fcm != null) {
@@ -270,7 +236,6 @@ class FlagAuthorController extends BaseController
         }
     }
 
-
     // Approval
     public function aproIndex(Request $req) {
         $user_id = $req->auth->user_id;
@@ -278,9 +243,9 @@ class FlagAuthorController extends BaseController
         try {
             $query = FlgOto::where('id_modul', '>',0)
                     ->where('user_id', $user_id)
-                    ->where('approval', '!=', 1)
-                    ->orderBy('tgl','asc')
-                    ->orderBy('jam', 'asc')
+                    ->where('otorisasi', 0)
+                    ->orderBy('tgl','desc')
+                    ->orderBy('jam', 'desc')
                     ->limit(5)
                     ->get();
 
@@ -306,20 +271,14 @@ class FlagAuthorController extends BaseController
                 $i = 0;
                 foreach ($query as $key => $val) {
 
-                    if ($val->approval == null || $val->approval == '') {
-                        $data[$i]['status'] = 'new';
-                    }elseif ($val->approval == 2) {
-                        $data[$i]['status'] = 'rejected';
-                        $data[$i]['info']   = $val->keterangan;
-                    }
-
-                    $data[$i]['id']              = $val->id;
-                    $data[$i]['email']           = $val->email;
-                    $data[$i]['no_hp']           = $val->no_hp;
-                    $data[$i]['subject']         = $val->subject; //'Pengambilan Tabungan Tunai';
-                    $data[$i]['pesan']           = $pesan;
-                    $data[$i]['tgl']             = $val->tgl;
-                    $data[$i]['jam']             = $val->jam;
+                    $data[$i]['status']  = 'new';
+                    $data[$i]['id']      = $val->id;
+                    $data[$i]['email']   = $val->email;
+                    $data[$i]['no_hp']   = $val->no_hp;
+                    $data[$i]['subject'] = $val->subject; //'Pengambilan Tabungan Tunai';
+                    $data[$i]['pesan']   = $pesan;
+                    $data[$i]['tgl']     = $val->tgl;
+                    $data[$i]['jam']     = $val->jam;
                     $i++;
                 }
 
@@ -346,9 +305,9 @@ class FlagAuthorController extends BaseController
         try {
             $query = FlgOto::where('id_modul', '>',0)
                     ->where('user_id', $user_id)
-                    ->where('approval', '!=', 1)
-                    ->orderBy('tgl','asc')
-                    ->orderBy('jam', 'asc')
+                    ->where('otorisasi', 0)
+                    ->orderBy('tgl','desc')
+                    ->orderBy('jam', 'desc')
                     ->limit($limit)
                     ->get();
 
@@ -357,21 +316,14 @@ class FlagAuthorController extends BaseController
 
             foreach ($query as $key => $val) {
 
-                if ($val->approval == 0 || $val->approval == null || $val->approval == '') {
-                    $arrData[$i]['status'] = 'new';
-                }elseif ($val->approval == 2) {
-                    $arrData[$i]['status'] = 'rejected';
-                    $arrData[$i]['info']   = $val->keterangan;
-                }
-
                 $arrData[$i]['id']      = $val->id;
                 $arrData[$i]['email']   = $val->email;
                 $arrData[$i]['no_hp']   = $val->no_hp;
                 $arrData[$i]['subject'] = $val->subject; //'Pengambilan Tabungan Tunai';
                 $arrData[$i]['pesan']   = str_replace("="," = ",explode("\r\n",$val->pesan));
-
                 $arrData[$i]['tgl']     = $val->tgl;
                 $arrData[$i]['jam']     = $val->jam;
+                $arrData[$i]['status']  = 'new';
                 $i++;
 
             }
@@ -403,58 +355,40 @@ class FlagAuthorController extends BaseController
         $user_id = $req->auth->user_id;
 
         try {
-            $query = FlgOto::where('id_modul', '>',0)
+            $val = FlgOto::where('id_modul', '>',0)
                     ->where('user_id', $user_id)
-                    ->where('approval', '!=', 1)
                     ->where('id', $id)
-                    ->get();
+                    ->first();
 
-            if ($query == '[]') {
+            if ($val == null) {
                 return response()->json([
                     'code'    => 404,
                     'status'  => 'not found',
                     'message' => 'Data kosong'
                 ], 404);
-            }else{
-                $pesan = array(
-                    "transaksi"     => "Pengambilan Tabungan Tunai",
-                    "tgl_transaksi" => "17-10-2013",
-                    "no_rekening"   => "32-02-00066",
-                    "nama_nasabah"  => "PONIMIN",
-                    "alamat"        => "VILA MUTIARA GADING 2 BLOK F04 NO 18 RT/RW 007/016",
-                    "jumlah"        => "7,000,000.00",
-                    "keterangan"    => "Pengambilan Tabungan Tunai an: 32-02-00066 PONIMIN",
-                    "nama_teller"   => "GRIS"
-                );
-
-                $data = array();
-                $i = 0;
-
-                foreach ($query as $key => $val) {
-
-                    if ($val->approval == null || $val->approval == '') {
-                        $data[$i]['status'] = 'new';
-                    }elseif ($val->approval == 2) {
-                        $data[$i]['status'] = 'rejected';
-                        $data[$i]['info']   = $val->keterangan;
-                    }
-
-                    $data[$i]['id']              = $val->id;
-                    $data[$i]['email']           = $val->email;
-                    $data[$i]['no_hp']           = $val->no_hp;
-                    $data[$i]['subject']         = $val->subject; //'Pengambilan Tabungan Tunai';
-                    $data[$i]['pesan']           = $pesan;
-                    $data[$i]['tgl']             = $val->tgl;
-                    $data[$i]['jam']             = $val->jam;
-                    $i++;
-                }
-
-                return response()->json([
-                    'code'    => 200,
-                    'status'  => 'success',
-                    'data'    => $data[0]
-                ], 200);
             }
+
+            $data['id']      = $val->id;
+            $data['email']   = $val->email;
+            $data['no_hp']   = $val->no_hp;
+            $data['subject'] = $val->subject;
+            $data['pesan']   = str_replace("="," = ",explode("\r\n",$val->pesan));
+            $data['tgl']     = $val->tgl;
+            $data['jam']     = $val->jam;
+
+            if ($val->otorisasi == 1) {
+                $data['status'] = 'accepted';
+            }elseif ($val->otorisasi == 2) {
+                $data['status'] = 'rejected';
+            }else{
+                $data['status'] = 'new';
+            }
+
+            return response()->json([
+                'code'    => 200,
+                'status'  => 'success',
+                'data'    => $data
+            ], 200);
         } catch (Exception $e) {
             return response()->json([
                 "code"    => 501,
@@ -483,8 +417,7 @@ class FlagAuthorController extends BaseController
 
             FlgOto::where([
                 ['id', $id],
-                ['user_id', $user_id],
-                ['id_modul', '>',0]
+                ['user_id', $user_id]
             ])->update(['approval' => 1, 'keterangan' => $because, 'waktu_otorisasi' => $Now]);
 
             if ($fcm != null) {
@@ -521,9 +454,9 @@ class FlagAuthorController extends BaseController
     public function countOto(Request $req){
         $user_id = $req->auth->user_id;
 
-        $query = FlgOto::where('id_modul',0)
+        $query = FlgOto::where('id_modul', '<=', 0)
                 ->where('user_id', $user_id)
-                ->where('otorisasi', '!=', 1)
+                ->where('otorisasi', 0)
                 ->count();
 
         try {
@@ -545,9 +478,9 @@ class FlagAuthorController extends BaseController
     public function countApro(Request $req){
         $user_id = $req->auth->user_id;
 
-        $query = FlgOto::where('id_modul', '>',0)
+        $query = FlgOto::where('id_modul', '>', 0)
                     ->where('user_id', $user_id)
-                    ->where('approval', '!=', 1)
+                    ->where('otorisasi', 0)
                     ->count();
 
         try {
@@ -566,64 +499,108 @@ class FlagAuthorController extends BaseController
     }
 
     // Historisasi After AOtorisasi
-    public function AfterOto(Request $req) {
-        $user_id = $req->auth->user_id;
+    public function otoHY(Request $req, $year) {
+        $user_id = $req->auth->user_id; // 1130
+
+
+        $query = FlgOto::where('id_modul', '<=', 0)
+            ->where('user_id', $user_id)
+            ->where('otorisasi', '!=', 0)
+            ->whereYear('tgl', $year)
+            ->orderBy('waktu_otorisasi','desc')
+            ->get();
+
+        if($query == '[]'){
+            return response()->json([
+                'code'    => 404,
+                'status'  => 'not found',
+                'message' => 'Data kosong'
+            ], 404);
+        }
+
+        foreach ($query as $key => $val) {
+            if ($val->otorisasi == 1) {
+                $msg = 'accepted';
+            }elseif ($val->otorisasi == 2) {
+                $msg = 'rejected';
+            }else{
+                $msg = 'new';
+            }
+
+            $data[$key] = [
+                'id'      => $val->id,
+                'email'   => $val->email,
+                'no_hp'   => $val->no_hp,
+                'subject' => $val->subject, //'Pengambilan Tabungan Tunai';
+                'pesan'   => str_replace("="," = ",explode("\r\n",$val->pesan)),
+                'tgl'     => $val->tgl,
+                'jam'     => $val->jam,
+                'status'  => $msg
+            ];
+        }
 
         try {
-            $query = FlgOto::where('id_modul',0)
-                    ->where('user_id', $user_id)
-                    ->where('otorisasi', '!=', 0)
-                    ->orderBy('waktu_otorisasi','desc')
-                    // ->limit(5)
-                    ->get();
+            return response()->json([
+                'code'    => 200,
+                'status'  => 'success',
+                'data'    => $data
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                "code"    => 501,
+                "status"  => "error",
+                "message" => $e
+            ], 501);
+        }
+    }
 
-            if($query == '[]'){
-                return response()->json([
-                    'code'    => 404,
-                    'status'  => 'not found',
-                    'message' => 'Data kosong'
-                ], 404);
+    public function otoHYM(Request $req, $year, $month) {
+        $user_id = $req->auth->user_id; // 1130
+
+
+        $query = FlgOto::where('id_modul', '<=', 0)
+            ->where('user_id', $user_id)
+            ->where('otorisasi', '!=', 0)
+            ->whereYear('tgl', $year)
+            ->whereMonth('tgl', $month)
+            ->orderBy('waktu_otorisasi','desc')
+            ->get();
+
+        if($query == '[]'){
+            return response()->json([
+                'code'    => 404,
+                'status'  => 'not found',
+                'message' => 'Data kosong'
+            ], 404);
+        }
+
+        foreach ($query as $key => $val) {
+            if ($val->otorisasi == 1) {
+                $msg = 'accepted';
+            }elseif ($val->otorisasi == 2) {
+                $msg = 'rejected';
             }else{
-                $pesan = array(
-                    "transaksi"     => "Pengambilan Tabungan Tunai",
-                    "tgl_transaksi" => "17-10-2013",
-                    "no_rekening"   => "32-02-00066",
-                    "nama_nasabah"  => "PONIMIN",
-                    "alamat"        => "VILA MUTIARA GADING 2 BLOK F04 NO 18 RT/RW 007/016",
-                    "jumlah"        => "7,000,000.00",
-                    "keterangan"    => "Pengambilan Tabungan Tunai an: 32-02-00066 PONIMIN",
-                    "nama_teller"   => "GRIS"
-                );
-
-                $data = array();
-                $i = 0;
-                foreach ($query as $key => $val) {
-
-                    if ($val->otorisasi == 1 ) {
-                        $data[$i]['status'] = 'accepted';
-                        $data[$i]['info']   = $val->keterangan;
-                        $data[$i]['time_acepted'] = $val->waktu_otorisasi;
-                    }elseif ($val->otorisasi == 2) {
-                        $data[$i]['status'] = 'rejected';
-                        $data[$i]['info']   = $val->keterangan;
-                    }
-
-                    $data[$i]['id']      = $val->id;
-                    $data[$i]['email']   = $val->email;
-                    $data[$i]['no_hp']   = $val->no_hp;
-                    $data[$i]['subject'] = $val->subject; //'Pengambilan Tabungan Tunai';
-                    $data[$i]['pesan']   = $pesan;
-                    $data[$i]['tgl']     = $val->tgl;
-                    $data[$i]['jam']     = $val->jam;
-                    $i++;
-                }
-
-                return response()->json([
-                    'code'    => 200,
-                    'status'  => 'success',
-                    'data'    => $data
-                ], 200);
+                $msg = 'new';
             }
+
+            $data[$key] = [
+                'id'      => $val->id,
+                'email'   => $val->email,
+                'no_hp'   => $val->no_hp,
+                'subject' => $val->subject, //'Pengambilan Tabungan Tunai';
+                'pesan'   => str_replace("="," = ",explode("\r\n",$val->pesan)),
+                'tgl'     => $val->tgl,
+                'jam'     => $val->jam,
+                'status'  => $msg
+            ];
+        }
+
+        try {
+            return response()->json([
+                'code'    => 200,
+                'status'  => 'success',
+                'data'    => $data
+            ], 200);
         } catch (Exception $e) {
             return response()->json([
                 "code"    => 501,
@@ -634,63 +611,118 @@ class FlagAuthorController extends BaseController
     }
 
     // Detail Historisasi After Otorisasi
-    public function DetailAfterOto($id, Request $req) {
+    // public function DetailAfterOto($id, Request $req) {
+    //     $user_id = $req->auth->user_id;
+
+    //     try {
+    //         $query = FlgOto::where('id_modul', '<=', 0)
+    //                 ->where('user_id', $user_id)
+    //                 ->where('otorisasi', '!=', 0)
+    //                 ->where('id', $id)
+    //                 ->get();
+
+    //         if($query == '[]'){
+    //             return response()->json([
+    //                 'code'    => 404,
+    //                 'status'  => 'not found',
+    //                 'message' => 'Data kosong'
+    //             ], 404);
+    //         }else{
+    //             $pesan = array(
+    //                 "transaksi"     => "Pengambilan Tabungan Tunai",
+    //                 "tgl_transaksi" => "17-10-2013",
+    //                 "no_rekening"   => "32-02-00066",
+    //                 "nama_nasabah"  => "PONIMIN",
+    //                 "alamat"        => "VILA MUTIARA GADING 2 BLOK F04 NO 18 RT/RW 007/016",
+    //                 "jumlah"        => "7,000,000.00",
+    //                 "keterangan"    => "Pengambilan Tabungan Tunai an: 32-02-00066 PONIMIN",
+    //                 "nama_teller"   => "GRIS"
+    //             );
+
+    //             $data = array();
+    //             $i = 0;
+    //             foreach ($query as $key => $val) {
+
+    //                 if ($val->otorisasi == 1 ) {
+    //                     $data[$i]['status'] = 'accepted';
+    //                     $data[$i]['info']   = $val->keterangan;
+    //                     $data[$i]['time_acepted'] = $val->waktu_otorisasi;
+    //                 }elseif ($val->otorisasi == 2) {
+    //                     $data[$i]['status'] = 'rejected';
+    //                     $data[$i]['info']   = $val->keterangan;
+    //                 }
+
+    //                 $data[$i]['id']      = $val->id;
+    //                 $data[$i]['email']   = $val->email;
+    //                 $data[$i]['no_hp']   = $val->no_hp;
+    //                 $data[$i]['subject'] = $val->subject; //'Pengambilan Tabungan Tunai';
+    //                 $data[$i]['pesan']   = $pesan;
+    //                 $data[$i]['tgl']     = $val->tgl;
+    //                 $data[$i]['jam']     = $val->jam;
+    //                 $i++;
+    //             }
+
+    //             return response()->json([
+    //                 'code'    => 200,
+    //                 'status'  => 'success',
+    //                 'data'    => $data[0]
+    //             ], 200);
+    //         }
+    //     } catch (Exception $e) {
+    //         return response()->json([
+    //             "code"    => 501,
+    //             "status"  => "error",
+    //             "message" => $e
+    //         ], 501);
+    //     }
+    // }
+
+    // Historisasi After Approval
+    public function aproHNY(Request $req, $year) {
         $user_id = $req->auth->user_id;
 
-        try {
-            $query = FlgOto::where('id_modul',0)
-                    ->where('user_id', $user_id)
-                    ->where('otorisasi', '!=', 0)
-                    ->where('id', $id)
-                    ->get();
+        $query = FlgOto::where('id_modul', '>',0)
+            ->where('user_id', $user_id)
+            ->where('otorisasi', '!=', 0)
+            ->whereYear('tgl', $year)
+            ->orderBy('waktu_otorisasi','desc')
+            ->get();
 
-            if($query == '[]'){
-                return response()->json([
-                    'code'    => 404,
-                    'status'  => 'not found',
-                    'message' => 'Data kosong'
-                ], 404);
+        if($query == '[]'){
+            return response()->json([
+                'code'    => 404,
+                'status'  => 'not found',
+                'message' => 'Data kosong'
+            ], 404);
+        }
+
+        foreach ($query as $key => $val) {
+            if ($val->otorisasi == 1) {
+                $msg = 'accepted';
+            }elseif ($val->otorisasi == 2) {
+                $msg = 'rejected';
             }else{
-                $pesan = array(
-                    "transaksi"     => "Pengambilan Tabungan Tunai",
-                    "tgl_transaksi" => "17-10-2013",
-                    "no_rekening"   => "32-02-00066",
-                    "nama_nasabah"  => "PONIMIN",
-                    "alamat"        => "VILA MUTIARA GADING 2 BLOK F04 NO 18 RT/RW 007/016",
-                    "jumlah"        => "7,000,000.00",
-                    "keterangan"    => "Pengambilan Tabungan Tunai an: 32-02-00066 PONIMIN",
-                    "nama_teller"   => "GRIS"
-                );
-
-                $data = array();
-                $i = 0;
-                foreach ($query as $key => $val) {
-
-                    if ($val->otorisasi == 1 ) {
-                        $data[$i]['status'] = 'accepted';
-                        $data[$i]['info']   = $val->keterangan;
-                        $data[$i]['time_acepted'] = $val->waktu_otorisasi;
-                    }elseif ($val->otorisasi == 2) {
-                        $data[$i]['status'] = 'rejected';
-                        $data[$i]['info']   = $val->keterangan;
-                    }
-
-                    $data[$i]['id']      = $val->id;
-                    $data[$i]['email']   = $val->email;
-                    $data[$i]['no_hp']   = $val->no_hp;
-                    $data[$i]['subject'] = $val->subject; //'Pengambilan Tabungan Tunai';
-                    $data[$i]['pesan']   = $pesan;
-                    $data[$i]['tgl']     = $val->tgl;
-                    $data[$i]['jam']     = $val->jam;
-                    $i++;
-                }
-
-                return response()->json([
-                    'code'    => 200,
-                    'status'  => 'success',
-                    'data'    => $data[0]
-                ], 200);
+                $msg = 'new';
             }
+
+            $data[$key] = [
+                'id'      => $val->id,
+                'email'   => $val->email,
+                'no_hp'   => $val->no_hp,
+                'subject' => $val->subject, //'Pengambilan Tabungan Tunai';
+                'pesan'   => str_replace("="," = ",explode("\r\n",$val->pesan)),
+                'tgl'     => $val->tgl,
+                'jam'     => $val->jam,
+                'status'  => $msg
+            ];
+        }
+
+        try{
+            return response()->json([
+                'code'    => 200,
+                'status'  => 'success',
+                'data'    => $data
+            ], 200);
         } catch (Exception $e) {
             return response()->json([
                 "code"    => 501,
@@ -700,65 +732,52 @@ class FlagAuthorController extends BaseController
         }
     }
 
-    // Historisasi After Approval
-    public function AfterApro(Request $req) {
+    public function aproHNYM(Request $req, $year, $month) {
         $user_id = $req->auth->user_id;
 
-        try {
-            $query = FlgOto::where('id_modul', '>',0)
-                    ->where('user_id', $user_id)
-                    ->where('approval', '!=', 0)
-                    ->orderBy('waktu_otorisasi','desc')
-                    // ->limit(5)
-                    ->get();
+        $query = FlgOto::where('id_modul', '>',0)
+            ->where('user_id', $user_id)
+            ->where('otorisasi', '!=', 0)
+            ->whereYear('tgl', $year)
+            ->whereMonth('tgl', $month)
+            ->orderBy('waktu_otorisasi','desc')
+            ->get();
 
-            if($query == '[]'){
-                return response()->json([
-                    'code'    => 404,
-                    'status'  => 'not found',
-                    'message' => 'Data kosong'
-                ], 404);
+        if($query == '[]'){
+            return response()->json([
+                'code'    => 404,
+                'status'  => 'not found',
+                'message' => 'Data kosong'
+            ], 404);
+        }
+
+        foreach ($query as $key => $val) {
+            if ($val->otorisasi == 1) {
+                $msg = 'accepted';
+            }elseif ($val->otorisasi == 2) {
+                $msg = 'rejected';
             }else{
-                $pesan = array(
-                    "transaksi"     => "Pengambilan Tabungan Tunai",
-                    "tgl_transaksi" => "17-10-2013",
-                    "no_rekening"   => "32-02-00066",
-                    "nama_nasabah"  => "PONIMIN",
-                    "alamat"        => "VILA MUTIARA GADING 2 BLOK F04 NO 18 RT/RW 007/016",
-                    "jumlah"        => "7,000,000.00",
-                    "keterangan"    => "Pengambilan Tabungan Tunai an: 32-02-00066 PONIMIN",
-                    "nama_teller"   => "GRIS"
-                );
-
-                $data = array();
-                $i = 0;
-                foreach ($query as $key => $val) {
-
-                    if ($val->approval == 1 ) {
-                        $data[$i]['status'] = 'accepted';
-                        $data[$i]['info']   = $val->keterangan;
-                        $data[$i]['time_acepted'] = $val->waktu_otorisasi;
-                    }elseif ($val->approval == 2) {
-                        $data[$i]['status'] = 'rejected';
-                        $data[$i]['info']   = $val->keterangan;
-                    }
-
-                    $data[$i]['id']      = $val->id;
-                    $data[$i]['email']   = $val->email;
-                    $data[$i]['no_hp']   = $val->no_hp;
-                    $data[$i]['subject'] = $val->subject; //'Pengambilan Tabungan Tunai';
-                    $data[$i]['pesan']   = $pesan;
-                    $data[$i]['tgl']     = $val->tgl;
-                    $data[$i]['jam']     = $val->jam;
-                    $i++;
-                }
-
-                return response()->json([
-                    'code'    => 200,
-                    'status'  => 'success',
-                    'data'    => $data
-                ], 200);
+                $msg = 'new';
             }
+
+            $data[$key] = [
+                'id'      => $val->id,
+                'email'   => $val->email,
+                'no_hp'   => $val->no_hp,
+                'subject' => $val->subject, //'Pengambilan Tabungan Tunai';
+                'pesan'   => str_replace("="," = ",explode("\r\n",$val->pesan)),
+                'tgl'     => $val->tgl,
+                'jam'     => $val->jam,
+                'status'  => $msg
+            ];
+        }
+
+        try{
+            return response()->json([
+                'code'    => 200,
+                'status'  => 'success',
+                'data'    => $data
+            ], 200);
         } catch (Exception $e) {
             return response()->json([
                 "code"    => 501,
@@ -769,72 +788,71 @@ class FlagAuthorController extends BaseController
     }
 
     // Detail Historisasi After Approval
-    public function DetailAfterApro($id, Request $req) {
-        $user_id = $req->auth->user_id;
+    // public function DetailAfterApro($id, Request $req) {
+    //     $user_id = $req->auth->user_id;
 
-        try {
-            $query = FlgOto::where('id_modul', '>',0)
-                    ->where('id', $id)
-                    ->where('user_id', $user_id)
-                    ->where('approval', '!=', 0)
-                    ->where('approval', 1)
-                    ->get();
+    //     try {
+    //         $query = FlgOto::where('id_modul', '>',0)
+    //                 ->where('id', $id)
+    //                 ->where('user_id', $user_id)
+    //                 ->where('otorisasi', '!=', 0)
+    //                 ->get();
 
-            if($query == '[]'){
-                return response()->json([
-                    'code'    => 404,
-                    'status'  => 'not found',
-                    'message' => 'Data kosong'
-                ], 404);
-            }else{
-                $pesan = array(
-                    "transaksi"     => "Pengambilan Tabungan Tunai",
-                    "tgl_transaksi" => "17-10-2013",
-                    "no_rekening"   => "32-02-00066",
-                    "nama_nasabah"  => "PONIMIN",
-                    "alamat"        => "VILA MUTIARA GADING 2 BLOK F04 NO 18 RT/RW 007/016",
-                    "jumlah"        => "7,000,000.00",
-                    "keterangan"    => "Pengambilan Tabungan Tunai an: 32-02-00066 PONIMIN",
-                    "nama_teller"   => "GRIS"
-                );
+    //         if($query == '[]'){
+    //             return response()->json([
+    //                 'code'    => 404,
+    //                 'status'  => 'not found',
+    //                 'message' => 'Data kosong'
+    //             ], 404);
+    //         }else{
+    //             $pesan = array(
+    //                 "transaksi"     => "Pengambilan Tabungan Tunai",
+    //                 "tgl_transaksi" => "17-10-2013",
+    //                 "no_rekening"   => "32-02-00066",
+    //                 "nama_nasabah"  => "PONIMIN",
+    //                 "alamat"        => "VILA MUTIARA GADING 2 BLOK F04 NO 18 RT/RW 007/016",
+    //                 "jumlah"        => "7,000,000.00",
+    //                 "keterangan"    => "Pengambilan Tabungan Tunai an: 32-02-00066 PONIMIN",
+    //                 "nama_teller"   => "GRIS"
+    //             );
 
-                $data = array();
-                $i = 0;
-                foreach ($query as $key => $val) {
+    //             $data = array();
+    //             $i = 0;
+    //             foreach ($query as $key => $val) {
 
-                    if ($val->approval == 1 ) {
-                        $data[$i]['status'] = 'accepted';
-                        $data[$i]['info']   = $val->keterangan;
-                        $data[$i]['time_acepted'] = $val->waktu_otorisasi;
-                    }elseif ($val->approval == 2) {
-                        $data[$i]['status'] = 'rejected';
-                        $data[$i]['info']   = $val->keterangan;
-                    }
+    //                 if ($val->approval == 1 ) {
+    //                     $data[$i]['status'] = 'accepted';
+    //                     $data[$i]['info']   = $val->keterangan;
+    //                     $data[$i]['time_acepted'] = $val->waktu_otorisasi;
+    //                 }elseif ($val->approval == 2) {
+    //                     $data[$i]['status'] = 'rejected';
+    //                     $data[$i]['info']   = $val->keterangan;
+    //                 }
 
-                    $data[$i]['id']      = $val->id;
-                    $data[$i]['email']   = $val->email;
-                    $data[$i]['no_hp']   = $val->no_hp;
-                    $data[$i]['subject'] = $val->subject; //'Pengambilan Tabungan Tunai';
-                    $data[$i]['pesan']   = $pesan;
-                    $data[$i]['tgl']     = $val->tgl;
-                    $data[$i]['jam']     = $val->jam;
-                    $i++;
-                }
+    //                 $data[$i]['id']      = $val->id;
+    //                 $data[$i]['email']   = $val->email;
+    //                 $data[$i]['no_hp']   = $val->no_hp;
+    //                 $data[$i]['subject'] = $val->subject; //'Pengambilan Tabungan Tunai';
+    //                 $data[$i]['pesan']   = $pesan;
+    //                 $data[$i]['tgl']     = $val->tgl;
+    //                 $data[$i]['jam']     = $val->jam;
+    //                 $i++;
+    //             }
 
-                return response()->json([
-                    'code'    => 200,
-                    'status'  => 'success',
-                    'data'    => $data[0]
-                ], 200);
-            }
-        } catch (Exception $e) {
-            return response()->json([
-                "code"    => 501,
-                "status"  => "error",
-                "message" => $e
-            ], 501);
-        }
-    }
+    //             return response()->json([
+    //                 'code'    => 200,
+    //                 'status'  => 'success',
+    //                 'data'    => $data[0]
+    //             ], 200);
+    //         }
+    //     } catch (Exception $e) {
+    //         return response()->json([
+    //             "code"    => 501,
+    //             "status"  => "error",
+    //             "message" => $e
+    //         ], 501);
+    //     }
+    // }
 
     // Rejected Otorisasi
     public function rejectOto($id, Request $req) {
@@ -865,7 +883,7 @@ class FlagAuthorController extends BaseController
             FlgOto::where([
                 ['id', $id],
                 ['user_id', $user_id],
-                ['id_modul',0]
+                ['id_modul', '<=', 0]
             ])->update(['otorisasi' => 2, 'keterangan' => $because, 'waktu_otorisasi' => $Now]);
 
             if ($fcm != null) {
@@ -921,7 +939,7 @@ class FlagAuthorController extends BaseController
                 ['id', $id],
                 ['user_id', $user_id],
                 ['id_modul', '>',0],
-            ])->update(['approval' => 2, 'keterangan' => $because, 'waktu_otorisasi' => $Now]);
+            ])->update(['otorisasi' => 2, 'keterangan' => $because, 'waktu_otorisasi' => $Now]);
 
             if ($fcm != null) {
                 $push = Helper::push_notif($fcm, $title, $msg);

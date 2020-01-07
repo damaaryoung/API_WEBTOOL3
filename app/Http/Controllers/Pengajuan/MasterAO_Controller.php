@@ -343,7 +343,7 @@ class MasterAO_Controller extends BaseController
                     "posisi_pekerjaan"      => $val->pas['posisi_pekerjaan'],
                     "nama_tempat_kerja"     => $val->pas['nama_tempat_kerja'],
                     "jenis_pekerjaan"       => $val->pas['jenis_pekerjaan'],
-                    "tgl_mulai_kerja"       => $val=>pas['tgl_mulai_kerja'], //Carbon::parse($val->pas['tgl_mulai_kerja'])->format('d-m-Y'),
+                    "tgl_mulai_kerja"       => $val->pas['tgl_mulai_kerja'], //Carbon::parse($val->pas['tgl_mulai_kerja'])->format('d-m-Y'),
                     "no_telp_tempat_kerja"  => $val->pas['no_telp_tempat_kerja'],
                     'alamat' => [
                         'alamat_singkat' => $val->pas['alamat_tempat_kerja'],

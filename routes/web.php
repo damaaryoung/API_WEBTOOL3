@@ -71,8 +71,9 @@ $router->group(['middleware' => 'jwt.auth'], function () use ($router) {
         $router->get('/oto/{limit}/limit', 'FlagAuthorController@otoLimit'); // Otorisasi
         $router->get('/oto/{id}', 'FlagAuthorController@otoShow');
         $router->put('/oto/{id}', 'FlagAuthorController@otoUpdate');
-        $router->get('/log_oto', 'FlagAuthorController@AfterOto');
-        $router->get('/log_oto/{id}', 'FlagAuthorController@DetailAfterOto');
+        $router->get('/log_oto/{year}', 'FlagAuthorController@otoHY');
+        $router->get('/log_oto/{year}/{month}', 'FlagAuthorController@otoHYM');
+        // $router->get('/log_oto/{id}', 'FlagAuthorController@DetailAfterOto');
         $router->get('/count_oto', 'FlagAuthorController@countOto');
         $router->put('/oto/{id}/reject', 'FlagAuthorController@rejectOto');
 
@@ -81,7 +82,8 @@ $router->group(['middleware' => 'jwt.auth'], function () use ($router) {
         $router->get('/apro/{id}', 'FlagAuthorController@aproShow');
         $router->put('/apro/{id}', 'FlagAuthorController@aproUpdate');
         $router->get('/log_apro', 'FlagAuthorController@AfterApro');
-        $router->get('/log_apro/{id}', 'FlagAuthorController@DetailAfterApro');
+        $router->get('/log_apro/{year}', 'FlagAuthorController@aproHY');
+        $router->get('/log_apro/{year}/{month}', 'FlagAuthorController@aproHYM');
         $router->get('/count_apro', 'FlagAuthorController@countApro');
         $router->put('/apro/{id}/reject', 'FlagAuthorController@rejectApro');
 
