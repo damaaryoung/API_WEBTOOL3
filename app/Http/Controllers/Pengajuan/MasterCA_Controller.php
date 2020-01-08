@@ -1580,18 +1580,23 @@ class MasterCA_Controller extends BaseController
                 $dataMuBa[] = array(
                     'id_trans_so' => $id,
                     'urutan_mutasi' => empty($req->input('urutan_mutasi')[$i]) ? null[$i] : $req->urutan_mutasi[$i],
-                    'nama_bank' => empty($req->input('nama_bank')[$i]) ? null[$i] : $req->nama_bank[$i],
+                    'nama_bank'   => empty($req->input('nama_bank')[$i]) ? null[$i] : $req->nama_bank[$i],
                     'no_rekening' => empty($req->input('no_rekening')[$i]) ? null[$i] : $req->no_rekening[$i],
-                    'nama_pemilik' => empty($req->input('nama_pemilik')[$i]) ? null[$i] : $req->nama_pemilik[$i]
-                    // 'data' => array(
-                        // 'periode' => empty($req->input('periode')[$i]) ? null[$i][$i] : $req->periode[$i][$i]
-                        // 'frek_debet' => empty($req->input('frek_debet')[$i]) ? null[$i][$i] : $req->frek_debet[$i][$i],
-                        // 'nominal_debet' => empty($req->input('nominal_debet')[$i]) ? null[$i][$i] : $req->nominal_debet[$i][$i],
-                        // 'frek_kredit' => empty($req->input('frek_kredit')[$i]) ? null[$i][$i] : $req->frek_kredit[$i][$i],
-                        // 'nominal_kredit' => empty($req->input('nominal_kredit')[$i]) ? null[$i][$i] : $req->nominal_kredit[$i][$i],
-                        // 'saldo' => empty($req->input('saldo')[$i]) ? null[$i][$i] : $req->saldo[$i][$i]
-                    // )
+                    'nama_pemilik'=> empty($req->input('nama_pemilik')[$i]) ? null[$i] : $req->nama_pemilik[$i]
                 );
+
+                dd($dataMuBa[$i]['urutan_mutasi']);
+
+                // for ($j = 0; $j < count($dataMuBa['urutan_mutasi']); $j++) {
+                //     $data => array(
+                //         'periode' => empty($req->input('periode')[$i]) ? null[$i][$i] : $req->periode[$i][$i]
+                //         // 'frek_debet' => empty($req->input('frek_debet')[$i]) ? null[$i][$i] : $req->frek_debet[$i][$i],
+                //         // 'nominal_debet' => empty($req->input('nominal_debet')[$i]) ? null[$i][$i] : $req->nominal_debet[$i][$i],
+                //         // 'frek_kredit' => empty($req->input('frek_kredit')[$i]) ? null[$i][$i] : $req->frek_kredit[$i][$i],
+                //         // 'nominal_kredit' => empty($req->input('nominal_kredit')[$i]) ? null[$i][$i] : $req->nominal_kredit[$i][$i],
+                //         // 'saldo' => empty($req->input('saldo')[$i]) ? null[$i][$i] : $req->saldo[$i][$i]
+                //     )
+                // }
             }
 
             dd($dataMuBa);

@@ -1119,7 +1119,7 @@ class FlagAuthorController extends BaseController
             return response()->json([
                 "code"    => 200,
                 'status'  => 'success',
-                'message' => 'approval berhasil disetujui'
+                'message' => 'approval berhasil direset'
             ], 200);
         } catch (Exception $e) {
             return response()->json([
