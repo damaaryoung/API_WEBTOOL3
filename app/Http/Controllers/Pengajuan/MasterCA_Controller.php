@@ -12,11 +12,6 @@ use App\Models\CC\AgunanTanah;
 use App\Models\CC\KapBulanan;
 use App\Models\CC\KeuanganUsaha;
 use Illuminate\Support\Facades\File;
-// use App\Models\AreaKantor\Cabang;
-// use App\Models\Wilayah\Kabupaten;
-// use App\Models\Wilayah\Kecamatan;
-// use App\Models\Wilayah\Kelurahan;
-// use App\Models\Wilayah\Provinsi;
 use App\Models\AreaKantor\JPIC;
 use App\Models\AreaKantor\PIC;
 use App\Models\Bisnis\TransCA;
@@ -24,6 +19,7 @@ use App\Models\Bisnis\TransAO;
 use App\Models\Bisnis\TransSo;
 use Illuminate\Http\Request;
 // use App\Models\CC\Pasangan;
+use App\Models\CA\MutasiBank;
 use App\Models\CC\Penjamin;
 // use App\Models\CC\Debitur;
 use App\Http\Requests;
@@ -1576,6 +1572,29 @@ class MasterCA_Controller extends BaseController
             );
 
             $newDataUsaha = array_merge($dataUsaha, $keuanganUsaha, $labaUsaha);
+        }
+
+        // Mutasi Bank
+        if (!empty($req->input('no_rekening'))){
+            for ($i = 0; $i < count($req->input('no_rekening')); $i++) {
+                $dataMuBa[] = array(
+                    'id_trans_so' => $id,
+                    'urutan_mutasi' => empty($req->input('urutan_mutasi')[$i]) ? null[$i] : $req->urutan_mutasi[$i],
+                    'nama_bank' => empty($req->input('nama_bank')[$i]) ? null[$i] : $req->nama_bank[$i],
+                    'no_rekening' => empty($req->input('no_rekening')[$i]) ? null[$i] : $req->no_rekening[$i],
+                    'nama_pemilik' => empty($req->input('nama_pemilik')[$i]) ? null[$i] : $req->nama_pemilik[$i]
+                    // 'data' => array(
+                        // 'periode' => empty($req->input('periode')[$i]) ? null[$i][$i] : $req->periode[$i][$i]
+                        // 'frek_debet' => empty($req->input('frek_debet')[$i]) ? null[$i][$i] : $req->frek_debet[$i][$i],
+                        // 'nominal_debet' => empty($req->input('nominal_debet')[$i]) ? null[$i][$i] : $req->nominal_debet[$i][$i],
+                        // 'frek_kredit' => empty($req->input('frek_kredit')[$i]) ? null[$i][$i] : $req->frek_kredit[$i][$i],
+                        // 'nominal_kredit' => empty($req->input('nominal_kredit')[$i]) ? null[$i][$i] : $req->nominal_kredit[$i][$i],
+                        // 'saldo' => empty($req->input('saldo')[$i]) ? null[$i][$i] : $req->saldo[$i][$i]
+                    // )
+                );
+            }
+
+            dd($dataMuBa);
         }
 
         // try{
