@@ -250,7 +250,36 @@ class BlankRequest extends FormRequest
                 'biaya_provisi'         => 'integer',
                 'biaya_administrasi'    => 'integer',
                 'biaya_credit_checking' => 'integer',
-                'biaya_tabungan'        => 'integer'
+                'biaya_tabungan'        => 'integer',
+
+                // Mutasi Bank
+                'urutan_mutasi.*'           => 'numeric',
+                'no_rekening_mutasi.*'      => 'numeric',
+                'frek_debet_mutasi.*.*'     => 'numeric',
+                'nominal_debet_mutasi.*.*'  => 'numeric',
+                'frek_kredit_mutasi.*.*'    => 'numeric',
+                'nominal_kredit_mutasi.*.*' => 'numeric',
+                'saldo_mutasi.*.*'          => 'numeric',
+
+                // Data Keuangan Di CA
+                'no_rekening'               => 'numeric',
+                'tujuan_pengeluaran_dana'   => 'in:KONSUMTIF,MODAL,INVESTASI',
+
+                // Info ACC
+                'plafon_acc.*'          => 'integer',
+                'baki_debet_acc.*'      => 'integer',
+                'angsuran_acc.*'        => 'integer',
+                'collectabilitas_acc.*' => 'integer',
+
+                // Ringkasan Analisa
+                'kuantitatif_ttl_pendapatan'  => 'integer',
+                'kuantitatif_ttl_pengeluaran' => 'integer',
+                'kuantitatif_pendapatan'      => 'integer',
+                'kuantitatif_angsuran'        => 'integer',
+                'kuantitatif_ltv'             => 'integer',
+                'kuantitatif_dsr'             => 'integer',
+                'kuantitatif_idir'            => 'integer',
+                'kuantitatif_hasil'           => 'integer'
             ];
         }else{
             $rules = [
@@ -579,11 +608,40 @@ class BlankRequest extends FormRequest
             'suku_bunga.integer'            => ':attribute harus berupa angka / bilangan bulat',
             'pembayaran_bunga.integer'      => ':attribute harus berupa angka / bilangan bulat',
             'akad_kredit.in'                => ':attribute harus salah satu dari jenis berikut :values',
-            'ikatan_agunan.integer'         => ':attribute harus berupa lamp_agunan_kanan/ bilangan bulat',
-            'biaya_provisi.integer'         => ':attribute harus berupa lamp_agunan_kanan/ bilangan bulat',
-            'biaya_administrasi.integer'    => ':attribute harus berupa lamp_agunan_kanan/ bilangan bulat',
-            'biaya_credit_checking.integer' => ':attribute harus berupa lamp_agunan_kanan/ bilangan bulat',
-            'biaya_tabungan.integer'        => ':attribute harus berupa lamp_agunan_kanan/ bilangan bulat',
+            'ikatan_agunan.integer'         => ':attribute harus berupa angka / bilangan bulat',
+            'biaya_provisi.integer'         => ':attribute harus berupa angka / bilangan bulat',
+            'biaya_administrasi.integer'    => ':attribute harus berupa angka / bilangan bulat',
+            'biaya_credit_checking.integer' => ':attribute harus berupa angka / bilangan bulat',
+            'biaya_tabungan.integer'        => ':attribute harus berupa angka / bilangan bulat',
+
+            // Mutasi Bank
+            'urutan_mutasi.*.numeric'           => ':attribute harus berupa angka',
+            'no_rekening_mutasi.*.numeric'      => ':attribute harus berupa angka',
+            'frek_debet_mutasi.*.*.numeric'     => ':attribute harus berupa angka',
+            'nominal_debet_mutasi.*.*.numeric'  => ':attribute harus berupa angka',
+            'frek_kredit_mutasi.*.*.numeric'    => ':attribute harus berupa angka',
+            'nominal_kredit_mutasi.*.*.numeric' => ':attribute harus berupa angka',
+            'saldo_mutasi.*.*.numeric'          => ':attribute harus berupa angka',
+
+            // Data Keuangan Di CA
+            'no_rekening.numeric'        => ':attribute harus berupa angka',
+            'tujuan_pengeluaran_dana.in' => ':attribute harus salah satu dari jenis berikut :values',
+
+            // Info ACC
+            'plafon_acc.*.integer'          => ':attribute harus berupa angka / bilangan bulat',
+            'baki_debet_acc.*.integer'      => ':attribute harus berupa angka / bilangan bulat',
+            'angsuran_acc.*.integer'        => ':attribute harus berupa angka / bilangan bulat',
+            'collectabilitas_acc.*.integer' => ':attribute harus berupa angka / bilangan bulat',
+
+            // Ringkasan Analisa
+            'kuantitatif_ttl_pendapatan.integer'  => ':attribute harus berupa angka / bilangan bulat',
+            'kuantitatif_ttl_pengeluaran.integer' => ':attribute harus berupa angka / bilangan bulat',
+            'kuantitatif_pendapatan.integer'      => ':attribute harus berupa angka / bilangan bulat',
+            'kuantitatif_angsuran.integer'        => ':attribute harus berupa angka / bilangan bulat',
+            'kuantitatif_ltv.integer'             => ':attribute harus berupa angka / bilangan bulat',
+            'kuantitatif_dsr.integer'             => ':attribute harus berupa angka / bilangan bulat',
+            'kuantitatif_idir.integer'            => ':attribute harus berupa angka / bilangan bulat',
+            'kuantitatif_hasil.integer'           => ':attribute harus berupa angka / bilangan bulat'
         ];
     }
 

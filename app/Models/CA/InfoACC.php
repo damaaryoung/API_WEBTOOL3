@@ -8,7 +8,7 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Lumen\Auth\Authorizable;
 
-class MutasiBank extends Model implements AuthenticatableContract, AuthorizableContract
+class InfoACC extends Model implements AuthenticatableContract, AuthorizableContract
 {
     use Authenticatable, Authorizable;
 
@@ -19,11 +19,11 @@ class MutasiBank extends Model implements AuthenticatableContract, AuthorizableC
      */
     protected $connection = 'web';
 
-    protected $table = 'mutasi_bank';
+    protected $table = 'informasi_analisa_cc';
     protected $primaryKey = 'id';
 
     protected $fillable = [
-        'id_trans_so', 'urutan_mutasi', 'nama_bank', 'no_rekening', 'nama_pemilik', 'periode', 'frek_debet', 'nominal_debet', 'frek_kredit', 'nominal_kredit', 'saldo'
+        'id_trans_so', 'nama_bank', 'plafon', 'baki_debet', 'angsuran', 'collectabilitas', 'jenis_kredit'
     ];
 
     public function so(){

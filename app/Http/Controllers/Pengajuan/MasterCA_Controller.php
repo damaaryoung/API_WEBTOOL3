@@ -1575,32 +1575,82 @@ class MasterCA_Controller extends BaseController
         }
 
         // Mutasi Bank
-        if (!empty($req->input('no_rekening'))){
-            for ($i = 0; $i < count($req->input('no_rekening')); $i++) {
+        if (!empty($req->input('no_rekening_mutasi'))){
+            for ($i = 0; $i < count($req->input('no_rekening_mutasi')); $i++) {
                 $dataMuBa[] = array(
-                    'id_trans_so' => $id,
-                    'urutan_mutasi' => empty($req->input('urutan_mutasi')[$i]) ? null[$i] : $req->urutan_mutasi[$i],
-                    'nama_bank'   => empty($req->input('nama_bank')[$i]) ? null[$i] : $req->nama_bank[$i],
-                    'no_rekening' => empty($req->input('no_rekening')[$i]) ? null[$i] : $req->no_rekening[$i],
-                    'nama_pemilik'=> empty($req->input('nama_pemilik')[$i]) ? null[$i] : $req->nama_pemilik[$i]
+                    'id_trans_so'    => $id,
+                    'urutan_mutasi'  => empty($req->input('urutan_mutasi')[$i]) ? null[$i] : $req->urutan_mutasi[$i],
+                    'nama_bank'      => empty($req->input('nama_bank_mutasi')[$i]) ? null[$i] : $req->nama_bank_mutasi[$i],
+                    'no_rekening'    => empty($req->input('no_rekening_mutasi')[$i]) ? null[$i] : $req->no_rekening_mutasi[$i],
+                    'nama_pemilik'   => empty($req->input('nama_pemilik_mutasi')[$i]) ? null[$i] : $req->nama_pemilik_mutasi[$i],
+                    'periode'        => empty($req->input('periode_mutasi')[$i]) ? null[$i] : $req->periode_mutasi[$i],
+                    'frek_debet'     => empty($req->input('frek_debet_mutasi')[$i]) ? null[$i] : $req->frek_debet_mutasi[$i],
+                    'nominal_debet'  => empty($req->input('nominal_debet_mutasi')[$i]) ? null[$i] : $req->nominal_debet_mutasi[$i],
+                    'frek_kredit'    => empty($req->input('frek_kredit_mutasi')[$i]) ? null[$i] : $req->frek_kredit_mutasi[$i],
+                    'nominal_kredit' => empty($req->input('nominal_kredit_mutasi')[$i]) ? null[$i] : $req->nominal_kredit_mutasi[$i],
+                    'saldo'          => empty($req->input('saldo_mutasi')[$i]) ? null[$i] : $req->saldo_mutasi[$i]
                 );
-
-                dd($dataMuBa[$i]['urutan_mutasi']);
-
-                // for ($j = 0; $j < count($dataMuBa['urutan_mutasi']); $j++) {
-                //     $data => array(
-                //         'periode' => empty($req->input('periode')[$i]) ? null[$i][$i] : $req->periode[$i][$i]
-                //         // 'frek_debet' => empty($req->input('frek_debet')[$i]) ? null[$i][$i] : $req->frek_debet[$i][$i],
-                //         // 'nominal_debet' => empty($req->input('nominal_debet')[$i]) ? null[$i][$i] : $req->nominal_debet[$i][$i],
-                //         // 'frek_kredit' => empty($req->input('frek_kredit')[$i]) ? null[$i][$i] : $req->frek_kredit[$i][$i],
-                //         // 'nominal_kredit' => empty($req->input('nominal_kredit')[$i]) ? null[$i][$i] : $req->nominal_kredit[$i][$i],
-                //         // 'saldo' => empty($req->input('saldo')[$i]) ? null[$i][$i] : $req->saldo[$i][$i]
-                //     )
-                // }
             }
-
-            dd($dataMuBa);
         }
+
+        $dataTabUang = array(
+            'id_trans_so'    => $id,
+            'no_rekening' => empty($req->input('no_rekening')) ? null : $req->input('no_rekening'),
+            'nama_bank' => empty($req->input('nama_bank')) ? null : $req->input('nama_bank'),
+            'tujuan_pembukaan_rek' => empty($req->input('tujuan_pembukaan_rek')) ? null : $req->input('tujuan_pembukaan_rek'),
+            'penghasilan_per_tahun' => empty($req->input('penghasilan_per_tahun')) ? null : $req->input('penghasilan_per_tahun'),
+            'sumber_penghasilan' => empty($req->input('sumber_penghasilan')) ? null : $req->input('sumber_penghasilan'),
+            'pemasukan_per_bulan' => empty($req->input('pemasukan_per_bulan')) ? null : $req->input('pemasukan_per_bulan'),
+            'frek_trans_pemasukan' => empty($req->input('frek_trans_pemasukan')) ? null : $req->input('frek_trans_pemasukan'),
+            'pengeluaran_per_bulan' => empty($req->input('pengeluaran_per_bulan')) ? null : $req->input('pengeluaran_per_bulan'),
+            'frek_trans_pengeluaran' => empty($req->input('frek_trans_pengeluaran')) ? null : $req->input('frek_trans_pengeluaran'),
+            'sumber_dana_setoran' => empty($req->input('sumber_dana_setoran')) ? null : $req->input('sumber_dana_setoran'),
+            'tujuan_pengeluaran_dana' => empty($req->input('tujuan_pengeluaran_dana')) ? null : $req->input('tujuan_pengeluaran_dana')
+        );
+
+        if (!empty($req->input('nama_bank_acc'))) {
+            for ($i = 0; $i < count($req->input('nama_bank_acc')); $i++) {
+                $dataACC[] = array(
+                    'id_trans_so' => $id,
+                    'nama_bank' => empty($req->input('nama_bank_acc')[$i]) ? null[$i] : $req->nama_bank_acc[$i],
+                    'plafon' => empty($req->input('plafon_acc')[$i]) ? null[$i] : $req->plafon_acc[$i],
+                    'baki_debet' => empty($req->input('baki_debet_acc')[$i]) ? null[$i] : $req->baki_debet_acc[$i],
+                    'angsuran' => empty($req->input('angsuran_acc')[$i]) ? null[$i] : $req->angsuran_acc[$i],
+                    'collectabilitas' => empty($req->input('collectabilitas_acc')[$i]) ? null[$i] : $req->collectabilitas_acc[$i],
+                    'jenis_kredit' => empty($req->input('jenis_kredit_acc')[$i]) ? null[$i] : $req->jenis_kredit_acc[$i]
+                );
+            }
+        }
+
+        $dataRK = array(
+            'id_trans_so' => $id,
+            'kuantitatif_ttl_pendapatan' => empty($req->input('kuantitatif_ttl_pendapatan')) ? null : $req->input('kuantitatif_ttl_pendapatan'),
+            'kuantitatif_ttl_pengeluaran' => empty($req->input('kuantitatif_ttl_pengeluaran')) ? null : $req->input('kuantitatif_ttl_pengeluaran'),
+            'kuantitatif_pendapatan' => empty($req->input('kuantitatif_pendapatan')) ? null : $req->input('kuantitatif_pendapatan'),
+            'kuantitatif_angsuran' => empty($req->input('kuantitatif_angsuran')) ? null : $req->input('kuantitatif_angsuran'),
+            'kuantitatif_ltv' => empty($req->input('kuantitatif_ltv')) ? null : $req->input('kuantitatif_ltv'),
+            'kuantitatif_dsr' => empty($req->input('kuantitatif_dsr')) ? null : $req->input('kuantitatif_dsr'),
+            'kuantitatif_idir' => empty($req->input('kuantitatif_idir')) ? null : $req->input('kuantitatif_idir'),
+            'kuantitatif_hasil' => empty($req->input('kuantitatif_hasil')) ? null : $req->input('kuantitatif_hasil'),
+            'kualitatif_analisa' => empty($req->input('kualitatif_analisa')) ? null : $req->input('kualitatif_analisa'),
+            'kualitatif_swot' => empty($req->input('kualitatif_swot')) ? null : $req->input('kualitatif_swot'),
+            'kualitatif_strenght' => empty($req->input('kualitatif_strenght')) ? null : $req->input('kualitatif_strenght'),
+            'kualitatif_weakness' => empty($req->input('kualitatif_weakness')) ? null : $req->input('kualitatif_weakness'),
+            'kualitatif_opportunity' => empty($req->input('kualitatif_opportunity')) ? null : $req->input('kualitatif_opportunity'),
+            'kualitatif_threatness' => empty($req->input('kualitatif_threatness')) ? null : $req->input('kualitatif_threatness')
+        );
+
+        $dataTrCA = array(
+            'segmentasi_bpr'        => empty($req->input('segmentasi_bpr')) ? null : $req->input('segmentasi_bpr'),
+            'penyimpangan_struktur' => empty($req->input('penyimpangan_struktur')) ? null : $req->input('penyimpangan_struktur'),
+            'penyimpangan_dokumen'  => empty($req->input('penyimpangan_dokumen')) ? null : $req->input('penyimpangan_dokumen'),
+
+            'recom_nilai_pinjaman' => empty($req->input('recom_nilai_pinjaman')) ? null : $req->input('recom_nilai_pinjaman'),
+            'recom_tenor' => empty($req->input('recom_tenor')) ? null : $req->input('recom_tenor'),
+            'recom_angsuran' => empty($req->input('recom_angsuran')) ? null : $req->input('recom_angsuran'),
+            'recom_produk_kredit' => empty($req->input('recom_produk_kredit')) ? null : $req->input('recom_produk_kredit'),
+            'note_recom' => empty($req->input('note_recom')) ? null : $req->input('note_recom')
+        );
 
         // try{
 

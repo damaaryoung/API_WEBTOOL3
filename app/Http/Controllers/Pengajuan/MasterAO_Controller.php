@@ -1273,67 +1273,85 @@ class MasterAO_Controller extends BaseController
         DB::connection('web')->beginTransaction();
         // try{
 
-            for ($i = 0; $i < count($daAguTa); $i++) {
-                if (empty($check->id_agunan_tanah)) {
-                    $tanah = AgunanTanah::create($daAguTa[$i]);
+            if (!empty($req->input('tipe_lokasi_agunan'))) {
+                for ($i = 0; $i < count($daAguTa); $i++) {
+                    if (empty($check->id_agunan_tanah)) {
+                        $tanah = AgunanTanah::create($daAguTa[$i]);
 
-                    $id_tanah['id'][$i] = $tanah->id;
-                }else{
-                    $id_aguta = explode(",", $check->id_agunan_tanah);
-                    $tanah = AgunanTanah::where('id', $id_aguta)->update($daAguTa[$i]);
+                        $id_tanah['id'][$i] = $tanah->id;
+                    }else{
+                        $id_aguta = explode(",", $check->id_agunan_tanah);
+                        $tanah = AgunanTanah::where('id', $id_aguta)->update($daAguTa[$i]);
 
-                    $id_tanah['id'][$i] = $id_aguta[$i];
+                        $id_tanah['id'][$i] = $id_aguta[$i];
+                    }
                 }
+
+                for ($i = 0; $i < count($pemAguTa); $i++) {
+                    $pemAguTa_N[$i] = array_merge(array('id_agunan_tanah' => $id_tanah['id'][$i]), $pemAguTa[$i]);
+
+                    if (empty($check->id_periksa_agunan_tanah)) {
+                        $pemTanah = PemeriksaanAgunTan::create($pemAguTa_N[$i]);
+
+                        $id_pem_tan['id'][$i] = $pemTanah->id;
+                    }else{
+                        $id_pe_aguta = explode(",", $check->id_periksa_agunan_tanah);
+                        $tanah = PemeriksaanAgunTan::where('id', $id_pe_aguta)->update($pemAguTa_N[$i]);
+
+                        $id_pem_tan['id'][$i] = $id_pe_aguta[$i];
+                    }
+                }
+
+                $tanID   = implode(",", $id_tanah['id']);
+                $p_tanID = implode(",", $id_pem_tan['id']);
+            }else{
+                $tanID   = null;
+                $p_tanID = null;
             }
 
 
-            for ($i = 0; $i < count($daAguKe); $i++) {
-                if (empty($check->id_agunan_kendaraan)) {
-                    $kendaraan = AgunanKendaraan::create($daAguKe[$i]);
+            if (!empty($req->input('no_bpkb_ken'))) {
+                for ($i = 0; $i < count($daAguKe); $i++) {
+                    if (empty($check->id_agunan_kendaraan)) {
+                        $kendaraan = AgunanKendaraan::create($daAguKe[$i]);
 
-                    $id_kendaraan['id'][$i] = $kendaraan->id;
-                }else{
-                    $id_aguke = explode(",", $check->id_agunan_kendaraan);
-                    $tanah = AgunanKendaraan::where('id', $id_aguke)->update($daAguKe[$i]);
+                        $id_kendaraan['id'][$i] = $kendaraan->id;
+                    }else{
+                        $id_aguke = explode(",", $check->id_agunan_kendaraan);
+                        $tanah = AgunanKendaraan::where('id', $id_aguke)->update($daAguKe[$i]);
 
-                    $id_kendaraan['id'][$i] = $id_aguke[$i];
+                        $id_kendaraan['id'][$i] = $id_aguke[$i];
+                    }
                 }
+
+                for ($i = 0; $i < count($pemAguKe); $i++) {
+                    $pemAguKe_N[$i] = array_merge(array('id_agunan_kendaraan' => $id_kendaraan['id'][$i]), $pemAguKe[$i]);
+
+                    if (empty($check->id_periksa_agunan_kendaraan)) {
+                        $pemKendaraan = PemeriksaanAgunKen::create($pemAguKe_N[$i]);
+
+                        $id_pem_ken['id'][$i] = $pemKendaraan->id;
+                    }else{
+                        $id_pe_aguke = explode(",", $check->id_periksa_agunan_kendaraan);
+                        $tanah = PemeriksaanAgunKen::where('id', $id_pe_aguke)->update($pemAguKe_N[$i]);
+
+                        $id_pem_ken['id'][$i] = $id_pe_aguke[$i];
+                    }
+                }
+
+                $kenID   = implode(",", $id_kendaraan['id']);
+                $p_kenID = implode(",", $id_pem_ken['id']);
+            }else{
+                $kenID   = null;
+                $p_kenID = null;
             }
 
-            for ($i = 0; $i < count($pemAguTa); $i++) {
-                $pemAguTa_N[$i] = array_merge(array('id_agunan_tanah' => $id_tanah['id'][$i]), $pemAguTa[$i]);
 
-                if (empty($check->id_periksa_agunan_tanah)) {
-                    $pemTanah = PemeriksaanAgunTan::create($pemAguTa_N[$i]);
 
-                    $id_pem_tan['id'][$i] = $pemTanah->id;
-                }else{
-                    $id_pe_aguta = explode(",", $check->id_periksa_agunan_tanah);
-                    $tanah = PemeriksaanAgunTan::where('id', $id_pe_aguta)->update($pemAguTa_N[$i]);
-
-                    $id_pem_tan['id'][$i] = $id_pe_aguta[$i];
-                }
-            }
-
-            for ($i = 0; $i < count($pemAguKe); $i++) {
-                $pemAguKe_N[$i] = array_merge(array('id_agunan_kendaraan' => $id_kendaraan['id'][$i]), $pemAguKe[$i]);
-
-                if (empty($check->id_periksa_agunan_kendaraan)) {
-                    $pemKendaraan = PemeriksaanAgunKen::create($pemAguKe_N[$i]);
-
-                    $id_pem_ken['id'][$i] = $pemKendaraan->id;
-                }else{
-                    $id_pe_aguke = explode(",", $check->id_periksa_agunan_kendaraan);
-                    $tanah = PemeriksaanAgunKen::where('id', $id_pe_aguke)->update($pemAguKe_N[$i]);
-
-                    $id_pem_ken['id'][$i] = $id_pe_aguke[$i];
-                }
-            }
-
-            $tanID   = implode(",", $id_tanah['id']);
-            $kenID   = implode(",", $id_kendaraan['id']);
-            $p_tanID = implode(",", $id_pem_tan['id']);
-            $p_kenID = implode(",", $id_pem_ken['id']);
+            // $tanID   = implode(",", $id_tanah['id']);
+            // $kenID   = implode(",", $id_kendaraan['id']);
+            // $p_tanID = implode(",", $id_pem_tan['id']);
+            // $p_kenID = implode(",", $id_pem_ken['id']);
 
             Debitur::where('id', $check->id_calon_debt)->update($dataDebitur);
 
@@ -1384,6 +1402,14 @@ class MasterAO_Controller extends BaseController
                 }
             }else{
                 $id_usaha = null;
+            }
+
+            if (!empty($check->id_penjamin)) {
+                $id_penj = explode (",",$check->id_penjamin);
+
+                for ($i = 0; $i < count($id_penj); $i++) {
+                    Penjamin::where('id', $id_penj[$i])->update($DP[$i]);
+                }
             }
 
             TransSo::where('id', $id)->update([
