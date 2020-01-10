@@ -43,26 +43,17 @@ class Pe_KendaraanRequest extends FormRequest
 
     public function messages()
     {
-        $single = $request->segment(3);
-
-        if (empty($single)){
-            $messages = [
+            return [
                 // Pemeriksaan Agunan Kendaraan
                 'status_pengguna_ken.*.in'  => ':attribute harus salah satu dari jenis berikut :values',
                 'jml_roda_ken.*.integer'    => ':attribute harus berupa angka / bilangan bulat',
-                'km_ken.*.integer'          => ':attribute harus berupa angka / bilangan bulat'
-            ];
-        }else{
-            $messages = [
+                'km_ken.*.integer'          => ':attribute harus berupa angka / bilangan bulat',
+
                 // Pemeriksaan Agunan Kendaraan
                 'status_pengguna_ken.in'  => ':attribute harus salah satu dari jenis berikut :values',
                 'jml_roda_ken.integer'    => ':attribute harus berupa angka / bilangan bulat',
                 'km_ken.integer'          => ':attribute harus berupa angka / bilangan bulat'
             ];
-        }
-
-
-        return $messages;
     }
 
     protected function failedValidation(Validator $validator)

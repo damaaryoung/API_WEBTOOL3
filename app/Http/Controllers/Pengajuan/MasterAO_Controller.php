@@ -1029,7 +1029,7 @@ class MasterAO_Controller extends BaseController
                     'id_calon_debitur'      => $check->id_calon_debt,
                     'no_bpkb'               => empty($req->no_bpkb_ken[$i]) ? null[$i] : $req->no_bpkb_ken[$i],
                     'nama_pemilik'          => empty($req->nama_pemilik_ken[$i]) ? null[$i] : $req->nama_pemilik_ken[$i],
-                    'alamat_pemilik'        => empty($req->alamat_pemilik_ken[$i]) ? null[$i] : $req->nama_pemilik_ken[$i],
+                    'alamat_pemilik'        => empty($req->alamat_pemilik_ken[$i]) ? null[$i] : $req->alamat_pemilik_ken[$i],
                     'merk'                  => empty($req->merk_ken[$i]) ? null[$i] : $req->merk_ken[$i],
                     'jenis'                 => empty($req->jenis_ken[$i]) ? null[$i] : $req->jenis_ken[$i],
                     'no_rangka'             => empty($req->no_rangka_ken[$i]) ? null[$i] : $req->no_rangka_ken[$i],

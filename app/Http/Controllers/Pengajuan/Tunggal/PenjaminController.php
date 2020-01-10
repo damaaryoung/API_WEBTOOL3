@@ -228,9 +228,10 @@ class PenjaminController extends BaseController
 
         DB::connection('web')->beginTransaction();
 
-        Penjamin::where('id', $id)->update($dataPenjamin);
-
         try {
+
+            Penjamin::where('id', $id)->update($dataPenjamin);
+
             DB::connection('web')->commit();
 
             return response()->json([
@@ -239,7 +240,9 @@ class PenjaminController extends BaseController
                 'message'=> 'Update Penjamin Berhasil'
             ], 200);
         } catch (Exception $e) {
+
             $err = DB::connection('web')->rollback();
+
             return response()->json([
                 'code'    => 501,
                 'status'  => 'error',

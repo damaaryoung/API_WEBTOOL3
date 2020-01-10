@@ -308,7 +308,7 @@ class MasterCA_Controller extends BaseController
                     'interior'            => $value->interior,
                     'km'                  => $value->km,
                     'modifikasi'          => $value->modifikasi,
-                    'aksesoris'           => $value->aksesoris,
+                    'aksesoris'           => $value->aksesoris
                 ];
             }
         }else{

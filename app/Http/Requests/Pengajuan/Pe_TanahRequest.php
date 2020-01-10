@@ -51,10 +51,7 @@ class Pe_TanahRequest extends FormRequest
 
     public function messages()
     {
-        $single = $request->segment(3);
-
-        if (empty($single)){
-            $messages = [
+            return [
                 // Pemeriksaan Agunan Tanah
                 'status_penghuni.*.in'              => ':attribute harus salah satu dari jenis berikut :values',
                 'bentuk_bangunan.*.in'              => ':attribute harus salah satu dari jenis berikut :values',
@@ -62,10 +59,8 @@ class Pe_TanahRequest extends FormRequest
                 'nilai_taksasi_agunan.*.integer'    => ':attribute harus berupa angka / bilangan bulat',
                 'nilai_taksasi_bangunan.*.integer'  => ':attribute harus berupa angka / bilangan bulat',
                 'tgl_taksasi.*.date_format'         => ':attribute harus berupa angka dengan format :format',
-                'nilai_likuidasi.*.integer'         => ':attribute harus berupa angka / bilangan bulat'
-            ];
-        }else{
-            $messages = [
+                'nilai_likuidasi.*.integer'         => ':attribute harus berupa angka / bilangan bulat',
+
                 // Pemeriksaan Agunan Tanah
                 'status_penghuni.in'              => ':attribute harus salah satu dari jenis berikut :values',
                 'bentuk_bangunan.in'              => ':attribute harus salah satu dari jenis berikut :values',
@@ -75,9 +70,6 @@ class Pe_TanahRequest extends FormRequest
                 'tgl_taksasi.date_format'         => ':attribute harus berupa angka dengan format :format',
                 'nilai_likuidasi.integer'         => ':attribute harus berupa angka / bilangan bulat'
             ];
-        }
-
-        return $messages;
     }
 
     protected function failedValidation(Validator $validator)

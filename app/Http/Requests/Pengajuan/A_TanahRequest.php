@@ -20,9 +20,10 @@ class A_TanahRequest extends FormRequest
 
     public function rules(Request $request)
     {
-        $single = $request->segment(3);
+        $single = $request->segment(4);
 
-        if (empty($single)){
+        if (empty($single)) {
+
             $rules = [
                 // Agunan Tanah
                 'tipe_lokasi_agunan.*'  => 'in:PERUM,BIASA',
@@ -41,7 +42,7 @@ class A_TanahRequest extends FormRequest
             ];
         }else{
             $rules = [
-                // Agunan Tanah
+               // Agunan Tanah
                 'tipe_lokasi_agunan'  => 'in:PERUM,BIASA',
                 'rt_agunan'           => 'numeric',
                 'rw_agunan'           => 'numeric',
@@ -61,12 +62,10 @@ class A_TanahRequest extends FormRequest
         return $rules;
     }
 
-    public function messages(){
-        $single = $request->segment(3);
-
-        if (empty($single)) {
-            $messages = [
-            // Agunan Tanah
+    public function messages()
+    {
+            return  [
+                // Agunan Tanah Array
                 'tipe_lokasi_agunan.*.in'           => ':attribute harus salah satu dari jenis berikut :values',
                 'rt_agunan.*.numeric'               => ':attribute harus berupa angka',
                 'rw_agunan.*.numeric'               => ':attribute harus berupa angka',
@@ -86,10 +85,8 @@ class A_TanahRequest extends FormRequest
                 'lamp_agunan_kanan.*.max'           => 'ukuran :attribute max :max kb',
                 'lamp_agunan_kiri.*.max'            => 'ukuran :attribute max :max kb',
                 'lamp_agunan_belakang.*.max'        => 'ukuran :attribute max :max kb',
-                'lamp_agunan_dalam.*.max'           => 'ukuran :attribute max :max kb'
-            ];
-        }else{
-            $messages = [
+                'lamp_agunan_dalam.*.max'           => 'ukuran :attribute max :max kb',
+
                 // Agunan Tanah
                 'tipe_lokasi_agunan.in'           => ':attribute harus salah satu dari jenis berikut :values',
                 'rt_agunan.numeric'               => ':attribute harus berupa angka',
@@ -97,7 +94,7 @@ class A_TanahRequest extends FormRequest
                 'luas_tanah.numeric'              => ':attribute harus berupa angka',
                 'luas_bangunan.numeric'           => ':attribute harus berupa angka',
                 'jenis_sertifikat.in'             => ':attribute harus salah satu dari jenis berikut :values',
-                // 'tgl_ukur_sertifikat.*.date_format' => ':attribute harus berupa angka dengan format :format',
+                // 'tgl_ukur_sertifikat.date_format' => ':attribute harus berupa angka dengan format :format',
                 'tgl_berlaku_shgb.date_format'    => ':attribute harus berupa angka dengan format :format',
 
                 'lamp_agunan_depan.mimes'         => ':attribute harus bertipe :values',
@@ -112,9 +109,6 @@ class A_TanahRequest extends FormRequest
                 'lamp_agunan_belakang.max'        => 'ukuran :attribute max :max kb',
                 'lamp_agunan_dalam.max'           => 'ukuran :attribute max :max kb'
             ];
-        }
-
-        return $messages;
     }
 
     protected function failedValidation(Validator $validator)

@@ -212,24 +212,33 @@ $router->group(['middleware' => 'jwt.auth'], function () use ($router) {
         $router->group(['prefix' => '/validasi'], function() use ($router) {});
 
         // Agunan
-        $router->group(['prefix' => '/data_agunan', 'namespace' => 'Pengajuan\Tunggal'], function() use ($router) {
+        $router->group(['prefix' => '/agunan', 'namespace' => 'Pengajuan\Tunggal'], function() use ($router) {
             // Agunan Tabah / Sertifikat
             $router->group(['prefix' => '/tanah'], function() use ($router) {
-                $router->get('/{id}', 'TanahController@showAgunan');
-                $router->post('/{id}', 'TanahController@updateAgunan');
+                $router->get('/{id}', 'TanahController@show');
+                $router->post('/{id}', 'TanahController@update');
             });
 
             // Agunan Kendaraan
-            $router->group(['prefix' => '/kendaraan'], function() use ($router) {});
+            $router->group(['prefix' => '/kendaraan'], function() use ($router) {
+                $router->get('/{id}', 'KendaraanController@show');
+                $router->post('/{id}', 'KendaraanController@update');
+            });
         });
 
         // Pemeriksaan Agunan
-        $router->group(['prefix' => '/periksa_agunan'], function() use ($router) {
+        $router->group(['prefix' => '/periksa', 'namespace' => 'Pengajuan\Tunggal'], function() use ($router) {
             // Pemeriksaaan Agunan Tabah / Sertifikat
-            $router->group(['prefix' => '/tanah'], function() use ($router) {});
+            $router->group(['prefix' => '/tanah'], function() use ($router) {
+                $router->get('/{id}', 'PemeriksaanTanahController@show');
+                $router->post('/{id}', 'PemeriksaanTanahController@update');
+            });
 
             // Pemeriksaaan Agunan Kendaraan
-            $router->group(['prefix' => '/kendaraan'], function() use ($router) {});
+            $router->group(['prefix' => '/kendaraan'], function() use ($router) {
+                $router->get('/{id}', 'PemeriksaanKendaraanController@show');
+                $router->post('/{id}', 'PemeriksaanKendaraanController@update');
+            });
         });
 
         // Kapasitas Bulanan

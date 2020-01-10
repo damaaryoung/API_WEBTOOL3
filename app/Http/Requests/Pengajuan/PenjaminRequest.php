@@ -65,31 +65,54 @@ class PenjaminRequest extends FormRequest
         return $rules;
     }
 
-    public function messages(){
-        return [
+    public function messages()
+    {
             // Penjamin
-            'no_ktp_pen.*.digits'                => ':attribute harus berupa angka dan berjumlah :digits digit',
-            'no_ktp_pen.*.unique'                => ':attribute telah ada yang menggunakan',
-            'no_npwp_pen.*.digits'               => ':attribute harus berupa angka dan berjumlah :digits digit',
-            'no_npwp_pen.*.unique'               => ':attribute telah ada yang menggunakan',
-            'tgl_lahir_pen.*.date_format'        => ':attribute harus berupa angka dengan format :format',
-            'jenis_kelamin_pen.*.in'             => ':attribute harus salah satu dari jenis berikut :values',
-            'no_telp_pen.*.between'              => ':attribute harus berada diantara :min - :max.',
-            'no_telp_pen.*.unique'               => ':attribute telah ada yang menggunakan',
-            'lamp_ktp_pen.*.mimes'               => ':attribute harus bertipe :values',
-            'lamp_ktp_pasangan_pen.*.mimes'      => ':attribute harus bertipe :values',
-            'lamp_kk_pen.*.mimes'                => ':attribute harus bertipe :values',
-            'lamp_buku_nikah_pen.*.mimes'        => ':attribute harus bertipe :values',
-            'lamp_ktp_pen.*.max'                 => 'ukuran :attribute max :max kb',
-            'lamp_ktp_pasangan_pen.*.max'        => 'ukuran :attribute max :max kb',
-            'lamp_kk_pen.*.max'                  => 'ukuran :attribute max :max kb',
-            'lamp_buku_nikah_pen.*.max'          => 'ukuran :attribute max :max kb',
-            'pekerjaan_pen.*.in'                 => ':attribute harus salah satu dari jenis berikut :values',
-            'rt_tempat_kerja_pen.*.numeric'      => ':attribute harus berupa angka',
-            'rw_tempat_kerja_pen.*.numeric'      => ':attribute harus berupa angka',
-            // 'tgl_mulai_kerja_pen.*.date_format'  => ':attribute harus berupa angka dengan format :format',
-            'no_telp_tempat_kerja_pen.*.numeric' => ':attribute harus berupa angka'
-        ];
+            return [
+                'no_ktp_pen.digits'                => ':attribute harus berupa angka dan berjumlah :digits digit',
+                'no_ktp_pen.unique'                => ':attribute telah ada yang menggunakan',
+                'no_npwp_pen.digits'               => ':attribute harus berupa angka dan berjumlah :digits digit',
+                'no_npwp_pen.unique'               => ':attribute telah ada yang menggunakan',
+                'tgl_lahir_pen.date_format'        => ':attribute harus berupa angka dengan format :format',
+                'jenis_kelamin_pen.in'             => ':attribute harus salah satu dari jenis berikut :values',
+                'no_telp_pen.between'              => ':attribute harus berada diantara :min - :max.',
+                'no_telp_pen.unique'               => ':attribute telah ada yang menggunakan',
+                'lamp_ktp_pen.mimes'               => ':attribute harus bertipe :values',
+                'lamp_ktp_pasangan_pen.mimes'      => ':attribute harus bertipe :values',
+                'lamp_kk_pen.mimes'                => ':attribute harus bertipe :values',
+                'lamp_buku_nikah_pen.mimes'        => ':attribute harus bertipe :values',
+                'lamp_ktp_pen.max'                 => 'ukuran :attribute max :max kb',
+                'lamp_ktp_pasangan_pen.max'        => 'ukuran :attribute max :max kb',
+                'lamp_kk_pen.max'                  => 'ukuran :attribute max :max kb',
+                'lamp_buku_nikah_pen.max'          => 'ukuran :attribute max :max kb',
+                'pekerjaan_pen.in'                 => ':attribute harus salah satu dari jenis berikut :values',
+                'rt_tempat_kerja_pen.numeric'      => ':attribute harus berupa angka',
+                'rw_tempat_kerja_pen.numeric'      => ':attribute harus berupa angka',
+                // 'tgl_mulai_kerja_pen.date_format'  => ':attribute harus berupa angka dengan format :format',
+                'no_telp_tempat_kerja_pen.numeric' => ':attribute harus berupa angka',
+
+                'no_ktp_pen.*.digits'                => ':attribute harus berupa angka dan berjumlah :digits digit',
+                'no_ktp_pen.*.unique'                => ':attribute telah ada yang menggunakan',
+                'no_npwp_pen.*.digits'               => ':attribute harus berupa angka dan berjumlah :digits digit',
+                'no_npwp_pen.*.unique'               => ':attribute telah ada yang menggunakan',
+                'tgl_lahir_pen.*.date_format'        => ':attribute harus berupa angka dengan format :format',
+                'jenis_kelamin_pen.*.in'             => ':attribute harus salah satu dari jenis berikut :values',
+                'no_telp_pen.*.between'              => ':attribute harus berada diantara :min - :max.',
+                'no_telp_pen.*.unique'               => ':attribute telah ada yang menggunakan',
+                'lamp_ktp_pen.*.mimes'               => ':attribute harus bertipe :values',
+                'lamp_ktp_pasangan_pen.*.mimes'      => ':attribute harus bertipe :values',
+                'lamp_kk_pen.*.mimes'                => ':attribute harus bertipe :values',
+                'lamp_buku_nikah_pen.*.mimes'        => ':attribute harus bertipe :values',
+                'lamp_ktp_pen.*.max'                 => 'ukuran :attribute max :max kb',
+                'lamp_ktp_pasangan_pen.*.max'        => 'ukuran :attribute max :max kb',
+                'lamp_kk_pen.*.max'                  => 'ukuran :attribute max :max kb',
+                'lamp_buku_nikah_pen.*.max'          => 'ukuran :attribute max :max kb',
+                'pekerjaan_pen.*.in'                 => ':attribute harus salah satu dari jenis berikut :values',
+                'rt_tempat_kerja_pen.*.numeric'      => ':attribute harus berupa angka',
+                'rw_tempat_kerja_pen.*.numeric'      => ':attribute harus berupa angka',
+                // 'tgl_mulai_kerja_pen.*.date_format'  => ':attribute harus berupa angka dengan format :format',
+                'no_telp_tempat_kerja_pen.*.numeric' => ':attribute harus berupa angka'
+            ];
     }
 
     protected function failedValidation(Validator $validator)

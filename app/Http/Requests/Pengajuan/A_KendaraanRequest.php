@@ -20,7 +20,7 @@ class A_KendaraanRequest extends FormRequest
 
     public function rules(Request $request)
     {
-        $single = $request->segment(3);
+        $single = $request->segment(4);
 
         if (empty($single)) {
             $rules = [
@@ -53,10 +53,7 @@ class A_KendaraanRequest extends FormRequest
     }
 
     public function messages(){
-        $single = $request->segment(3);
-
-        if (empty($single)) {
-            $messages = [
+            return [
                 // Agunan Tanah
                 'tipe_lokasi_agunan.*.in'           => ':attribute harus salah satu dari jenis berikut :values',
                 'rt_agunan.*.numeric'               => ':attribute harus berupa angka',
@@ -77,10 +74,8 @@ class A_KendaraanRequest extends FormRequest
                 'lamp_agunan_kanan.*.max'           => 'ukuran :attribute max :max kb',
                 'lamp_agunan_kiri.*.max'            => 'ukuran :attribute max :max kb',
                 'lamp_agunan_belakang.*.max'        => 'ukuran :attribute max :max kb',
-                'lamp_agunan_dalam.*.max'           => 'ukuran :attribute max :max kb'
-            ];
-        }else {
-            $messages = [
+                'lamp_agunan_dalam.*.max'           => 'ukuran :attribute max :max kb',
+
                 // Agunan Tanah
                 'tipe_lokasi_agunan.in'           => ':attribute harus salah satu dari jenis berikut :values',
                 'rt_agunan.numeric'               => ':attribute harus berupa angka',
@@ -103,9 +98,6 @@ class A_KendaraanRequest extends FormRequest
                 'lamp_agunan_belakang.max'        => 'ukuran :attribute max :max kb',
                 'lamp_agunan_dalam.max'           => 'ukuran :attribute max :max kb'
             ];
-        }
-
-        return $messages;
     }
 
     protected function failedValidation(Validator $validator)

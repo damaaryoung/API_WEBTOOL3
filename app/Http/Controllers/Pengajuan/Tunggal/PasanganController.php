@@ -186,9 +186,10 @@ class PasanganController extends BaseController
 
         DB::connection('web')->beginTransaction();
 
-        Pasangan::where('id', $id)->update($dataPasangan);
-
         try {
+
+            Pasangan::where('id', $id)->update($dataPasangan);
+
             DB::connection('web')->commit();
 
             return response()->json([
@@ -197,7 +198,9 @@ class PasanganController extends BaseController
                 'message'=> 'Update Pasangan Berhasil'
             ], 200);
         } catch (Exception $e) {
+
             $err = DB::connection('web')->rollback();
+
             return response()->json([
                 'code'    => 501,
                 'status'  => 'error',

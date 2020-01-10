@@ -410,9 +410,10 @@ class DebiturController extends BaseController
 
         DB::connection('web')->beginTransaction();
 
-        Debitur::where('id', $id)->update($dataDebitur);
-
         try {
+
+            Debitur::where('id', $id)->update($dataDebitur);
+
             DB::connection('web')->commit();
 
             return response()->json([
@@ -421,7 +422,9 @@ class DebiturController extends BaseController
                 'message'=> 'Update Debitur Berhasil'
             ], 200);
         } catch (Exception $e) {
+
             $err = DB::connection('web')->rollback();
+
             return response()->json([
                 'code'    => 501,
                 'status'  => 'error',
