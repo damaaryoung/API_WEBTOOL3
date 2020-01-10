@@ -28,18 +28,18 @@ class Provinsi extends Model implements AuthenticatableContract, AuthorizableCon
     }
 
     public function debt(){
-        return $this->hasMany('App\Models\CC\Debitur');
+        return $this->hasMany('App\Models\Pengajuan\Debitur');
     }
 
     public function pas(){
-        return $this->hasMany('App\Models\CC\Pasangan');
+        return $this->hasMany('App\Models\Pengajuan\Pasangan');
     }
 
     public function penj(){
-        return $this->hasMany('App\Models\CC\Penjamin');
+        return $this->hasMany('App\Models\Pengajuan\Penjamin');
     }
 
     public function tanah(){
-        return $this->hasMany('App\Models\CC\AgunanTanah');
+        return $this->hasMany('App\Models\Pengajuan\AgunanTanah');
     }
 }

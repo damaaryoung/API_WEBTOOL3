@@ -27,7 +27,7 @@ class VerifModel extends Model implements AuthenticatableContract, AuthorizableC
     ];
 
     public function debt(){
-        return $this->belongsTo('App\Models\CC\Debitur', 'id_calon_debitur');
+        return $this->belongsTo('App\Models\Pengajuan\Debitur', 'id_calon_debitur');
     }
 
     public function so(){

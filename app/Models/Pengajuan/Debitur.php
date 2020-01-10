@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\CC;
+namespace App\Models\Pengajuan;
 
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
@@ -75,25 +75,5 @@ class Debitur extends Model implements AuthenticatableContract, AuthorizableCont
 
     public function kel_kerja(){
         return $this->belongsTo('App\Models\Wilayah\Kelurahan', 'id_kel_tempat_kerja')->select(['id', 'nama', 'kode_pos']);
-    }
-
-    public function penj(){
-        return $this->hasMany('App\Models\CC\Penjamin');
-    }
-
-    public function tanah(){
-        return $this->hasMany('App\Models\CC\AgunanTanah');
-    }
-
-    public function kendaraan(){
-        return $this->hasMany('App\Models\CC\AgunanKendaraan');
-    }
-
-    public function periksa_tanah(){
-        return $this->hasMany('App\Models\CC\PemeriksaanAgunTan');
-    }
-
-    public function periksa_kendaraan(){
-        return $this->hasMany('App\Models\CC\PemeriksaanAgunKen');
     }
 }

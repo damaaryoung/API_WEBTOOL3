@@ -4,9 +4,12 @@ namespace App\Http\Controllers\Pengajuan;
 
 use Laravel\Lumen\Routing\Controller as BaseController;
 use App\Http\Controllers\Controller as Helper;
+use App\Models\Pengajuan\FasilitasPinjaman;
 use App\Http\Requests\Bisnis\BlankRequest;
-use App\Models\CC\FasilitasPinjaman;
 use Illuminate\Support\Facades\File;
+use App\Models\Pengajuan\Penjamin;
+use App\Models\Pengajuan\Pasangan;
+use App\Models\Pengajuan\Debitur;
 use App\Models\AreaKantor\Cabang;
 use App\Models\AreaKantor\JPIC;
 use App\Models\AreaKantor\PIC;
@@ -14,13 +17,9 @@ use App\Models\Bisnis\TransSo;
 use App\Models\Bisnis\TransAO;
 use App\Models\KeuanganUsaha;
 use Illuminate\Http\Request;
-use App\Models\CC\Pasangan;
-use App\Models\CC\Penjamin;
-use App\Models\CC\Debitur;
 use App\Http\Requests;
 Use App\Models\User;
 use Carbon\Carbon;
-use Image;
 use DB;
 
 class MasterCC_Controller extends BaseController

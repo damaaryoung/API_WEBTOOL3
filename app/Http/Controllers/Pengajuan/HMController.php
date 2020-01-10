@@ -3,22 +3,18 @@
 namespace App\Http\Controllers\Pengajuan;
 
 use Laravel\Lumen\Routing\Controller as BaseController;
-use App\Http\Requests\Debt\DebtPenjaminRequest;
-use App\Http\Requests\Debt\DebtPasanganRequest;
 use App\Http\Controllers\Controller as Helper;
 use App\Http\Requests\Bisnis\BlankRequest;
+use App\Models\Pengajuan\Penjamin;
 use App\Models\Wilayah\Kabupaten;
 use App\Models\Wilayah\Kecamatan;
 use App\Models\Wilayah\Kelurahan;
 use App\Models\Wilayah\Provinsi;
 use App\Models\Bisnis\TransSo;
 use Illuminate\Http\Request;
-use App\Models\CC\Penjamin;
 use App\Http\Requests;
 use App\Models\User;
 use Carbon\Carbon;
-// use Image;
-use DB;
 
 class HMController extends BaseController
 {

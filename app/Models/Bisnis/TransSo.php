@@ -32,16 +32,16 @@ class TransSo extends Model implements AuthenticatableContract, AuthorizableCont
     }
 
     public function debt(){
-        return $this->belongsTo('App\Models\CC\Debitur', 'id_calon_debt');
+        return $this->belongsTo('App\Models\Pengajuan\Debitur', 'id_calon_debt');
     }
 
 
     public function faspin(){
-        return $this->belongsTo('App\Models\CC\FasilitasPinjaman', 'id_fasilitas_pinjaman');
+        return $this->belongsTo('App\Models\Pengajuan\FasilitasPinjaman', 'id_fasilitas_pinjaman');
     }
 
     public function pas(){
-        return $this->belongsTo('App\Models\CC\Pasangan', 'id_pasangan');
+        return $this->belongsTo('App\Models\Pengajuan\Pasangan', 'id_pasangan');
     }
 
     public function pic(){
@@ -49,26 +49,26 @@ class TransSo extends Model implements AuthenticatableContract, AuthorizableCont
     }
 
     // public function penj(){
-    //     return $this->belongsTo('App\Models\CC\Penjamin', 'id_penjamin');
+    //     return $this->belongsTo('App\Models\Pengajuan\Penjamin', 'id_penjamin');
     // }
 
     public function tan(){
-        return $this->belongsTo('App\Models\CC\AgunanTanah', 'id_agunan_tanah');
+        return $this->belongsTo('App\Models\Pengajuan\AgunanTanah', 'id_agunan_tanah');
     }
 
     public function ken(){
-        return $this->belongsTo('App\Models\CC\AgunanKendaraan', 'id_agunan_kendaraan');
+        return $this->belongsTo('App\Models\Pengajuan\AgunanKendaraan', 'id_agunan_kendaraan');
     }
 
     public function per_tanah(){
-        return $this->belongsTo('App\Models\CC\PemeriksaanAgunTan', 'id_periksa_agunan_tanah');
+        return $this->belongsTo('App\Models\Pengajuan\PemeriksaanAgunTan', 'id_periksa_agunan_tanah');
     }
 
     public function per_kendaraan(){
-        return $this->belongsTo('App\Models\CC\PemeriksaanAgunKen', 'id_periksa_agunan_kendaraan');
+        return $this->belongsTo('App\Models\Pengajuan\PemeriksaanAgunKen', 'id_periksa_agunan_kendaraan');
     }
 
     public function usaha(){
-        return $this->belongsTo('App\Models\CC\KeuanganUsaha', 'id_usaha');
+        return $this->belongsTo('App\Models\Pengajuan\KeuanganUsaha', 'id_usaha');
     }
 }

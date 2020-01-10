@@ -160,6 +160,7 @@ $router->group(['middleware' => 'jwt.auth'], function () use ($router) {
             $router->post('/mca/{id}', 'Pengajuan\MasterCA_Controller@update'); //Update CA BY ID
         });
 
+        // Menu
         $router->group(['prefix' => '/menu'], function () use ($router) {
             $router->get('/akses', 'Menu\MenuAccessController@index'); // Get All Data
             $router->post('/akses', 'Menu\MenuAccessController@store'); // Insert Data
@@ -180,6 +181,62 @@ $router->group(['middleware' => 'jwt.auth'], function () use ($router) {
             $router->put('/sub/{IdOrSlug}', 'Menu\MenuSubController@edit');
             $router->delete('/sub/{IdOrSlug}', 'Menu\MenuSubController@delete'); // Delete Data based on slug(URL)
         });
+
+        // Fasilitas Pinjaman
+        $router->group(['prefix' => '/faspin'], function() use ($router) {});
+
+        // Calon Debitur
+        $router->group(['prefix' => '/debitur', 'namespace' => 'Pengajuan\Tunggal'], function() use ($router) {
+            $router->get('/{id}', 'DebiturController@show');
+            $router->post('/{id}', 'DebiturController@update');
+            // /Pendapatan Usaha
+            $router->group(['prefix' => '/usaha'], function() use ($router) {});
+        });
+
+        // Pasangan
+        $router->group(['prefix' => '/pasangan', 'namespace' => 'Pengajuan\Tunggal'], function() use ($router) {
+            $router->get('/{id}', 'PasanganController@show');
+            $router->post('/{id}', 'PasanganController@update');
+        });
+
+        // Penjamin
+        $router->group(['prefix' => '/penjamin', 'namespace' => 'Pengajuan\Tunggal'], function() use ($router) {
+            $router->get('/{id}', 'PenjaminController@show');
+            $router->post('/{id}', 'PenjaminController@update');
+        });
+
+        // Verifikasi Dokumen
+        $router->group(['prefix' => '/verifikasi'], function() use ($router) {});
+
+        // Validasi Saat Survey
+        $router->group(['prefix' => '/validasi'], function() use ($router) {});
+
+        // Agunan
+        $router->group(['prefix' => '/data_agunan', 'namespace' => 'Pengajuan\Tunggal'], function() use ($router) {
+            // Agunan Tabah / Sertifikat
+            $router->group(['prefix' => '/tanah'], function() use ($router) {
+                $router->get('/{id}', 'TanahController@showAgunan');
+                $router->post('/{id}', 'TanahController@updateAgunan');
+            });
+
+            // Agunan Kendaraan
+            $router->group(['prefix' => '/kendaraan'], function() use ($router) {});
+        });
+
+        // Pemeriksaan Agunan
+        $router->group(['prefix' => '/periksa_agunan'], function() use ($router) {
+            // Pemeriksaaan Agunan Tabah / Sertifikat
+            $router->group(['prefix' => '/tanah'], function() use ($router) {});
+
+            // Pemeriksaaan Agunan Kendaraan
+            $router->group(['prefix' => '/kendaraan'], function() use ($router) {});
+        });
+
+        // Kapasitas Bulanan
+        $router->group(['prefix' => '/kap_bul'], function() use ($router) {});
+
+        // Rekomendasi AO
+        $router->group(['prefix' => '/rekom_ao'], function() use ($router) {});
 
         $router->get('/pinjaman', 'PinjamanController@index');
         $router->post('/pinjaman', 'PinjamanController@store');

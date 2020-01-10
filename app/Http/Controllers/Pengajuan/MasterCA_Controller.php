@@ -4,28 +4,28 @@ namespace App\Http\Controllers\Pengajuan;
 
 use Laravel\Lumen\Routing\Controller as BaseController;
 use App\Http\Controllers\Controller as Helper;
+use App\Models\Pengajuan\PemeriksaanAgunTan;
+use App\Models\Pengajuan\PemeriksaanAgunKen;
 use App\Http\Requests\Bisnis\BlankRequest;
-use App\Models\CC\PemeriksaanAgunTan;
-use App\Models\CC\PemeriksaanAgunKen;
-use App\Models\CC\AgunanKendaraan;
-use App\Models\CC\AgunanTanah;
-use App\Models\CC\KapBulanan;
-use App\Models\CC\KeuanganUsaha;
+use App\Models\Pengajuan\AgunanKendaraan;
+use App\Models\Pengajuan\KeuanganUsaha;
+// use App\Models\Pengajuan\Pasangan;
+// use App\Models\Pengajuan\Debitur;
+use App\Models\Pengajuan\AgunanTanah;
+use App\Models\Pengajuan\KapBulanan;
 use Illuminate\Support\Facades\File;
+use App\Models\Pengajuan\Penjamin;
 use App\Models\AreaKantor\JPIC;
 use App\Models\AreaKantor\PIC;
 use App\Models\Bisnis\TransCA;
 use App\Models\Bisnis\TransAO;
 use App\Models\Bisnis\TransSo;
-use Illuminate\Http\Request;
-// use App\Models\CC\Pasangan;
 use App\Models\CA\MutasiBank;
-use App\Models\CC\Penjamin;
-// use App\Models\CC\Debitur;
+use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Models\User;
 use Carbon\Carbon;
-// use DB;
+use DB;
 
 class MasterCA_Controller extends BaseController
 {

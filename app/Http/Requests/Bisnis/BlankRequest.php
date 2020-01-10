@@ -122,8 +122,6 @@ class BlankRequest extends FormRequest
                 'rw_tempat_kerja_pas'       => 'numeric',
                 // 'tgl_mulai_kerja_pas'       => 'date_format:d-m-Y',
                 'no_telp_tempat_kerja_pas'  => 'numeric',
-
-                // AO
                 'rt_tempat_kerja_pas'       => 'numeric',
                 'rw_tempat_kerja_pas'       => 'numeric',
                 // 'tgl_mulai_kerja_pas'       => 'date_format:d-m-Y',

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\CC;
+namespace App\Models\Pengajuan;
 
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
@@ -27,10 +27,10 @@ class PemeriksaanAgunTan extends Model implements AuthenticatableContract, Autho
     ];
 
     public function debt(){
-        return $this->belongsTo('App\Models\CC\Debitur', 'id_calon_debitur');
+        return $this->belongsTo('App\Models\Pengajuan\Debitur', 'id_calon_debitur');
     }
 
     public function tanah(){
-        return $this->belongsTo('App\Models\CC\AgunanTanah', 'id_agunan_tanah');
+        return $this->belongsTo('App\Models\Pengajuan\AgunanTanah', 'id_agunan_tanah');
     }
 }
