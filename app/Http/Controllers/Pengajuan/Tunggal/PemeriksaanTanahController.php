@@ -9,8 +9,8 @@ use App\Http\Controllers\Controller as Helper;
 use App\Http\Requests\Pengajuan\Pe_TanahRequest;
 
 // Models
-use App\Models\Pengajuan\PemeriksaanAgunTan;
-use App\Models\Bisnis\TransSo;
+use App\Models\Pengajuan\AO\PemeriksaanAgunTan;
+use App\Models\Transaksi\TransAO;
 use App\Models\User;
 
 use Illuminate\Support\Facades\File;
@@ -23,8 +23,7 @@ class PemeriksaanTanahController extends BaseController
 {
 
     public function show($id){
-        $check = PemeriksaanAgunTan::with('debt', 'tanah')
-            ->where('id', $id)->first();
+        $check = PemeriksaanAgunTan::where('id', $id)->first();
 
         if ($check == null) {
             return response()->json([
@@ -75,13 +74,13 @@ class PemeriksaanTanahController extends BaseController
             ], 404);
         }
 
-        $so = TransSo::where('id_periksa_agunan_tanah', 'like', '%'.$check->id.'%')->get();
+        $ao = TransAO::where('id_periksa_agunan_tanah', 'like', '%'.$id.'%')->first();
 
-        if ($so == '[]') {
+        if ($ao == null) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
-                'message' => 'Data Transaksi SO Kosong'
+                'message' => 'Data Transaksi AO Kosong'
             ], 404);
         }
 

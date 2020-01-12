@@ -91,11 +91,11 @@ $router->group(['middleware' => 'jwt.auth'], function () use ($router) {
         $router->post('/apro/all/reset', 'FlagAuthorController@aproReset'); // Reset Otorisasi
 
         $router->group(['prefix' => '/master'], function () use ($router) {
-            $router->get('/asal_data', 'Master\Bisnis\AsalDataController@index');
-            $router->post('/asal_data', 'Master\Bisnis\AsalDataController@store');
-            $router->get('/asal_data/{id}', 'Master\Bisnis\AsalDataController@show');
-            $router->put('/asal_data/{id}', 'Master\Bisnis\AsalDataController@update');
-            $router->delete('/asal_data/{id}', 'Master\Bisnis\AsalDataController@delete');
+            $router->get('/asal_data', 'Master\AreaKantor\AsalDataController@index');
+            $router->post('/asal_data', 'Master\AreaKantor\AsalDataController@store');
+            $router->get('/asal_data/{id}', 'Master\AreaKantor\AsalDataController@show');
+            $router->put('/asal_data/{id}', 'Master\AreaKantor\AsalDataController@update');
+            $router->delete('/asal_data/{id}', 'Master\AreaKantor\AsalDataController@delete');
 
             $router->get('/mitra', 'Master\Bisnis\MitraController@index');
             $router->get('/mitra/{kode_mitra}', 'Master\Bisnis\MitraController@show');
@@ -138,10 +138,10 @@ $router->group(['middleware' => 'jwt.auth'], function () use ($router) {
             $router->delete('/jenis_pic/{id}', 'Master\AreaKantor\JPICController@delete');
 
 
-            $router->post('/mcc', 'Pengajuan\MasterCC_Controller@store'); // Memorandum Credit Checking
-            $router->get('/mcc', 'Pengajuan\MasterCC_Controller@index');
-            $router->get('/mcc/{id}', 'Pengajuan\MasterCC_Controller@show');
-            $router->post('/mcc/{id}', 'Pengajuan\MasterCC_Controller@update'); // Update MCC
+            $router->post('/mcc', 'Transaksi\MasterCC_Controller@store'); // Memorandum Credit Checking
+            $router->get('/mcc', 'Transaksi\MasterCC_Controller@index');
+            $router->get('/mcc/{id}', 'Transaksi\MasterCC_Controller@show');
+            $router->post('/mcc/{id}', 'Transaksi\MasterCC_Controller@update'); // Update MCC
 
             $router->get('/das', 'Pengajuan\DASController@index'); //Cek HM
             $router->get('/das/{id}', 'Pengajuan\DASController@show'); //Cek HM
@@ -151,13 +151,13 @@ $router->group(['middleware' => 'jwt.auth'], function () use ($router) {
             $router->get('/hm/{id}', 'Pengajuan\HMController@show'); //Cek HM
             $router->put('/hm/{id}', 'Pengajuan\HMController@update'); //Cek HM
 
-            $router->get('/mao', 'Pengajuan\MasterAO_Controller@index'); // All Memorandum Account Officer
-            $router->get('/mao/{id}', 'Pengajuan\MasterAO_Controller@show'); //GEt MAO BY ID
-            $router->post('/mao/{id}', 'Pengajuan\MasterAO_Controller@update'); //Update MAO BY ID
+            $router->get('/mao', 'Transaksi\MasterAO_Controller@index'); // All Memorandum Account Officer
+            $router->get('/mao/{id}', 'Transaksi\MasterAO_Controller@show'); //GEt MAO BY ID
+            $router->post('/mao/{id}', 'Transaksi\MasterAO_Controller@update'); //Update MAO BY ID
 
-            $router->get('/mca', 'Pengajuan\MasterCA_Controller@index'); // All Memorandum Credit Analyst
-            $router->get('/mca/{id}', 'Pengajuan\MasterCA_Controller@show'); //GEt CA BY ID
-            $router->post('/mca/{id}', 'Pengajuan\MasterCA_Controller@update'); //Update CA BY ID
+            $router->get('/mca', 'Transaksi\MasterCA_Controller@index'); // All Memorandum Credit Analyst
+            $router->get('/mca/{id}', 'Transaksi\MasterCA_Controller@show'); //GEt CA BY ID
+            $router->post('/mca/{id}', 'Transaksi\MasterCA_Controller@update'); //Update CA BY ID
         });
 
         // Menu
@@ -183,14 +183,15 @@ $router->group(['middleware' => 'jwt.auth'], function () use ($router) {
         });
 
         // Fasilitas Pinjaman
-        $router->group(['prefix' => '/faspin'], function() use ($router) {});
+        $router->group(['prefix' => '/faspin', 'namespace' => 'Pengajuan\Tunggal'], function() use ($router) {
+            $router->get('/{id}', 'FasPinController@show');
+            $router->post('/{id}', 'FasPinController@update');
+        });
 
         // Calon Debitur
         $router->group(['prefix' => '/debitur', 'namespace' => 'Pengajuan\Tunggal'], function() use ($router) {
             $router->get('/{id}', 'DebiturController@show');
             $router->post('/{id}', 'DebiturController@update');
-            // /Pendapatan Usaha
-            $router->group(['prefix' => '/usaha'], function() use ($router) {});
         });
 
         // Pasangan
@@ -204,12 +205,6 @@ $router->group(['middleware' => 'jwt.auth'], function () use ($router) {
             $router->get('/{id}', 'PenjaminController@show');
             $router->post('/{id}', 'PenjaminController@update');
         });
-
-        // Verifikasi Dokumen
-        $router->group(['prefix' => '/verifikasi'], function() use ($router) {});
-
-        // Validasi Saat Survey
-        $router->group(['prefix' => '/validasi'], function() use ($router) {});
 
         // Agunan
         $router->group(['prefix' => '/agunan', 'namespace' => 'Pengajuan\Tunggal'], function() use ($router) {
@@ -242,13 +237,18 @@ $router->group(['middleware' => 'jwt.auth'], function () use ($router) {
         });
 
         // Kapasitas Bulanan
-        $router->group(['prefix' => '/kap_bul'], function() use ($router) {});
+        $router->group(['prefix' => '/kap_bul', 'namespace' => 'Pengajuan\Tunggal'], function() use ($router) {
+            $router->get('/{id}', 'KapBulController@show');
+            $router->post('/{id}', 'KapBulController@update');
+        });
+
+        // PENDAPATAN USAHA CADEBT
+        $router->group(['prefix' => '/usaha_cadebt', 'namespace' => 'Pengajuan\Tunggal'], function() use ($router) {
+            $router->get('/{id}', 'UsahaCadebtController@show');
+            $router->post('/{id}', 'UsahaCadebtController@update');
+        });
 
         // Rekomendasi AO
-        $router->group(['prefix' => '/rekom_ao'], function() use ($router) {});
-
-        $router->get('/pinjaman', 'PinjamanController@index');
-        $router->post('/pinjaman', 'PinjamanController@store');
-        $router->get('/pinjaman/plus', 'PinjamanController@plus');
+        // $router->group(['prefix' => '/rekom_ao', 'namespace' => 'Pengajuan\Tunggal'], function() use ($router) {});
     });
 });

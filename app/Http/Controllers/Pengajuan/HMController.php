@@ -4,13 +4,13 @@ namespace App\Http\Controllers\Pengajuan;
 
 use Laravel\Lumen\Routing\Controller as BaseController;
 use App\Http\Controllers\Controller as Helper;
-use App\Http\Requests\Bisnis\BlankRequest;
-use App\Models\Pengajuan\Penjamin;
+use App\Http\Requests\Transaksi\BlankRequest;
+use App\Models\Pengajuan\SO\Penjamin;
+use App\Models\Transaksi\TransSO;
 use App\Models\Wilayah\Kabupaten;
 use App\Models\Wilayah\Kecamatan;
 use App\Models\Wilayah\Kelurahan;
 use App\Models\Wilayah\Provinsi;
-use App\Models\Bisnis\TransSo;
 use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Models\User;
@@ -20,8 +20,8 @@ class HMController extends BaseController
 {
     public function index(Request $req){
         // $kode_kantor = $req->auth->kd_cabang;
-        // $query = TransSo::where('kode_kantor', $kode_kantor)->get();
-        $query = TransSo::with('asaldata','debt', 'pic')->get();
+        // $query = TransSO::where('kode_kantor', $kode_kantor)->get();
+        $query = TransSO::with('asaldata','debt', 'pic')->get();
 
         if ($query == '[]') {
             return response()->json([
@@ -84,8 +84,8 @@ class HMController extends BaseController
 
     public function show($id, Request $req){
         // $kode_kantor = $req->auth->kd_cabang;
-        // $val = TransSo::where('id', $id)->where('kode_kantor', $kode_kantor)->first();
-        $val = TransSo::with('asaldata','debt', 'pic')->where('id', $id)->first();
+        // $val = TransSO::where('id', $id)->where('kode_kantor', $kode_kantor)->first();
+        $val = TransSO::with('asaldata','debt', 'pic')->where('id', $id)->first();
         if (!$val) {
             return response()->json([
                 'code'    => 404,
@@ -243,7 +243,7 @@ class HMController extends BaseController
     }
 
     public function update($id, Request $req){
-        $check = TransSo::where('id', $id)->first();
+        $check = TransSO::where('id', $id)->first();
 
         if (!$check) {
             return response()->json([
@@ -290,7 +290,7 @@ class HMController extends BaseController
             $msg = 'waiting proccess';
         }
 
-        TransSo::where('id', $id)->update($data);
+        TransSO::where('id', $id)->update($data);
 
         try {
             return response()->json([

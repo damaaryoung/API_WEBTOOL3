@@ -9,8 +9,8 @@ use App\Http\Controllers\Controller as Helper;
 use App\Http\Requests\Pengajuan\PenjaminRequest;
 
 // Models
-use App\Models\Pengajuan\Penjamin;
-use App\Models\Bisnis\TransSo;
+use App\Models\Pengajuan\SO\Penjamin;
+use App\Models\Transaksi\TransSO;
 use App\Models\User;
 
 use Illuminate\Support\Facades\File;
@@ -110,9 +110,9 @@ class PenjaminController extends BaseController
             ], 404);
         }
 
-        $so = TransSo::where('id_Penjamin', 'like', '%'.$check->id.'%')->get();
+        $so = TransSO::where('id_Penjamin', 'like', '%'.$id.'%')->first();
 
-        if ($so == '[]') {
+        if ($so == null) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
@@ -122,9 +122,11 @@ class PenjaminController extends BaseController
 
         $lamp_path = $check->lamp_ktp;
 
+        $ktp_debt = $so->debt['no_ktp'];
+
         $arrPath = explode("/", $lamp_path, 4);
 
-        $path = $arrPath[0].'/'.$arrPath[1].'/'.$arrPath[2];
+        $path = $arrPath[0].'/'.$ktp_debt.'/'.$arrPath[2];
 
         $no = substr($arrPath[3], 12, 1);
 

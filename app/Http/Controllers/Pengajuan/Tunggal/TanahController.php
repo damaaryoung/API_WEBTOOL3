@@ -9,8 +9,9 @@ use App\Http\Controllers\Controller as Helper;
 use App\Http\Requests\Pengajuan\A_TanahRequest;
 
 // Models
-use App\Models\Pengajuan\AgunanTanah;
-use App\Models\Bisnis\TransSo;
+use App\Models\Pengajuan\AO\AgunanTanah;
+use App\Models\Transaksi\TransSO;
+use App\Models\Transaksi\TransAO;
 use App\Models\User;
 
 use Illuminate\Support\Facades\File;
@@ -23,7 +24,7 @@ class TanahController extends BaseController
 {
 
     public function show($id){
-        $check = AgunanTanah::with('debt', 'prov', 'kab','kec','kel')
+        $check = AgunanTanah::with('prov', 'kab','kec','kel')
             ->where('id', $id)->first();
 
         if ($check == null) {
@@ -107,16 +108,25 @@ class TanahController extends BaseController
             ], 404);
         }
 
-        $so = TransSo::where('id_agunan_tanah', 'like', '%'.$check->id.'%')->get();
+        $ao = TransAO::where('id_agunan_tanah', 'like', '%'.$id.'%')->first();
 
-        if ($so == '[]') {
+        if ($ao == null) {
+            return response()->json([
+                'code'    => 404,
+                'status'  => 'not found',
+                'message' => 'Data Transaksi AO Kosong'
+            ], 404);
+        }
+
+        $so = TransSO::where('id_trans_ao', $ao->id)->first();
+
+        if ($so == null) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
                 'message' => 'Data Transaksi SO Kosong'
             ], 404);
         }
-
 
         if (!empty($check->lamp_agunan_depan)) {
             $lamp_path = $check->lamp_agunan_depan;
@@ -128,11 +138,15 @@ class TanahController extends BaseController
             $lamp_path = $check->lamp_agunan_belakang;
         }elseif (!empty($check->lamp_agunan_dalam)) {
             $lamp_path = $check->lamp_agunan_dalam;
+        }else{
+            $lamp_path = 'public/lamp_trans.2-AO-1-2020-13/agunan_tanah/agunan_depan1.png';
         }
+
+        $ktp_debt = $so->debt['no_ktp'];
 
         $arrPath = explode("/", $lamp_path, 4);
 
-        $path = $arrPath[0].'/'.$arrPath[1].'/'.$arrPath[2];
+        $path = $arrPath[0].'/'.$ktp_debt.'/'.$arrPath[2];
 
         $no = substr($arrPath[3], 12, 1);
 

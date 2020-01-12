@@ -9,8 +9,8 @@ use App\Http\Controllers\Controller as Helper;
 use App\Http\Requests\Pengajuan\DebiturRequest;
 
 // Models
-use App\Models\Pengajuan\Debitur;
-use App\Models\Bisnis\TransSo;
+use App\Models\Pengajuan\SO\Debitur;
+use App\Models\Transaksi\TransSO;
 use App\Models\User;
 
 use Illuminate\Support\Facades\File;
@@ -35,7 +35,6 @@ class DebiturController extends BaseController
         }
 
         $data = array(
-            'id' => $val->id_calon_debt,
             'nama_lengkap'          => $val->nama_lengkap,
             'gelar_keagamaan'       => $val->gelar_keagamaan,
             'gelar_pendidikan'      => $val->gelar_pendidikan,
@@ -166,7 +165,7 @@ class DebiturController extends BaseController
             ], 404);
         }
 
-        $so = TransSo::where('id_calon_debt', $check->id)->first();
+        $so = TransSO::where('id_calon_debitur', $id)->first();
 
         if ($so == null) {
             return response()->json([
@@ -176,9 +175,7 @@ class DebiturController extends BaseController
             ], 404);
         }
 
-        $lamp_dir = 'public/lamp_trans.' . $so->nomor_so;
-
-        // dd($lamp_dir);
+        $lamp_dir = 'public/' . $so->debt['no_ktp'];
 
         // Lampiran Debitur
         if($file = $req->file('lamp_ktp')){

@@ -9,8 +9,8 @@ use App\Http\Controllers\Controller as Helper;
 use App\Http\Requests\Pengajuan\PasanganRequest;
 
 // Models
-use App\Models\Pengajuan\Pasangan;
-use App\Models\Bisnis\TransSo;
+use App\Models\Pengajuan\SO\Pasangan;
+use App\Models\Transaksi\TransSO;
 use App\Models\User;
 
 use Illuminate\Support\Facades\File;
@@ -108,7 +108,7 @@ class PasanganController extends BaseController
             ], 404);
         }
 
-        $so = TransSo::where('id_pasangan', $check->id)->first();
+        $so = TransSO::where('id_pasangan', $check->id)->first();
 
         if ($so == null) {
             return response()->json([
@@ -118,10 +118,9 @@ class PasanganController extends BaseController
             ], 404);
         }
 
-        $lamp_dir = 'public/lamp_trans.' . $so->nomor_so;
+        $lamp_dir = 'public/' . $so->debt['no_ktp'];
 
-        // Lampiran Pasangab
-
+        // Lampiran Pasangan
         if($file = $req->file('lamp_ktp_pas')){
             $path = $lamp_dir.'/pasangan';
             $name = 'ktp.'.$file->getClientOriginalExtension();

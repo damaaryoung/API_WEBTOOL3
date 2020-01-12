@@ -9,8 +9,9 @@ use App\Http\Controllers\Controller as Helper;
 use App\Http\Requests\Pengajuan\A_KendaraanRequest;
 
 // Models
-use App\Models\Pengajuan\AgunanKendaraan;
-use App\Models\Bisnis\TransSo;
+use App\Models\Pengajuan\AO\AgunanKendaraan;
+use App\Models\Transaksi\TransSO;
+use App\Models\Transaksi\TransAO;
 use App\Models\User;
 
 use Illuminate\Support\Facades\File;
@@ -23,8 +24,7 @@ class KendaraanController extends BaseController
 {
 
     public function show($id){
-        $check = AgunanKendaraan::with('debt')
-            ->where('id', $id)->first();
+        $check = AgunanKendaraan::where('id', $id)->first();
 
         if ($check == null) {
             return response()->json([
@@ -85,9 +85,19 @@ class KendaraanController extends BaseController
             ], 404);
         }
 
-        $so = TransSo::where('id_agunan_kendaraan', 'like', '%'.$check->id.'%')->get();
+        $ao = TransAO::where('id_agunan_kendaraan', 'like', '%'.$id.'%')->first();
 
-        if ($so == '[]') {
+        if ($ao == null) {
+            return response()->json([
+                'code'    => 404,
+                'status'  => 'not found',
+                'message' => 'Data Transaksi AO Kosong'
+            ], 404);
+        }
+
+        $so = TransSO::where('id_trans_ao', $ao->id)->first();
+
+        if ($so == null) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
@@ -109,9 +119,11 @@ class KendaraanController extends BaseController
             $lamp_path = 'public/lamp_trans.2-AO-1-2020-13/agunan_kendaraan/agunan_depan1.png';
         }
 
+        $ktp_debt = $so->debt['no_ktp'];
+
         $arrPath = explode("/", $lamp_path, 4);
 
-        $path = $arrPath[0].'/'.$arrPath[1].'/'.$arrPath[2];
+        $path = $arrPath[0].'/'.$ktp_debt.'/'.$arrPath[2];
 
         $no = substr($arrPath[3], 12, 1);
 
@@ -197,20 +209,20 @@ class KendaraanController extends BaseController
         }
 
         $dataAgunanKendaraan = array(
-            'no_bpkb'               => empty($req->no_bpkb_ken) ? $check->no_bpkb : $req->no_bpkb_ken,
-            'nama_pemilik'          => empty($req->nama_pemilik_ken) ? $check->nama_pemilik : $req->nama_pemilik_ken,
-            'alamat_pemilik'        => empty($req->alamat_pemilik_ken) ? $check->alamat_pemilik : $req->alamat_pemilik,
-            'merk'                  => empty($req->merk_ken) ? $check->merk : $req->merk_ken,
-            'jenis'                 => empty($req->jenis_ken) ? $check->jenis : $req->jenis_ken,
-            'no_rangka'             => empty($req->no_rangka_ken) ? $check->no_rangka : $req->no_rangka_ken,
-            'no_mesin'              => empty($req->no_mesin_ken) ? $check->no_mesin : $req->no_mesin_ken,
-            'warna'                 => empty($req->warna_ken) ? $check->warna : $req->warna_ken,
-            'tahun'                 => empty($req->tahun_ken) ? $check->tahun : $req->tahun_ken,
-            'no_polisi'             => empty($req->no_polisi_ken) ? $check->no_polisi : strtoupper($req->no_polisi_ken),
-            'no_stnk'               => empty($req->no_stnk_ken) ? $check->no_stnk : $req->no_stnk_ken,
-            'tgl_kadaluarsa_pajak'  => empty($req->tgl_exp_pajak_ken) ? $check->tgl_kadaluarsa_pajak : Carbon::parse($req->tgl_exp_pajak_ken)->format('Y-m-d'),
-            'tgl_kadaluarsa_stnk'   => empty($req->tgl_exp_stnk_ken) ? $check->tgl_kadaluarsa_stnk : Carbon::parse($req->tgl_exp_stnk_ken)->format('Y-m-d'),
-            'no_faktur'             => empty($req->no_faktur_ken) ? $check->no_faktur : $req->no_faktur_ken,
+            'no_bpkb'               => empty($req->input('no_bpkb_ken')) ? $check->no_bpkb : $req->input('no_bpkb_ken'),
+            'nama_pemilik'          => empty($req->input('nama_pemilik_ken')) ? $check->nama_pemilik : $req->input('nama_pemilik_ken'),
+            'alamat_pemilik'        => empty($req->input('alamat_pemilik_ken')) ? $check->alamat_pemilik : $req->input('alamat_pemilik_ken'),
+            'merk'                  => empty($req->input('merk_ken')) ? $check->merk : $req->input('merk_ken'),
+            'jenis'                 => empty($req->input('jenis_ken')) ? $check->jenis : $req->input('jenis_ken'),
+            'no_rangka'             => empty($req->input('no_rangka_ken')) ? $check->no_rangka : $req->input('no_rangka_ken'),
+            'no_mesin'              => empty($req->input('no_mesin_ken')) ? $check->no_mesin : $req->input('no_mesin_ken'),
+            'warna'                 => empty($req->input('warna_ken')) ? $check->warna : $req->input('warna_ken'),
+            'tahun'                 => empty($req->input('tahun_ken')) ? $check->tahun : $req->input('tahun_ken'),
+            'no_polisi'             => empty($req->input('no_polisi_ken')) ? $check->no_polisi : strtoupper($req->input('no_polisi_ken')),
+            'no_stnk'               => empty($req->input('no_stnk_ken')) ? $check->no_stnk : $req->input('no_stnk_ken'),
+            'tgl_kadaluarsa_pajak'  => empty($req->input('tgl_exp_pajak_ken')) ? $check->tgl_kadaluarsa_pajak : Carbon::parse($req->input('tgl_exp_pajak_ken'))->format('Y-m-d'),
+            'tgl_kadaluarsa_stnk'   => empty($req->input('tgl_exp_stnk_ken')) ? $check->tgl_kadaluarsa_stnk : Carbon::parse($req->input('tgl_exp_stnk_ken'))->format('Y-m-d'),
+            'no_faktur'             => empty($req->input('no_faktur_ken')) ? $check->no_faktur : $req->input('no_faktur_ken'),
             'lamp_agunan_depan'     => $agunanDepan,
             'lamp_agunan_kanan'     => $agunanKanan,
             'lamp_agunan_kiri'      => $agunanKiri,

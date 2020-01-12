@@ -4,9 +4,9 @@ namespace App\Http\Requests\Pengajuan;
 
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
-use App\Models\Pengajuan\Debitur;
 use Illuminate\Http\JsonResponse;
 use Urameshibr\Requests\FormRequest;
+use App\Models\Pengajuan\SO\Debitur;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Http\Exceptions\HttpResponseException;
