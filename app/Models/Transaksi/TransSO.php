@@ -23,7 +23,7 @@ class TransSO extends Model implements AuthenticatableContract, AuthorizableCont
     protected $primaryKey = 'id';
 
     protected $fillable = [
-        'nomor_so', 'user_id', 'id_pic', 'id_cabang', 'id_asal_data', 'nama_marketing', 'nama_so', 'id_fasilitas_pinjaman', 'id_calon_debitur', 'id_pasangan', 'id_penjamin', 'id_trans_ao', 'id_trans_ca', 'catatan_das', 'catatan_hm', 'status_das', 'status_hm', 'lamp_ideb', 'lamp_pefindo', 'flg_aktif'
+        'nomor_so', 'user_id', 'id_pic', 'id_cabang', 'id_asal_data', 'nama_marketing', 'nama_so', 'id_fasilitas_pinjaman', 'id_calon_debitur', 'id_pasangan', 'id_penjamin', 'id_trans_ao', 'id_trans_ca', 'id_trans_caa', 'catatan_das', 'catatan_hm', 'status_das', 'status_hm', 'lamp_ideb', 'lamp_pefindo', 'flg_aktif'
     ];
 
     public function pic(){
@@ -61,4 +61,8 @@ class TransSO extends Model implements AuthenticatableContract, AuthorizableCont
     public function ca(){
         return $this->belongsTo('App\Models\Transaksi\TransCA', 'id_trans_ca');
     }
+
+    // public function caa(){
+    //     return $this->belongsTo('App\Models\Transaksi\TransCAA', 'id_trans_caa');
+    // }
 }

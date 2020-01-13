@@ -20,7 +20,6 @@ use App\Models\Pengajuan\SO\Debitur;
 use Illuminate\Support\Facades\File;
 use App\Models\AreaKantor\Cabang;
 use App\Models\Transaksi\TransSO;
-use App\Models\Transaksi\TransAO;
 use App\Models\AreaKantor\JPIC;
 use App\Models\AreaKantor\PIC;
 use Illuminate\Http\Request;
@@ -47,8 +46,7 @@ class MasterAO_Controller extends BaseController
 
         $id_cabang = $pic->id_mk_cabang;
 
-        $query = TransSO::with('asaldata','debt')->where('id_cabang', $id_cabang)->where('status_hm', 1)->get();
-
+        $query = TransSO::with('pic', 'cabang', 'asaldata', 'debt', 'pas', 'faspin', 'ao', 'ca')->where('id_cabang', $id_cabang)->get();
         if ($query == '[]') {
             return response()->json([
                 'code'    => 404,
@@ -75,22 +73,41 @@ class MasterAO_Controller extends BaseController
                 $status_hm = 'waiting';
             }
 
+            if ($val->ao['status_ao'] == 1) {
+                $status_ao = 'recommend';
+            }elseif ($val->ao['status_ao'] == 2) {
+                $status_ao = 'not recommend';
+            }else{
+                $status_ao = 'waiting';
+            }
+
             $data[$key] = [
                 'id'             => $val->id,
                 'nomor_so'       => $val->nomor_so,
-                'user_id'        => $val->user_id,
-                'id_pic'         => $val->id_pic,
-                'id_cabang'      => $id_cabang,
+                'nomor_ao'       => $val->ao['nomor_ao'],
+                'pic'            => $val->pic['nama'],
+                'cabang'         => $val->cabang['nama'],
                 'asal_data'      => $val->asaldata['nama'],
                 'nama_marketing' => $val->nama_marketing,
-                'nama_so'        => $val->nama_so,
                 'nama_debitur'   => $val->debt['nama_lengkap'],
-                'plafon'         => (int) $val->faspin->plafon,
-                'tenor'          => (int) $val->faspin->tenor,
-                'das_status'     => $status_das,
-                'das_note'       => $val->catatan_das,
-                'hm_status'      => $status_das,
-                'hm_note'        => $val->catatan_hm
+                'plafon'         => $val->faspin['plafon'],
+                'tenor'          => $val->faspin['tenor'],
+                'das'            => [
+                    'status'  => $status_das,
+                    'catatan' => $val->catatan_das
+                ],
+                'hm'            => [
+                    'status'  => $status_hm,
+                    'catatan' => $val->catatan_hm
+                ],
+                'ao'            => [
+                    'status'  => $status_ao,
+                    'catatan' => $val->catatan_ao
+                ]
+                // 'das_status'     => $status_das,
+                // 'das_note'       => $val->catatan_das,
+                // 'hm_status'      => $status_das,
+                // 'hm_note'        => $val->catatan_hm,
             ];
         }
 
@@ -114,7 +131,7 @@ class MasterAO_Controller extends BaseController
         $pic     = PIC::where('user_id', $user_id)->first();
         $id_cabang = $pic->id_mk_cabang;
 
-        $val = TransSO::where('id', $id)->where('id_cabang', $id_cabang)->first();
+        $val = TransSO::with('pic', 'cabang', 'asaldata', 'debt', 'pas', 'faspin', 'ao', 'ca')->where('id', $id)->where('id_cabang', $id_cabang)->first();
 
         if (!$val) {
             return response()->json([
@@ -184,7 +201,6 @@ class MasterAO_Controller extends BaseController
             $pen = null;
         }
 
-
         if ($val->status_das == 1) {
             $status_das = 'complete';
         }elseif($val->status_das == 2){
@@ -201,18 +217,27 @@ class MasterAO_Controller extends BaseController
             $status_hm = 'waiting';
         }
 
+        if ($val->ao['status_ao'] == 1) {
+            $status_ao = 'recommend';
+        }elseif ($val->ao['status_ao'] == 2) {
+            $status_ao = 'not recommend';
+        }else{
+            $status_ao = 'waiting';
+        }
+
         $data[] = [
-            'id'        => $val->id,
-            'nomor_so'  => $val->nomor_so,
+            'id'          => $val->id,
+            'nomor_so'    => $val->nomor_so,
+            'nama_so'     => $val->nama_so,
             'id_pic'      => $val->id_pic,
-            'id_cabang'   => $val->pic['id_mk_cabang'],
-            'nama_cabang' => $val->pic['cabang']['nama'],
+            'nama_pic'    => $val->pic['nama'],
+            'id_cabang'   => $val->id_cabang,
+            'nama_cabang' => $val->cabang['nama'],
             'asaldata'  => [
                 'id'   => $val->asaldata['id'],
                 'nama' => $val->asaldata['nama']
             ],
             'nama_marketing' => $val->nama_marketing,
-            'nama_so'        => $val->nama_so,
             'fasilitas_pinjaman'  => [
                 'id'              => $val->id_fasilitas_pinjaman,
                 // 'jenis_pinjaman'  => $val->faspin->jenis_pinjaman,
@@ -374,10 +399,18 @@ class MasterAO_Controller extends BaseController
                 // ]
             ],
             'data_penjamin' => $pen,
-            'das_status'    => $status_das,
-            'das_note'      => $val->catatan_das,
-            'hm_status'     => $status_das,
-            'hm_note'       => $val->catatan_hm,
+            'das'=> [
+                'status'  => $status_das,
+                'catatan' => $val->catatan_das
+            ],
+            'hm' => [
+                'status'  => $status_hm,
+                'catatan' => $val->catatan_hm
+            ],
+            'ao' => [
+                'status'  => $status_ao,
+                'catatan' => $val->catatan_ao
+            ],
             'lampiran'  => [
                 "ideb"      => explode(";", $val->lamp_ideb),
                 "pefindo"   => explode(";", $val->lamp_pefindo)
@@ -455,7 +488,7 @@ class MasterAO_Controller extends BaseController
             'id_pic'                => $PIC->id,
             'id_cabang'             => $PIC->id_mk_cabang,
             'catatan_ao'            => $req->input('catatan_ao'),
-            'status_ao'             => $req->input('status_ao')
+            'status_ao'             => empty($req->input('status_ao')) ? 1 : $req->input('status_ao')
         );
 
         // if ($TransAO['status_ao'] == 1) {

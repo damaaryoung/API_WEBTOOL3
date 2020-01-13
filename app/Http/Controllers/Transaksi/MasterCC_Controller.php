@@ -12,8 +12,6 @@ use App\Models\Pengajuan\SO\Debitur;
 use Illuminate\Support\Facades\File;
 use App\Models\AreaKantor\Cabang;
 use App\Models\Transaksi\TransSO;
-use App\Models\Transaksi\TransAO;
-use App\Models\Transaksi\TransCA;
 use App\Models\AreaKantor\JPIC;
 use App\Models\AreaKantor\PIC;
 use App\Models\KeuanganUsaha;
@@ -30,7 +28,7 @@ class MasterCC_Controller extends BaseController
         $pic     = PIC::where('user_id', $user_id)->first();
         $id_cabang = $pic->id_mk_cabang;
 
-        $query = TransSO::with('asaldata','debt')
+        $query = TransSO::with('pic', 'cabang', 'asaldata','debt', 'faspin')
                 ->where('id_cabang', $id_cabang)
                 ->where('user_id', $user_id)
                 ->get();
@@ -44,13 +42,13 @@ class MasterCC_Controller extends BaseController
         }else{
             foreach ($query as $key => $val) {
                 $res[$key] = [
-                    'id'            => $val->id,
-                    'nomor_so'      => $val->nomor_so,
-                    'id_pic'        => $val->id_pic,
-                    'id_cabang'     => $val->id_cabang,
-                    'nama_so'       => $val->nama_so,
-                    'id_asal_data'  => $val->asaldata['nama'],
-                    'nama_marketing'=> $val->nama_marketing,
+                    'id'              => $val->id,
+                    'nomor_so'        => $val->nomor_so,
+                    'nama_so'         => $val->nama_so,
+                    'pic'             => $val->pic['nama'],
+                    'cabang'          => $val->cabang['nama'],
+                    'asal_data'       => $val->asaldata['nama'],
+                    'nama_marketing'  => $val->nama_marketing,
                     'nama_calon_debt' => $val->debt['nama_lengkap']
                 ];
             }
@@ -75,11 +73,10 @@ class MasterCC_Controller extends BaseController
     public function show($id, Request $req){
         $user_id = $req->auth->user_id;
 
-        $val = TransSO::with('asaldata','debt', 'pic')
+        $val = TransSO::with('pic', 'cabang', 'asaldata', 'debt', 'pas', 'faspin', 'ao', 'ca')
                 ->where('id', $id)
                 ->where('user_id', $user_id)
                 ->first();
-
 
         if (!$val) {
             return response()->json([
@@ -89,9 +86,7 @@ class MasterCC_Controller extends BaseController
             ], 404);
         }
 
-        $ao = TransAO::where('id_trans_so', $val->id)->first();
-
-        $ca = TransCA::where('id_trans_so', $val->id)->first();
+        // $ao = TransAO::where('id_trans_so', $val->id)->first();
 
         $nama_anak = explode (",",$val->nama_anak);
         $tgl_anak  = explode (",",$val->tgl_lahir_anak);
@@ -149,37 +144,32 @@ class MasterCC_Controller extends BaseController
             $status_hm = 'waiting';
         }
 
-        if (!empty($ao)) {
-            if ($ao->status_ao == 1) {
-                $status_ao = 'complete';
-            }elseif ($ao->status_ao == 2) {
-                $status_ao = 'not complete';
-            }else{
-                $status_ao = 'waiting';
-            }
+
+        if ($val->ao['status_ao'] == 1) {
+            $status_ao = 'complete';
+        }elseif ($val->ao['status_ao'] == 2) {
+            $status_ao = 'not complete';
         }else{
             $status_ao = 'waiting';
         }
 
-        if (!empty($ca)) {
-            if ($ca->status_ca == 1) {
-                $status_ao = 'complete';
-            }elseif ($ca->status_ca == 2) {
-                $status_ca = 'not complete';
-            }else{
-                $status_ca = 'waiting';
-            }
+
+        if ($val->ca['status_ca'] == 1) {
+            $status_ao = 'complete';
+        }elseif ($val->ca['status_ca'] == 2) {
+            $status_ca = 'not complete';
         }else{
             $status_ca = 'waiting';
         }
 
         $res = [
-            'id'        => $val->id,
-            'nomor_so'  => $val->nomor_so,
-            'id_pic'    => $val->id_pic,
-            'id_cabang' => $val->pic['id_mk_cabang'],
-            'nama_cabang'=> $val->pic['cabang']['nama'],
-            'nama_so'   => $val->nama_so,
+            'id'          => $val->id,
+            'nomor_so'    => $val->nomor_so,
+            'nama_so'     => $val->nama_so,
+            'id_pic'      => $val->id_pic,
+            'nama_pic'    => $val->pic['nama'],
+            'id_cabang'   => $val->id_cabang,
+            'nama_cabang' => $val->cabang['nama'],
             'tracking'  => [
                 'das' => $status_das,
                 'hm'  => $status_hm,
@@ -316,8 +306,8 @@ class MasterCC_Controller extends BaseController
         }
     }
 
-    public function store(Request $request, BlankRequest $req) {
-
+    public function store(Request $request, BlankRequest $req)
+    {
         $user_id     = $request->auth->user_id;
         $username    = $request->auth->usename;
 

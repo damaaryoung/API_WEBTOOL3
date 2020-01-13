@@ -26,6 +26,10 @@ class TransAO extends Model implements AuthenticatableContract, AuthorizableCont
         'nomor_ao', 'id_trans_so', 'user_id', 'id_pic', 'id_cabang', 'id_validasi', 'id_verifikasi', 'id_agunan_tanah', 'id_agunan_kendaraan', 'id_periksa_agunan_tanah', 'id_periksa_agunan_kendaraan', 'id_kapasitas_bulanan', 'id_pendapatan_usaha', 'id_recom_ao', 'catatan_ao', 'status_ao'
     ];
 
+    public function so(){
+        return $this->belongsTo('App\Models\Transaksi\TransSO', 'id_trans_so');
+    }
+
     public function pic(){
         return $this->belongsTo('App\Models\AreaKantor\PIC', 'id_pic');
     }
@@ -67,6 +71,6 @@ class TransAO extends Model implements AuthenticatableContract, AuthorizableCont
     }
 
     public function recom_ao(){
-        return $this->belongsTo('App\Models\Pengajuan\AO\Rekomendasi_AO', 'id_recom_ao');
+        return $this->belongsTo('App\Models\Pengajuan\AO\RekomendasiAO', 'id_recom_ao');
     }
 }

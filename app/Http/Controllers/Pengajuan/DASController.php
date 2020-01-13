@@ -24,7 +24,7 @@ class DASController extends BaseController
         // $kode_kantor = $req->auth->kd_cabang;
 
         // $query = DB::connection('web')->table('trans_so')->where('kode_kantor', $kode_kantor)->get();
-        $query = TransSO::with('asaldata','debt', 'pic')->get();
+        $query = TransSO::with('pic', 'cabang', 'asaldata','debt', 'faspin')->get();
         // $query = DB::connection('web')->select("SELECT * FROM trans_so WHERE kode_kantor=?",[$kode_kantor]);
 
         if ($query == '[]') {
@@ -38,16 +38,6 @@ class DASController extends BaseController
         $data = array();
         foreach ($query as $key => $val) {
 
-            $data[$key]['id']             = $val->id;
-            $data[$key]['nomor_so']       = $val->nomor_so;
-            // $data[$key]['id_cabang']      = $val->pic['id_mk_cabang'];
-            $data[$key]['asal_data']      = $val->asaldata['nama'];
-            $data[$key]['nama_marketing'] = $val->nama_marketing;
-            $data[$key]['nama_so']        = $val->nama_so;
-            $data[$key]['nama_debitur']   = $val->debt['nama_lengkap'];
-            $data[$key]['plafon']         = $val->faspin->plafon;
-            $data[$key]['tenor']          = $val->faspin->tenor;
-
             if ($val->status_das == 1) {
                 $status = 'complete';
             }elseif ($val->status_das == 2) {
@@ -56,8 +46,20 @@ class DASController extends BaseController
                 $status = 'waiting';
             }
 
-            $data[$key]['status']         = $status;
-            $data[$key]['note']           = $val->catatan_das;
+            $data[$key] = [
+                'id'              => $val->id,
+                'nomor_so'        => $val->nomor_so,
+                'nama_so'         => $val->nama_so,
+                'pic'             => $val->pic['nama'],
+                'cabang'          => $val->cabang['nama'],
+                'asal_data'       => $val->asaldata['nama'],
+                'nama_marketing'  => $val->nama_marketing,
+                'nama_debitur'    => $val->debt['nama_lengkap'],
+                'plafon'          => $val->faspin['plafon'],
+                'tenor'           => $val->faspin['tenor'],
+                'status'          => $status,
+                'note'            => $val->catatan_das
+            ];
         }
 
         try {
@@ -129,11 +131,11 @@ class DASController extends BaseController
         $data = [
             'id'             => $val->id,
             'nomor_so'       => $val->nomor_so,
+            'nama_so'        => $val->nama_so,
             'id_cabang'      => $val->pic['id_mk_cabang'],
             'nama_cabang'    => $val->pic['cabang']['nama'],
             'asal_data'      => $val->asaldata['nama'],
             'nama_marketing' => $val->nama_marketing,
-            'nama_so'        => $val->nama_so,
             'plafon'         => (int) $val->faspin->plafon,
             'tenor'          => (int) $val->faspin->tenor,
             'fasilitas_pinjaman'  => [

@@ -1,26 +1,26 @@
 <?php
 
-namespace App\Http\Controllers\Pengajuan;
+namespace App\Http\Controllers\Transaksi;
 
 use Laravel\Lumen\Routing\Controller as BaseController;
 use App\Http\Controllers\Controller as Helper;
-use App\Models\Pengajuan\PemeriksaanAgunTan;
-use App\Models\Pengajuan\PemeriksaanAgunKen;
-use App\Http\Requests\Bisnis\BlankRequest;
-use App\Models\Pengajuan\AgunanKendaraan;
-use App\Models\Pengajuan\KeuanganUsaha;
+use App\Models\Pengajuan\AO\PemeriksaanAgunTan;
+use App\Models\Pengajuan\AO\PemeriksaanAgunKen;
+use App\Http\Requests\Transaksi\BlankRequest;
+use App\Models\Pengajuan\AO\AgunanKendaraan;
+use App\Models\Pengajuan\AO\KeuanganUsaha;
 // use App\Models\Pengajuan\Pasangan;
 // use App\Models\Pengajuan\Debitur;
-use App\Models\Pengajuan\AgunanTanah;
-use App\Models\Pengajuan\KapBulanan;
+use App\Models\Pengajuan\AO\AgunanTanah;
+use App\Models\Pengajuan\AO\KapBulanan;
+use App\Models\Pengajuan\CA\MutasiBank;
+use App\Models\Pengajuan\AO\Penjamin;
 use Illuminate\Support\Facades\File;
-use App\Models\Pengajuan\Penjamin;
+use App\Models\Transaksi\TransCA;
+use App\Models\Transaksi\TransAO;
+use App\Models\Transaksi\TransSO;
 use App\Models\AreaKantor\JPIC;
 use App\Models\AreaKantor\PIC;
-use App\Models\Bisnis\TransCA;
-use App\Models\Bisnis\TransAO;
-use App\Models\Bisnis\TransSO;
-use App\Models\CA\MutasiBank;
 use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Models\User;
@@ -45,7 +45,9 @@ class MasterCA_Controller extends BaseController
 
         $id_cabang = $pic->id_mk_cabang;
 
-        $query = TransAO::with('so')->where('id_cabang', $id_cabang)->where('status_ao', 1)->get();
+        $query = TransAO::with('so', 'pic', 'cabang')->where('id_cabang', $id_cabang)->where('status_ao', 1)->get();
+
+        // 'so', 'pic', 'cabang', 'valid', 'verif', 'tan', 'ken', 'pe_tan', 'pe_ken', 'kapbul', 'usaha', 'recom_ao'
 
         if ($query == '[]') {
             return response()->json([
@@ -68,14 +70,12 @@ class MasterCA_Controller extends BaseController
 
             $data[$key] = [
                 'id_trans_so'    => $val->id_trans_so,
-                // 'id'             => $val->id,
-                'nomor_ao'       => $val->nomor_ao,
-                // 'user_id'        => $val->user_id,
-                'id_pic'         => $val->id_pic,
-                'id_cabang'      => $id_cabang,
+                'nomor_so'       => $val->so['nomor_so'],
+                'nomor_ca'       => $val->nomor_ca,
+                'pic'            => $val->pic['nama'],
+                'cabang'         => $val->cabang['nama'],
                 'asal_data'      => $val->so['asaldata']['nama'],
                 'nama_marketing' => $val->so['nama_marketing'],
-                'nama_so'        => $val->so['nama_so'],
                 'nama_debitur'   => $val->so['debt']['nama_lengkap'],
                 'plafon'         => $val->so['faspin']['plafon'],
                 'tenor'          => $val->so['faspin']['tenor'],
@@ -103,7 +103,7 @@ class MasterCA_Controller extends BaseController
         $pic     = PIC::where('user_id', $user_id)->first();
         $id_cabang = $pic->id_mk_cabang;
 
-        $val = TransAO::with('so')->where('id_cabang', $id_cabang)->first();
+        $val = TransAO::with('so', 'pic', 'cabang')->where('id_cabang', $id_cabang)->first();
 
         if (!$val) {
             return response()->json([
@@ -113,249 +113,14 @@ class MasterCA_Controller extends BaseController
             ], 404);
         }
 
-        $id_penj = explode (",",$val->so['id_penjamin']);
+        $id_penj = explode (",", $val->so['id_penjamin']);
 
-        $id_agu_ta = explode (",",$val->so['id_agunan_tanah']);
-        $id_agu_ke = explode (",",$val->so['id_agunan_kendaraan']);
+        $id_agu_ta = explode (",",$val->id_agunan_tanah);
+        $id_agu_ke = explode (",",$val->id_agunan_kendaraan);
 
-        $id_pe_agu_ta = explode (",",$val->so['id_periksa_agunan_tanah']);
-        $id_pe_agu_ke = explode (",",$val->so['id_periksa_agunan_kendaraan']);
+        $id_pe_agu_ta = explode (",",$val->id_periksa_agunan_tanah);
+        $id_pe_agu_ke = explode (",",$val->id_periksa_agunan_kendaraan);
 
-        $penjamin = Penjamin::whereIn('id', $id_penj)->get();
-
-        $tanah     = AgunanTanah::whereIn('id', $id_agu_ta)->get();
-        $kendaraan = AgunanKendaraan::whereIn('id', $id_agu_ke)->get();
-
-        $pe_tanah     = PemeriksaanAgunTan::whereIn('id', $id_pe_agu_ta)->get();
-        $pe_kendaraan = PemeriksaanAgunKen::whereIn('id', $id_pe_agu_ke)->get();
-
-        $check_KapBul = KapBulanan::where('id_calon_debitur', $val->so['id_calon_debt'])->first();
-
-        $check_usaha = KeuanganUsaha::where('id_calon_debitur', $val->so['id_calon_debt'])->first();
-
-        if ($penjamin != '[]') {
-            foreach ($penjamin as $key => $value) {
-                $pen[$key] = [
-                    "id"                    => $value->id,
-                    "nama_ktp"              => $value->nama_ktp,
-                    "nama_ibu_kandung"      => $value->nama_ibu_kandung,
-                    "no_ktp"                => $value->no_ktp,
-                    "no_npwp"               => $value->no_npwp,
-                    "tempat_lahir"          => $value->tempat_lahir,
-                    "tgl_lahir"             => Carbon::parse($value->tgl_lahir)->format('d-m-Y'),
-                    "jenis_kelamin"         => $value->jenis_kelamin,
-                    "alamat_ktp"            => $value->alamat_ktp,
-                    "no_telp"               => $value->no_telp,
-                    "hubungan_debitur"      => $value->hubungan_debitur,
-                    "pekerjaan" => [
-                        "nama_pekerjaan"        => $value->pekerjaan,
-                        "posisi_pekerjaan"      => $value->posisi_pekerjaan,
-                        "nama_tempat_kerja"     => $value->nama_tempat_kerja,
-                        "jenis_pekerjaan"       => $value->jenis_pekerjaan,
-                        "tgl_mulai_kerja"       => Carbon::parse($value->tgl_mulai_kerja)->format('d-m-Y'),
-                        "no_telp_tempat_kerja"  => $value->no_telp_tempat_kerja,
-                        'alamat' => [
-                            'alamat_singkat' => $value->alamat_tempat_kerja,
-                            'rt'             => $value->rt_tempat_kerja,
-                            'rw'             => $value->rw_tempat_kerja,
-                            'kelurahan' => [
-                                'id'    => $value->penj['kel_kerja']['id'],
-                                'nama'  => $value->penj['kel_kerja']['nama']
-                            ],
-                            'kecamatan' => [
-                                'id'    => $value->penj['kec_kerja']['id'],
-                                'nama'  => $value->penj['kec_kerja']['nama']
-                            ],
-                            'kabupaten' => [
-                                'id'    => $value->penj['kab_kerja']['id'],
-                                'nama'  => $value->penj['kab_kerja']['nama'],
-                            ],
-                            'provinsi'  => [
-                                'id'   => $value->penj['prov_kerja']['id'],
-                                'nama' => $value->penj['prov_kerja']['nama'],
-                            ],
-                            'kode_pos' => $value->penj['kel_kerja']['kode_pos']
-                        ]
-                    ],
-                    "lampiran" => [
-                        "lamp_ktp"          => $value->lamp_ktp,
-                        "lamp_ktp_pasangan" => $value->lamp_ktp_pasangan,
-                        "lamp_kk"           => $value->lamp_kk,
-                        "lamp_buku_nikah"   => $value->lamp_buku_nikah
-                    ]
-                ];
-            }
-        }else{
-            $pen = null;
-        }
-
-        if ($tanah != '[]') {
-            foreach ($tanah as $value) {
-                $tan[] = [
-                    'id'          => $value->id,
-                    'tipe_lokasi' => $value->tipe_lokasi,
-                    'alamat' => [
-                        'alamat_singkat' => $value->alamat,
-                        'rt' => $value->rt,
-                        'rw' => $value->rw,
-                        'kelurahan' => [
-                            'id'    => $value->id_kelurahan,
-                            'nama'  => $value->kel['nama']
-                        ],
-                        'kecamatan' => [
-                            'id'    => $value->id_kecamatan,
-                            'nama'  => $value->kec['nama']
-                        ],
-                        'kabupaten' => [
-                            'id'    => $value->id_kabupaten,
-                            'nama'  => $value->kab['nama'],
-                        ],
-                        'provinsi' => [
-                            'id'    => $value->id_provinsi,
-                            'nama'  => $value->prov['nama']
-                        ],
-                        'kode_pos' => $value->kel['kode_pos'],
-                        'luas_tanah'    => $value->luas_tanah,
-                        'luas_bangunan' => $value->luas_bangunan,
-                        'nama_pemilik_sertifikat' => $value->nama_pemilik_sertifikat,
-                        'jenis_sertifikat'        => $value->jenis_sertifikat,
-                        'no_sertifikat'           => $value->no_sertifikat,
-                        'tgl_ukur_sertifikat'     => $value->tgl_ukur_sertifikat,
-                        'tgl_berlaku_shgb'        => $value->tgl_berlaku_shgb,
-                        'no_imb' => $value->no_imb,
-                        'njop'   => $value->njop,
-                        'nop'    => $value->nop,
-                        'lampiran' => [
-                            'lamp_agunan_depan' => $value->lamp_agunan_depan,
-                            'lamp_agunan_kanan' => $value->lamp_agunan_kanan,
-                            'lamp_agunan_kiri' => $value->lamp_agunan_kiri,
-                            'lamp_agunan_belakang' => $value->lamp_agunan_belakang,
-                            'lamp_agunan_dalam' => $value->lamp_agunan_dalam,
-                            'lamp_sertifikat' => $value->lamp_sertifikat,
-                            'lamp_imb' => $value->lamp_imb,
-                            'lamp_pbb' => $value->lamp_pbb
-                        ]
-                    ],
-                ];
-            }
-        }else{
-            $tan = null;
-        }
-
-        if ($kendaraan != '[]') {
-            foreach ($kendaraan as $value) {
-                $ken[] = [
-                    'id'            => $value->id,
-                    'no_bpkb'       => $value->no_bpkb,
-                    'nama_pemilik'  => $value->nama_pemilik,
-                    'alamat_pemilik'=> $value->alamat_pemilik,
-                    'merk'          => $value->merk,
-                    'jenis'         => $value->jenis,
-                    'no_rangka'     => $value->no_rangka,
-                    'no_mesin'      => $value->no_mesin,
-                    'warna'         => $value->warna,
-                    'tahun'         => $value->tahun,
-                    'no_polisi'     => $value->no_polisi,
-                    'no_stnk'       => $value->no_stnk,
-                    'tgl_kadaluarsa_pajak'=> $value->tgl_kadaluarsa_pajak,
-                    'tgl_kadaluarsa_stnk' => $value->tgl_kadaluarsa_stnk,
-                    'no_faktur'         => $value->no_faktur,
-                    'lampiran'  => [
-                        'lamp_agunan_depan' => $value->lamp_agunan_depan,
-                        'lamp_agunan_kanan' => $value->lamp_agunan_kanan,
-                        'lamp_agunan_kiri'  => $value->lamp_agunan_kiri,
-                        'lamp_agunan_belakang' => $value->lamp_agunan_belakang,
-                        'lamp_agunan_dalam' => $value->lamp_agunan_dalam
-                    ]
-                ];
-            }
-        }else{
-            $ken = null;
-        }
-
-        if ($pe_tanah != '[]') {
-            foreach ($pe_tanah as $value) {
-                $pe_ta[] = [
-                    'id'                => $value->id,
-                    'id_agunan_tanah'   => $value->id_agunan_tanah,
-                    'nama_penghuni'     => $value->nama_penghuni,
-                    'status_penghuni'   => $value->status_penghuni,
-                    'bentuk_bangunan'   => $value->bentuk_bangunan,
-                    'kondisi_bangunan'  => $value->kondisi_bangunan,
-                    'fasilitas'         => $value->fasilitas,
-                    'listrik'           => $value->listrik,
-                    'nilai_taksasi_agunan'   => $value->nilai_taksasi_agunan,
-                    'nilai_taksasi_bangunan' => $value->nilai_taksasi_bangunan,
-                    'tgl_taksasi'     => $value->tgl_taksasi,
-                    'nilai_likuidasi' => $value->nilai_likuidasi
-                ];
-            }
-        }else{
-            $pe_ta = null;
-        }
-
-        if ($pe_kendaraan != '[]') {
-            foreach ($pe_kendaraan as $value) {
-                $pe_ke[] = [
-                    'id'                  => $value->id,
-                    'id_agunan_kendaraan' => $value->id_agunan_kendaraan,
-                    'nama_pengguna'       => $value->nama_pengguna,
-                    'status_pengguna'     => $value->status_pengguna,
-                    'jml_roda_kendaraan'  => $value->jml_roda_kendaraan,
-                    'kondisi_kendaraan'   => $value->kondisi_kendaraan,
-                    'keberadaan_kendaraan'=> $value->keberadaan_kendaraan,
-                    'body'                => $value->body,
-                    'interior'            => $value->interior,
-                    'km'                  => $value->km,
-                    'modifikasi'          => $value->modifikasi,
-                    'aksesoris'           => $value->aksesoris
-                ];
-            }
-        }else{
-            $pe_ke = null;
-        }
-
-        if ($check_KapBul == null) {
-            $kapbul = null;
-        }else{
-            $kapbul = array(
-                'pemasukan' => array(
-                    'debitur' => $check_KapBul->pemasukan_cadebt,
-                    'pasangan'=> $check_KapBul->pemasukan_pasangan,
-                    'penjamin'=> $check_KapBul->pemasukan_penjamin,
-                ),
-                'pengeluaran' => array(
-                    'rumah_tangga'  => $check_KapBul->biaya_rumah_tangga,
-                    'transport'     => $check_KapBul->biaya_transport,
-                    'pendidikan'    => $check_KapBul->biaya_pendidikan,
-                    'telp_list_air' => $check_KapBul->biaya_telp_listr_air,
-                    'angsuran'      => $check_KapBul->angsuran,
-                    'lain_lain'     => $check_KapBul->biaya_lain
-                )
-            );
-        }
-
-        if ($check_usaha == null) {
-            $usaha = null;
-        }else{
-            $usaha = array(
-                'pendapatan' => array(
-                    'tunai' => $check_usaha->pemasukan_tunai,
-                    'kredit'=> $check_usaha->pemasukan_kredit
-                ),
-                'pengeluaran' => array(
-                    'biaya_sewa'           => $check_usaha->biaya_sewa,
-                    'biaya_gaji_pegawai'   => $check_usaha->biaya_gaji_pegawai,
-                    'biaya_belanja_brg'    => $check_usaha->biaya_belanja_brg,
-                    'biaya_telp_listr_air' => $check_usaha->biaya_telp_listr_air,
-                    'biaya_sampah_kemanan' => $check_usaha->biaya_sampah_kemanan,
-                    'biaya_kirim_barang'   => $check_usaha->biaya_kirim_barang,
-                    'biaya_hutang_dagang'  => $check_usaha->biaya_hutang_dagang,
-                    'angsuran'             => $check_usaha->biaya_angsuran,
-                    'lain_lain'            => $check_usaha->biaya_lain_lain
-                )
-            );
-        }
 
         if ($val->status_ao == 1) {
             $status_ao = 'recommend';
@@ -366,188 +131,195 @@ class MasterCA_Controller extends BaseController
         }
 
         $data[] = [
-            'id'        => $val->id,
-            'nomor_ao'  => $val->nomor_ao,
-            'id_pic'      => $val->id_pic,
-            'id_cabang'   => $val->so['pic']['id_mk_cabang'],
-            'nama_cabang' => $val->so['pic']['cabang']['nama'],
+            'id_trans_so'    => $val->id_trans_so,
+            'nomor_so'       => $val->so['nomor_so'],
+            'nomor_ca'       => $val->nomor_ca,
+            'nama_so'        => $val->so['nama_so'],
+            'nama_marketing' => $val->so['nama_marketing'],
+            'pic'  => [
+                'id'         => $val->id_pic,
+                'nama'       => $val->pic['nama'],
+            ],
+            'cabang' => [
+                'id'      => $val->id_cabang,
+                'nama'    => $val->cabang['nama'],
+            ],
+
             'asaldata'  => [
                 'id'   => $val->so['asaldata']['id'],
                 'nama' => $val->so['asaldata']['nama']
             ],
-            'nama_marketing' => $val->so['nama_marketing'],
-            'nama_so'        => $val->so['nama_so'],
             'fasilitas_pinjaman'  => [
                 'id'              => $val->so['id_fasilitas_pinjaman'],
-                'jenis_pinjaman'  => $val->so['faspin']['jenis_pinjaman'],
-                'tujuan_pinjaman' => $val->so['faspin']['tujuan_pinjaman'],
-                'plafon'          => $val->so['faspin']['plafon'],
-                'tenor'           => $val->so['faspin']['tenor'],
+                // 'jenis_pinjaman'  => $val->so['faspin']['jenis_pinjaman'],
+                // 'tujuan_pinjaman' => $val->so['faspin']['tujuan_pinjaman'],
+                // 'plafon'          => $val->so['faspin']['plafon'],
+                // 'tenor'           => $val->so['faspin']['tenor'],
             ],
             'data_debitur' => [
                 'id'                    => $val->so['id_calon_debt'],
                 'nama_lengkap'          => $val->so['debt']['nama_lengkap'],
-                'gelar_keagamaan'       => $val->so['debt']['gelar_keagamaan'],
-                'gelar_pendidikan'      => $val->so['debt']['gelar_pendidikan'],
-                'jenis_kelamin'         => $val->so['debt']['jenis_kelamin'],
-                'status_nikah'          => $val->so['debt']['status_nikah'],
-                'ibu_kandung'           => $val->so['debt']['ibu_kandung'],
-                'tinggi_badan'          => $val->so['debt']['tinggi_badan'],
-                'berat_badan'           => $val->so['debt']['berat_badan'],
-                'no_ktp'                => $val->so['debt']['no_ktp'],
-                'no_ktp_kk'             => $val->so['debt'][''],
-                'no_kk'                 => $val->so['debt']['no_ktp_kk'],
-                'no_npwp'               => $val->so['debt']['no_npwp'],
-                'tempat_lahir'          => $val->so['debt']['tempat_lahir'],
-                'tgl_lahir'             => Carbon::parse($val->so['debt']['tgl_lahir'])->format('d-m-Y'),
-                'agama'                 => $val->so['debt']['agama'],
+                // 'gelar_keagamaan'       => $val->so['debt']['gelar_keagamaan'],
+                // 'gelar_pendidikan'      => $val->so['debt']['gelar_pendidikan'],
+                // 'jenis_kelamin'         => $val->so['debt']['jenis_kelamin'],
+                // 'status_nikah'          => $val->so['debt']['status_nikah'],
+                // 'ibu_kandung'           => $val->so['debt']['ibu_kandung'],
+                // 'tinggi_badan'          => $val->so['debt']['tinggi_badan'],
+                // 'berat_badan'           => $val->so['debt']['berat_badan'],
+                // 'no_ktp'                => $val->so['debt']['no_ktp'],
+                // 'no_ktp_kk'             => $val->so['debt'][''],
+                // 'no_kk'                 => $val->so['debt']['no_ktp_kk'],
+                // 'no_npwp'               => $val->so['debt']['no_npwp'],
+                // 'tempat_lahir'          => $val->so['debt']['tempat_lahir'],
+                // 'tgl_lahir'             => Carbon::parse($val->so['debt']['tgl_lahir'])->format('d-m-Y'),
+                // 'agama'                 => $val->so['debt']['agama'],
 
-                'alamat_ktp' => [
-                    'alamat_singkat' => $val->so['debt']['alamat_ktp'],
-                    'rt'     => $val->so['debt']['rt_ktp'],
-                    'rw'     => $val->so['debt']['rw_ktp'],
-                    'kelurahan' => [
-                        'id'    => $val->so['debt']['kel_ktp']['id'],
-                        'nama'  => $val->so['debt']['kel_ktp']['nama']
-                    ],
-                    'kecamatan' => [
-                        'id'    => $val->so['debt']['kec_ktp']['id'],
-                        'nama'  => $val->so['debt']['kec_ktp']['nama']
-                    ],
-                    'kabupaten' => [
-                        'id'    => $val->so['debt']['kab_ktp']['id'],
-                        'nama'  => $val->so['debt']['kab_ktp']['nama'],
-                    ],
-                    'provinsi'  => [
-                        'id'   => $val->so['debt']['prov_ktp']['id'],
-                        'nama' => $val->so['debt']['prov_ktp']['nama'],
-                    ],
-                    'kode_pos' => $val->so['debt']['kel_ktp']['kode_pos']
-                ],
-                'alamat_domisili' => [
-                    'alamat_singkat' => $val->so['debt']['alamat_domisili'],
-                    'rt'             => $val->so['debt']['rt_domisili'],
-                    'rw'             => $val->so['debt']['rw_domisili'],
-                    'kelurahan' => [
-                        'id'    => $val->so['debt']['kel_dom']['id'],
-                        'nama'  => $val->so['debt']['kel_dom']['nama']
-                    ],
-                    'kecamatan' => [
-                        'id'    => $val->so['debt']['kec_dom']['id'],
-                        'nama'  => $val->so['debt']['kec_dom']['nama']
-                    ],
-                    'kabupaten' => [
-                        'id'    => $val->so['debt']['kab_dom']['id'],
-                        'nama'  => $val->so['debt']['kab_dom']['nama'],
-                    ],
-                    'provinsi'  => [
-                        'id'   => $val->so['debt']['prov_dom']['id'],
-                        'nama' => $val->so['debt']['prov_dom']['nama'],
-                    ],
-                    'kode_pos' => $val->so['debt']['kel_dom']['kode_pos']
-                ],
-                "pekerjaan" => [
-                    "nama_pekerjaan"        => $val->so['debt']['pekerjaan'],
-                    "posisi_pekerjaan"      => $val->so['debt']['posisi_pekerjaan'],
-                    "nama_tempat_kerja"     => $val->so['debt']['nama_tempat_kerja'],
-                    "jenis_pekerjaan"       => $val->so['debt']['jenis_pekerjaan'],
-                    "tgl_mulai_kerja"       => Carbon::parse($val->so['debt']['tgl_mulai_kerja'])->format('d-m-Y'),
-                    "no_telp_tempat_kerja"  => $val->so['debt']['no_telp_tempat_kerja'],
-                    'alamat' => [
-                        'alamat_singkat' => $val->so['debt']['alamat_tempat_kerja'],
-                        'rt'             => $val->so['debt']['rt_tempat_kerja'],
-                        'rw'             => $val->so['debt']['rw_tempat_kerja'],
-                        'kelurahan' => [
-                            'id'    => $val->so['debt']['kel_kerja']['id'],
-                            'nama'  => $val->so['debt']['kel_kerja']['nama']
-                        ],
-                        'kecamatan' => [
-                            'id'    => $val->so['debt']['kec_kerja']['id'],
-                            'nama'  => $val->so['debt']['kec_kerja']['nama']
-                        ],
-                        'kabupaten' => [
-                            'id'    => $val->so['debt']['kab_kerja']['id'],
-                            'nama'  => $val->so['debt']['kab_kerja']['nama'],
-                        ],
-                        'provinsi'  => [
-                            'id'   => $val->so['debt']['prov_kerja']['id'],
-                            'nama' => $val->so['debt']['prov_kerja']['nama'],
-                        ],
-                        'kode_pos' => $val->so['debt']['kel_kerja']['kode_pos']
-                    ]
-                ],
-                'pendidikan_terakhir'   => $val->so['debt']['pendidikan_terakhir'],
-                'jumlah_tanggungan'     => $val->so['debt']['jumlah_tanggungan'],
-                'no_telp'               => $val->so['debt']['no_telp'],
-                'no_hp'                 => $val->so['debt']['no_hp'],
-                'alamat_surat'          => $val->so['debt']['alamat_surat'],
-                'lampiran' => [
-                    'lamp_ktp'              => $val->so['debt']['lamp_ktp'],
-                    'lamp_kk'               => $val->so['debt']['lamp_kk'],
-                    'lamp_buku_tabungan'    => $val->so['debt']['lamp_buku_tabungan'],
-                    'lamp_sertifikat'       => $val->so['debt']['lamp_sertifikat'],
-                    'lamp_sttp_pbb'         => $val->so['debt']['lamp_sttp_pbb'],
-                    'lamp_imb'              => $val->so['debt']['lamp_imb']
-                ]
+                // 'alamat_ktp' => [
+                //     'alamat_singkat' => $val->so['debt']['alamat_ktp'],
+                //     'rt'     => $val->so['debt']['rt_ktp'],
+                //     'rw'     => $val->so['debt']['rw_ktp'],
+                //     'kelurahan' => [
+                //         'id'    => $val->so['debt']['kel_ktp']['id'],
+                //         'nama'  => $val->so['debt']['kel_ktp']['nama']
+                //     ],
+                //     'kecamatan' => [
+                //         'id'    => $val->so['debt']['kec_ktp']['id'],
+                //         'nama'  => $val->so['debt']['kec_ktp']['nama']
+                //     ],
+                //     'kabupaten' => [
+                //         'id'    => $val->so['debt']['kab_ktp']['id'],
+                //         'nama'  => $val->so['debt']['kab_ktp']['nama'],
+                //     ],
+                //     'provinsi'  => [
+                //         'id'   => $val->so['debt']['prov_ktp']['id'],
+                //         'nama' => $val->so['debt']['prov_ktp']['nama'],
+                //     ],
+                //     'kode_pos' => $val->so['debt']['kel_ktp']['kode_pos']
+                // ],
+                // 'alamat_domisili' => [
+                //     'alamat_singkat' => $val->so['debt']['alamat_domisili'],
+                //     'rt'             => $val->so['debt']['rt_domisili'],
+                //     'rw'             => $val->so['debt']['rw_domisili'],
+                //     'kelurahan' => [
+                //         'id'    => $val->so['debt']['kel_dom']['id'],
+                //         'nama'  => $val->so['debt']['kel_dom']['nama']
+                //     ],
+                //     'kecamatan' => [
+                //         'id'    => $val->so['debt']['kec_dom']['id'],
+                //         'nama'  => $val->so['debt']['kec_dom']['nama']
+                //     ],
+                //     'kabupaten' => [
+                //         'id'    => $val->so['debt']['kab_dom']['id'],
+                //         'nama'  => $val->so['debt']['kab_dom']['nama'],
+                //     ],
+                //     'provinsi'  => [
+                //         'id'   => $val->so['debt']['prov_dom']['id'],
+                //         'nama' => $val->so['debt']['prov_dom']['nama'],
+                //     ],
+                //     'kode_pos' => $val->so['debt']['kel_dom']['kode_pos']
+                // ],
+                // "pekerjaan" => [
+                //     "nama_pekerjaan"        => $val->so['debt']['pekerjaan'],
+                //     "posisi_pekerjaan"      => $val->so['debt']['posisi_pekerjaan'],
+                //     "nama_tempat_kerja"     => $val->so['debt']['nama_tempat_kerja'],
+                //     "jenis_pekerjaan"       => $val->so['debt']['jenis_pekerjaan'],
+                //     "tgl_mulai_kerja"       => Carbon::parse($val->so['debt']['tgl_mulai_kerja'])->format('d-m-Y'),
+                //     "no_telp_tempat_kerja"  => $val->so['debt']['no_telp_tempat_kerja'],
+                //     'alamat' => [
+                //         'alamat_singkat' => $val->so['debt']['alamat_tempat_kerja'],
+                //         'rt'             => $val->so['debt']['rt_tempat_kerja'],
+                //         'rw'             => $val->so['debt']['rw_tempat_kerja'],
+                //         'kelurahan' => [
+                //             'id'    => $val->so['debt']['kel_kerja']['id'],
+                //             'nama'  => $val->so['debt']['kel_kerja']['nama']
+                //         ],
+                //         'kecamatan' => [
+                //             'id'    => $val->so['debt']['kec_kerja']['id'],
+                //             'nama'  => $val->so['debt']['kec_kerja']['nama']
+                //         ],
+                //         'kabupaten' => [
+                //             'id'    => $val->so['debt']['kab_kerja']['id'],
+                //             'nama'  => $val->so['debt']['kab_kerja']['nama'],
+                //         ],
+                //         'provinsi'  => [
+                //             'id'   => $val->so['debt']['prov_kerja']['id'],
+                //             'nama' => $val->so['debt']['prov_kerja']['nama'],
+                //         ],
+                //         'kode_pos' => $val->so['debt']['kel_kerja']['kode_pos']
+                //     ]
+                // ],
+                // 'pendidikan_terakhir'   => $val->so['debt']['pendidikan_terakhir'],
+                // 'jumlah_tanggungan'     => $val->so['debt']['jumlah_tanggungan'],
+                // 'no_telp'               => $val->so['debt']['no_telp'],
+                // 'no_hp'                 => $val->so['debt']['no_hp'],
+                // 'alamat_surat'          => $val->so['debt']['alamat_surat'],
+                // 'lampiran' => [
+                //     'lamp_ktp'              => $val->so['debt']['lamp_ktp'],
+                //     'lamp_kk'               => $val->so['debt']['lamp_kk'],
+                //     'lamp_buku_tabungan'    => $val->so['debt']['lamp_buku_tabungan'],
+                //     'lamp_sertifikat'       => $val->so['debt']['lamp_sertifikat'],
+                //     'lamp_sttp_pbb'         => $val->so['debt']['lamp_sttp_pbb'],
+                //     'lamp_imb'              => $val->so['debt']['lamp_imb']
+                // ]
             ],
             'data_pasangan' => [
                 'id'               => $val->so['id_pasangan'],
                 'nama_lengkap'     => $val->so['pas']['nama_lengkap'],
-                'nama_ibu_kandung' => $val->so['pas']['nama_ibu_kandung'],
-                'jenis_kelamin'    => $val->so['pas']['jenis_kelamin'],
-                'no_ktp'           => $val->so['pas']['no_ktp'],
-                'no_ktp_kk'        => $val->so['pas']['no_ktp_kk'],
-                'no_npwp'          => $val->so['pas']['no_npwp'],
-                'tempat_lahir'     => $val->so['pas']['tempat_lahir'],
-                'tgl_lahir'        => Carbon::parse($val->so['pas']['tgl_lahir'])->format('d-m-Y'),
-                'alamat_ktp'       => $val->so['pas']['alamat_ktp'],
-                'no_telp'          => $val->so['pas']['no_telp'],
-                'pekerjaan' => [
-                    "nama_pekerjaan"        => $val->so['pas']['pekerjaan'],
-                    "posisi_pekerjaan"      => $val->so['pas']['posisi_pekerjaan'],
-                    "nama_tempat_kerja"     => $val->so['pas']['nama_tempat_kerja'],
-                    "jenis_pekerjaan"       => $val->so['pas']['jenis_pekerjaan'],
-                    "tgl_mulai_kerja"       => Carbon::parse($val->so['pas']['tgl_mulai_kerja'])->format('d-m-Y'),
-                    "no_telp_tempat_kerja"  => $val->so['pas']['no_telp_tempat_kerja'],
-                    'alamat' => [
-                        'alamat_singkat' => $val->so['pas']['alamat_tempat_kerja'],
-                        'rt'             => $val->so['pas']['rt_tempat_kerja'],
-                        'rw'             => $val->so['pas']['rw_tempat_kerja'],
-                        'kelurahan' => [
-                            'id'    => $val->so['pas']['kel_kerja']['id'],
-                            'nama'  => $val->so['pas']['kel_kerja']['nama']
-                        ],
-                        'kecamatan' => [
-                            'id'    => $val->so['pas']['kec_kerja']['id'],
-                            'nama'  => $val->so['pas']['kec_kerja']['nama']
-                        ],
-                        'kabupaten' => [
-                            'id'    => $val->so['pas']['kab_kerja']['id'],
-                            'nama'  => $val->so['pas']['kab_kerja']['nama'],
-                        ],
-                        'provinsi'  => [
-                            'id'   => $val->so['pas']['prov_kerja']['id'],
-                            'nama' => $val->so['pas']['prov_kerja']['nama'],
-                        ],
-                        'kode_pos' => $val->so['pas']['kel_kerja']['kode_pos']
-                    ]
-                ],
-                'lampiran' => [
-                    'lamp_ktp'         => $val->so['pas']['lamp_ktp'],
-                    'lamp_buku_nikah'  => $val->so['pas']['lamp_buku_nikah']
-                ]
+                // 'nama_ibu_kandung' => $val->so['pas']['nama_ibu_kandung'],
+                // 'jenis_kelamin'    => $val->so['pas']['jenis_kelamin'],
+                // 'no_ktp'           => $val->so['pas']['no_ktp'],
+                // 'no_ktp_kk'        => $val->so['pas']['no_ktp_kk'],
+                // 'no_npwp'          => $val->so['pas']['no_npwp'],
+                // 'tempat_lahir'     => $val->so['pas']['tempat_lahir'],
+                // 'tgl_lahir'        => Carbon::parse($val->so['pas']['tgl_lahir'])->format('d-m-Y'),
+                // 'alamat_ktp'       => $val->so['pas']['alamat_ktp'],
+                // 'no_telp'          => $val->so['pas']['no_telp'],
+                // 'pekerjaan' => [
+                //     "nama_pekerjaan"        => $val->so['pas']['pekerjaan'],
+                //     "posisi_pekerjaan"      => $val->so['pas']['posisi_pekerjaan'],
+                //     "nama_tempat_kerja"     => $val->so['pas']['nama_tempat_kerja'],
+                //     "jenis_pekerjaan"       => $val->so['pas']['jenis_pekerjaan'],
+                //     "tgl_mulai_kerja"       => Carbon::parse($val->so['pas']['tgl_mulai_kerja'])->format('d-m-Y'),
+                //     "no_telp_tempat_kerja"  => $val->so['pas']['no_telp_tempat_kerja'],
+                //     'alamat' => [
+                //         'alamat_singkat' => $val->so['pas']['alamat_tempat_kerja'],
+                //         'rt'             => $val->so['pas']['rt_tempat_kerja'],
+                //         'rw'             => $val->so['pas']['rw_tempat_kerja'],
+                //         'kelurahan' => [
+                //             'id'    => $val->so['pas']['kel_kerja']['id'],
+                //             'nama'  => $val->so['pas']['kel_kerja']['nama']
+                //         ],
+                //         'kecamatan' => [
+                //             'id'    => $val->so['pas']['kec_kerja']['id'],
+                //             'nama'  => $val->so['pas']['kec_kerja']['nama']
+                //         ],
+                //         'kabupaten' => [
+                //             'id'    => $val->so['pas']['kab_kerja']['id'],
+                //             'nama'  => $val->so['pas']['kab_kerja']['nama'],
+                //         ],
+                //         'provinsi'  => [
+                //             'id'   => $val->so['pas']['prov_kerja']['id'],
+                //             'nama' => $val->so['pas']['prov_kerja']['nama'],
+                //         ],
+                //         'kode_pos' => $val->so['pas']['kel_kerja']['kode_pos']
+                //     ]
+                // ],
+                // 'lampiran' => [
+                //     'lamp_ktp'         => $val->so['pas']['lamp_ktp'],
+                //     'lamp_buku_nikah'  => $val->so['pas']['lamp_buku_nikah']
+                // ]
             ],
-            'data_penjamin' => $pen,
+            'data_penjamin' => $id_penj,
             'data_agunan' => [
-                'agunan_tanah'     => $tan,
-                'agunan_kendaraan' => $ken
+                'agunan_tanah'     => $id_agu_ta,
+                'agunan_kendaraan' => $id_agu_ke
             ],
             'pemeriksaan' => [
-                'agunan_tanah' => $pe_ta,
-                'agunan_kendaraan' => $pe_ke
+                'agunan_tanah' => $id_pe_agu_ta,
+                'agunan_kendaraan' => $id_pe_agu_ke
             ],
-            'kapasitas_bulanan' => $kapbul,
-            'pendapatan_usaha'  => $usaha,
+            'kapasitas_bulanan' => ['id' => $val->id_kapasitas_bulanan],
+            'pendapatan_usaha'  => ['id' => $val->id_pendapatan_usaha],
             'status_ao'         => $status_ao
         ];
 
