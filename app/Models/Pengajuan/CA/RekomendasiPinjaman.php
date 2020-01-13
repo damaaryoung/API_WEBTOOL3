@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\Pengajuan\SO;
+namespace App\Models\Pengajuan\CA;
 
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
@@ -8,7 +8,7 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Lumen\Auth\Authorizable;
 
-class FasilitasPinjaman extends Model implements AuthenticatableContract, AuthorizableContract
+class RekomendasiPinjaman extends Model implements AuthenticatableContract, AuthorizableContract
 {
     use Authenticatable, Authorizable;
 
@@ -19,11 +19,11 @@ class FasilitasPinjaman extends Model implements AuthenticatableContract, Author
      */
     protected $connection = 'web';
 
-    protected $table = 'fasilitas_pinjaman';
+    protected $table = 'rekomendasi_pinjaman';
     protected $primaryKey = 'id';
 
     protected $fillable = [
-        'jenis_pinjaman', 'tujuan_pinjaman', 'plafon', 'tenor', 'segmentasi_bpr'
+       'penyimpangan_struktur', 'penyimpangan_dokumen', 'recom_nilai_pinjaman', 'recom_tenor', 'recom_angsuran', 'recom_produk_kredit', 'note_recom'
     ];
 
     public $timestamps = false;

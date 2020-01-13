@@ -23,8 +23,16 @@ class RekomendasiCA extends Model implements AuthenticatableContract, Authorizab
     protected $primaryKey = 'id';
 
     protected $fillable = [
-       'segmentasi_bpr', 'penyimpangan_struktur', 'penyimpangan_dokumen', 'recom_nilai_pinjaman', 'recom_tenor', 'recom_angsuran', 'recom_produk_kredit', 'note_recom', 'notaris'
+       'produk', 'plafon_kredit', 'jangka_waktu', 'suku_bunga', 'pembayaran_bunga', 'akad_kredit', 'ikatan_agunan', 'biaya_provisi', 'biaya_administrasi', 'biaya_credit_checking', 'id_asuransi_jiwa', 'id_asuransi_jaminan', 'notaris', 'biaya_tabungan'
     ];
 
     public $timestamps = false;
+
+    public function as_jiwa(){
+        return $this->belongsTo('App\Models\Pengajuan\CA\AsuransiJiwa', 'id_asuransi_jiwa');
+    }
+
+    public function as_jaminan(){
+        return $this->belongsTo('App\Models\Pengajuan\CA\AsuransiJaminan', 'id_asuransi_jaminan');
+    }
 }

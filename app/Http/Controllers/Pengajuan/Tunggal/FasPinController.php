@@ -38,7 +38,8 @@ class FaspinController extends BaseController
             'jenis_pinjaman'  => $check->jenis_pinjaman,
             'tujuan_pinjaman' => $check->tujuan_pinjaman,
             'plafon'          => $check->plafon,
-            'tenor'           => $check->tenor
+            'tenor'           => $check->tenor,
+            'segmentasi_bpr'  => $check->segmentasi_bpr
         );
 
         try {
@@ -82,7 +83,8 @@ class FaspinController extends BaseController
             'jenis_pinjaman'  => empty($req->input('jenis_pinjaman')) ? $check->jenis_pinjaman : $req->input('jenis_pinjaman'),
             'tujuan_pinjaman' => empty($req->input('tujuan_pinjaman')) ? $check->tujuan_pinjaman : $req->input('tujuan_pinjaman'),
             'plafon'          => empty($req->input('plafon_pinjaman')) ? $check->plafon : $req->input('plafon_pinjaman'),
-            'tenor'           => empty($req->input('tenor_pinjaman')) ? $check->tenor : $req->input('tenor_pinjaman')
+            'tenor'           => empty($req->input('tenor_pinjaman')) ? $check->tenor : $req->input('tenor_pinjaman'),
+            'segmentasi_bpr'  => empty($req->input('segmentasi_bpr')) ? $check->segmentasi_bpr : $req->input('segmentasi_bpr')
         );
 
         DB::connection('web')->beginTransaction();

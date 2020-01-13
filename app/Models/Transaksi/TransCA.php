@@ -23,7 +23,7 @@ class TransCA extends Model implements AuthenticatableContract, AuthorizableCont
     protected $primaryKey = 'id';
 
     protected $fillable = [
-        'nomor_ca', 'user_id', 'id_trans_so', 'id_pic', 'id_cabang', 'id_mutasi_bank', 'id_log_tabungan', 'id_info_analisa_cc', 'id_ringkasan_analisa', 'id_recom_ca', 'id_asuransi_jiwa', 'id_asuransi_jaminan', 'catatan_ca', 'status_ca'
+        'nomor_ca', 'user_id', 'id_trans_so', 'id_pic', 'id_cabang', 'id_mutasi_bank', 'id_log_tabungan', 'id_info_analisa_cc', 'id_ringkasan_analisa', 'id_recom_ca', 'id_rekomendasi_pinjaman', 'id_asuransi_jiwa', 'id_asuransi_jaminan', 'catatan_ca', 'status_ca'
     ];
 
     public function pic(){
@@ -52,6 +52,10 @@ class TransCA extends Model implements AuthenticatableContract, AuthorizableCont
 
     public function recom_ca(){
         return $this->belongsTo('App\Models\Pengajuan\CA\Rekomendasi_CA', 'id_recom_ca');
+    }
+
+    public function recom_pin(){
+        return $this->belongsTo('App\Models\Pengajuan\CA\RekomendasiPinjaman', 'id_rekomendasi_pinjaman');
     }
 
     public function as_jiwa(){
