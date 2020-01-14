@@ -229,6 +229,7 @@ class MasterAO_Controller extends BaseController
         $data[] = [
             'id'          => $val->id,
             'nomor_so'    => $val->nomor_so,
+            'nomor_ao'    => $val->ao['nomor_ao'],
             'nama_so'     => $val->nama_so,
             'id_pic'      => $val->id_pic,
             'nama_pic'    => $val->pic['nama'],

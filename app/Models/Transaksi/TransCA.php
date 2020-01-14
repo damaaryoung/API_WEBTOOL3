@@ -26,6 +26,10 @@ class TransCA extends Model implements AuthenticatableContract, AuthorizableCont
         'nomor_ca', 'user_id', 'id_trans_so', 'id_pic', 'id_cabang', 'id_mutasi_bank', 'id_log_tabungan', 'id_info_analisa_cc', 'id_ringkasan_analisa', 'id_recom_ca', 'id_rekomendasi_pinjaman', 'id_asuransi_jiwa', 'id_asuransi_jaminan', 'catatan_ca', 'status_ca'
     ];
 
+    public function so(){
+        return $this->belongsTo('App\Models\Transaksi\TransSO', 'id_trans_so');
+    }
+
     public function pic(){
         return $this->belongsTo('App\Models\AreaKantor\PIC', 'id_pic');
     }
@@ -42,7 +46,7 @@ class TransCA extends Model implements AuthenticatableContract, AuthorizableCont
         return $this->belongsTo('App\Models\Pengajuan\CA\TabDebt', 'id_log_tabungan');
     }
 
-    public function Info_acc(){
+    public function info_acc(){
         return $this->belongsTo('App\Models\Pengajuan\CA\InfoACC', 'id_info_analisa_cc');
     }
 
@@ -51,7 +55,7 @@ class TransCA extends Model implements AuthenticatableContract, AuthorizableCont
     }
 
     public function recom_ca(){
-        return $this->belongsTo('App\Models\Pengajuan\CA\Rekomendasi_CA', 'id_recom_ca');
+        return $this->belongsTo('App\Models\Pengajuan\CA\RekomendasiCA', 'id_recom_ca');
     }
 
     public function recom_pin(){

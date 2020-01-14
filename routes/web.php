@@ -138,11 +138,6 @@ $router->group(['middleware' => 'jwt.auth'], function () use ($router) {
             $router->delete('/jenis_pic/{id}', 'Master\AreaKantor\JPICController@delete');
 
 
-            $router->post('/mcc', 'Transaksi\MasterCC_Controller@store'); // Memorandum Credit Checking
-            $router->get('/mcc', 'Transaksi\MasterCC_Controller@index');
-            $router->get('/mcc/{id}', 'Transaksi\MasterCC_Controller@show');
-            $router->post('/mcc/{id}', 'Transaksi\MasterCC_Controller@update'); // Update MCC
-
             $router->get('/das', 'Pengajuan\DASController@index'); //Cek HM
             $router->get('/das/{id}', 'Pengajuan\DASController@show'); //Cek HM
             $router->post('/das/{id}', 'Pengajuan\DASController@update'); //Cek HM
@@ -151,13 +146,34 @@ $router->group(['middleware' => 'jwt.auth'], function () use ($router) {
             $router->get('/hm/{id}', 'Pengajuan\HMController@show'); //Cek HM
             $router->put('/hm/{id}', 'Pengajuan\HMController@update'); //Cek HM
 
-            $router->get('/mao', 'Transaksi\MasterAO_Controller@index'); // All Memorandum Account Officer
-            $router->get('/mao/{id}', 'Transaksi\MasterAO_Controller@show'); //GEt MAO BY ID
-            $router->post('/mao/{id}', 'Transaksi\MasterAO_Controller@update'); //Update MAO BY ID
 
-            $router->get('/mca', 'Transaksi\MasterCA_Controller@index'); // All Memorandum Credit Analyst
-            $router->get('/mca/{id}', 'Transaksi\MasterCA_Controller@show'); //GEt CA BY ID
-            $router->post('/mca/{id}', 'Transaksi\MasterCA_Controller@update'); //Update CA BY ID
+            $router->group(['namespace' => 'Transaksi'], function() use ($router) {
+
+                $router->group(['prefix' => '/mcc',], function() use ($router) {
+                    $router->post('/', 'MasterCC_Controller@store'); // Memorandum Credit Checking
+                    $router->get('/', 'MasterCC_Controller@index');
+                    $router->get('/{id}', 'MasterCC_Controller@show');
+                    $router->post('/{id}', 'MasterCC_Controller@update'); // Update MCC
+                });
+
+                $router->group(['prefix' => '/mao',], function() use ($router) {
+                    $router->get('/', 'MasterAO_Controller@index'); // All Memorandum Account Officer
+                    $router->get('/{id}', 'MasterAO_Controller@show'); //GEt MAO BY ID
+                    $router->post('/{id}', 'MasterAO_Controller@update'); //Update MAO BY ID
+                });
+
+                $router->group(['prefix' => '/mca',], function() use ($router) {
+                    $router->get('/', 'MasterCA_Controller@index'); // All Memorandum Credit Analyst
+                    $router->get('/{id}', 'MasterCA_Controller@show'); //GEt CA BY ID
+                    $router->post('/{id}', 'MasterCA_Controller@update'); //Update CA BY ID
+                });
+
+                $router->group(['prefix' => '/mcaa',], function() use ($router) {
+                    $router->get('/', 'MasterCAA_Controller@index'); // All Memorandum Credit Analyst
+                    $router->get('/{id}', 'MasterCAA_Controller@show'); //GEt CA BY ID
+                    $router->post('/{id}', 'MasterCAA_Controller@update'); //Update CA BY ID
+                });
+            });
         });
 
         // Menu

@@ -191,6 +191,7 @@ class HMController extends BaseController
                 'kabupaten_domisili'    => $val->debt['kab_dom']['nama'],
                 'kecamatan_domisili'    => $val->debt['kec_dom']['nama'],
                 'kelurahan_domisili'    => $val->debt['kel_dom']['nama'],
+                'kode_pos_domisili'     => $val->debt['kel_dom']['kode_pos'],
                 'pendidikan_terakhir'   => $val->debt['pendidikan_terakhir'],
                 'jumlah_tanggungan'     => $val->debt['jumlah_tanggungan'],
                 'no_telp'               => $val->debt['no_telp'],

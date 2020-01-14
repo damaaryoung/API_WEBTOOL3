@@ -62,7 +62,7 @@ class TransSO extends Model implements AuthenticatableContract, AuthorizableCont
         return $this->belongsTo('App\Models\Transaksi\TransCA', 'id_trans_ca');
     }
 
-    // public function caa(){
-    //     return $this->belongsTo('App\Models\Transaksi\TransCAA', 'id_trans_caa');
-    // }
+    public function caa(){
+        return $this->belongsTo('App\Models\Transaksi\TransCAA', 'id_trans_caa');
+    }
 }

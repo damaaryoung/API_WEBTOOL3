@@ -155,11 +155,20 @@ class MasterCC_Controller extends BaseController
 
 
         if ($val->ca['status_ca'] == 1) {
-            $status_ao = 'complete';
+            $status_ca = 'complete';
         }elseif ($val->ca['status_ca'] == 2) {
             $status_ca = 'not complete';
         }else{
             $status_ca = 'waiting';
+        }
+
+
+        if ($val->caa['status_caa'] == 1) {
+            $status_caa = 'complete';
+        }elseif ($val->caa['status_caa'] == 2) {
+            $status_caa = 'not complete';
+        }else{
+            $status_caa = 'waiting';
         }
 
         $res = [
@@ -175,7 +184,7 @@ class MasterCC_Controller extends BaseController
                 'hm'  => $status_hm,
                 'ao'  => $status_ao,
                 'ca'  => $status_ca,
-                // 'caa' => $status_caa,
+                'caa' => $status_caa,
             ],
             'asal_data' => [
                 'id'   => $val->id_asal_data,

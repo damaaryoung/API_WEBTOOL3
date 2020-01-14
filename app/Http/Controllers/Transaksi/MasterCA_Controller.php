@@ -70,7 +70,8 @@ class MasterCA_Controller extends BaseController
             $data[$key] = [
                 'id_trans_so'    => $val->id_trans_so,
                 'nomor_so'       => $val->so['nomor_so'],
-                'nomor_ca'       => $val->nomor_ca,
+                'nomor_ao'       => $val->nomor_ao,
+                'nomor_ca'       => $val->so['ca']['nomor_ca'],
                 'pic'            => $val->pic['nama'],
                 'cabang'         => $val->cabang['nama'],
                 'asal_data'      => $val->so['asaldata']['nama'],
@@ -168,7 +169,8 @@ class MasterCA_Controller extends BaseController
         $data[] = [
             'id_trans_so'    => $val->id_trans_so,
             'nomor_so'       => $val->so['nomor_so'],
-            'nomor_ca'       => $val->nomor_ca,
+            'nomor_ao'       => $val->nomor_ao,
+            'nomor_ca'       => $val->so['ca']['nomor_ca'],
             'nama_so'        => $val->so['nama_so'],
             'nama_marketing' => $val->so['nama_marketing'],
             'pic'  => [
@@ -185,164 +187,15 @@ class MasterCA_Controller extends BaseController
                 'nama' => $val->so['asaldata']['nama']
             ],
             'fasilitas_pinjaman'  => [
-                'id'              => $val->so['id_fasilitas_pinjaman'],
-                // 'jenis_pinjaman'  => $val->so['faspin']['jenis_pinjaman'],
-                // 'tujuan_pinjaman' => $val->so['faspin']['tujuan_pinjaman'],
-                // 'plafon'          => $val->so['faspin']['plafon'],
-                // 'tenor'           => $val->so['faspin']['tenor'],
+                'id'              => $val->so['id_fasilitas_pinjaman']
             ],
             'data_debitur' => [
-                'id'                    => $val->so['id_calon_debt'],
-                'nama_lengkap'          => $val->so['debt']['nama_lengkap'],
-                // 'gelar_keagamaan'       => $val->so['debt']['gelar_keagamaan'],
-                // 'gelar_pendidikan'      => $val->so['debt']['gelar_pendidikan'],
-                // 'jenis_kelamin'         => $val->so['debt']['jenis_kelamin'],
-                // 'status_nikah'          => $val->so['debt']['status_nikah'],
-                // 'ibu_kandung'           => $val->so['debt']['ibu_kandung'],
-                // 'tinggi_badan'          => $val->so['debt']['tinggi_badan'],
-                // 'berat_badan'           => $val->so['debt']['berat_badan'],
-                // 'no_ktp'                => $val->so['debt']['no_ktp'],
-                // 'no_ktp_kk'             => $val->so['debt'][''],
-                // 'no_kk'                 => $val->so['debt']['no_ktp_kk'],
-                // 'no_npwp'               => $val->so['debt']['no_npwp'],
-                // 'tempat_lahir'          => $val->so['debt']['tempat_lahir'],
-                // 'tgl_lahir'             => Carbon::parse($val->so['debt']['tgl_lahir'])->format('d-m-Y'),
-                // 'agama'                 => $val->so['debt']['agama'],
-
-                // 'alamat_ktp' => [
-                //     'alamat_singkat' => $val->so['debt']['alamat_ktp'],
-                //     'rt'     => $val->so['debt']['rt_ktp'],
-                //     'rw'     => $val->so['debt']['rw_ktp'],
-                //     'kelurahan' => [
-                //         'id'    => $val->so['debt']['kel_ktp']['id'],
-                //         'nama'  => $val->so['debt']['kel_ktp']['nama']
-                //     ],
-                //     'kecamatan' => [
-                //         'id'    => $val->so['debt']['kec_ktp']['id'],
-                //         'nama'  => $val->so['debt']['kec_ktp']['nama']
-                //     ],
-                //     'kabupaten' => [
-                //         'id'    => $val->so['debt']['kab_ktp']['id'],
-                //         'nama'  => $val->so['debt']['kab_ktp']['nama'],
-                //     ],
-                //     'provinsi'  => [
-                //         'id'   => $val->so['debt']['prov_ktp']['id'],
-                //         'nama' => $val->so['debt']['prov_ktp']['nama'],
-                //     ],
-                //     'kode_pos' => $val->so['debt']['kel_ktp']['kode_pos']
-                // ],
-                // 'alamat_domisili' => [
-                //     'alamat_singkat' => $val->so['debt']['alamat_domisili'],
-                //     'rt'             => $val->so['debt']['rt_domisili'],
-                //     'rw'             => $val->so['debt']['rw_domisili'],
-                //     'kelurahan' => [
-                //         'id'    => $val->so['debt']['kel_dom']['id'],
-                //         'nama'  => $val->so['debt']['kel_dom']['nama']
-                //     ],
-                //     'kecamatan' => [
-                //         'id'    => $val->so['debt']['kec_dom']['id'],
-                //         'nama'  => $val->so['debt']['kec_dom']['nama']
-                //     ],
-                //     'kabupaten' => [
-                //         'id'    => $val->so['debt']['kab_dom']['id'],
-                //         'nama'  => $val->so['debt']['kab_dom']['nama'],
-                //     ],
-                //     'provinsi'  => [
-                //         'id'   => $val->so['debt']['prov_dom']['id'],
-                //         'nama' => $val->so['debt']['prov_dom']['nama'],
-                //     ],
-                //     'kode_pos' => $val->so['debt']['kel_dom']['kode_pos']
-                // ],
-                // "pekerjaan" => [
-                //     "nama_pekerjaan"        => $val->so['debt']['pekerjaan'],
-                //     "posisi_pekerjaan"      => $val->so['debt']['posisi_pekerjaan'],
-                //     "nama_tempat_kerja"     => $val->so['debt']['nama_tempat_kerja'],
-                //     "jenis_pekerjaan"       => $val->so['debt']['jenis_pekerjaan'],
-                //     "tgl_mulai_kerja"       => Carbon::parse($val->so['debt']['tgl_mulai_kerja'])->format('d-m-Y'),
-                //     "no_telp_tempat_kerja"  => $val->so['debt']['no_telp_tempat_kerja'],
-                //     'alamat' => [
-                //         'alamat_singkat' => $val->so['debt']['alamat_tempat_kerja'],
-                //         'rt'             => $val->so['debt']['rt_tempat_kerja'],
-                //         'rw'             => $val->so['debt']['rw_tempat_kerja'],
-                //         'kelurahan' => [
-                //             'id'    => $val->so['debt']['kel_kerja']['id'],
-                //             'nama'  => $val->so['debt']['kel_kerja']['nama']
-                //         ],
-                //         'kecamatan' => [
-                //             'id'    => $val->so['debt']['kec_kerja']['id'],
-                //             'nama'  => $val->so['debt']['kec_kerja']['nama']
-                //         ],
-                //         'kabupaten' => [
-                //             'id'    => $val->so['debt']['kab_kerja']['id'],
-                //             'nama'  => $val->so['debt']['kab_kerja']['nama'],
-                //         ],
-                //         'provinsi'  => [
-                //             'id'   => $val->so['debt']['prov_kerja']['id'],
-                //             'nama' => $val->so['debt']['prov_kerja']['nama'],
-                //         ],
-                //         'kode_pos' => $val->so['debt']['kel_kerja']['kode_pos']
-                //     ]
-                // ],
-                // 'pendidikan_terakhir'   => $val->so['debt']['pendidikan_terakhir'],
-                // 'jumlah_tanggungan'     => $val->so['debt']['jumlah_tanggungan'],
-                // 'no_telp'               => $val->so['debt']['no_telp'],
-                // 'no_hp'                 => $val->so['debt']['no_hp'],
-                // 'alamat_surat'          => $val->so['debt']['alamat_surat'],
-                // 'lampiran' => [
-                //     'lamp_ktp'              => $val->so['debt']['lamp_ktp'],
-                //     'lamp_kk'               => $val->so['debt']['lamp_kk'],
-                //     'lamp_buku_tabungan'    => $val->so['debt']['lamp_buku_tabungan'],
-                //     'lamp_sertifikat'       => $val->so['debt']['lamp_sertifikat'],
-                //     'lamp_sttp_pbb'         => $val->so['debt']['lamp_sttp_pbb'],
-                //     'lamp_imb'              => $val->so['debt']['lamp_imb']
-                // ]
+                'id'                    => $val->so['id_calon_debitur'],
+                'nama_lengkap'          => $val->so['debt']['nama_lengkap']
             ],
             'data_pasangan' => [
                 'id'               => $val->so['id_pasangan'],
-                'nama_lengkap'     => $val->so['pas']['nama_lengkap'],
-                // 'nama_ibu_kandung' => $val->so['pas']['nama_ibu_kandung'],
-                // 'jenis_kelamin'    => $val->so['pas']['jenis_kelamin'],
-                // 'no_ktp'           => $val->so['pas']['no_ktp'],
-                // 'no_ktp_kk'        => $val->so['pas']['no_ktp_kk'],
-                // 'no_npwp'          => $val->so['pas']['no_npwp'],
-                // 'tempat_lahir'     => $val->so['pas']['tempat_lahir'],
-                // 'tgl_lahir'        => Carbon::parse($val->so['pas']['tgl_lahir'])->format('d-m-Y'),
-                // 'alamat_ktp'       => $val->so['pas']['alamat_ktp'],
-                // 'no_telp'          => $val->so['pas']['no_telp'],
-                // 'pekerjaan' => [
-                //     "nama_pekerjaan"        => $val->so['pas']['pekerjaan'],
-                //     "posisi_pekerjaan"      => $val->so['pas']['posisi_pekerjaan'],
-                //     "nama_tempat_kerja"     => $val->so['pas']['nama_tempat_kerja'],
-                //     "jenis_pekerjaan"       => $val->so['pas']['jenis_pekerjaan'],
-                //     "tgl_mulai_kerja"       => Carbon::parse($val->so['pas']['tgl_mulai_kerja'])->format('d-m-Y'),
-                //     "no_telp_tempat_kerja"  => $val->so['pas']['no_telp_tempat_kerja'],
-                //     'alamat' => [
-                //         'alamat_singkat' => $val->so['pas']['alamat_tempat_kerja'],
-                //         'rt'             => $val->so['pas']['rt_tempat_kerja'],
-                //         'rw'             => $val->so['pas']['rw_tempat_kerja'],
-                //         'kelurahan' => [
-                //             'id'    => $val->so['pas']['kel_kerja']['id'],
-                //             'nama'  => $val->so['pas']['kel_kerja']['nama']
-                //         ],
-                //         'kecamatan' => [
-                //             'id'    => $val->so['pas']['kec_kerja']['id'],
-                //             'nama'  => $val->so['pas']['kec_kerja']['nama']
-                //         ],
-                //         'kabupaten' => [
-                //             'id'    => $val->so['pas']['kab_kerja']['id'],
-                //             'nama'  => $val->so['pas']['kab_kerja']['nama'],
-                //         ],
-                //         'provinsi'  => [
-                //             'id'   => $val->so['pas']['prov_kerja']['id'],
-                //             'nama' => $val->so['pas']['prov_kerja']['nama'],
-                //         ],
-                //         'kode_pos' => $val->so['pas']['kel_kerja']['kode_pos']
-                //     ]
-                // ],
-                // 'lampiran' => [
-                //     'lamp_ktp'         => $val->so['pas']['lamp_ktp'],
-                //     'lamp_buku_nikah'  => $val->so['pas']['lamp_buku_nikah']
-                // ]
+                'nama_lengkap'     => $val->so['pas']['nama_lengkap']
             ],
             'data_penjamin' => $idPen,
             'data_agunan' => [
@@ -429,9 +282,6 @@ class MasterCA_Controller extends BaseController
             'catatan_ca'  => $req->input('catatan_ca'),
             'status_ca'   => empty($req->input('status_ca')) ? 1 : $req->input('status_ca')
         );
-
-
-        // $lamp_dir = 'public/'.$check->debt['no_ktp'];
 
         // Mutasi Bank
         if (!empty($req->input('no_rekening_mutasi'))){
@@ -541,6 +391,7 @@ class MasterCA_Controller extends BaseController
 
         $check_ca = TransCA::where('id_trans_so', $id)->first();
 
+        try{
             DB::connection('web')->beginTransaction();
 
             if ($check_ca == null) {
@@ -750,21 +601,6 @@ class MasterCA_Controller extends BaseController
                 TransSO::where('id', $id)->update(['id_trans_ca' => $check_ca->id]);
             }
 
-
-            // TabDebt::create($dataTabUang);
-
-            // InfoACC::create($dataACC);
-
-            // RingkasanAnalisa::create($dataRingkasan);
-
-            // RekomendasiPinjaman::create($rekomPinjaman);
-
-            // RekomendasiCA::create($recomCA);
-
-            // AsuransiJiwa::create($asJiwa);
-
-            // AsuransiJaminan::create($asJaminan);
-
             DB::connection('web')->commit();
 
             return response()->json([
@@ -772,21 +608,13 @@ class MasterCA_Controller extends BaseController
                 'status' => 'success',
                 'message'=> 'Data untuk CA berhasil dikirim'
             ], 200);
-
-        // try{
-
-        //     return response()->json([
-        //         'code'   => 200,
-        //         'status' => 'success',
-        //         'message'=> 'Data berhasil dibuat'
-        //     ], 200);
-        // } catch (\Exception $e) {
-        //     $err = DB::connection('web')->rollback();
-        //     return response()->json([
-        //         'code'    => 501,
-        //         'status'  => 'error',
-        //         'message' => $err
-        //     ], 501);
-        // }
+        } catch (\Exception $e) {
+            $err = DB::connection('web')->rollback();
+            return response()->json([
+                'code'    => 501,
+                'status'  => 'error',
+                'message' => $err
+            ], 501);
+        }
     }
 }
