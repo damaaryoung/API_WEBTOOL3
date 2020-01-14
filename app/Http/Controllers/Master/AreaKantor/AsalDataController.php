@@ -1,11 +1,10 @@
 <?php
 
-namespace App\Http\Controllers\Master\Bisnis;
+namespace App\Http\Controllers\Master\AreaKantor;
 
 use Laravel\Lumen\Routing\Controller as BaseController;
 use App\Http\Controllers\Controller as Helper;
-use App\Http\Requests\Bisnis\AsalDataReq;
-use App\Models\Bisnis\AsalData;
+use App\Models\AreaKantor\AsalData;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use DB;
@@ -38,7 +37,7 @@ class AsalDataController extends BaseController
         }
     }
 
-    public function store(AsalDataReq $req) {
+    public function store(Request $req) {
         $data = array(
             'nama' => $req->input('nama'),
             'info' => $req->input('info')

@@ -516,17 +516,18 @@ class MasterCA_Controller extends BaseController
             'umur_nasabah'        => $req->input('umur_nasabah_as_jiwa')
         );
 
+
         $asJaminan = array(
             'nama_asuransi'       => $req->input('nama_asuransi_jaminan'),
-            'jangka_waktu'        => Carbon::parse($req->input('jangka_waktu_as_jaminan'))->format('Y-m-d'),
+            'jangka_waktu'        => $req->input('jangka_waktu_as_jaminan'),
             'nilai_pertanggungan' => $req->input('nilai_pertanggungan_as_jaminan'),
-            'jatuh_tempo'         => $req->input('jatuh_tempo_as_jaminan')
+            'jatuh_tempo'         => Carbon::parse($req->input('jatuh_tempo_as_jaminan'))->format('Y-m-d')
         );
 
         $recomCA = array(
             'produk'                => $req->input('produk'),
             'plafon_kredit'         => $req->input('plafon_kredit'),
-            'jangka_waktu'          => Carbon::parse($req->input('jangka_waktu'))->format('Y-m-d'),
+            'jangka_waktu'          => $req->input('jangka_waktu'),
             'suku_bunga'            => $req->input('suku_bunga'),
             'pembayaran_bunga'      => $req->input('pembayaran_bunga'),
             'akad_kredit'           => $req->input('akad_kredit'),
@@ -537,7 +538,6 @@ class MasterCA_Controller extends BaseController
             'notaris'               => $req->input('notaris'),
             'biaya_tabungan'        => $req->input('biaya_tabungan')
         );
-
 
         $check_ca = TransCA::where('id_trans_so', $id)->first();
 
@@ -550,9 +550,9 @@ class MasterCA_Controller extends BaseController
                         $mutasi = MutasiBank::create($dataMuBa[$i]);
 
                         $id_mutasi['id'][$i] = $mutasi->id;
-
-                        $MutasiID   = implode(",", $id_mutasi['id']);
                     }
+
+                    $MutasiID   = implode(",", $id_mutasi['id']);
                 }else{
                     $MutasiID = null;
                 }
@@ -566,8 +566,13 @@ class MasterCA_Controller extends BaseController
                 }
 
                 if (!empty($req->input('nama_bank_acc'))) {
-                    $info = InfoACC::create($dataACC);
-                    $idInfo = $info->id;
+                    for ($i = 0; $i < count($dataACC); $i++) {
+                        $IACC = InfoACC::create($dataACC[$i]);
+
+                        $arrACC['id'][$i] = $IACC->id;
+                    }
+
+                    $idInfo = implode(",", $arrACC['id']);
                 }else{
                     $idInfo = null;
                 }
@@ -633,18 +638,13 @@ class MasterCA_Controller extends BaseController
                 TransSO::where('id', $id)->update(['id_trans_ca' => $CA->id]);
             }else{
                 if (!empty($check_ca->id_mutasi_bank)) {
+                    $ex_mutasi = explode(",", $check_ca->id_mutasi_bank);
+
                     for ($i = 0; $i < count($dataMuBa); $i++){
-                        $ex_mutasi = explode(",", $check_ca->id_mutasi_bank);
-
-                        dd($ex_mutasi);
-
-                        $mutasi = MutasiBank::where('id', $ex_mutasi)->update($dataMuBa[$i]);
+                        MutasiBank::where('id', $ex_mutasi[$i])->update($dataMuBa[$i]);
 
                         $id_mutasi['id'][$i] = $ex_mutasi[$i];
                     }
-
-                    dd($id_mutasi);
-
                 }else{
                     for ($i = 0; $i < count($dataMuBa); $i++){
                         $mutasi = MutasiBank::create($dataMuBa[$i]);
@@ -655,7 +655,6 @@ class MasterCA_Controller extends BaseController
 
                 $MutasiID   = implode(",", $id_mutasi['id']);
 
-                dd($MutasiID);
 
                 if (!empty($check_ca->no_rekening)) {
                     $tabungan = TabDebt::where('id', $check_ca->id_log_tabungan)->update($dataTabUang);
@@ -668,7 +667,12 @@ class MasterCA_Controller extends BaseController
                 }
 
                 if (!empty($check_ca->id_info_analisa_cc)) {
-                    $info = InfoACC::where('id', $check_ca->id_info_analisa_cc)->update($dataACC);
+                    $ex_iacc = explode(",", $check_ca->id_info_analisa_cc);
+
+                    for ($i = 0; $i < count($dataACC); $i++) {
+                        $IACC = InfoACC::where('id', $ex_iacc[$i])->update($dataACC[$i]);
+                    }
+
                     $idInfo = $check_ca->id_info_analisa_cc;
                 }else{
                     $info = InfoACC::create($dataACC);
