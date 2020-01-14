@@ -20,6 +20,7 @@ use App\Models\Pengajuan\SO\Debitur;
 use Illuminate\Support\Facades\File;
 use App\Models\AreaKantor\Cabang;
 use App\Models\Transaksi\TransSO;
+use App\Models\Transaksi\TransAO;
 use App\Models\AreaKantor\JPIC;
 use App\Models\AreaKantor\PIC;
 use Illuminate\Http\Request;

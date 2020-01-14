@@ -408,7 +408,7 @@ class MasterCA_Controller extends BaseController
         $JPIC   = JPIC::where('id', $PIC->id_mj_pic)->first();
 
         //  ID-Cabang - AO / CA / SO - Bulan - Tahun - NO. Urut
-        $nomor_ao = $PIC->id_mk_cabang.'-'.$JPIC->nama_jenis.'-'.$month.'-'.$year.'-'.$lastNumb;
+        $nomor_ca = $PIC->id_mk_cabang.'-'.$JPIC->nama_jenis.'-'.$month.'-'.$year.'-'.$lastNumb;
 
         $check = TransSO::where('id',$id)->first();
 
@@ -419,6 +419,16 @@ class MasterCA_Controller extends BaseController
                 'message' => 'Data kosong'
             ], 404);
         }
+
+        $transCA = array(
+            'nomor_ca'    => $nomor_ca,
+            'user_id'     => $user_id,
+            'id_trans_so' => $id,
+            'id_pic'      => $PIC->id,
+            'id_cabang'   => $PIC->id_mk_cabang,
+            'catatan_ca'  => $req->input('catatan_ca'),
+            'status_ca'   => empty($req->input('status_ca')) ? 1 : $req->input('status_ca')
+        );
 
 
         // $lamp_dir = 'public/'.$check->debt['no_ktp'];
@@ -496,10 +506,27 @@ class MasterCA_Controller extends BaseController
             'note_recom' => empty($req->input('note_recom')) ? null : $req->input('note_recom')
         );
 
+        $asJiwa = array(
+            'nama_asuransi'       => $req->input('nama_asuransi_jiwa'),
+            'jangka_waktu'        => $req->input('jangka_waktu_as_jiwa'),
+            'nilai_pertanggungan' => $req->input('nilai_pertanggungan_as_jiwa'),
+            'jatuh_tempo'         => Carbon::parse($req->input('jatuh_tempo_as_jiwa'))->format('Y-m-d'),
+            'berat_badan'         => $req->input('berat_badan_as_jiwa'),
+            'tinggi_badan'        => $req->input('tinggi_badan_as_jiwa'),
+            'umur_nasabah'        => $req->input('umur_nasabah_as_jiwa')
+        );
+
+        $asJaminan = array(
+            'nama_asuransi'       => $req->input('nama_asuransi_jaminan'),
+            'jangka_waktu'        => Carbon::parse($req->input('jangka_waktu_as_jaminan'))->format('Y-m-d'),
+            'nilai_pertanggungan' => $req->input('nilai_pertanggungan_as_jaminan'),
+            'jatuh_tempo'         => $req->input('jatuh_tempo_as_jaminan')
+        );
+
         $recomCA = array(
             'produk'                => $req->input('produk'),
             'plafon_kredit'         => $req->input('plafon_kredit'),
-            'jangka_waktu'          => $req->input('jangka_waktu'),
+            'jangka_waktu'          => Carbon::parse($req->input('jangka_waktu'))->format('Y-m-d'),
             'suku_bunga'            => $req->input('suku_bunga'),
             'pembayaran_bunga'      => $req->input('pembayaran_bunga'),
             'akad_kredit'           => $req->input('akad_kredit'),
@@ -511,27 +538,7 @@ class MasterCA_Controller extends BaseController
             'biaya_tabungan'        => $req->input('biaya_tabungan')
         );
 
-        $asJiwa = array(
-            'nama_asuransi'       => $req->input('nama_asuransi_jiwa'),
-            'jangka_waktu'        => $req->input('jangka_waktu_as_jiwa'),
-            'nilai_pertanggungan' => $req->input('nilai_pertanggungan_as_jiwa'),
-            'jatuh_tempo'         => $req->input('jatuh_tempo_as_jiwa'),
-            'berat_badan'         => $req->input('berat_badan_as_jiwa'),
-            'tinggi_badan'        => $req->input('tinggi_badan_as_jiwa'),
-            'umur_nasabah'        => $req->input('umur_nasabah_as_jiwa')
-        );
 
-        $asJaminan = array(
-            'nama_asuransi'       => $req->input('nama_asuransi_jaminan'),
-            'jangka_waktu'        => $req->input('jangka_waktu_as_jaminan'),
-            'nilai_pertanggungan' => $req->input('nilai_pertanggungan_as_jaminan'),
-            'jatuh_tempo'         => $req->input('jatuh_tempo_as_jaminan')
-        );
-
-        // $idJaminan = array(
-        //     'id_asuransi_jiwa',
-        //     'id_asuransi_jaminan',
-        // );
         $check_ca = TransCA::where('id_trans_so', $id)->first();
 
             DB::connection('web')->beginTransaction();
@@ -551,7 +558,7 @@ class MasterCA_Controller extends BaseController
                 }
 
                 if (!empty($req->input('no_rekening'))) {
-                    $tabungan TabDebt::create($dataTabUang);
+                    $tabungan = TabDebt::create($dataTabUang);
 
                     $idTabungan = $tabungan->id;
                 }else{
@@ -579,13 +586,6 @@ class MasterCA_Controller extends BaseController
                     $idrecomPin = null;
                 }
 
-                if (!empty($recomCA)) {
-                    $reCA = RekomendasiCA::create($recomCA);;
-                    $idReCA = $reCA->id;
-                }else{
-                    $idReCA = null;
-                }
-
                 if (!empty($asJiwa)) {
                     $jiwa = AsuransiJiwa::create($asJiwa);
                     $idJiwa = $jiwa->id;
@@ -599,27 +599,70 @@ class MasterCA_Controller extends BaseController
                 }else{
                     $idJaminan = null;
                 }
+
+                if (!empty($recomCA)) {
+                    $arrJaminan = array(
+                        'id_asuransi_jiwa'    => $idJiwa,
+                        'id_asuransi_jaminan' => $idJaminan,
+                    );
+
+                    $newRecom = array_merge($recomCA, $arrJaminan);
+
+                    $reCA = RekomendasiCA::create($newRecom);;
+                    $idReCA = $reCA->id;
+                }else{
+                    $idReCA = null;
+                }
+
+                $dataID = array(
+                    'id_mutasi_bank'          => $MutasiID,
+                    'id_log_tabungan'         => $idTabungan,
+                    'id_info_analisa_cc'      => $idInfo,
+                    'id_ringkasan_analisa'    => $idAnalisa,
+                    'id_recom_ca'             => $idReCA,
+                    'id_rekomendasi_pinjaman' => $idrecomPin,
+                    'id_asuransi_jiwa'        => $idJiwa,
+                    'id_asuransi_jaminan'     => $idJaminan
+                );
+
+                // dd($dataID);
+
+                $newTransCA = array_merge($transCA, $dataID);
+
+                $CA = TransCA::create($newTransCA);
+                TransSO::where('id', $id)->update(['id_trans_ca' => $CA->id]);
             }else{
                 if (!empty($check_ca->id_mutasi_bank)) {
-                    $ex_mutasi = explode(",", $check_ca->id_mutasi_bank);
+                    for ($i = 0; $i < count($dataMuBa); $i++){
+                        $ex_mutasi = explode(",", $check_ca->id_mutasi_bank);
 
-                    $mutasi = MutasiBank::where('id', $ex_mutasi)->update($dataMuBa[$i]);
+                        dd($ex_mutasi);
 
-                    $id_mutasi['id'][$i] = $ex_mutasi[$i];
+                        $mutasi = MutasiBank::where('id', $ex_mutasi)->update($dataMuBa[$i]);
+
+                        $id_mutasi['id'][$i] = $ex_mutasi[$i];
+                    }
+
+                    dd($id_mutasi);
+
                 }else{
-                    $mutasi = MutasiBank::create($dataMuBa[$i]);
+                    for ($i = 0; $i < count($dataMuBa); $i++){
+                        $mutasi = MutasiBank::create($dataMuBa[$i]);
 
-                    $id_mutasi['id'][$i] = $mutasi->id;
+                        $id_mutasi['id'][$i] = $mutasi->id;
+                    }
                 }
 
                 $MutasiID   = implode(",", $id_mutasi['id']);
 
+                dd($MutasiID);
+
                 if (!empty($check_ca->no_rekening)) {
-                    $tabungan TabDebt::where('id', $check_ca->id_log_tabungan)->update($dataTabUang);
+                    $tabungan = TabDebt::where('id', $check_ca->id_log_tabungan)->update($dataTabUang);
 
                     $idTabungan = $check_ca->id_log_tabungan;
                 }else{
-                    $tabungan TabDebt::create($dataTabUang);
+                    $tabungan = TabDebt::create($dataTabUang);
 
                     $idTabungan = $tabungan->id;
                 }
@@ -648,14 +691,6 @@ class MasterCA_Controller extends BaseController
                     $idrecomPin = $recomPin->id;
                 }
 
-                if (!empty($check_ca->id_rekomendasi_ca)) {
-                    $reCA = RekomendasiCA::where('id', $check_ca->id_rekomendasi_ca)->update($recomCA);
-                    $idReCA = $check_ca->id_rekomendasi_ca;
-                }else{
-                    $reCA = RekomendasiCA::create($recomCA);
-                    $idReCA = $reCA->id;
-                }
-
                 if (!empty($check_ca->id_asuransi_jiwa)) {
                     $jiwa = AsuransiJiwa::where('id', $check_ca->id_asuransi_jiwa)->update($asJiwa);
                     $idJiwa = $check_ca->id_asuransi_jiwa;
@@ -671,6 +706,44 @@ class MasterCA_Controller extends BaseController
                     $jaminan = AsuransiJaminan::create($asJaminan);
                     $idJaminan = $jaminan->id;
                 }
+
+                if (!empty($check_ca->id_rekomendasi_ca)) {
+                    $idJaminan = array(
+                        'id_asuransi_jiwa'    => $idJiwa,
+                        'id_asuransi_jaminan' => $idJaminan,
+                    );
+
+                    $newRecom = array_merge($recomCA, $idJaminan);
+
+                    $reCA = RekomendasiCA::where('id', $check_ca->id_rekomendasi_ca)->update($newRecom);
+                    $idReCA = $check_ca->id_rekomendasi_ca;
+                }else{
+                    $arrJaminan = array(
+                        'id_asuransi_jiwa'    => $idJiwa,
+                        'id_asuransi_jaminan' => $idJaminan,
+                    );
+
+                    $newRecom = array_merge($recomCA, $arrJaminan);
+
+                    $reCA = RekomendasiCA::create($newRecom);
+                    $idReCA = $reCA->id;
+                }
+
+                $dataID = array(
+                    'id_mutasi_bank'          => $MutasiID,
+                    'id_log_tabungan'         => $idTabungan,
+                    'id_info_analisa_cc'      => $idInfo,
+                    'id_ringkasan_analisa'    => $idAnalisa,
+                    'id_recom_ca'             => $idReCA,
+                    'id_rekomendasi_pinjaman' => $idrecomPin,
+                    'id_asuransi_jiwa'        => $idJiwa,
+                    'id_asuransi_jaminan'     => $idJaminan
+                );
+
+                $newTransCA = array_merge($transCA, $dataID);
+
+                TransCA::where('id', $check_ca->id)->update($newTransCA);
+                TransSO::where('id', $id)->update(['id_trans_ca' => $check_ca->id]);
             }
 
 
