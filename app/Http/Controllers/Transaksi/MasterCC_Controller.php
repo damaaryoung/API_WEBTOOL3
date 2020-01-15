@@ -26,6 +26,15 @@ class MasterCC_Controller extends BaseController
     public function index(Request $req){
         $user_id = $req->auth->user_id;
         $pic     = PIC::where('user_id', $user_id)->first();
+
+        if ($pic == null) {
+            return response()->json([
+                "code"    => 404,
+                "status"  => "not found",
+                "message" => "User_ID anda adalah '".$user_id."' dengan username '".$req->auth->user."' . Namun anda belum terdaftar sebagai PIC(SO). Harap daftarkan diri sebagai PIC(SO) pada form PIC atau hubungi bagian IT"
+            ], 404);
+        }
+
         $id_cabang = $pic->id_mk_cabang;
 
         $query = TransSO::with('pic', 'cabang', 'asaldata','debt', 'faspin')
@@ -72,10 +81,22 @@ class MasterCC_Controller extends BaseController
 
     public function show($id, Request $req){
         $user_id = $req->auth->user_id;
+        $pic     = PIC::where('user_id', $user_id)->first();
+
+        if ($pic == null) {
+            return response()->json([
+                "code"    => 404,
+                "status"  => "not found",
+                "message" => "User_ID anda adalah '".$user_id."' dengan username '".$req->auth->user."' . Namun anda belum terdaftar sebagai PIC(SO). Harap daftarkan diri sebagai PIC(SO) pada form PIC atau hubungi bagian IT"
+            ], 404);
+        }
+
+        $id_cabang = $pic->id_mk_cabang;
 
         $val = TransSO::with('pic', 'cabang', 'asaldata', 'debt', 'pas', 'faspin', 'ao', 'ca')
                 ->where('id', $id)
                 ->where('user_id', $user_id)
+                ->where('id_cabang', $id_cabang)
                 ->first();
 
         if (!$val) {
@@ -317,8 +338,8 @@ class MasterCC_Controller extends BaseController
 
     public function store(Request $request, BlankRequest $req)
     {
-        $user_id     = $request->auth->user_id;
-        $username    = $request->auth->usename;
+        $user_id  = $request->auth->user_id;
+        $username = $request->auth->user;
 
         $PIC = PIC::where('user_id', $user_id)->first();
 
@@ -326,7 +347,7 @@ class MasterCC_Controller extends BaseController
             return response()->json([
                 "code"    => 404,
                 "status"  => "not found",
-                "message" => "User_ID anda adalah '".$user_id."' dengan username '".$username."' . Namun anda belum terdaftar sebagai PIC. Harap daftarkan diri sebagai PIC pada form PIC atau hubungi bagian IT"
+                "message" => "User_ID anda adalah '".$user_id."' dengan username '".$username."' . Namun anda belum terdaftar sebagai PIC(SO). Harap daftarkan diri sebagai PIC pada form PIC(SO) atau hubungi bagian IT"
             ], 404);
         }
 

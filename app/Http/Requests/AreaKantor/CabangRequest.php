@@ -19,12 +19,12 @@ class CabangRequest extends FormRequest
     public function rules()
     {
         return [
-            'id_mk_area'   => 'required|numeric',
+            'id_mk_area'   => 'required|integer',
             'nama'         => 'required',
-            'id_provinsi'  => 'required|numeric',
-            'id_kabupaten' => 'required|numeric',
-            'id_kecamatan' => 'required|numeric',
-            'id_kelurahan' => 'required|numeric',
+            'id_provinsi'  => 'required|integer',
+            'id_kabupaten' => 'required|integer',
+            'id_kecamatan' => 'required|integer',
+            'id_kelurahan' => 'required|integer',
             'jenis_kantor' => 'in:CABANG,KAS',
             'flg_aktif'    => 'in:false,true'
         ];
@@ -32,19 +32,19 @@ class CabangRequest extends FormRequest
 
     public function messages(){
         return [
-            'id_mk_area.required'   => ':attribute belum diisi',
-            'nama.required'         => ':attribute belum diisi',
-            'id_provinsi.required'  => ':attribute belum diisi',
-            'id_kabupaten.required' => ':attribute belum diisi',
-            'id_kecamatan.required' => ':attribute belum diisi',
-            'id_kelurahan.required' => ':attribute belum diisi',
+            'id_mk_area.required'   => ':attribute wajib diisi',
+            'nama.required'         => ':attribute wajib diisi',
+            'id_provinsi.required'  => ':attribute wajib diisi',
+            'id_kabupaten.required' => ':attribute wajib diisi',
+            'id_kecamatan.required' => ':attribute wajib diisi',
+            'id_kelurahan.required' => ':attribute wajib diisi',
             'jenis_kantor.in'       => ':attribute harus salah satu dari jenis berikut :values',
             'flg_aktif.in'          => ':attribute harus salah satu dari jenis berikut :values',
-            'id_mk_area'            => ':attribute harus berupa angka',
-            'id_provinsi'           => ':attribute harus berupa angka',
-            'id_kabupaten'          => ':attribute harus berupa angka',
-            'id_kecamatan'          => ':attribute harus berupa angka',
-            'id_kelurahan'          => ':attribute harus berupa angka'
+            'id_mk_area.integer'    => ':attribute harus berupa angka',
+            'id_provinsi.integer'   => ':attribute harus berupa angka',
+            'id_kabupaten.integer'  => ':attribute harus berupa angka',
+            'id_kecamatan.integer'  => ':attribute harus berupa angka',
+            'id_kelurahan.integer'  => ':attribute harus berupa angka'
         ];
     }
 

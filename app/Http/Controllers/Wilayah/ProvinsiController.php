@@ -10,9 +10,43 @@ use DB;
 
 class ProvinsiController extends BaseController
 {
+    public function all() {
+        try {
+            $query = Provinsi::get();
+
+            if ($query == '[]') {
+                return response()->json([
+                    "code"    => 404,
+                    "status"  => "not found",
+                    "message" => "Data kosong!!"
+                ], 404);
+            }
+
+            foreach ($query as $key => $val) {
+                $res[$key] = [
+                    "id"        => $val->id,
+                    "nama"      => $val->nama,
+                    "flg_aktif" => $val->flg_aktif == 1 ? "true" : "false"
+                ];
+            }
+
+            return response()->json([
+                'code'   => 200,
+                'status' => 'success',
+                'data'   => $res
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                "code"    => 501,
+                "status"  => "error",
+                "message" => $e
+            ], 501);
+        }
+    }
+
     public function index() {
         try {
-            $query = Provinsi::select('id', 'nama')->get();
+            $query = Provinsi::select('id', 'nama')->where('flg_aktif', 1)->get();
 
             if ($query == '[]') {
                 return response()->json([
@@ -51,12 +85,12 @@ class ProvinsiController extends BaseController
             return response()->json([
                 "code"    => 422,
                 "status"  => "not valid request",
-                "message" => "nama belum diisi"
+                "message" => ["nama" => ["nama wajib diisi"]]
             ], 422);
         }
 
         try {
-            $query = Provinsi::create(['nama' => $nama]);
+            Provinsi::create(['nama' => $nama]);
 
             return response()->json([
                 'code'    => 200,
@@ -141,7 +175,7 @@ class ProvinsiController extends BaseController
         }
 
         try {
-            $query = Provinsi::where('id', $id)->update($data);
+            Provinsi::where('id', $id)->update($data);
 
             return response()->json([
                 'code'    => 200,
@@ -169,7 +203,7 @@ class ProvinsiController extends BaseController
         }
 
         try {
-            $query = Provinsi::where('id', $id)->delete();
+            Provinsi::where('id', $id)->delete();
 
             return response()->json([
                 'code'    => 200,

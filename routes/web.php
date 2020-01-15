@@ -21,6 +21,7 @@ $router->group(['prefix' => '/wilayah'], function () use ($router) {
     $router->get('/area_cabang/filter', 'Master\AreaKantor\CabangController@get_cabang');
 
     $router->get('/provinsi', 'Wilayah\ProvinsiController@index');
+    $router->get('/all/provinsi', 'Wilayah\ProvinsiController@all');
     $router->post('/provinsi', 'Wilayah\ProvinsiController@store');
     // $router->get('/provinsi/search/{search}', 'Wilayah\ProvinsiController@search'); // search Provinsi to Mitra
     $router->get('/provinsi/{IdOrName}', 'Wilayah\ProvinsiController@show');
@@ -28,6 +29,7 @@ $router->group(['prefix' => '/wilayah'], function () use ($router) {
     $router->delete('/provinsi/{id}', 'Wilayah\ProvinsiController@delete');
 
     $router->get('/kabupaten', 'Wilayah\KabupatenController@index');
+    $router->get('/all/kabupaten', 'Wilayah\KabupatenController@all');
     $router->post('/kabupaten', 'Wilayah\KabupatenController@store');
     $router->get('/kabupaten/{IdOrName}', 'Wilayah\KabupatenController@show');
     $router->put('/kabupaten/{id}', 'Wilayah\KabupatenController@update');
@@ -35,6 +37,7 @@ $router->group(['prefix' => '/wilayah'], function () use ($router) {
     $router->get('/provinsi/{id}/kabupaten', 'Wilayah\KabupatenController@sector'); // Get Data Kabupaten By Id Provinsi
 
     $router->get('/kecamatan', 'Wilayah\KecamatanController@index');
+    $router->get('/all/kecamatan', 'Wilayah\KecamatanController@all');
     $router->post('/kecamatan', 'Wilayah\KecamatanController@store');
     $router->get('/kecamatan/{IdOrName}', 'Wilayah\KecamatanController@show');
     $router->put('/kecamatan/{id}', 'Wilayah\KecamatanController@update');
@@ -42,6 +45,7 @@ $router->group(['prefix' => '/wilayah'], function () use ($router) {
     $router->get('/kabupaten/{id}/kecamatan', 'Wilayah\KecamatanController@sector'); // Get Data Kecamatan By Id Kabupaten
 
     $router->get('/kelurahan', 'Wilayah\KelurahanController@index');
+    $router->get('/all/kelurahan', 'Wilayah\KelurahanController@all');
     $router->post('/kelurahan', 'Wilayah\KelurahanController@store');
     $router->get('/kelurahan/{IdOrName}', 'Wilayah\KelurahanController@show');
     $router->put('/kelurahan/{id}', 'Wilayah\KelurahanController@update');
@@ -125,6 +129,7 @@ $router->group(['middleware' => 'jwt.auth'], function () use ($router) {
 
             //PIC
             $router->get('/pic', 'Master\AreaKantor\PICController@index');
+            $router->get('/team_caa', 'Master\AreaKantor\PICController@teamCAA');
             $router->post('/pic', 'Master\AreaKantor\PICController@store');
             $router->get('/pic/{id}', 'Master\AreaKantor\PICController@show');
             $router->put('/pic/{id}', 'Master\AreaKantor\PICController@update');

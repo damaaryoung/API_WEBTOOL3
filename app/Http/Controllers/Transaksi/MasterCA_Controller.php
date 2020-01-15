@@ -30,7 +30,6 @@ class MasterCA_Controller extends BaseController
 {
     public function index(Request $req){
         $user_id  = $req->auth->user_id;
-        $username = $req->auth->username;
 
         $pic = PIC::where('user_id', $user_id)->first();
 
@@ -38,7 +37,7 @@ class MasterCA_Controller extends BaseController
             return response()->json([
                 "code"    => 404,
                 "status"  => "not found",
-                "message" => "User_ID anda adalah '".$user_id."' dengan username '".$username."' . Namun anda belum terdaftar sebagai PIC(CA). Harap daftarkan diri sebagai PIC(CA) pada form PIC atau hubungi bagian IT"
+                "message" => "User_ID anda adalah '".$user_id."' dengan username '".$req->auth->user."' . Namun anda belum terdaftar sebagai PIC(CA). Harap daftarkan diri sebagai PIC(CA) pada form PIC atau hubungi bagian IT"
             ], 404);
         }
 
@@ -101,6 +100,15 @@ class MasterCA_Controller extends BaseController
     public function show($id, Request $req){
         $user_id = $req->auth->user_id;
         $pic     = PIC::where('user_id', $user_id)->first();
+
+        if ($pic == null) {
+            return response()->json([
+                "code"    => 404,
+                "status"  => "not found",
+                "message" => "User_ID anda adalah '".$user_id."' dengan username '".$req->auth->user."' . Namun anda belum terdaftar sebagai PIC(CA). Harap daftarkan diri sebagai PIC(CA) pada form PIC atau hubungi bagian IT"
+            ], 404);
+        }
+
         $id_cabang = $pic->id_mk_cabang;
 
         $val = TransAO::with('so', 'pic', 'cabang')->where('id_cabang', $id_cabang)->where('id_trans_so', $id)->first();
@@ -356,6 +364,21 @@ class MasterCA_Controller extends BaseController
             'note_recom' => empty($req->input('note_recom')) ? null : $req->input('note_recom')
         );
 
+        $recomCA = array(
+            'produk'                => $req->input('produk'),
+            'plafon_kredit'         => $req->input('plafon_kredit'),
+            'jangka_waktu'          => $req->input('jangka_waktu'),
+            'suku_bunga'            => $req->input('suku_bunga'),
+            'pembayaran_bunga'      => $req->input('pembayaran_bunga'),
+            'akad_kredit'           => $req->input('akad_kredit'),
+            'ikatan_agunan'         => $req->input('ikatan_agunan'),
+            'biaya_provisi'         => $req->input('biaya_provisi'),
+            'biaya_administrasi'    => $req->input('biaya_administrasi'),
+            'biaya_credit_checking' => $req->input('biaya_credit_checking'),
+            'notaris'               => $req->input('notaris'),
+            'biaya_tabungan'        => $req->input('biaya_tabungan')
+        );
+
         $asJiwa = array(
             'nama_asuransi'       => $req->input('nama_asuransi_jiwa'),
             'jangka_waktu'        => $req->input('jangka_waktu_as_jiwa'),
@@ -374,20 +397,6 @@ class MasterCA_Controller extends BaseController
             'jatuh_tempo'         => Carbon::parse($req->input('jatuh_tempo_as_jaminan'))->format('Y-m-d')
         );
 
-        $recomCA = array(
-            'produk'                => $req->input('produk'),
-            'plafon_kredit'         => $req->input('plafon_kredit'),
-            'jangka_waktu'          => $req->input('jangka_waktu'),
-            'suku_bunga'            => $req->input('suku_bunga'),
-            'pembayaran_bunga'      => $req->input('pembayaran_bunga'),
-            'akad_kredit'           => $req->input('akad_kredit'),
-            'ikatan_agunan'         => $req->input('ikatan_agunan'),
-            'biaya_provisi'         => $req->input('biaya_provisi'),
-            'biaya_administrasi'    => $req->input('biaya_administrasi'),
-            'biaya_credit_checking' => $req->input('biaya_credit_checking'),
-            'notaris'               => $req->input('notaris'),
-            'biaya_tabungan'        => $req->input('biaya_tabungan')
-        );
 
         $check_ca = TransCA::where('id_trans_so', $id)->first();
 

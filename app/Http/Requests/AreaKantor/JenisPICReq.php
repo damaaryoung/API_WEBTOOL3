@@ -25,7 +25,7 @@ class JenisPICReq extends FormRequest
 
     public function messages(){
         return [
-            'nama_jenis.required' => ':attribute belum diisi'
+            'nama_jenis.required' => ':attribute wajib diisi'
         ];
     }
 

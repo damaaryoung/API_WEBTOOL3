@@ -10,9 +10,47 @@ use DB;
 
 class KelurahanController extends BaseController
 {
+
+    public function all() {
+        try {
+            $query = Kelurahan::with('kec')->get();
+
+            if ($query == '[]') {
+                return response()->json([
+                    "code"    => 404,
+                    "status"  => "not found",
+                    "message" => "Data kosong!!"
+                ], 404);
+            }
+
+            $res = array();
+            foreach ($query as $key => $val) {
+                $res[$key] = [
+                    "id"             => $val->id,
+                    "nama"           => $val->nama,
+                    "nama_kecamatan" => $val->kec['nama'],
+                    'kode_pos'       => $val->kode_pos,
+                    "flg_aktif"      => $val->flg_aktif == 1 ? "true" : "false"
+                ];
+            }
+
+            return response()->json([
+                'code'   => 200,
+                'status' => 'success',
+                'data'   => $res
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                "code"    => 501,
+                "status"  => "error",
+                "message" => $e
+            ], 501);
+        }
+    }
+
     public function index() {
         try {
-            $query = Kelurahan::with('kec')->select('id', 'nama', 'id_kecamatan','kode_pos')->get();
+            $query = Kelurahan::with('kec')->select('id', 'nama', 'id_kecamatan','kode_pos')->where('flg_aktif', 1)->get();
 
             if ($query == '[]') {
                 return response()->json([
@@ -55,7 +93,7 @@ class KelurahanController extends BaseController
             return response()->json([
                 "code"    => 422,
                 "status"  => "not valid request",
-                "message" => "nama belum diisi"
+                "message" => [ "nama" => ["nama wajib diisi"]]
             ], 422);
         }
 
@@ -63,7 +101,15 @@ class KelurahanController extends BaseController
             return response()->json([
                 "code"    => 422,
                 "status"  => "not valid request",
-                "message" => "id kecamatan belum diisi"
+                "message" => [ "id_kecamatan" => ["id kecamatan wajib diisi"]]
+            ], 422);
+        }
+
+        if(!empty($kecamatan) && !preg_match("/^[0-9]{1,}$/", $kecamatan)){
+            return response()->json([
+                "code"    => 422,
+                "status"  => "not valid request",
+                "message" => [ "id_kecamatan" => ["id kecamatan harus berupa angka"]]
             ], 422);
         }
 
@@ -71,15 +117,23 @@ class KelurahanController extends BaseController
             return response()->json([
                 "code"    => 422,
                 "status"  => "not valid request",
-                "message" => "kode pos belum diisi"
+                "message" => [ "kode_pos" => ["kode pos wajib diisi"]]
             ], 422);
         }
 
-        if (strlen($kode_pos) != 5) {
+        if(!empty($kode_pos) && !preg_match("/^[0-9]{1,}$/", $kode_pos)){
             return response()->json([
                 "code"    => 422,
                 "status"  => "not valid request",
-                "message" => "kode pos harus berjumlah 5 digit"
+                "message" => [ "kode_pos" => ["kode pos harus berupa angka"]]
+            ], 422);
+        }
+
+        if (!empty($kode_pos) && strlen($kode_pos) != 5) {
+            return response()->json([
+                "code"    => 422,
+                "status"  => "not valid request",
+                "message" => [ "kode_pos" => ["kode pos harus berjumlah 5 digit"]]
             ], 422);
         }
 
@@ -168,21 +222,35 @@ class KelurahanController extends BaseController
         $kecamatan = empty($req->input('id_kecamatan')) ? $check->id_kecamatan : $req->input('id_kecamatan');
         $flg_aktif = empty($req->input('flg_aktif')) ? $check->flg_aktif : ($req->input('flg_aktif') == 'false' ? 0 : 1);
 
+        if(!empty($kecamatan) && !preg_match("/^[0-9]{1,}$/", $kecamatan)){
+            return response()->json([
+                "code"    => 422,
+                "status"  => "not valid request",
+                "message" => [ "id_kecamatan" => ["id kecamatan harus berupa angka"]]
+            ], 422);
+        }
+
+        if(!empty($kode_pos) && !preg_match("/^[0-9]{1,}$/", $kode_pos)){
+            return response()->json([
+                "code"    => 422,
+                "status"  => "not valid request",
+                "message" => [ "kode_pos" => ["kode pos harus berupa angka"]]
+            ], 422);
+        }
+
+        if (!empty($kode_pos) && strlen($kode_pos) != 5) {
+            return response()->json([
+                "code"    => 422,
+                "status"  => "not valid request",
+                "message" => ["kode_pos" => ["kode pos harus berjumlah 5 digit"]]
+            ], 422);
+        }
+
         if ($req->input('flg_aktif') != "false" && $req->input('flg_aktif') != "true" && $req->input('flg_aktif') != "") {
             return response()->json([
                 "code"    => 422,
                 "status"  => "not valid request",
-                "message" => [
-                    "flg_aktif" => ["flg aktif harus salah satu dari jenis berikut false, true"]
-                ]
-            ], 422);
-        }
-
-        if (strlen($kode_pos) != 5) {
-            return response()->json([
-                "code"    => 422,
-                "status"  => "not valid request",
-                "message" => "kode pos harus berjumlah 5 digit"
+                "message" => ["flg_aktif" => ["flg aktif harus salah satu dari jenis berikut false, true"]]
             ], 422);
         }
 

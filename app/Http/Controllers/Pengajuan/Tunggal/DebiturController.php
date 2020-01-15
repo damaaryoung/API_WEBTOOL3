@@ -35,6 +35,7 @@ class DebiturController extends BaseController
         }
 
         $data = array(
+            'id'                    => $val->id,
             'nama_lengkap'          => $val->nama_lengkap,
             'gelar_keagamaan'       => $val->gelar_keagamaan,
             'gelar_pendidikan'      => $val->gelar_pendidikan,

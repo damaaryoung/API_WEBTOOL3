@@ -23,6 +23,7 @@ class BlankRequest extends FormRequest
     {
         $single = $request->segment(4);
 
+        // if Update
         if (!empty($single)) {
             $trans = TransSO::where('id', $single)->first();
 
@@ -60,7 +61,7 @@ class BlankRequest extends FormRequest
                 // Fasilitas Pinjaman
                 'jenis_pinjaman'        => 'in:KONSUMTIF,MODAL,INVESTASI',
                 'plafon_pinjaman'       => 'integer',
-                'tenor_pinjaman'        => 'numeric',
+                'tenor_pinjaman'        => 'integer|in:12;18;24;30;36;48;60',
 
                 // Debitur
                 'jenis_kelamin'         => 'in:L,P',
@@ -142,11 +143,11 @@ class BlankRequest extends FormRequest
                 'no_telp_tempat_kerja_pen.*'  => 'numeric',
 
                 // Transaksi AO
-                'jangka_waktu'          => 'integer',
+                'jangka_waktu'          => 'integer|in:12;18;24;30;36;48;60',
                 'suku_bunga'            => 'integer',
                 'pembayaran_bunga'      => 'integer',
                 'akad_kredit'           => 'in:ADENDUM,NOTARIS,INTERNAL',
-                'ikatan_agunan'         => 'required|in:APHT,SKMHT,FIDUSIA',
+                'ikatan_agunan'         => 'in:APHT,SKMHT,FIDUSIA',
                 'biaya_provisi'         => 'integer',
                 'biaya_administrasi'    => 'integer',
                 'biaya_credit_checking' => 'integer',
@@ -211,7 +212,7 @@ class BlankRequest extends FormRequest
                 'biaya_telp_listr_air'  => 'integer',
                 'biaya_lain'            => 'integer',
 
-                // Usaha
+                // Pendapatan Usaha
                 'pemasukan_tunai'      => 'integer',
                 'pemasukan_kredit'     => 'integer',
                 'biaya_sewa'           => 'integer',
@@ -238,38 +239,31 @@ class BlankRequest extends FormRequest
                 'tgl_taksasi.*'           => 'date_format:d-m-Y',
                 'nilai_likuidasi.*'       => 'integer',
 
-                // Transaksi AO
-                'plafon_kredit'         => 'integer',
-                'jangka_waktu'          => 'integer',
-                'suku_bunga'            => 'integer',
-                'pembayaran_bunga'      => 'integer',
-                'akad_kredit'           => 'in:ADENDUM,NOTARIS,INTERNAL',
-                'ikatan_agunan'         => 'required|in:APHT,SKMHT,FIDUSIA',
-                'biaya_provisi'         => 'integer',
-                'biaya_administrasi'    => 'integer',
-                'biaya_credit_checking' => 'integer',
-                'biaya_tabungan'        => 'integer',
-
-                // Mutasi Bank
-                'urutan_mutasi.*'           => 'numeric',
+                // Mutasi Bank pada CA
+                'urutan_mutasi.*'           => 'integer',
                 'no_rekening_mutasi.*'      => 'numeric',
-                'frek_debet_mutasi.*.*'     => 'numeric',
-                'nominal_debet_mutasi.*.*'  => 'numeric',
-                'frek_kredit_mutasi.*.*'    => 'numeric',
-                'nominal_kredit_mutasi.*.*' => 'numeric',
-                'saldo_mutasi.*.*'          => 'numeric',
+                'frek_debet_mutasi.*.*'     => 'integer',
+                'nominal_debet_mutasi.*.*'  => 'integer',
+                'frek_kredit_mutasi.*.*'    => 'integer',
+                'nominal_kredit_mutasi.*.*' => 'integer',
+                'saldo_mutasi.*.*'          => 'integer',
 
-                // Data Keuangan Di CA
-                'no_rekening'               => 'numeric',
-                'tujuan_pengeluaran_dana'   => 'in:KONSUMTIF,MODAL,INVESTASI',
+                // Data History Bank pada CA
+                'no_rekening'             => 'integer',
+                'penghasilan_per_tahun'   => 'integer',
+                'pemasukan_per_bulan'     => 'integer',
+                'frek_trans_pemasukan'    => 'in:A,B,C',
+                'pengeluaran_per_bulan'   => 'integer',
+                'frek_trans_pengeluaran'  => 'in:A,B,C,D',
+                // 'sumber_dana_setoran'     =>
+                'tujuan_pengeluaran_dana' => 'in:KONSUMTIF,MODAL,INVESTASI',
 
                 // Info ACC
                 'plafon_acc.*'          => 'integer',
                 'baki_debet_acc.*'      => 'integer',
                 'angsuran_acc.*'        => 'integer',
-                'collectabilitas_acc.*' => 'integer',
 
-                // Ringkasan Analisa
+                // Ringkasan Analisa CA
                 'kuantitatif_ttl_pendapatan'  => 'integer',
                 'kuantitatif_ttl_pengeluaran' => 'integer',
                 'kuantitatif_pendapatan'      => 'integer',
@@ -277,14 +271,47 @@ class BlankRequest extends FormRequest
                 'kuantitatif_ltv'             => 'integer',
                 'kuantitatif_dsr'             => 'integer',
                 'kuantitatif_idir'            => 'integer',
-                'kuantitatif_hasil'           => 'integer'
+                'kuantitatif_hasil'           => 'integer',
+
+                // Rekomendasi Pinjaman pada CA
+                'penyimpangan_struktur' => 'in:ADA,TIDAK',
+                'penyimpangan_dokumen'  => 'in:ADA,TIDAK',
+                'recom_nilai_pinjaman'  => 'integer',
+                'recom_tenor'           => 'integer',
+                'recom_angsuran'        => 'integer',
+                'recom_produk_kredit'   => 'integer',
+
+                // Rekomendasi CA
+                'plafon_kredit' => 'integer',
+
+                // Asuransi Jiwa pada CA
+                'jangka_waktu_as_jiwa'        => 'integer|in:12;18;24;30;36;48;60',
+                'nilai_pertanggungan_as_jiwa' => 'integer',
+                'jatuh_tempo_as_jiwa'         => 'date_format:d-m-Y',
+                'berat_badan_as_jiwa'         => 'integer',
+                'tinggi_badan_as_jiwa'        => 'integer',
+                'umur_nasabah_as_jiwa'        => 'integer',
+
+                // Asuransi Jaminan pada CA
+                'jangka_waktu_as_jaminan'        => 'integer|in:12;18;24;30;36;48;60',
+                'nilai_pertanggungan_as_jaminan' => 'integer',
+                'jatuh_tempo_as_jaminan'         => 'date_format:d-m-Y',
+
+                // Transaksi CAA
+                'peyimpangan'  => 'in:ADA,TIDAK',
+                // 'team_caa'     => 'in:A,B,C,D,E,F',
+                'team_caa'     => 'required',
+                'file_mao_mca' => 'mimes:jpg,jpeg,png,pdf|max:2048',
+                'file_lain'    => 'mimes:jpg,jpeg,png,pdf|max:2048'
             ];
         }else{
+
+            // If Create
             $rules = [
                 // Fasilitas Pinjaman
                 'jenis_pinjaman'        => 'required|in:KONSUMTIF,MODAL,INVESTASI',
                 'plafon_pinjaman'       => 'required|integer',
-                'tenor_pinjaman'        => 'required|numeric',
+                'tenor_pinjaman'        => 'required|integer|in:12;18;24;30;36;48;60',
 
                 // Debitur
                 'jenis_kelamin'         => 'required|in:L,P',
@@ -337,7 +364,7 @@ class BlankRequest extends FormRequest
                 'lamp_ktp_pen.*'          => 'mimes:jpg,jpeg,png,pdf|max:2048',
                 'lamp_ktp_pasangan_pen.*' => 'mimes:jpg,jpeg,png,pdf|max:2048',
                 'lamp_kk_pen.*'           => 'mimes:jpg,jpeg,png,pdf|max:2048',
-                'lamp_buku_nikah_pen.*'   => 'mimes:jpg,jpeg,png,pdf|max:2048'
+                'lamp_buku_nikah_pen.*'   => 'mimes:jpg,jpeg,png,pdf|max:2048',
             ];
         }
 
@@ -352,8 +379,9 @@ class BlankRequest extends FormRequest
             'tenor_pinjaman.required'  => ':attribute wajib diisi',
 
             'jenis_pinjaman.in'        => ':attribute harus bertipe :values',
-            'plafon_pinjaman.integer'  => ':attribute harus berupa bilangan bulat',
-            'tenor_pinjaman.numeric'   => ':attribute harus berupa angka',
+            'plafon_pinjaman.integer'  => ':attribute harus berupa angka / bilangan bulat',
+            'tenor_pinjaman.integer'   => ':attribute harus berupa angka / bilangan bulat',
+            'tenor_pinjaman.in'        => ':attribute harus salah satu dari jenis berikut :values',
 
             // Debitur
             'jenis_kelamin.required'          => ':attribute wajib diisi',
@@ -492,6 +520,7 @@ class BlankRequest extends FormRequest
 
             // Transaksi AO
             'jangka_waktu.integer'          => ':attribute harus berupa angka',
+            'jangka_waktu.in'               => ':attribute harus salah satu dari jenis berikut :values',
             'suku_bunga.integer'            => ':attribute harus berupa angka',
             'pembayaran_bunga.integer'      => ':attribute harus berupa angka',
             'akad_kredit.in'                => ':attribute harus salah satu dari jenis berikut :values',
@@ -574,7 +603,7 @@ class BlankRequest extends FormRequest
             'biaya_telp_listr_air.integer'  => ':attribute harus berupa angka / bilangan bulat',
             'biaya_lain.integer'            => ':attribute harus berupa angka / bilangan bulat',
 
-            // Usaha
+            // Pendapatan Usaha
             'pemasukan_tunai.integer'      => ':attribute harus berupa angka / bilangan bulat',
             'pemasukan_kredit.integer'     => ':attribute harus berupa angka / bilangan bulat',
             'biaya_sewa.integer'           => ':attribute harus berupa angka / bilangan bulat',
@@ -601,37 +630,30 @@ class BlankRequest extends FormRequest
             'tgl_taksasi.*.date_format'         => ':attribute harus berupa angka dengan format :format',
             'nilai_likuidasi.*.integer'         => ':attribute harus berupa angka / bilangan bulat',
 
-            // Transaksi AO
-            'jangka_waktu.integer'          => ':attribute harus berupa angka / bilangan bulat',
-            'suku_bunga.integer'            => ':attribute harus berupa angka / bilangan bulat',
-            'pembayaran_bunga.integer'      => ':attribute harus berupa angka / bilangan bulat',
-            'akad_kredit.in'                => ':attribute harus salah satu dari jenis berikut :values',
-            'ikatan_agunan.in'              => ':attribute harus salah satu dari jenis berikut :values',
-            'biaya_provisi.integer'         => ':attribute harus berupa angka / bilangan bulat',
-            'biaya_administrasi.integer'    => ':attribute harus berupa angka / bilangan bulat',
-            'biaya_credit_checking.integer' => ':attribute harus berupa angka / bilangan bulat',
-            'biaya_tabungan.integer'        => ':attribute harus berupa angka / bilangan bulat',
-
-            // Mutasi Bank
-            'urutan_mutasi.*.numeric'           => ':attribute harus berupa angka',
+            // Mutasi Bank pada CA
+            'urutan_mutasi.*.integer'           => ':attribute harus berupa angka / bilangan bulat',
             'no_rekening_mutasi.*.numeric'      => ':attribute harus berupa angka',
-            'frek_debet_mutasi.*.*.numeric'     => ':attribute harus berupa angka',
-            'nominal_debet_mutasi.*.*.numeric'  => ':attribute harus berupa angka',
-            'frek_kredit_mutasi.*.*.numeric'    => ':attribute harus berupa angka',
-            'nominal_kredit_mutasi.*.*.numeric' => ':attribute harus berupa angka',
-            'saldo_mutasi.*.*.numeric'          => ':attribute harus berupa angka',
+            'frek_debet_mutasi.*.*.integer'     => ':attribute harus berupa angka / bilangan bulat',
+            'nominal_debet_mutasi.*.*.integer'  => ':attribute harus berupa angka / bilangan bulat',
+            'frek_kredit_mutasi.*.*.integer'    => ':attribute harus berupa angka / bilangan bulat',
+            'nominal_kredit_mutasi.*.*.integer' => ':attribute harus berupa angka / bilangan bulat',
+            'saldo_mutasi.*.*.integer'          => ':attribute harus berupa angka / bilangan bulat',
 
-            // Data Keuangan Di CA
-            'no_rekening.numeric'        => ':attribute harus berupa angka',
-            'tujuan_pengeluaran_dana.in' => ':attribute harus salah satu dari jenis berikut :values',
+            // Data History Bank pada CA
+            'no_rekening.integer'           => ':attribute harus berupa angka / bilangan bulat',
+            'penghasilan_per_tahun.integer' => ':attribute harus berupa angka / bilangan bulat',
+            'pemasukan_per_bulan.integer'   => ':attribute harus berupa angka / bilangan bulat',
+            'frek_trans_pemasukan.in'       => ':attribute harus salah satu dari jenis berikut :values, A untuk frek. 1 -  5 Kali, B untuk untuk frek. 2.6 - 10 kali, C untuk frek. lebih dari 10 kali',
+            'pengeluaran_per_bulan.integer' => ':attribute harus berupa angka / bilangan bulat',
+            'frek_trans_pengeluaran.in'     => ':attribute harus salah satu dari jenis berikut :values, A untuk frek. 1 -  5 Kali, B untuk untuk frek. 2.6 - 10 kali, C untuk frek. 3.1 - 15 kali, D untuk frek. lebih dari 15 kali',
+            'tujuan_pengeluaran_dana.in'    => 'in:KONSUMTIF,MODAL,INVESTASI',
 
             // Info ACC
             'plafon_acc.*.integer'          => ':attribute harus berupa angka / bilangan bulat',
             'baki_debet_acc.*.integer'      => ':attribute harus berupa angka / bilangan bulat',
             'angsuran_acc.*.integer'        => ':attribute harus berupa angka / bilangan bulat',
-            'collectabilitas_acc.*.integer' => ':attribute harus berupa angka / bilangan bulat',
 
-            // Ringkasan Analisa
+            // Ringkasan Analisa CA
             'kuantitatif_ttl_pendapatan.integer'  => ':attribute harus berupa angka / bilangan bulat',
             'kuantitatif_ttl_pengeluaran.integer' => ':attribute harus berupa angka / bilangan bulat',
             'kuantitatif_pendapatan.integer'      => ':attribute harus berupa angka / bilangan bulat',
@@ -639,7 +661,42 @@ class BlankRequest extends FormRequest
             'kuantitatif_ltv.integer'             => ':attribute harus berupa angka / bilangan bulat',
             'kuantitatif_dsr.integer'             => ':attribute harus berupa angka / bilangan bulat',
             'kuantitatif_idir.integer'            => ':attribute harus berupa angka / bilangan bulat',
-            'kuantitatif_hasil.integer'           => ':attribute harus berupa angka / bilangan bulat'
+            'kuantitatif_hasil.integer'           => ':attribute harus berupa angka / bilangan bulat',
+
+            // Rekomendasi Pinjaman pada CA
+            'penyimpangan_struktur.in'     => ':attribute harus salah satu dari jenis berikut :values',
+            'penyimpangan_dokumen.in'      => ':attribute harus salah satu dari jenis berikut :values',
+            'recom_nilai_pinjaman.integer' => ':attribute harus berupa angka / bilangan bulat',
+            'recom_tenor.integer'          => ':attribute harus berupa angka / bilangan bulat',
+            'recom_angsuran.integer'       => ':attribute harus berupa angka / bilangan bulat',
+            'recom_produk_kredit.integer' => ':attribute harus berupa angka / bilangan bulat',
+
+            // Rekomendasi CA
+            'plafon_kredit' => ':attribute harus berupa angka / bilangan bulat',
+
+            // Asuransi Jiwa pada CA
+            'jangka_waktu_as_jiwa.integer'        => ':attribute harus berupa angka / bilangan bulat',
+            'jangka_waktu_as_jiwa.in'             => ':attribute harus salah satu dari jenis berikut :values',
+            'nilai_pertanggungan_as_jiwa.integer' => ':attribute harus berupa angka / bilangan bulat',
+            'jatuh_tempo_as_jiwa.date_format'     => ':attribute harus berupa angka dengan format :format',
+            'berat_badan_as_jiwa.integer'         => ':attribute harus berupa angka / bilangan bulat',
+            'tinggi_badan_as_jiwa.integer'        => ':attribute harus berupa angka / bilangan bulat',
+            'umur_nasabah_as_jiwa.integer'        => ':attribute harus berupa angka / bilangan bulat',
+
+            // Asuransi Jaminan pada CA
+            'jangka_waktu_as_jaminan.integer'        => ':attribute harus berupa angka / bilangan bulat',
+            'jangka_waktu_as_jaminan.in'             => ':attribute harus salah satu dari jenis berikut :values',
+            'nilai_pertanggungan_as_jaminan.integer' => ':attribute harus berupa angka / bilangan bulat',
+            'jatuh_tempo_as_jaminan.date_format'     => ':attribute harus berupa angka dengan format :format',
+
+            // Transaksi CAA
+            'peyimpangan.in' => ':attribute harus salah satu dari jenis berikut :values',
+            // 'team_caa.in'    => ':attribute harus salah satu dari jenis berikut :values, A = DSH, B = DSH&DOO, C = DSH&DOO&AM, D = DSH&DOO&AM&CRRM, E = DSH&DOO&AM&CRM&DIR1, F = DSH&DOO&AM&CRM&DIR1&DIRUT',
+            'team_caa.required'  => ':attribute wajib diisi/dipilih',
+            'file_mao_mca.mimes' => ':attribute harus bertipe :values',
+            'file_lain.mimes'    => ':attribute harus bertipe :values',
+            'file_mao_mca.max'   => 'ukuran :attribute max :max kb',
+            'file_lain.max'      => 'ukuran :attribute max :max kb'
         ];
     }
 

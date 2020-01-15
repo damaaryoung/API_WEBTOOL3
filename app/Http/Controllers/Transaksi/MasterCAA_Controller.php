@@ -21,7 +21,6 @@ class MasterCAA_Controller extends BaseController
 {
     public function index(Request $req){
         $user_id  = $req->auth->user_id;
-        $username = $req->auth->username;
 
         $pic = PIC::where('user_id', $user_id)->first();
 
@@ -29,7 +28,7 @@ class MasterCAA_Controller extends BaseController
             return response()->json([
                 "code"    => 404,
                 "status"  => "not found",
-                "message" => "User_ID anda adalah '".$user_id."' dengan username '".$username."' . Namun anda belum terdaftar sebagai PIC(CA). Harap daftarkan diri sebagai PIC(CA) pada form PIC atau hubungi bagian IT"
+                "message" => "User_ID anda adalah '".$user_id."' dengan username '".$req->auth->user."' . Namun anda belum terdaftar sebagai PIC(CAA). Harap daftarkan diri sebagai PIC(CAA) pada form PIC atau hubungi bagian IT"
             ], 404);
         }
 
@@ -94,7 +93,16 @@ class MasterCAA_Controller extends BaseController
 
     public function show($id, Request $req){
         $user_id = $req->auth->user_id;
-        $pic     = PIC::where('user_id', $user_id)->first();
+        $pic     = PIC::with('jpic','area','cabang')->where('user_id', $user_id)->first();
+
+        if ($pic == null) {
+            return response()->json([
+                "code"    => 404,
+                "status"  => "not found",
+                "message" => "User_ID anda adalah '".$user_id."' dengan username '".$req->auth->user."' . Namun anda belum terdaftar sebagai PIC(CAA). Harap daftarkan diri sebagai PIC(CAA) pada form PIC atau hubungi bagian IT"
+            ], 404);
+        }
+
         $id_cabang = $pic->id_mk_cabang;
 
         $val = TransCA::with('pic', 'cabang')->where('id_cabang', $id_cabang)->where('id_trans_so', $id)->first();
@@ -233,7 +241,7 @@ class MasterCAA_Controller extends BaseController
         if (!$countCAA) {
             $lastNumb = 1;
         }else{
-            $no = $countCAA->nomor_ca;
+            $no = $countCAA->nomor_caa;
 
             $arr = explode("-", $no, 5);
 
@@ -260,13 +268,20 @@ class MasterCAA_Controller extends BaseController
             ], 404);
         }
 
+        $check_caa = TransCAA::where('id_trans_so', $id)->first();
+
         $lamp_dir = 'public/'.$check->debt['no_ktp'];
 
         if($file = $req->file('file_mao_mca')){
 
-            $path = $lamp_dir.'/mcaa';
+            $path = $lamp_dir.'/mcaa/file_mao_mca';
 
-            $name = 'file_mao_mca/'.$file->getClientOriginalName();
+            $name = $file->getClientOriginalName();
+
+            if(!empty($check_caa->file_mao_mca))
+            {
+                File::delete($check_caa->file_mao_mca);
+            }
 
             $file->move($path,$name);
 
@@ -278,9 +293,14 @@ class MasterCAA_Controller extends BaseController
 
         if($file = $req->file('file_lain')){
 
-            $path = $lamp_dir.'/mcaa';
+            $path = $lamp_dir.'/mcaa/file_lain';
 
-            $name = 'file_lain/'.$file->getClientOriginalName();
+            $name = $file->getClientOriginalName();
+
+            if(!empty($check_caa->file_lain))
+            {
+                File::delete($check_caa->file_lain);
+            }
 
             $file->move($path,$name);
 
@@ -290,6 +310,16 @@ class MasterCAA_Controller extends BaseController
             $lain = null;
         }
 
+        $reqTeam = $req->input('team_caa');
+
+        for ($i = 0; $i < count($reqTeam); $i++) {
+            $arrTeam['email'] = $req->team_caa;
+            // $id_pem_tan['id'][$i] = $pemTanah->id;
+
+        }
+
+        $team_caa = implode(";", $arrTeam['email']);
+
         $transCAA = array(
             'nomor_caa'   => $nomor_caa,
             'user_id'     => $user_id,
@@ -297,12 +327,39 @@ class MasterCAA_Controller extends BaseController
             'id_pic'      => $PIC->id,
             'id_cabang'   => $PIC->id_mk_cabang,
             'peyimpangan' => $req->input('peyimpangan'),
-            'team_caa'    => $req->input('team_caa'),
+            'team_caa'    => $team_caa,
             'rincian'     => $req->input('rincian'),
             'file_mao_mca'=> $mao_mca,
             'file_lain'   => $lain,
-            'catatan_ca'  => $req->input('catatan_caa'),
-            'status_ca'   => empty($req->input('status_caa')) ? 1 : $req->input('status_caa'),
+            'catatan_caa' => $req->input('catatan_caa'),
+            'status_caa'  => empty($req->input('status_caa')) ? 1 : $req->input('status_caa'),
         );
+
+        DB::connection('web')->beginTransaction();
+
+        try {
+            if ($check_caa == null) {
+                $CAA = TransCAA::create($transCAA);
+
+                TransSO::where('id', $id)->update(['id_trans_caa' => $CAA->id]);
+            }else{
+                TransCAA::where('id', $check_caa->id)->update($transCAA);
+            }
+
+            DB::connection('web')->commit();
+
+            return response()->json([
+                'code'   => 200,
+                'status' => 'success',
+                'message'=> 'Data untuk CA berhasil dikirim'
+            ], 200);
+        } catch (Exception $e) {
+            $err = DB::connection('web')->rollback();
+            return response()->json([
+                'code'    => 501,
+                'status'  => 'error',
+                'message' => $err
+            ], 501);
+        }
     }
 }

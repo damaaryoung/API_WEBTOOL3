@@ -33,7 +33,6 @@ class MasterAO_Controller extends BaseController
 {
     public function index(Request $req){
         $user_id  = $req->auth->user_id;
-        $username = $req->auth->username;
 
         $pic = PIC::where('user_id', $user_id)->first();
 
@@ -41,7 +40,7 @@ class MasterAO_Controller extends BaseController
             return response()->json([
                 "code"    => 404,
                 "status"  => "not found",
-                "message" => "User_ID anda adalah '".$user_id."' dengan username '".$username."' . Namun anda belum terdaftar sebagai PIC(AO). Harap daftarkan diri sebagai PIC(AO) pada form PIC atau hubungi bagian IT"
+                "message" => "User_ID anda adalah '".$user_id."' dengan username '".$req->auth->user."' . Namun anda belum terdaftar sebagai PIC(AO). Harap daftarkan diri sebagai PIC(AO) pada form PIC atau hubungi bagian IT"
             ], 404);
         }
 
@@ -130,6 +129,15 @@ class MasterAO_Controller extends BaseController
     public function show($id, Request $req){
         $user_id = $req->auth->user_id;
         $pic     = PIC::where('user_id', $user_id)->first();
+
+        if ($pic == null) {
+            return response()->json([
+                "code"    => 404,
+                "status"  => "not found",
+                "message" => "User_ID anda adalah '".$user_id."' dengan username '".$req->auth->user."' . Namun anda belum terdaftar sebagai PIC(AO). Harap daftarkan diri sebagai PIC(AO) pada form PIC atau hubungi bagian IT"
+            ], 404);
+        }
+
         $id_cabang = $pic->id_mk_cabang;
 
         $val = TransSO::with('pic', 'cabang', 'asaldata', 'debt', 'pas', 'faspin', 'ao', 'ca')->where('id', $id)->where('id_cabang', $id_cabang)->first();
@@ -492,14 +500,6 @@ class MasterAO_Controller extends BaseController
             'catatan_ao'            => $req->input('catatan_ao'),
             'status_ao'             => empty($req->input('status_ao')) ? 1 : $req->input('status_ao')
         );
-
-        // if ($TransAO['status_ao'] == 1) {
-        //     $msg = 'berhasil menyetujui data';
-        // }elseif ($TransAO['status_ao'] == 2) {
-        //     $msg = 'berhasil menolak data';
-        // }else{
-        //     $msg = 'waiting proccess';
-        // }
 
         $recom_AO = array(
             'produk'                => $req->input('produk'),

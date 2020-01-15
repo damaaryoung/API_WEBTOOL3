@@ -35,7 +35,7 @@ class PasanganController extends BaseController
         }
 
         $data = array(
-            'id'               => $val->id_pasangan,
+            'id'               => $val->id,
             'nama_lengkap'     => $val->nama_lengkap,
             'nama_ibu_kandung' => $val->nama_ibu_kandung,
             'jenis_kelamin'    => $val->jenis_kelamin,

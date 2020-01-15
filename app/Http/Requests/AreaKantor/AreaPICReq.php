@@ -32,13 +32,13 @@ class AreaPICReq extends FormRequest
 
     public function messages(){
         return [
-            'id_area_kerja.required' => ':attribute belum diisi',
-            'id_area_cabang.required'=> ':attribute belum diisi',
-            'nama_area_pic.required' => ':attribute belum diisi',
-            'id_prov.required'       => ':attribute belum diisi',
-            'id_kab.required'        => ':attribute belum diisi',
-            'id_kec.required'        => ':attribute belum diisi',
-            'id_kel.required'        => ':attribute belum diisi',
+            'id_area_kerja.required' => ':attribute wajib diisi',
+            'id_area_cabang.required'=> ':attribute wajib diisi',
+            'nama_area_pic.required' => ':attribute wajib diisi',
+            'id_prov.required'       => ':attribute wajib diisi',
+            'id_kab.required'        => ':attribute wajib diisi',
+            'id_kec.required'        => ':attribute wajib diisi',
+            'id_kel.required'        => ':attribute wajib diisi',
             'flg_aktif.in'           => ':attribute harus salah satu dari jenis berikut :values'
         ];
     }

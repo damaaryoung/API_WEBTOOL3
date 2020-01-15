@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\AreaKantor;
 
+use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Urameshibr\Requests\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
@@ -16,27 +17,36 @@ class PICRequest extends FormRequest
         return true;
     }
 
-    public function rules()
+    public function rules(Request $request)
     {
+        $method = $request->method();
+
+        switch ($method) {
+            case 'POST':
+                $value = 'required|integer';
+                break;
+
+            case 'PUT':
+                $value = 'integer';
+                break;
+        }
+
         return [
-            'user_id'      => 'required|numeric',
-            'id_mk_area'   => 'required',
-            'id_mk_cabang' => 'required',
-            'id_mj_pic'    => 'required',
-            'nama'         => 'required',
+            'user_id'      => $value,
+            'id_mk_area'   => $value,
+            'id_mk_cabang' => $value,
+            'id_mj_pic'    => $value,
             'flg_aktif'    => 'in:false,true'
        ];
     }
 
     public function messages(){
         return [
-            'user_id.required'      => ':attribute belum diisi',
-            'user_id.numeric'       => ':attribute harus berupa angka',
-            'id_mk_area.required'   => ':attribute belum diisi',
-            'id_mk_cabang.required' => ':attribute belum diisi',
-            'user_id.numeric'       => ':attribute harus berupa angka',
-            'id_mj_pic.required'    => ':attribute belum diisi',
-            'nama.required'         => ':attribute belum diisi',
+            'user_id.required'      => ':attribute wajib diisi',
+            'user_id.integer'       => ':attribute harus berupa angka',
+            'id_mk_area.required'   => ':attribute wajib diisi',
+            'id_mk_cabang.required' => ':attribute wajib diisi',
+            'id_mj_pic.required'    => ':attribute wajib diisi',
             'flg_aktif.in'          => ':attribute harus salah satu dari jenis berikut :values'
         ];
     }

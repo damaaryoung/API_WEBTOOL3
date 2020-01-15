@@ -28,9 +28,9 @@ class AreaRequest extends FormRequest
 
     public function messages(){
         return [
-            'nama.required'         => ':attribute belum diisi',
-            'id_provinsi.required'  => ':attribute belum diisi',
-            'id_kabupaten.required' => ':attribute belum diisi',
+            'nama.required'         => ':attribute wajib diisi',
+            'id_provinsi.required'  => ':attribute wajib diisi',
+            'id_kabupaten.required' => ':attribute wajib diisi',
             'flg_aktif.in'          => ':attribute harus salah satu dari jenis berikut :values'
         ];
     }

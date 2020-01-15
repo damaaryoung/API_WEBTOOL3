@@ -10,9 +10,44 @@ use DB;
 
 class KecamatanController extends BaseController
 {
+    public function all() {
+        try {
+            $query = Kecamatan::with('kab')->get();
+
+            if ($query == '[]') {
+                return response()->json([
+                    "code"    => 404,
+                    "status"  => "not found",
+                    "message" => "Data kosong!!"
+                ], 404);
+            }
+
+            foreach ($query as $key => $val) {
+                $res[$key] = [
+                    "id"             => $val->id,
+                    "nama"           => $val->nama,
+                    "nama_kabupaten" => $val->kab['nama'],
+                    "flg_aktif"      => $val->flg_aktif == 1 ? "true" : "false"
+                ];
+            }
+
+            return response()->json([
+                'code'   => 200,
+                'status' => 'success',
+                'data'   => $res
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                "code"    => 501,
+                "status"  => "error",
+                "message" => $e
+            ], 501);
+        }
+    }
+
     public function index() {
         try {
-            $query = Kecamatan::with('kab')->select('id', 'nama', 'id_kabupaten')->get();
+            $query = Kecamatan::with('kab')->select('id', 'nama', 'id_kabupaten')->where('flg_aktif', 1)->get();
 
             if ($query == '[]') {
                 return response()->json([
@@ -53,7 +88,7 @@ class KecamatanController extends BaseController
             return response()->json([
                 "code"    => 422,
                 "status"  => "not valid request",
-                "message" => "nama belum diisi"
+                "message" => [ "nama" => ["nama belum diisi"]]
             ], 422);
         }
 
@@ -61,12 +96,20 @@ class KecamatanController extends BaseController
             return response()->json([
                 "code"    => 422,
                 "status"  => "not valid request",
-                "message" => "id kabupaten belum diisi"
+                "message" => [ "id_kabupaten" => ["id kabupaten belum diisi"]]
+            ], 422);
+        }
+
+        if(!empty($kabupaten) && !preg_match("/^[0-9]{1,}$/", $kabupaten)){
+            return response()->json([
+                "code"    => 422,
+                "status"  => "not valid request",
+                "message" => [ "id_kabupaten" => ["id kabupaten harus berupa angka"]]
             ], 422);
         }
 
         try {
-            $query = Kecamatan::create([
+            Kecamatan::create([
                 'nama'         => $nama,
                 'id_kabupaten' => $kabupaten
             ]);
@@ -148,14 +191,19 @@ class KecamatanController extends BaseController
         $kabupaten = empty($req->input('id_kabupaten')) ? $check->id_kabupaten : $req->input('id_kabupaten');
         $flg_aktif = empty($req->input('flg_aktif')) ? $check->flg_aktif : ($req->input('flg_aktif') == 'false' ? 0 : 1);
 
+        if(!empty($kabupaten) && !preg_match("/^[0-9]{1,}$/", $kabupaten)){
+            return response()->json([
+                "code"    => 422,
+                "status"  => "not valid request",
+                "message" => ["id_kabupaten" => ["id kabupaten harus berupa angka"]]
+            ], 422);
+        }
 
         if ($req->input('flg_aktif') != "false" && $req->input('flg_aktif') != "true" && $req->input('flg_aktif') != "") {
             return response()->json([
                 "code"    => 422,
                 "status"  => "not valid request",
-                "message" => [
-                    "flg_aktif" => ["flg aktif harus salah satu dari jenis berikut false, true"]
-                ]
+                "message" => ["flg_aktif" => ["flg aktif harus salah satu dari jenis berikut false, true"]]
             ], 422);
         }
 
