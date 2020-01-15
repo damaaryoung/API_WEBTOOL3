@@ -18,39 +18,54 @@ $router->group(['prefix' => '/wilayah'], function () use ($router) {
         return 'add parameters after slash';
     });
 
-    $router->get('/area_cabang/filter', 'Master\AreaKantor\CabangController@get_cabang');
+    // $router->get('/area_cabang/filter', 'Master\AreaKantor\CabangController@get_cabang');
 
-    $router->get('/provinsi', 'Wilayah\ProvinsiController@index');
-    $router->get('/all/provinsi', 'Wilayah\ProvinsiController@all');
-    $router->post('/provinsi', 'Wilayah\ProvinsiController@store');
-    // $router->get('/provinsi/search/{search}', 'Wilayah\ProvinsiController@search'); // search Provinsi to Mitra
-    $router->get('/provinsi/{IdOrName}', 'Wilayah\ProvinsiController@show');
-    $router->put('/provinsi/{id}', 'Wilayah\ProvinsiController@update');
-    $router->delete('/provinsi/{id}', 'Wilayah\ProvinsiController@delete');
+    $router->group(['namespace' => 'Wilayah'], function() use ($router){
 
-    $router->get('/kabupaten', 'Wilayah\KabupatenController@index');
-    $router->get('/all/kabupaten', 'Wilayah\KabupatenController@all');
-    $router->post('/kabupaten', 'Wilayah\KabupatenController@store');
-    $router->get('/kabupaten/{IdOrName}', 'Wilayah\KabupatenController@show');
-    $router->put('/kabupaten/{id}', 'Wilayah\KabupatenController@update');
-    $router->delete('/kabupaten/{id}', 'Wilayah\KabupatenController@delete');
-    $router->get('/provinsi/{id}/kabupaten', 'Wilayah\KabupatenController@sector'); // Get Data Kabupaten By Id Provinsi
+        // Provinsi
+        $router->get('/all/provinsi', 'ProvinsiController@all');
+        $router->group(['prefix' => '/provinsi'], function () use ($router){
+            $router->get('/', 'ProvinsiController@index');
+            $router->post('/', 'ProvinsiController@store');
+            // $router->get('/search/{search}', 'ProvinsiController@search'); // search Provinsi to Mitra
+            $router->get('/{IdOrName}', 'ProvinsiController@show');
+            $router->put('/{id}', 'ProvinsiController@update');
+            $router->delete('/{id}', 'ProvinsiController@delete');
+        });
 
-    $router->get('/kecamatan', 'Wilayah\KecamatanController@index');
-    $router->get('/all/kecamatan', 'Wilayah\KecamatanController@all');
-    $router->post('/kecamatan', 'Wilayah\KecamatanController@store');
-    $router->get('/kecamatan/{IdOrName}', 'Wilayah\KecamatanController@show');
-    $router->put('/kecamatan/{id}', 'Wilayah\KecamatanController@update');
-    $router->delete('/kecamatan/{id}', 'Wilayah\KecamatanController@delete');
-    $router->get('/kabupaten/{id}/kecamatan', 'Wilayah\KecamatanController@sector'); // Get Data Kecamatan By Id Kabupaten
+        // Kabupaten
+        $router->get('/all/kabupaten', 'KabupatenController@all');
+        $router->get('/provinsi/{id}/kabupaten', 'KabupatenController@sector'); // Get Data Kabupaten By Id Provinsi
+        $router->group(['prefix' => '/kabupaten'], function () use ($router){
+            $router->get('/', 'KabupatenController@index');
+            $router->post('/', 'KabupatenController@store');
+            $router->get('/{IdOrName}', 'KabupatenController@show');
+            $router->put('/{id}', 'KabupatenController@update');
+            $router->delete('/{id}', 'KabupatenController@delete');
+        });
 
-    $router->get('/kelurahan', 'Wilayah\KelurahanController@index');
-    $router->get('/all/kelurahan', 'Wilayah\KelurahanController@all');
-    $router->post('/kelurahan', 'Wilayah\KelurahanController@store');
-    $router->get('/kelurahan/{IdOrName}', 'Wilayah\KelurahanController@show');
-    $router->put('/kelurahan/{id}', 'Wilayah\KelurahanController@update');
-    $router->delete('/kelurahan/{id}', 'Wilayah\KelurahanController@delete');
-    $router->get('/kecamatan/{id}/kelurahan', 'Wilayah\KelurahanController@sector'); // Get Data Kelurahan By Id Kecamatan
+        // Kecamatan
+        $router->get('/all/kecamatan', 'KecamatanController@all');
+        $router->get('/kabupaten/{id}/kecamatan', 'KecamatanController@sector'); // Get Data Kecamatan By Id Kabupaten
+        $router->group(['prefix' => '/kecamatan'], function () use ($router){
+            $router->get('/', 'KecamatanController@index');
+            $router->post('/', 'KecamatanController@store');
+            $router->get('/{IdOrName}', 'KecamatanController@show');
+            $router->put('/{id}', 'KecamatanController@update');
+            $router->delete('/{id}', 'KecamatanController@delete');
+        });
+
+        // Kelurahan
+        $router->get('/all/kelurahan', 'KelurahanController@all');
+        $router->get('/kecamatan/{id}/kelurahan', 'KelurahanController@sector'); // Get Data Kelurahan By Id Kecamatan
+        $router->group(['prefix' => '/kelurahan'], function () use ($router){
+            $router->get('/', 'KelurahanController@index');
+            $router->post('/', 'KelurahanController@store');
+            $router->get('/{IdOrName}', 'KelurahanController@show');
+            $router->put('/{id}', 'KelurahanController@update');
+            $router->delete('/{id}', 'KelurahanController@delete');
+        });
+    });
 });
 
 $router->post('/login', 'AuthController@login'); // Login All Level
@@ -61,88 +76,130 @@ $router->group(['middleware' => 'jwt.auth'], function () use ($router) {
     //For Non User (Debitur)
     $router->group(['prefix' => '/api'], function () use ($router) {
 
-        $router->get('/logs', 'LogsController@index'); //Log History All
-        $router->get('/logs/{id}', 'LogsController@detail'); //Log History By ID
-        $router->get('/logs/limit/{limit}', 'LogsController@limit'); //Log History Limit
-        $router->get('/logs/search/{search}', 'LogsController@search'); //Log History Search
+        // Logs (History)
+        $router->group(['prefix' => '/logs'], function () use ($router){
+            $router->get('/', 'LogsController@index'); //Log History All
+            $router->get('/{id}', 'LogsController@detail'); //Log History By ID
+            $router->get('/limit/{limit}', 'LogsController@limit'); //Log History Limit
+            $router->get('/search/{search}', 'LogsController@search'); //Log History Search
+        });
 
+        // Users And User
         $router->get('/users', 'UserController@getUsers');
         $router->get('/users/{IdOrSearch}', 'UserController@IdOrSearch');
         $router->get('/user', 'UserController@index');
         $router->put('/user/change_password', 'UserController@changePassword');
 
+        // Otorisasi
         $router->get('/oto', 'FlagAuthorController@otoIndex'); // Otorisasi
         $router->get('/oto/{limit}/limit', 'FlagAuthorController@otoLimit'); // Otorisasi
         $router->get('/oto/{id}', 'FlagAuthorController@otoShow');
         $router->put('/oto/{id}', 'FlagAuthorController@otoUpdate');
+        $router->put('/oto/{id}/reject', 'FlagAuthorController@rejectOto');
+
+        // Log Otorisasi
         $router->get('/log_oto', 'FlagAuthorController@otoH');
         $router->get('/log_oto/{year}', 'FlagAuthorController@otoHY');
         $router->get('/log_oto/{year}/{month}', 'FlagAuthorController@otoHYM');
-        $router->get('/count_oto', 'FlagAuthorController@countOto');
-        $router->put('/oto/{id}/reject', 'FlagAuthorController@rejectOto');
 
+        // Count Otorisasi
+        $router->get('/count_oto', 'FlagAuthorController@countOto');
+
+        // Approval
         $router->get('/apro', 'FlagAuthorController@aproIndex'); // Approval
         $router->get('/apro/{limit}/limit', 'FlagAuthorController@aproLimit'); // Approval
         $router->get('/apro/{id}', 'FlagAuthorController@aproShow');
         $router->put('/apro/{id}', 'FlagAuthorController@aproUpdate');
+        $router->put('/apro/{id}/reject', 'FlagAuthorController@rejectApro');
+
+        // Log Approval
         $router->get('/log_apro', 'FlagAuthorController@aproH');
         $router->get('/log_apro/{year}', 'FlagAuthorController@aproHY');
         $router->get('/log_apro/{year}/{month}', 'FlagAuthorController@aproHYM');
-        $router->get('/count_apro', 'FlagAuthorController@countApro');
-        $router->put('/apro/{id}/reject', 'FlagAuthorController@rejectApro');
 
+        // Count Otorisasi
+        $router->get('/count_apro', 'FlagAuthorController@countApro');
+
+        // Reset Otorisasi And Approval
         $router->post('/oto/all/reset', 'FlagAuthorController@otoReset'); // Reset Otorisasi
         $router->post('/apro/all/reset', 'FlagAuthorController@aproReset'); // Reset Otorisasi
 
+
         $router->group(['prefix' => '/master'], function () use ($router) {
-            $router->get('/asal_data', 'Master\AreaKantor\AsalDataController@index');
-            $router->post('/asal_data', 'Master\AreaKantor\AsalDataController@store');
-            $router->get('/asal_data/{id}', 'Master\AreaKantor\AsalDataController@show');
-            $router->put('/asal_data/{id}', 'Master\AreaKantor\AsalDataController@update');
-            $router->delete('/asal_data/{id}', 'Master\AreaKantor\AsalDataController@delete');
 
-            $router->get('/mitra', 'Master\Bisnis\MitraController@index');
-            $router->get('/mitra/{kode_mitra}', 'Master\Bisnis\MitraController@show');
+            $router->group(['namespace' => 'Master\AreaKantor'], function () use ($router){
 
-            //Area Kantor
-            $router->get('/area_kerja', 'Master\AreaKantor\AreaController@index');
-            $router->post('/area_kerja', 'Master\AreaKantor\AreaController@store');
-            $router->get('/area_kerja/{id}', 'Master\AreaKantor\AreaController@show');
-            $router->put('/area_kerja/{id}', 'Master\AreaKantor\AreaController@update');
-            $router->delete('/area_kerja/{id}', 'Master\AreaKantor\AreaController@delete');
+                // Mitra Bisnis
+                $router->get('/mitra', 'Bisnis\MitraController@index');
+                $router->get('/mitra/{kode_mitra}', 'Bisnis\MitraController@show');
 
-            //Cabang Kantor
-            $router->get('/area_cabang', 'Master\AreaKantor\CabangController@index');
-            $router->post('/area_cabang', 'Master\AreaKantor\CabangController@store');
-            $router->get('/area_cabang/{id}', 'Master\AreaKantor\CabangController@show');
-            $router->put('/area_cabang/{id}', 'Master\AreaKantor\CabangController@update');
-            $router->delete('/area_cabang/{id}', 'Master\AreaKantor\CabangController@delete');
+                // Asal Data
+                $router->get('/all/asal_data', 'AsalDataController@all');
+                $router->group(['prefix' => '/asal_data'], function () use ($router){
+                    $router->get('/', 'AsalDataController@index');
+                    $router->post('/', 'AsalDataController@store');
+                    $router->get('/{id}', 'AsalDataController@show');
+                    $router->put('/{id}', 'AsalDataController@update');
+                    $router->delete('/{id}', 'AsalDataController@delete');
+                });
 
-            $router->get('/kode_kantor', 'Master\AreaKantor\KodeKantorController@index');
+                //Area Kantor
+                $router->get('/all/area_kerja', 'AreaController@all');
+                $router->group(['prefix' => '/area_kerja'], function () use ($router){
+                    $router->get('/', 'AreaController@index');
+                    $router->post('/', 'AreaController@store');
+                    $router->get('/{id}', 'AreaController@show');
+                    $router->put('/{id}', 'AreaController@update');
+                    $router->delete('/{id}', 'AreaController@delete');
+                });
 
-            //Kas Kantor
-            $router->get('/area_pic', 'Master\AreaKantor\AreaPICController@index');
-            $router->post('/area_pic', 'Master\AreaKantor\AreaPICController@store');
-            $router->get('/area_pic/{id}', 'Master\AreaKantor\AreaPICController@show');
-            $router->put('/area_pic/{id}', 'Master\AreaKantor\AreaPICController@update');
-            $router->delete('/area_pic/{id}', 'Master\AreaKantor\AreaPICController@delete');
+                //Cabang Kantor
+                $router->get('/all/area_cabang', 'CabangController@all');
+                $router->group(['prefix' => '/area_cabang'], function () use ($router){
+                    $router->get('/', 'CabangController@index');
+                    $router->post('/', 'CabangController@store');
+                    $router->get('/{id}', 'CabangController@show');
+                    $router->put('/{id}', 'CabangController@update');
+                    $router->delete('/{id}', 'CabangController@delete');
+                });
 
-            //PIC
-            $router->get('/pic', 'Master\AreaKantor\PICController@index');
-            $router->get('/team_caa', 'Master\AreaKantor\PICController@teamCAA');
-            $router->post('/pic', 'Master\AreaKantor\PICController@store');
-            $router->get('/pic/{id}', 'Master\AreaKantor\PICController@show');
-            $router->put('/pic/{id}', 'Master\AreaKantor\PICController@update');
-            $router->delete('/pic/{id}', 'Master\AreaKantor\PICController@delete');
+                // Area PIC
+                $router->get('/all/area_pic', 'AreaPICController@all');
+                $router->group(['prefix' => '/area_pic'], function () use ($router){
+                    $router->get('/', 'AreaPICController@index');
+                    $router->post('/', 'AreaPICController@store');
+                    $router->get('/{id}', 'AreaPICController@show');
+                    $router->put('/{id}', 'AreaPICController@update');
+                    $router->delete('/{id}', 'AreaPICController@delete');
+                });
 
-            //Jenis PIC
-            $router->get('/jenis_pic', 'Master\AreaKantor\JPICController@index');
-            $router->post('/jenis_pic', 'Master\AreaKantor\JPICController@store');
-            $router->get('/jenis_pic/{id}', 'Master\AreaKantor\JPICController@show');
-            $router->put('/jenis_pic/{id}', 'Master\AreaKantor\JPICController@update');
-            $router->delete('/jenis_pic/{id}', 'Master\AreaKantor\JPICController@delete');
+                // Daftar PIC
+                $router->get('/all/pic', 'PICController@all');
+                $router->group(['prefix' => '/pic'], function () use ($router){
+                    $router->get('/', 'PICController@index');
+                    $router->post('/', 'PICController@store');
+                    $router->get('/{id}', 'ICController@show');
+                    $router->put('/{id}', 'PICController@update');
+                    $router->delete('/{id}', 'PICController@delete');
 
+                });
+                $router->get('/team_caa', 'PICController@teamCAA');
 
+                //Jenis PIC
+                $router->group(['prefix' => '/jenis_pic'], function () use ($router){
+                    $router->get('/', 'JPICController@index');
+                    $router->post('/', 'JPICController@store');
+                    $router->get('/{id}', 'JPICController@show');
+                    $router->put('/{id}', 'JPICController@update');
+                    $router->delete('/{id}', 'JPICController@delete');
+                });
+
+                // Kode Kantor from DPM_ONLINE (user)
+                $router->get('/kode_kantor', 'KodeKantorController@index');
+
+            });
+
+            // Transaksi From SO -> CAA, etc
             $router->get('/das', 'Pengajuan\DASController@index'); //Cek HM
             $router->get('/das/{id}', 'Pengajuan\DASController@show'); //Cek HM
             $router->post('/das/{id}', 'Pengajuan\DASController@update'); //Cek HM
@@ -151,9 +208,10 @@ $router->group(['middleware' => 'jwt.auth'], function () use ($router) {
             $router->get('/hm/{id}', 'Pengajuan\HMController@show'); //Cek HM
             $router->put('/hm/{id}', 'Pengajuan\HMController@update'); //Cek HM
 
-
+            // Transaksi From SO -> CAA, etc
             $router->group(['namespace' => 'Transaksi'], function() use ($router) {
 
+                // Trans SO
                 $router->group(['prefix' => '/mcc',], function() use ($router) {
                     $router->post('/', 'MasterCC_Controller@store'); // Memorandum Credit Checking
                     $router->get('/', 'MasterCC_Controller@index');
@@ -161,19 +219,22 @@ $router->group(['middleware' => 'jwt.auth'], function () use ($router) {
                     $router->post('/{id}', 'MasterCC_Controller@update'); // Update MCC
                 });
 
-                $router->group(['prefix' => '/mao',], function() use ($router) {
+                // Trans AO
+                $router->group(['prefix' => '/mao'], function() use ($router) {
                     $router->get('/', 'MasterAO_Controller@index'); // All Memorandum Account Officer
                     $router->get('/{id}', 'MasterAO_Controller@show'); //GEt MAO BY ID
                     $router->post('/{id}', 'MasterAO_Controller@update'); //Update MAO BY ID
                 });
 
-                $router->group(['prefix' => '/mca',], function() use ($router) {
+                // Trans CA
+                $router->group(['prefix' => '/mca'], function() use ($router) {
                     $router->get('/', 'MasterCA_Controller@index'); // All Memorandum Credit Analyst
                     $router->get('/{id}', 'MasterCA_Controller@show'); //GEt CA BY ID
                     $router->post('/{id}', 'MasterCA_Controller@update'); //Update CA BY ID
                 });
 
-                $router->group(['prefix' => '/mcaa',], function() use ($router) {
+                // Trans CAA
+                $router->group(['prefix' => '/mcaa'], function() use ($router) {
                     $router->get('/', 'MasterCAA_Controller@index'); // All Memorandum Credit Analyst
                     $router->get('/{id}', 'MasterCAA_Controller@show'); //GEt CA BY ID
                     $router->post('/{id}', 'MasterCAA_Controller@update'); //Update CA BY ID
@@ -182,94 +243,112 @@ $router->group(['middleware' => 'jwt.auth'], function () use ($router) {
         });
 
         // Menu
-        $router->group(['prefix' => '/menu'], function () use ($router) {
-            $router->get('/akses', 'Menu\MenuAccessController@index'); // Get All Data
-            $router->post('/akses', 'Menu\MenuAccessController@store'); // Insert Data
-            $router->get('/akses/{id}', 'Menu\MenuAccessController@show'); // Get Data based on Id User
-            $router->put('/akses/{id}', 'Menu\MenuAccessController@update'); // Update Data based on Id User
-            $router->delete('/akses/{id}', 'Menu\MenuAccessController@delete'); // Delete Data based on Id User
+        $router->group(['prefix' => '/menu', 'namespace' => 'Menu'], function () use ($router) {
 
-            $router->get('/master', ['as' => 'menu', 'uses' => 'Menu\MenuMasterController@index']); //Get Data
-            $router->post('/master', 'Menu\MenuMasterController@store'); // Create Data
+            // Menu Master
             $router->get('/', function () use ($router) {return redirect('/api/menu/master');});
-            $router->get('/master/{IdOrSlug}', ['as' => 'mastermenu', 'uses' => 'Menu\MenuMasterController@show']);
-            $router->put('/master/{IdOrSlug}', 'Menu\MenuMasterController@edit');
-            $router->delete('/master/{IdOrSlug}', 'Menu\MenuMasterController@delete'); // Delete Data based on slug (URL)
+            $router->get('/all/master', 'MenuMasterController@all'); //Get all Data
+            $router->group(['prefix' => '/master'], function() use ($router){
+                $router->get('/', ['as' => 'menu', 'uses' => 'MenuMasterController@index']); //Get list Data When Flg Aktif == 1 ('true')
+                $router->post('/', 'MenuMasterController@store'); // Create Data
+                $router->get('/{IdOrSlug}', ['as' => 'mastermenu', 'uses' => 'MenuMasterController@show']);
+                $router->put('/{IdOrSlug}', 'MenuMasterController@edit');
+                $router->delete('{IdOrSlug}', 'MenuMasterController@delete'); // Delete Data based on slug (URL)
 
-            $router->get('/sub', 'Menu\MenuSubController@index');
-            $router->post('/sub', 'Menu\MenuSubController@store');
-            $router->get('/sub/{IdOrSlug}', ['as' => 'submenu', 'uses' => 'Menu\MenuSubController@show']);
-            $router->put('/sub/{IdOrSlug}', 'Menu\MenuSubController@edit');
-            $router->delete('/sub/{IdOrSlug}', 'Menu\MenuSubController@delete'); // Delete Data based on slug(URL)
-        });
-
-        // Fasilitas Pinjaman
-        $router->group(['prefix' => '/faspin', 'namespace' => 'Pengajuan\Tunggal'], function() use ($router) {
-            $router->get('/{id}', 'FasPinController@show');
-            $router->post('/{id}', 'FasPinController@update');
-        });
-
-        // Calon Debitur
-        $router->group(['prefix' => '/debitur', 'namespace' => 'Pengajuan\Tunggal'], function() use ($router) {
-            $router->get('/{id}', 'DebiturController@show');
-            $router->post('/{id}', 'DebiturController@update');
-        });
-
-        // Pasangan
-        $router->group(['prefix' => '/pasangan', 'namespace' => 'Pengajuan\Tunggal'], function() use ($router) {
-            $router->get('/{id}', 'PasanganController@show');
-            $router->post('/{id}', 'PasanganController@update');
-        });
-
-        // Penjamin
-        $router->group(['prefix' => '/penjamin', 'namespace' => 'Pengajuan\Tunggal'], function() use ($router) {
-            $router->get('/{id}', 'PenjaminController@show');
-            $router->post('/{id}', 'PenjaminController@update');
-        });
-
-        // Agunan
-        $router->group(['prefix' => '/agunan', 'namespace' => 'Pengajuan\Tunggal'], function() use ($router) {
-            // Agunan Tabah / Sertifikat
-            $router->group(['prefix' => '/tanah'], function() use ($router) {
-                $router->get('/{id}', 'TanahController@show');
-                $router->post('/{id}', 'TanahController@update');
             });
 
-            // Agunan Kendaraan
-            $router->group(['prefix' => '/kendaraan'], function() use ($router) {
-                $router->get('/{id}', 'KendaraanController@show');
-                $router->post('/{id}', 'KendaraanController@update');
-            });
-        });
-
-        // Pemeriksaan Agunan
-        $router->group(['prefix' => '/periksa', 'namespace' => 'Pengajuan\Tunggal'], function() use ($router) {
-            // Pemeriksaaan Agunan Tabah / Sertifikat
-            $router->group(['prefix' => '/tanah'], function() use ($router) {
-                $router->get('/{id}', 'PemeriksaanTanahController@show');
-                $router->post('/{id}', 'PemeriksaanTanahController@update');
+            // Menu Akses
+            $router->get('/all/akses', 'MenuAccessController@all'); // Get All Data
+            $router->group(['prefix' => '/akses'], function() use ($router){
+                $router->get('/', 'MenuAccessController@index'); // Get List Data When Flg Aktif == 1 ('true')
+                $router->post('/', 'MenuAccessController@store'); // Insert Data
+                $router->get('/{id}', 'MenuAccessController@show'); // Get Data based on Id User
+                $router->put('/{id}', 'MenuAccessController@update'); // Update Data based on Id User
+                $router->delete('/{id}', 'MenuAccessController@delete'); // Delete Data based on Id User
             });
 
-            // Pemeriksaaan Agunan Kendaraan
-            $router->group(['prefix' => '/kendaraan'], function() use ($router) {
-                $router->get('/{id}', 'PemeriksaanKendaraanController@show');
-                $router->post('/{id}', 'PemeriksaanKendaraanController@update');
+            // Sub Menu
+            $router->get('/all/sub', 'MenuSubController@all');
+            $router->group(['prefix' => '/sub'], function() use ($router){
+                $router->get('/', 'MenuSubController@index');
+                $router->post('/', 'MenuSubController@store');
+                $router->get('/{IdOrSlug}', ['as' => 'submenu', 'uses' => 'MenuSubController@show']);
+                $router->put('/{IdOrSlug}', 'MenuSubController@edit');
+                $router->delete('/{IdOrSlug}', 'MenuSubController@delete'); // Delete Data based on slug(URL)
             });
+
         });
 
-        // Kapasitas Bulanan
-        $router->group(['prefix' => '/kap_bul', 'namespace' => 'Pengajuan\Tunggal'], function() use ($router) {
-            $router->get('/{id}', 'KapBulController@show');
-            $router->post('/{id}', 'KapBulController@update');
+        // Single Data When Transactioning From SO to CAA, etc
+        $router->group(['namespace' => 'Pengajuan\Tunggal'], function() use ($router){
+
+            // Fasilitas Pinjaman
+            $router->group(['prefix' => '/faspin'], function() use ($router) {
+                $router->get('/{id}', 'FasPinController@show');
+                $router->post('/{id}', 'FasPinController@update');
+            });
+
+            // Calon Debitur
+            $router->group(['prefix' => '/debitur'], function() use ($router) {
+                $router->get('/{id}', 'DebiturController@show');
+                $router->post('/{id}', 'DebiturController@update');
+            });
+
+            // Pasangan
+            $router->group(['prefix' => '/pasangan'], function() use ($router) {
+                $router->get('/{id}', 'PasanganController@show');
+                $router->post('/{id}', 'PasanganController@update');
+            });
+
+            // Penjamin
+            $router->group(['prefix' => '/penjamin'], function() use ($router) {
+                $router->get('/{id}', 'PenjaminController@show');
+                $router->post('/{id}', 'PenjaminController@update');
+            });
+
+            // Agunan
+            $router->group(['prefix' => '/agunan'], function() use ($router) {
+                // Agunan Tabah / Sertifikat
+                $router->group(['prefix' => '/tanah'], function() use ($router) {
+                    $router->get('/{id}', 'TanahController@show');
+                    $router->post('/{id}', 'TanahController@update');
+                });
+
+                // Agunan Kendaraan
+                $router->group(['prefix' => '/kendaraan'], function() use ($router) {
+                    $router->get('/{id}', 'KendaraanController@show');
+                    $router->post('/{id}', 'KendaraanController@update');
+                });
+            });
+
+            // Pemeriksaan Agunan
+            $router->group(['prefix' => '/periksa'], function() use ($router) {
+                // Pemeriksaaan Agunan Tabah / Sertifikat
+                $router->group(['prefix' => '/tanah'], function() use ($router) {
+                    $router->get('/{id}', 'PemeriksaanTanahController@show');
+                    $router->post('/{id}', 'PemeriksaanTanahController@update');
+                });
+
+                // Pemeriksaaan Agunan Kendaraan
+                $router->group(['prefix' => '/kendaraan'], function() use ($router) {
+                    $router->get('/{id}', 'PemeriksaanKendaraanController@show');
+                    $router->post('/{id}', 'PemeriksaanKendaraanController@update');
+                });
+            });
+
+            // Kapasitas Bulanan
+            $router->group(['prefix' => '/kap_bul'], function() use ($router) {
+                $router->get('/{id}', 'KapBulController@show');
+                $router->post('/{id}', 'KapBulController@update');
+            });
+
+            // PENDAPATAN USAHA CADEBT
+            $router->group(['prefix' => '/usaha_cadebt'], function() use ($router) {
+                $router->get('/{id}', 'UsahaCadebtController@show');
+                $router->post('/{id}', 'UsahaCadebtController@update');
+            });
+
         });
 
-        // PENDAPATAN USAHA CADEBT
-        $router->group(['prefix' => '/usaha_cadebt', 'namespace' => 'Pengajuan\Tunggal'], function() use ($router) {
-            $router->get('/{id}', 'UsahaCadebtController@show');
-            $router->post('/{id}', 'UsahaCadebtController@update');
-        });
-
-        // Rekomendasi AO
-        // $router->group(['prefix' => '/rekom_ao', 'namespace' => 'Pengajuan\Tunggal'], function() use ($router) {});
     });
 });

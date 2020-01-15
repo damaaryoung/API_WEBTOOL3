@@ -10,7 +10,6 @@ use DB;
 
 class KelurahanController extends BaseController
 {
-
     public function all() {
         try {
             $query = Kelurahan::with('kec')->get();

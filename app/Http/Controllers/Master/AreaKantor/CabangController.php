@@ -15,8 +15,51 @@ use DB;
 
 class CabangController extends BaseController
 {
-    public function index() {
+    public function all() {
         $query = Cabang::get();
+
+        if ($query == '[]') {
+            return response()->json([
+                'code'    => 404,
+                'status'  => 'not found',
+                'message' => 'Data kosong'
+            ], 404);
+        }
+
+        $res = array();
+        foreach ($query as $key => $val) {
+            $res[$key] = [
+                "id"             => $val->id,
+                "nama_area"      => $val->area['nama'],
+                "nama_cabang"    => $val->nama,
+                "nama_provinsi"  => $val->prov['nama'],
+                "nama_kabupaten" => $val->kab['nama'],
+                "nama_kecamatan" => $val->kec['nama'],
+                "nama_kelurahan" => $val->kel['nama'],
+                "jenis_kantor"   => $val->jenis_kantor,
+                "flg_aktif"      => $value->flg_aktif == 1 ? "true" : "false",
+                "created_at"     => $val->created_at,
+                "upated_at"      => $val->updated_at
+            ];
+        }
+
+        try {
+            return response()->json([
+                'code'   => 200,
+                'status' => 'success',
+                'data'   => $res
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                "code"    => 501,
+                "status"  => "error",
+                "message" => $e
+            ], 501);
+        }
+    }
+
+    public function index() {
+        $query = Cabang::where('flg_aktif', 1)->get();
 
         if ($query == '[]') {
             return response()->json([
@@ -196,52 +239,37 @@ class CabangController extends BaseController
     }
 
     // Get Cabang By Id Kelurahan
-    public function get_cabang(){
-        // if(!preg_match("/^[0-9]{1,}$/", $id_kel)){
+    // public function get_cabang(){
+    //     $check = Cabang::with('kel')->get();
 
-        //     return response()->json([
-        //         "code"    => 422,
-        //         "status"  => "not valid request",
-        //         "message" => "parameter harus berupa angka"
-        //     ], 422);
-        // }
+    //     if ($check == '[]') {
+    //         return response()->json([
+    //             'code'    => 404,
+    //             'status'  => 'not found',
+    //             'message' => 'Data tidak ada'
+    //         ], 404);
+    //     }
 
-        $check = Cabang::with('kel')->get();
+    //     foreach ($check as $val) {
+    //         $res[] = [
+    //             'id'             => $val->id,
+    //             'nama'           => $val->nama,
+    //             'nama_kelurahan' => $val->kel['nama']
+    //         ];
+    //     }
 
-        // $check = DB::connection('web')->table('mk_cabang')
-        //     ->select('id', 'nama', 'id_kelurahan')
-        //     ->where('id_kelurahan', $id_kel)
-        //     ->groupBy('id')
-        //     ->get();
-
-        if ($check == '[]') {
-            return response()->json([
-                'code'    => 404,
-                'status'  => 'not found',
-                'message' => 'Data tidak ada'
-            ], 404);
-        }
-
-        foreach ($check as $val) {
-            $res[] = [
-                'id'             => $val->id,
-                'nama'           => $val->nama,
-                'nama_kelurahan' => $val->kel['nama']
-            ];
-        }
-
-        try {
-            return response()->json([
-                'code'    => 200,
-                'status'  => 'success',
-                'data'    => $res
-            ], 200);
-        } catch (Exception $e) {
-            return response()->json([
-                'code'   => 501,
-                'status' => 'error',
-                'data'   => $e
-            ], 501);
-        }
-    }
+    //     try {
+    //         return response()->json([
+    //             'code'    => 200,
+    //             'status'  => 'success',
+    //             'data'    => $res
+    //         ], 200);
+    //     } catch (Exception $e) {
+    //         return response()->json([
+    //             'code'   => 501,
+    //             'status' => 'error',
+    //             'data'   => $e
+    //         ], 501);
+    //     }
+    // }
 }

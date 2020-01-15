@@ -13,9 +13,44 @@ use DB;
 
 class MenuMasterController extends BaseController
 {
+    public function all() {
+        try {
+            $query = MenuMaster::get();
+
+            if ($query == '[]') {
+                return response()->json([
+                    "code"    => 404,
+                    "status"  => "not found",
+                    "message" => "Data kosong"
+                ], 404);
+            }
+
+            foreach ($query as $value) {
+                $data[] = [
+                    'nama'      => $value->nama,
+                    'url'       => $value->url,
+                    'icon'      => $value->icon,
+                    'flg_aktif' => $value->flg_aktif == 1 ? 'true' : 'false'
+                ];
+            }
+
+            return response()->json([
+                'code'   => 200,
+                'status' => 'success',
+                'data'   => $data
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                'code'   => 501,
+                'status' => 'error',
+                'message'=> $e
+            ], 501);
+        }
+    }
+
     public function index() {
         try {
-            $query = MenuMaster::select('id','nama','url')->get();
+            $query = MenuMaster::select('id','nama','url')->where('flg_aktif', 1)->get();
 
             if ($query == '[]') {
                 return response()->json([

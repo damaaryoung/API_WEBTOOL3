@@ -12,9 +12,45 @@ use DB;
 
 class MenuAccessController extends BaseController
 {
+    public function all() {
+        try {
+            $query = MenuAccess::with('menu_master','menu_sub')->get();
+
+            if ($query == '[]') {
+                return response()->json([
+                    "code"    => 404,
+                    "status"  => "not found",
+                    "message" => "Data kosong"
+                ], 404);
+            }
+
+            foreach ($query as $key => $val) {
+                $res[$key] = [
+                    'id'          => $val->id,
+                    'id_user'     => $val->id_user,
+                    'menu_master' => $val->menu_master['nama'],
+                    'menu_sub'    => $val->menu_sub['nama'],
+                    'flg_aktif'   => $val->flg_aktif == 1 ? 'true' : 'false'
+                ];
+            }
+
+            return response()->json([
+                'code'   => 200,
+                'status' => 'success',
+                'data'   => $res
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                'code'    => 501,
+                'status'  => 'error',
+                'message' => $e
+            ], 501);
+        }
+    }
+
     public function index() {
         try {
-            $query = MenuAccess::with('menu_master','menu_sub')->select('id','id_user', 'id_menu_master', 'id_menu_sub')->get();
+            $query = MenuAccess::with('menu_master','menu_sub')->select('id','id_user', 'id_menu_master', 'id_menu_sub')->where('flg_aktif', 1)->get();
 
             if ($query == '[]') {
                 return response()->json([

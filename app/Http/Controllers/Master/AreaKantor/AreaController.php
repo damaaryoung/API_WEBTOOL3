@@ -13,8 +13,47 @@ use DB;
 
 class AreaController extends BaseController
 {
-    public function index() {
+    public function all() {
         $query = Area::get();
+
+        if ($query == '[]') {
+            return response()->json([
+                'code'    => 404,
+                'status'  => 'not found',
+                'message' => 'Data kosong'
+            ], 404);
+        }
+
+        $res = array();
+        foreach ($query as $key => $val) {
+            $res[$key] = [
+                "id"             => $val->id,
+                "nama_area"      => $val->nama,
+                "nama_provinsi"  => $val->prov['nama'],
+                "nama_kabupaten" => $val->kab['nama'],
+                "flg_aktif"      => $val->flg_aktif == 1 ? "true" : "false",
+                "created_at"     => $val->created_at,
+                "updated_at"     => $val->updated_at
+            ];
+        }
+
+        try {
+            return response()->json([
+                'code'   => 200,
+                'status' => 'success',
+                'data'   => $res
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                "code"    => 501,
+                "status"  => "error",
+                "message" => $e
+            ], 501);
+        }
+    }
+
+    public function index() {
+        $query = Area::where('flg_aktif', 1)->get();
 
         if ($query == '[]') {
             return response()->json([

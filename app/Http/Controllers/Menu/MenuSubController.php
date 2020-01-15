@@ -12,9 +12,45 @@ use DB;
 
 class MenuSubController extends BaseController
 {
+    public function all() {
+        try {
+            $query = MenuSub::with('menu_master')->get();
+
+            if ($query == '[]') {
+                return response()->json([
+                    "code"    => 404,
+                    "status"  => "not found",
+                    "message" => "Data kosong"
+                ], 404);
+            }
+
+            foreach ($query as $key => $val) {
+                $data[$key] = [
+                    'id'          => $val->id,
+                    'nama'        => $val->nama,
+                    'url'         => $val->url,
+                    'menu_master' => $val->menu_master['nama'],
+                    'flg_aktif'   => $val->flg_aktif == 1 ? 'true' : 'false'
+                ];
+            }
+
+            return response()->json([
+                'code'   => 200,
+                'status' => 'success',
+                'data'   => $data
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                'code'   => 501,
+                'status' => 'error',
+                'message'=> $e
+            ], 501);
+        }
+    }
+
     public function index() {
         try {
-            $query = MenuSub::with('menu_master')->select('id','nama','url', 'id_menu_master')->get();
+            $query = MenuSub::with('menu_master')->select('id','nama','url', 'id_menu_master')->where('flg_aktif', 1)->get();
 
             if ($query == '[]') {
                 return response()->json([

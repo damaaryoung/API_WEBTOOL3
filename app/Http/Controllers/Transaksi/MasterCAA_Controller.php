@@ -314,8 +314,6 @@ class MasterCAA_Controller extends BaseController
 
         for ($i = 0; $i < count($reqTeam); $i++) {
             $arrTeam['email'] = $req->team_caa;
-            // $id_pem_tan['id'][$i] = $pemTanah->id;
-
         }
 
         $team_caa = implode(";", $arrTeam['email']);
@@ -351,7 +349,7 @@ class MasterCAA_Controller extends BaseController
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'message'=> 'Data untuk CA berhasil dikirim'
+                'message'=> 'Data untuk CAA berhasil dikirim'
             ], 200);
         } catch (Exception $e) {
             $err = DB::connection('web')->rollback();

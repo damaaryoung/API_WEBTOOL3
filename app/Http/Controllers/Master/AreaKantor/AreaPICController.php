@@ -13,8 +13,40 @@ use DB;
 
 class AreaPICController extends BaseController
 {
-    public function index() {
+    public function all() {
         $query = AreaPIC::get();
+
+        foreach ($query as $key => $val) {
+            $res[$key] = [
+                'id'                => $val->id,
+                "nama_area_pic"     => $val->nama_area_pic,
+                "nama_area_kerja"   => $val->area['nama'],
+                "nama_kantor_cabang"=> $val->cabang['nama'],
+                "nama_kelurahan"    => $val->kel['nama'],
+                "kode_pos"          => $val->kel['kode_pos'],
+                "flg_aktif"         => $val->flg_aktif == 1 ? "true" : "false",
+                "created_at"        => $val->created_at,
+                "updated_at"        => $val->updated_at
+            ];
+        }
+
+        try {
+            return response()->json([
+                'code'   => 200,
+                'status' => 'success',
+                'data'   => $res
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                "code"    => 501,
+                "status"  => "error",
+                "message" => $e
+            ], 501);
+        }
+    }
+
+    public function index() {
+        $query = AreaPIC::where('flg_aktif', 1)->get();
 
         foreach ($query as $key => $val) {
             $res[$key] = [
