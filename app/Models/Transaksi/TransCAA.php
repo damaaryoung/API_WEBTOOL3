@@ -23,11 +23,11 @@ class TransCAA extends Model implements AuthenticatableContract, AuthorizableCon
     protected $primaryKey = 'id';
 
     protected $fillable = [
-        'nomor_caa', 'user_id', 'id_trans_so', 'id_pic', 'id_cabang', 'peyimpangan', 'team_caa', 'rincian', 'file_mao_mca', 'file_lain', 'catatan_caa', 'status_caa', 'flg_aktif'
+        'nomor_caa', 'user_id', 'id_trans_so', 'id_pic', 'id_cabang', 'penyimpangan', 'team_caa', 'rincian', 'file_report_mao', 'file_report_mca', 'status_file_agunan', 'file_agunan', 'status_file_usaha', 'file_tempat_tinggal', 'file_lain', 'catatan_caa', 'status_caa', 'flg_aktif'
     ];
 
     public function so(){
-        return $this->belongsTo('App\Models\Transaksi\TransaksiSO', 'id_trans_so');
+        return $this->belongsTo('App\Models\Transaksi\TransSO', 'id_trans_so');
     }
 
     public function pic(){

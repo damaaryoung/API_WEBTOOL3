@@ -224,4 +224,30 @@ class MenuMasterController extends BaseController
             ], 501);
         }
     }
+
+    public function search($search) {
+        try {
+            $query = MenuMaster::select('id','nama','url')->where('flg_aktif', 1)->where('nama', 'like', '%'.$search.'%')->get();
+
+            if ($query == '[]') {
+                return response()->json([
+                    "code"    => 404,
+                    "status"  => "not found",
+                    "message" => "Data kosong"
+                ], 404);
+            }
+
+            return response()->json([
+                'code'   => 200,
+                'status' => 'success',
+                'data'   => $query
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                'code'   => 501,
+                'status' => 'error',
+                'message'=> $e
+            ], 501);
+        }
+    }
 }

@@ -233,4 +233,39 @@ class MenuSubController extends BaseController
             ], 501);
         }
     }
+
+    public function search($search) {
+        try {
+            $query = MenuSub::with('menu_master')->select('id','nama','url', 'id_menu_master')->where('flg_aktif', 1)->where('nama', 'like', '%'.$search.'%')->get();
+
+            if ($query == '[]') {
+                return response()->json([
+                    "code"    => 404,
+                    "status"  => "not found",
+                    "message" => "Data kosong"
+                ], 404);
+            }
+
+            foreach ($query as $key => $val) {
+                $res[$key] = [
+                    'id'          => $val->id,
+                    'nama'        => $val->nama,
+                    'url'         => $val->url,
+                    'menu_master' => $val->menu_master['nama']
+                ];
+            }
+
+            return response()->json([
+                'code'   => 200,
+                'status' => 'success',
+                'data'   => $res
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                'code'   => 501,
+                'status' => 'error',
+                'message'=> $e
+            ], 501);
+        }
+    }
 }

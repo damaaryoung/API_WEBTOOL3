@@ -280,4 +280,39 @@ class KabupatenController extends BaseController
             ], 501);
         }
     }
+
+    public function search($search) {
+        try {
+            $query = Kabupaten::with('prov')->select('id', 'nama', 'id_provinsi')->where('flg_aktif', 1)->where('nama', 'like', '%'.$search.'%')->get();
+
+            if ($query == '[]') {
+                return response()->json([
+                    "code"    => 404,
+                    "status"  => "not found",
+                    "message" => "Data kosong!!"
+                ], 404);
+            }
+
+            $res = array();
+            foreach ($query as $key => $val) {
+                $res[$key] = [
+                    "id"            => $val->id,
+                    "nama"          => $val->nama,
+                    "nama_provinsi" => $val->prov['nama']
+                ];
+            }
+
+            return response()->json([
+                'code'   => 200,
+                'status' => 'success',
+                'data'   => $res
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                "code"    => 501,
+                "status"  => "error",
+                "message" => $e
+            ], 501);
+        }
+    }
 }

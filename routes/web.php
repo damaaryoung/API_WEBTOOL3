@@ -31,6 +31,7 @@ $router->group(['prefix' => '/wilayah'], function () use ($router) {
             $router->get('/{IdOrName}', 'ProvinsiController@show');
             $router->put('/{id}', 'ProvinsiController@update');
             $router->delete('/{id}', 'ProvinsiController@delete');
+            $router->get('/{search}/search', 'ProvinsiController@search');
         });
 
         // Kabupaten
@@ -42,6 +43,7 @@ $router->group(['prefix' => '/wilayah'], function () use ($router) {
             $router->get('/{IdOrName}', 'KabupatenController@show');
             $router->put('/{id}', 'KabupatenController@update');
             $router->delete('/{id}', 'KabupatenController@delete');
+            $router->get('/{search}/search', 'KabupatenController@search');
         });
 
         // Kecamatan
@@ -53,6 +55,7 @@ $router->group(['prefix' => '/wilayah'], function () use ($router) {
             $router->get('/{IdOrName}', 'KecamatanController@show');
             $router->put('/{id}', 'KecamatanController@update');
             $router->delete('/{id}', 'KecamatanController@delete');
+            $router->get('/{search}/search', 'KecamatanController@search');
         });
 
         // Kelurahan
@@ -64,6 +67,7 @@ $router->group(['prefix' => '/wilayah'], function () use ($router) {
             $router->get('/{IdOrName}', 'KelurahanController@show');
             $router->put('/{id}', 'KelurahanController@update');
             $router->delete('/{id}', 'KelurahanController@delete');
+            $router->get('/{search}/search', 'KelurahanController@search');
         });
     });
 });
@@ -141,6 +145,7 @@ $router->group(['middleware' => 'jwt.auth'], function () use ($router) {
                     $router->get('/{id}', 'AsalDataController@show');
                     $router->put('/{id}', 'AsalDataController@update');
                     $router->delete('/{id}', 'AsalDataController@delete');
+                    $router->get('/{search}/search', 'AsalDataController@search');
                 });
 
                 //Area Kantor
@@ -151,6 +156,7 @@ $router->group(['middleware' => 'jwt.auth'], function () use ($router) {
                     $router->get('/{id}', 'AreaController@show');
                     $router->put('/{id}', 'AreaController@update');
                     $router->delete('/{id}', 'AreaController@delete');
+                    $router->get('/{search}/search', 'AreaController@search');
                 });
 
                 //Cabang Kantor
@@ -161,6 +167,7 @@ $router->group(['middleware' => 'jwt.auth'], function () use ($router) {
                     $router->get('/{id}', 'CabangController@show');
                     $router->put('/{id}', 'CabangController@update');
                     $router->delete('/{id}', 'CabangController@delete');
+                    $router->get('/{search}/search', 'CabangController@search');
                 });
 
                 // Area PIC
@@ -171,6 +178,7 @@ $router->group(['middleware' => 'jwt.auth'], function () use ($router) {
                     $router->get('/{id}', 'AreaPICController@show');
                     $router->put('/{id}', 'AreaPICController@update');
                     $router->delete('/{id}', 'AreaPICController@delete');
+                    $router->get('/{search}/search', 'AreaPICController@search');
                 });
 
                 // Daftar PIC
@@ -181,6 +189,7 @@ $router->group(['middleware' => 'jwt.auth'], function () use ($router) {
                     $router->get('/{id}', 'ICController@show');
                     $router->put('/{id}', 'PICController@update');
                     $router->delete('/{id}', 'PICController@delete');
+                    $router->get('/{search}/search', 'PICController@search');
 
                 });
                 $router->get('/team_caa', 'PICController@teamCAA');
@@ -192,6 +201,7 @@ $router->group(['middleware' => 'jwt.auth'], function () use ($router) {
                     $router->get('/{id}', 'JPICController@show');
                     $router->put('/{id}', 'JPICController@update');
                     $router->delete('/{id}', 'JPICController@delete');
+                    $router->get('/{search}/search', 'JPICController@search');
                 });
 
                 // Kode Kantor from DPM_ONLINE (user)
@@ -203,10 +213,12 @@ $router->group(['middleware' => 'jwt.auth'], function () use ($router) {
             $router->get('/das', 'Pengajuan\DASController@index'); //Cek HM
             $router->get('/das/{id}', 'Pengajuan\DASController@show'); //Cek HM
             $router->post('/das/{id}', 'Pengajuan\DASController@update'); //Cek HM
+            $router->get('/das/{search}/search', 'Pengajuan\DASController@search');
 
             $router->get('/hm', 'Pengajuan\HMController@index'); //Cek HM
             $router->get('/hm/{id}', 'Pengajuan\HMController@show'); //Cek HM
             $router->put('/hm/{id}', 'Pengajuan\HMController@update'); //Cek HM
+            $router->get('/hm/{search}/search', 'Pengajuan\HMController@search');
 
             // Transaksi From SO -> CAA, etc
             $router->group(['namespace' => 'Transaksi'], function() use ($router) {
@@ -217,6 +229,7 @@ $router->group(['middleware' => 'jwt.auth'], function () use ($router) {
                     $router->get('/', 'MasterCC_Controller@index');
                     $router->get('/{id}', 'MasterCC_Controller@show');
                     $router->post('/{id}', 'MasterCC_Controller@update'); // Update MCC
+                    $router->get('/{search}/search', 'MasterCC_Controller@search');
                 });
 
                 // Trans AO
@@ -224,6 +237,7 @@ $router->group(['middleware' => 'jwt.auth'], function () use ($router) {
                     $router->get('/', 'MasterAO_Controller@index'); // All Memorandum Account Officer
                     $router->get('/{id}', 'MasterAO_Controller@show'); //GEt MAO BY ID
                     $router->post('/{id}', 'MasterAO_Controller@update'); //Update MAO BY ID
+                    $router->get('/{search}/search', 'MasterAO_Controller@search');
                 });
 
                 // Trans CA
@@ -231,13 +245,17 @@ $router->group(['middleware' => 'jwt.auth'], function () use ($router) {
                     $router->get('/', 'MasterCA_Controller@index'); // All Memorandum Credit Analyst
                     $router->get('/{id}', 'MasterCA_Controller@show'); //GEt CA BY ID
                     $router->post('/{id}', 'MasterCA_Controller@update'); //Update CA BY ID
+                    $router->get('/{search}/search', 'MasterCA_Controller@search');
                 });
 
                 // Trans CAA
                 $router->group(['prefix' => '/mcaa'], function() use ($router) {
                     $router->get('/', 'MasterCAA_Controller@index'); // All Memorandum Credit Analyst
-                    $router->get('/{id}', 'MasterCAA_Controller@show'); //GEt CA BY ID
+                    // $router->get('/{id}', 'MasterCAA_Controller@show'); //GEt CA BY ID
+                    $router->get('/{idOrString}', 'MasterCAA_Controller@idOrString'); //GEt CA BY ID Or to Route
+                    $router->get('/{id}/detail', 'MasterCAA_Controller@detail'); //GEt CA BY ID after caa
                     $router->post('/{id}', 'MasterCAA_Controller@update'); //Update CA BY ID
+                    $router->get('/{search}/search', 'MasterCAA_Controller@search');
                 });
             });
         });
@@ -254,7 +272,7 @@ $router->group(['middleware' => 'jwt.auth'], function () use ($router) {
                 $router->get('/{IdOrSlug}', ['as' => 'mastermenu', 'uses' => 'MenuMasterController@show']);
                 $router->put('/{IdOrSlug}', 'MenuMasterController@edit');
                 $router->delete('{IdOrSlug}', 'MenuMasterController@delete'); // Delete Data based on slug (URL)
-
+                $router->get('/{search}/search', 'MenuMasterController@search');
             });
 
             // Menu Akses
@@ -275,6 +293,7 @@ $router->group(['middleware' => 'jwt.auth'], function () use ($router) {
                 $router->get('/{IdOrSlug}', ['as' => 'submenu', 'uses' => 'MenuSubController@show']);
                 $router->put('/{IdOrSlug}', 'MenuSubController@edit');
                 $router->delete('/{IdOrSlug}', 'MenuSubController@delete'); // Delete Data based on slug(URL)
+                $router->get('/{search}/search', 'MenuSubController@search');
             });
 
         });

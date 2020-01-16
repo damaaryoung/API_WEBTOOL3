@@ -211,4 +211,40 @@ class AreaController extends BaseController
             ], 501);
         }
     }
+
+    public function search($search) {
+        $query = Area::where('flg_aktif', 1)->where('nama', 'like', '%'.$search.'%')->get();
+
+        if ($query == '[]') {
+            return response()->json([
+                'code'    => 404,
+                'status'  => 'not found',
+                'message' => 'Data kosong'
+            ], 404);
+        }
+
+        $res = array();
+        foreach ($query as $key => $val) {
+            $res[$key] = [
+                "id"             => $val->id,
+                "nama_area"      => $val->nama,
+                "nama_provinsi"  => $val->prov['nama'],
+                "nama_kabupaten" => $val->kab['nama']
+            ];
+        }
+
+        try {
+            return response()->json([
+                'code'   => 200,
+                'status' => 'success',
+                'data'   => $res
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                "code"    => 501,
+                "status"  => "error",
+                "message" => $e
+            ], 501);
+        }
+    }
 }

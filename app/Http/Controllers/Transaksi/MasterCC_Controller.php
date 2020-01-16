@@ -1068,4 +1068,61 @@ class MasterCC_Controller extends BaseController
         //     ], 501);
         // }
     }
+
+    public function search($search, Request $req){
+        $user_id = $req->auth->user_id;
+        $pic     = PIC::where('user_id', $user_id)->first();
+
+        if ($pic == null) {
+            return response()->json([
+                "code"    => 404,
+                "status"  => "not found",
+                "message" => "User_ID anda adalah '".$user_id."' dengan username '".$req->auth->user."' . Namun anda belum terdaftar sebagai PIC(SO). Harap daftarkan diri sebagai PIC(SO) pada form PIC atau hubungi bagian IT"
+            ], 404);
+        }
+
+        $id_cabang = $pic->id_mk_cabang;
+
+        $query = TransSO::with('pic', 'cabang', 'asaldata','debt', 'faspin')
+                ->where('id_cabang', $id_cabang)
+                ->where('user_id', $user_id)
+                ->where('nomor_so', 'like', '%'.$search.'%')
+                ->get();
+
+        if ($query == '[]') {
+            return response()->json([
+                "code"    => 404,
+                "status"  => "not found",
+                "message" => "Data kosong!!"
+            ], 404);
+        }else{
+            foreach ($query as $key => $val) {
+                $res[$key] = [
+                    'id'              => $val->id,
+                    'nomor_so'        => $val->nomor_so,
+                    'nama_so'         => $val->nama_so,
+                    'pic'             => $val->pic['nama'],
+                    'cabang'          => $val->cabang['nama'],
+                    'asal_data'       => $val->asaldata['nama'],
+                    'nama_marketing'  => $val->nama_marketing,
+                    'nama_calon_debt' => $val->debt['nama_lengkap']
+                ];
+            }
+
+            try {
+                return response()->json([
+                    'code'   => 200,
+                    'status' => 'success',
+                    'data'   => $res
+                ], 200);
+            } catch (Exception $e) {
+                return response()->json([
+                    "code"    => 501,
+                    "status"  => "error",
+                    "message" => $e
+                ], 501);
+            }
+        }
+
+    }
 }

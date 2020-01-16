@@ -238,38 +238,45 @@ class CabangController extends BaseController
         }
     }
 
-    // Get Cabang By Id Kelurahan
-    // public function get_cabang(){
-    //     $check = Cabang::with('kel')->get();
+    public function search($search) {
+        $query = Cabang::where('flg_aktif', 1)
+                ->where('nama', 'like', '%'.$search.'%')
+                ->get();
 
-    //     if ($check == '[]') {
-    //         return response()->json([
-    //             'code'    => 404,
-    //             'status'  => 'not found',
-    //             'message' => 'Data tidak ada'
-    //         ], 404);
-    //     }
+        if ($query == '[]') {
+            return response()->json([
+                'code'    => 404,
+                'status'  => 'not found',
+                'message' => 'Data kosong'
+            ], 404);
+        }
 
-    //     foreach ($check as $val) {
-    //         $res[] = [
-    //             'id'             => $val->id,
-    //             'nama'           => $val->nama,
-    //             'nama_kelurahan' => $val->kel['nama']
-    //         ];
-    //     }
+        $res = array();
+        foreach ($query as $key => $val) {
+            $res[$key] = [
+                "id"             => $val->id,
+                "nama_area"      => $val->area['nama'],
+                "nama_cabang"    => $val->nama,
+                "nama_provinsi"  => $val->prov['nama'],
+                "nama_kabupaten" => $val->kab['nama'],
+                "nama_kecamatan" => $val->kec['nama'],
+                "nama_kelurahan" => $val->kel['nama'],
+                "jenis_kantor"   => $val->jenis_kantor
+            ];
+        }
 
-    //     try {
-    //         return response()->json([
-    //             'code'    => 200,
-    //             'status'  => 'success',
-    //             'data'    => $res
-    //         ], 200);
-    //     } catch (Exception $e) {
-    //         return response()->json([
-    //             'code'   => 501,
-    //             'status' => 'error',
-    //             'data'   => $e
-    //         ], 501);
-    //     }
-    // }
+        try {
+            return response()->json([
+                'code'   => 200,
+                'status' => 'success',
+                'data'   => $res
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                "code"    => 501,
+                "status"  => "error",
+                "message" => $e
+            ], 501);
+        }
+    }
 }

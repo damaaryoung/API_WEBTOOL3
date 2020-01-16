@@ -348,4 +348,64 @@ class DASController extends BaseController
             ], 501);
         }
     }
+
+    public function search($search, Request $req){
+        $user_id = $req->auth->user_id;
+        // $kode_kantor = $req->auth->kd_cabang;
+
+        // $query = DB::connection('web')->table('trans_so')->where('kode_kantor', $kode_kantor)->get();
+        $query = TransSO::with('pic', 'cabang', 'asaldata','debt', 'faspin')
+                ->where('nomor_so', 'like', '%'.$search.'%')
+                ->get();
+        // $query = DB::connection('web')->select("SELECT * FROM trans_so WHERE kode_kantor=?",[$kode_kantor]);
+
+        if ($query == '[]') {
+            return response()->json([
+                'code'    => 404,
+                'status'  => 'not found',
+                'message' => 'Data kosong'
+            ], 404);
+        }
+
+        $data = array();
+        foreach ($query as $key => $val) {
+
+            if ($val->status_das == 1) {
+                $status = 'complete';
+            }elseif ($val->status_das == 2) {
+                $status = 'not complete';
+            }else{
+                $status = 'waiting';
+            }
+
+            $data[$key] = [
+                'id'              => $val->id,
+                'nomor_so'        => $val->nomor_so,
+                'nama_so'         => $val->nama_so,
+                'pic'             => $val->pic['nama'],
+                'cabang'          => $val->cabang['nama'],
+                'asal_data'       => $val->asaldata['nama'],
+                'nama_marketing'  => $val->nama_marketing,
+                'nama_debitur'    => $val->debt['nama_lengkap'],
+                'plafon'          => $val->faspin['plafon'],
+                'tenor'           => $val->faspin['tenor'],
+                'status'          => $status,
+                'note'            => $val->catatan_das
+            ];
+        }
+
+        try {
+            return response()->json([
+                'code'   => 200,
+                'status' => 'success',
+                'data'   => $data
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                "code"    => 501,
+                "status"  => "error",
+                "message" => $e
+            ], 501);
+        }
+    }
 }

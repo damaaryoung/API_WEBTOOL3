@@ -207,4 +207,33 @@ class AreaPICController extends BaseController
             ], 501);
         }
     }
+
+    public function search($search) {
+        $query = AreaPIC::where('flg_aktif', 1)->where('nama_area_pic', 'like', '%'.$search.'%')->get();
+
+        foreach ($query as $key => $val) {
+            $res[$key] = [
+                'id'                => $val->id,
+                "nama_area_pic"     => $val->nama_area_pic,
+                "nama_area_kerja"   => $val->area['nama'],
+                "nama_kantor_cabang"=> $val->cabang['nama'],
+                "nama_kelurahan"    => $val->kel['nama'],
+                "kode_pos"          => $val->kel['kode_pos']
+            ];
+        }
+
+        try {
+            return response()->json([
+                'code'   => 200,
+                'status' => 'success',
+                'data'   => $res
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                "code"    => 501,
+                "status"  => "error",
+                "message" => $e
+            ], 501);
+        }
+    }
 }

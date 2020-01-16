@@ -626,4 +626,77 @@ class MasterCA_Controller extends BaseController
             ], 501);
         }
     }
+
+    public function search($search, Request $req){
+        $user_id  = $req->auth->user_id;
+
+        $pic = PIC::where('user_id', $user_id)->first();
+
+        if ($pic == null) {
+            return response()->json([
+                "code"    => 404,
+                "status"  => "not found",
+                "message" => "User_ID anda adalah '".$user_id."' dengan username '".$req->auth->user."' . Namun anda belum terdaftar sebagai PIC(CA). Harap daftarkan diri sebagai PIC(CA) pada form PIC atau hubungi bagian IT"
+            ], 404);
+        }
+
+        $id_cabang = $pic->id_mk_cabang;
+
+        $query = TransAO::with('so', 'pic', 'cabang')
+                ->where('id_cabang', $id_cabang)
+                ->where('status_ao', 1)
+                ->orWhere('nomor_ao', 'like', '%'.$search.'%')
+                ->get();
+
+        // 'so', 'pic', 'cabang', 'valid', 'verif', 'tan', 'ken', 'pe_tan', 'pe_ken', 'kapbul', 'usaha', 'recom_ao'
+
+        if ($query == '[]') {
+            return response()->json([
+                'code'    => 404,
+                'status'  => 'not found',
+                'message' => 'Data kosong'
+            ], 404);
+        }
+
+
+        foreach ($query as $key => $val) {
+
+            if ($val->status_ao == 1) {
+                $status_ao = 'recommend';
+            }elseif($val->status_ao == 2){
+                $status_ao = 'not recommend';
+            }else{
+                $status_ao = 'waiting';
+            }
+
+            $data[$key] = [
+                'id_trans_so'    => $val->id_trans_so,
+                'nomor_so'       => $val->so['nomor_so'],
+                'nomor_ao'       => $val->nomor_ao,
+                // 'nomor_ca'       => $val->so['ca']['nomor_ca'],
+                'pic'            => $val->pic['nama'],
+                'cabang'         => $val->cabang['nama'],
+                'asal_data'      => $val->so['asaldata']['nama'],
+                'nama_marketing' => $val->so['nama_marketing'],
+                'nama_debitur'   => $val->so['debt']['nama_lengkap'],
+                'plafon'         => $val->so['faspin']['plafon'],
+                'tenor'          => $val->so['faspin']['tenor'],
+                'status_ao'      => $status_ao
+            ];
+        }
+
+        try {
+            return response()->json([
+                'code'   => 200,
+                'status' => 'success',
+                'data'   => $data
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                "code"    => 501,
+                "status"  => "error",
+                "message" => $e
+            ], 501);
+        }
+    }
 }

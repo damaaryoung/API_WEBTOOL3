@@ -146,4 +146,30 @@ class JPICController extends BaseController
             ], 501);
         }
     }
+
+    public function search($search) {
+        $query = JPIC::select('id', 'nama_jenis','keterangan')->where('nama_jenis', 'like', '%'.$search.'%')->get();
+
+        if ($query == '[]') {
+            return response()->json([
+                'code'    => 404,
+                'status'  => 'not found',
+                'message' => 'Data kosong'
+            ], 404);
+        }
+
+        try {
+            return response()->json([
+                'code'   => 200,
+                'status' => 'success',
+                'data'   => $query
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                "code"    => 501,
+                "status"  => "error",
+                "message" => $e
+            ], 501);
+        }
+    }
 }

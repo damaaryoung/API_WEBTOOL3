@@ -308,4 +308,71 @@ class HMController extends BaseController
             ], 501);
         }
     }
+
+    public function search($search, Request $req){
+        // $kode_kantor = $req->auth->kd_cabang;
+        // $query = TransSO::where('kode_kantor', $kode_kantor)->get();
+        $query = TransSO::with('asaldata','debt', 'pic')
+                ->where('nomor_so', 'like', '%'.$search.'%')
+                ->get();
+
+        if ($query == '[]') {
+            return response()->json([
+                'code'    => 404,
+                'status'  => 'not found',
+                'message' => 'Data kosong'
+            ], 404);
+        }
+
+        $data = array();
+        foreach ($query as $key => $val) {
+
+            if ($val->status_das == 1) {
+                $status_das = 'complete';
+            }elseif($val->status_das == 2){
+                $status_das = 'not complete';
+            }else{
+                $status_das = 'waiting';
+            }
+
+            if ($val->status_hm == 1) {
+                $status_hm = 'complete';
+            }elseif ($val->status_hm == 2) {
+                $status_hm = 'not complete';
+            }else{
+                $status_hm = 'waiting';
+            }
+
+            $data[$key] = [
+                'id'             => $val->id,
+                'nomor_so'       => $val->nomor_so,
+                'nama_so'        => $val->nama_so,
+                'pic'            => $val->pic['nama'],
+                'cabang'         => $val->cabang['nama'],
+                'asal_data'      => $val->asaldata['nama'],
+                'nama_marketing' => $val->nama_marketing,
+                'nama_debitur'   => $val->debt['nama_lengkap'],
+                'plafon'         => $val->faspin['plafon'],
+                'tenor'          => $val->faspin['tenor'],
+                'das_status'     => $status_das,
+                'das_note'       => $val->catatan_das,
+                'hm_status'      => $status_hm,
+                'hm_note'        => $val->catatan_hm
+            ];
+        }
+
+        try {
+            return response()->json([
+                'code'   => 200,
+                'status' => 'success',
+                'data'   => $data
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                "code"    => 501,
+                "status"  => "error",
+                "message" => $e
+            ], 501);
+        }
+    }
 }

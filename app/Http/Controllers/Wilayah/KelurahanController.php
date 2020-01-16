@@ -328,4 +328,40 @@ class KelurahanController extends BaseController
             ], 501);
         }
     }
+
+    public function search($search) {
+        try {
+            $query = Kelurahan::with('kec')->select('id', 'nama', 'id_kecamatan','kode_pos')->where('flg_aktif', 1)->where('nama', 'like', '%'.$search.'%')->get();
+
+            if ($query == '[]') {
+                return response()->json([
+                    "code"    => 404,
+                    "status"  => "not found",
+                    "message" => "Data kosong!!"
+                ], 404);
+            }
+
+            $res = array();
+            foreach ($query as $key => $val) {
+                $res[$key] = [
+                    "id"             => $val->id,
+                    "nama"           => $val->nama,
+                    "nama_kecamatan" => $val->kec['nama'],
+                    'kode_pos'       => (string) $val->kode_pos
+                ];
+            }
+
+            return response()->json([
+                'code'   => 200,
+                'status' => 'success',
+                'data'   => $res
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                "code"    => 501,
+                "status"  => "error",
+                "message" => $e
+            ], 501);
+        }
+    }
 }
