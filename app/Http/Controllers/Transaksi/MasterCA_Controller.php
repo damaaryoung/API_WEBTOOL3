@@ -70,7 +70,7 @@ class MasterCA_Controller extends BaseController
                 'id_trans_so'    => $val->id_trans_so,
                 'nomor_so'       => $val->so['nomor_so'],
                 'nomor_ao'       => $val->nomor_ao,
-                'nomor_ca'       => $val->so['ca']['nomor_ca'],
+                // 'nomor_ca'       => $val->so['ca']['nomor_ca'],
                 'pic'            => $val->pic['nama'],
                 'cabang'         => $val->cabang['nama'],
                 'asal_data'      => $val->so['asaldata']['nama'],
@@ -178,7 +178,7 @@ class MasterCA_Controller extends BaseController
             'id_trans_so'    => $val->id_trans_so,
             'nomor_so'       => $val->so['nomor_so'],
             'nomor_ao'       => $val->nomor_ao,
-            'nomor_ca'       => $val->so['ca']['nomor_ca'],
+            // 'nomor_ca'       => $val->so['ca']['nomor_ca'],
             'nama_so'        => $val->so['nama_so'],
             'nama_marketing' => $val->so['nama_marketing'],
             'pic'  => [

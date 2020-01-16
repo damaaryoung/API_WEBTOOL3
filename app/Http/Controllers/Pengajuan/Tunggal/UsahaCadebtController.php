@@ -36,7 +36,8 @@ class UsahaCadebtController extends BaseController
         $data = array(
             'pendapatan' => array(
                 'tunai' => $check->pemasukan_tunai,
-                'kredit'=> $check->pemasukan_kredit
+                'kredit'=> $check->pemasukan_kredit,
+                'total' => $check->total_pemasukan
             ),
             'pengeluaran' => array(
                 'biaya_sewa'           => $check->biaya_sewa,
@@ -47,8 +48,10 @@ class UsahaCadebtController extends BaseController
                 'biaya_kirim_barang'   => $check->biaya_kirim_barang,
                 'biaya_hutang_dagang'  => $check->biaya_hutang_dagang,
                 'angsuran'             => $check->biaya_angsuran,
-                'lain_lain'            => $check->biaya_lain_lain
-            )
+                'lain_lain'            => $check->biaya_lain_lain,
+                'total'                => $check->total_pengeluaran
+            ),
+            'penghasilan_bersih' => $check->laba_usaha
         );
 
         try {

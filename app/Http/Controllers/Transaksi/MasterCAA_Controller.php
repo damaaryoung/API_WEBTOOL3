@@ -61,7 +61,7 @@ class MasterCAA_Controller extends BaseController
 
                 'nomor_ao'       => $val->so['ao']['nomor_ao'],
                 'nomor_ca'       => $val->nomor_ca,
-                'nomor_caa'      => $val->so['caa']['nomor_caa'],
+                // 'nomor_caa'      => $val->so['caa']['nomor_caa'],
 
                 'pic'            => $val->pic['nama'],
                 'cabang'         => $val->cabang['nama'],
@@ -159,11 +159,24 @@ class MasterCAA_Controller extends BaseController
 
         $data[] = [
             'id_trans_so'    => $val->id_trans_so,
-
-            'nomor_so'       => $val->so['nomor_so'],
-            'nomor_ao'       => $val->so['ao']['nomor_ao'],
-            'nomor_ca'       => $val->nomor_ca,
-            'nomor_caa'      => $val->so['caa']['nomor_caa'],
+            'transaksi'   => [
+                'so' => [
+                    'nomor' => $val->so['nomor_so'],
+                    'nama'  => $val->so['pic']['nama']
+                ],
+                'ao' => [
+                    'nomor' => $val->so['ao']['nomor_ao'],
+                    'nama'  => $val->so['ao']['pic']['nama']
+                ],
+                'ca' => [
+                    'nomor' => $val->so['ca']['nomor_ca'],
+                    'nama'  => $val->so['ca']['pic']['nama']
+                ],
+                // 'caa' => [
+                //     'nomor' => $val->so['caa']['nomor_caa'],
+                //     'nama'  => $val->so['caa']['pic']['nama']
+                // ]
+            ],
 
             'nama_marketing' => $val->so['nama_marketing'],
 
@@ -175,7 +188,6 @@ class MasterCAA_Controller extends BaseController
                 'id'   => $val->id_cabang,
                 'nama' => $val->cabang['nama'],
             ],
-
             'asaldata' => [
                 'id'   => $val->so['asaldata']['id'],
                 'nama' => $val->so['asaldata']['nama'],
@@ -272,25 +284,59 @@ class MasterCAA_Controller extends BaseController
 
         $lamp_dir = 'public/'.$check->debt['no_ktp'];
 
-        if($file = $req->file('file_mao_mca')){
-
-            $path = $lamp_dir.'/mcaa/file_mao_mca';
-
-            $name = $file->getClientOriginalName();
-
-            if(!empty($check_caa->file_mao_mca))
-            {
-                File::delete($check_caa->file_mao_mca);
+        // Agunan Files Condition
+        $statusFileAgunan = $req->input('status_file_agunan');
+        if ($statusFileAgunan == 'ORIGINAL') {
+            for ($i = 0; $i < count($req->file_agunan); $i++){
+                $listAgunan['agunan'] = $req->file_agunan;
             }
 
-            $file->move($path,$name);
+            $file_agunan = implode(";", $listAgunan['agunan']);
+        }elseif ($statusFileAgunan == 'CUSTOM') {
 
-            $mao_mca = $path.'/'.$name;
+            if($files = $req->file('file_agunan')){
+                foreach($files as $file){
+                    $path = $lamp_dir.'/mcaa/file_agunan';
+                    $name = $file->getClientOriginalName();
+                    $file->move($path,$name);
 
+                    $listAgunan['agunan'][] = $path.'/'.$name;
+                }
+
+                $file_agunan = implode(";", $listAgunan['agunan']);
+            }
         }else{
-            $mao_mca = null;
+            $file_agunan = null;
         }
 
+        // Usaha Files Condition
+        $statusFileUsaha = $req->input('status_file_usaha');
+        if ($statusFileUsaha == 'ORIGINAL') {
+            for ($i = 0; $i < count($req->file_usaha); $i++){
+                $listUsaha['usaha'] = $req->file_usaha;
+            }
+
+            $file_usaha = implode(";", $listUsaha['usaha']);
+        }elseif ($statusFileUsaha == 'CUSTOM') {
+
+            if($files = $req->file('file_usaha')){
+                foreach($files as $file){
+                    $path = $lamp_dir.'/mcaa/file_usaha';
+                    $name = $file->getClientOriginalName();
+                    $file->move($path,$name);
+
+                    $listUsaha['usaha'][] = $path.'/'.$name;
+                }
+
+                $file_usaha = implode(";", $listUsaha['usaha']);
+            }
+        }else{
+            $file_usaha = null;
+        }
+
+        dd($file_usaha);
+
+        // Othe File
         if($file = $req->file('file_lain')){
 
             $path = $lamp_dir.'/mcaa/file_lain';
@@ -304,33 +350,38 @@ class MasterCAA_Controller extends BaseController
 
             $file->move($path,$name);
 
-            $lain = $path.'/'.$name;
+            $file_lain = $path.'/'.$name;
 
         }else{
-            $lain = null;
+            $file_lain = null;
         }
 
+        // Email Team CAA
         $reqTeam = $req->input('team_caa');
-
         for ($i = 0; $i < count($reqTeam); $i++) {
             $arrTeam['email'] = $req->team_caa;
         }
-
         $team_caa = implode(";", $arrTeam['email']);
 
+
         $transCAA = array(
-            'nomor_caa'   => $nomor_caa,
-            'user_id'     => $user_id,
-            'id_trans_so' => $id,
-            'id_pic'      => $PIC->id,
-            'id_cabang'   => $PIC->id_mk_cabang,
-            'peyimpangan' => $req->input('peyimpangan'),
-            'team_caa'    => $team_caa,
-            'rincian'     => $req->input('rincian'),
-            'file_mao_mca'=> $mao_mca,
-            'file_lain'   => $lain,
-            'catatan_caa' => $req->input('catatan_caa'),
-            'status_caa'  => empty($req->input('status_caa')) ? 1 : $req->input('status_caa'),
+            'nomor_caa'          => $nomor_caa,
+            'user_id'            => $user_id,
+            'id_trans_so'        => $id,
+            'id_pic'             => $PIC->id,
+            'id_cabang'          => $PIC->id_mk_cabang,
+            'peyimpangan'        => $req->input('peyimpangan'),
+            'team_caa'           => $team_caa,
+            'rincian'            => $req->input('rincian'),
+            'file_report_mao'    => $file_report_mao,
+            'file_report_mca'    => $file_report_mca,
+            'status_file_agunan' => $req->input('status_file_agunan'),
+            'file_agunan'        => $file_agunan,
+            'status_file_usaha'  => $req->input('status_file_usaha'),
+            'file_usaha'         => $file_usaha,
+            'file_lain'          => $file_lain,
+            'catatan_caa'        => $req->input('catatan_caa'),
+            'status_caa'         => empty($req->input('status_caa')) ? 1 : $req->input('status_caa'),
         );
 
         DB::connection('web')->beginTransaction();
@@ -357,6 +408,78 @@ class MasterCAA_Controller extends BaseController
                 'code'    => 501,
                 'status'  => 'error',
                 'message' => $err
+            ], 501);
+        }
+    }
+
+    public function indexAfter(Request $req){
+        $user_id  = $req->auth->user_id;
+
+        $pic = PIC::where('user_id', $user_id)->first();
+
+        if ($pic == null) {
+            return response()->json([
+                "code"    => 404,
+                "status"  => "not found",
+                "message" => "User_ID anda adalah '".$user_id."' dengan username '".$req->auth->user."' . Namun anda belum terdaftar sebagai PIC(CAA). Harap daftarkan diri sebagai PIC(CAA) pada form PIC atau hubungi bagian IT"
+            ], 404);
+        }
+
+        $id_cabang = $pic->id_mk_cabang;
+
+        $query = TransCA::with('pic', 'cabang')->where('id_cabang', $id_cabang)->where('status_ca', 1)->get();
+
+        if ($query == '[]') {
+            return response()->json([
+                'code'    => 404,
+                'status'  => 'not found',
+                'message' => 'Data kosong'
+            ], 404);
+        }
+
+
+        foreach ($query as $key => $val) {
+
+            if ($val->status_ca == 1) {
+                $status_ca = 'recommend';
+            }elseif($val->status_ca == 2){
+                $status_ca = 'not recommend';
+            }else{
+                $status_ca = 'waiting';
+            }
+
+            $data[$key] = [
+                'id_trans_so'    => $val->id_trans_so,
+                'nomor_so'       => $val->so['nomor_so'],
+
+                'nomor_ao'       => $val->so['ao']['nomor_ao'],
+                'nomor_ca'       => $val->nomor_ca,
+                'nomor_caa'      => $val->so['caa']['nomor_caa'],
+
+                'pic'            => $val->pic['nama'],
+                'cabang'         => $val->cabang['nama'],
+                'asal_data'      => $val->so['asaldata']['nama'],
+                'nama_marketing' => $val->so['nama_marketing'],
+                'pengajuan_ca' => [
+                    'plafon' => $val->recom_ca['plafon_kredit'],
+                    'tenor'  => $val->recom_ca['jangka_waktu']
+                ],
+                'nama_debitur'   => $val->so['debt']['nama_lengkap'],
+                'status_ca'      => $status_ca
+            ];
+        }
+
+        try {
+            return response()->json([
+                'code'   => 200,
+                'status' => 'success',
+                'data'   => $data
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                "code"    => 501,
+                "status"  => "error",
+                "message" => $e
             ], 501);
         }
     }

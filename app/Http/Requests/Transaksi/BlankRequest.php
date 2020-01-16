@@ -298,11 +298,15 @@ class BlankRequest extends FormRequest
                 'jatuh_tempo_as_jaminan'         => 'date_format:d-m-Y',
 
                 // Transaksi CAA
-                'peyimpangan'  => 'in:ADA,TIDAK',
-                // 'team_caa'     => 'in:A,B,C,D,E,F',
-                'team_caa'     => 'required',
-                'file_mao_mca' => 'mimes:jpg,jpeg,png,pdf|max:2048',
-                'file_lain'    => 'mimes:jpg,jpeg,png,pdf|max:2048'
+                'peyimpangan'        => 'required|in:ADA,TIDAK',
+                'team_caa'           => 'required',
+                'file_report_mao'    => 'mimes:jpg,jpeg,png,pdf|max:2048',
+                'file_report_mca'    => 'mimes:jpg,jpeg,png,pdf|max:2048',
+                'status_file_agunan' => 'required|in:ORIGINAL,CUSTOM',
+                'status_file_usaha'  => 'required|in:ORIGINAL,CUSTOM',
+                'file_agunan.*'      => 'required|mimes:jpg,jpeg,png,pdf|max:2048',
+                'file_usaha.*'       => 'required|mimes:jpg,jpeg,png,pdf|max:2048',
+                'file_lain'          => 'mimes:jpg,jpeg,png,pdf|max:2048'
             ];
         }else{
 
@@ -372,6 +376,13 @@ class BlankRequest extends FormRequest
     }
 
     public function messages(){
+
+        $required = ':attribute wajib diisi';
+        $in       = ':attribute harus bertipe :values';
+        $integer  = ':attribute harus berupa angka / bilangan bulat';
+        $digits   = ':attribute harus berupa angka dan berjumlah :digits digit';
+
+
         return [
             // Fasilitas Pinjaman
             'jenis_pinjaman.required'  => ':attribute wajib diisi',
@@ -690,13 +701,25 @@ class BlankRequest extends FormRequest
             'jatuh_tempo_as_jaminan.date_format'     => ':attribute harus berupa angka dengan format :format',
 
             // Transaksi CAA
-            'peyimpangan.in' => ':attribute harus salah satu dari jenis berikut :values',
-            // 'team_caa.in'    => ':attribute harus salah satu dari jenis berikut :values, A = DSH, B = DSH&DOO, C = DSH&DOO&AM, D = DSH&DOO&AM&CRRM, E = DSH&DOO&AM&CRM&DIR1, F = DSH&DOO&AM&CRM&DIR1&DIRUT',
-            'team_caa.required'  => ':attribute wajib diisi/dipilih',
-            'file_mao_mca.mimes' => ':attribute harus bertipe :values',
-            'file_lain.mimes'    => ':attribute harus bertipe :values',
-            'file_mao_mca.max'   => 'ukuran :attribute max :max kb',
-            'file_lain.max'      => 'ukuran :attribute max :max kb'
+            'peyimpangan.required'        => ':attribute wajib diisi / dipilih',
+            'peyimpangan.in'              => ':attribute harus salah satu dari jenis berikut :values',
+            'team_caa.required'           => ':attribute wajib diisi / dipilih',
+            'file_report_mao.mimes'       => ':attribute harus bertipe :values',
+            'file_report_mao.max'         => 'ukuran :attribute max :max kb',
+            'file_report_mca.mimes'       => ':attribute harus bertipe :values',
+            'file_report_mca.max'         => 'ukuran :attribute max :max kb',
+            'status_file_agunan.required' => ':attribute wajib diisi / dipilih',
+            'status_file_agunan.in'       => ':attribute harus salah satu dari jenis berikut :values',
+            'status_file_usaha.required'  => ':attribute wajib diisi / dipilih',
+            'status_file_usaha.in'        => ':attribute harus salah satu dari jenis berikut :values',
+            'file_agunan.*.required'      => ':attribute wajib diisi / dipilih',
+            'file_agunan.*.mimes'         => ':attribute harus bertipe :values',
+            'file_agunan.*.max'           => 'ukuran :attribute max :max kb',
+            'file_usaha.*.required'       => ':attribute wajib diisi / dipilih',
+            'file_usaha.*.mimes'          => ':attribute harus bertipe :values',
+            'file_usaha.*.max'            => 'ukuran :attribute max :max kb',
+            'file_lain.mimes'             => ':attribute harus bertipe :values',
+            'file_lain.max'               => 'ukuran :attribute max :max kb',
         ];
     }
 

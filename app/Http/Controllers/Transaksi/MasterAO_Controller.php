@@ -84,7 +84,7 @@ class MasterAO_Controller extends BaseController
             $data[$key] = [
                 'id'             => $val->id,
                 'nomor_so'       => $val->nomor_so,
-                'nomor_ao'       => $val->ao['nomor_ao'],
+                // 'nomor_ao'       => $val->ao['nomor_ao'],
                 'pic'            => $val->pic['nama'],
                 'cabang'         => $val->cabang['nama'],
                 'asal_data'      => $val->asaldata['nama'],
@@ -237,7 +237,7 @@ class MasterAO_Controller extends BaseController
         $data[] = [
             'id'          => $val->id,
             'nomor_so'    => $val->nomor_so,
-            'nomor_ao'    => $val->ao['nomor_ao'],
+            // 'nomor_ao'    => $val->ao['nomor_ao'],
             'nama_so'     => $val->nama_so,
             'id_pic'      => $val->id_pic,
             'nama_pic'    => $val->pic['nama'],
