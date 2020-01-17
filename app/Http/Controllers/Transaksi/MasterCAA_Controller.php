@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Transaksi;
 use Laravel\Lumen\Routing\Controller as BaseController;
 use App\Http\Controllers\Controller as Helper;
 use App\Http\Requests\Transaksi\BlankRequest;
+use App\Models\Pengajuan\AO\AgunanKendaraan;
+use App\Models\Pengajuan\AO\AgunanTanah;
 use Illuminate\Support\Facades\File;
 use App\Models\Transaksi\TransCAA;
 use App\Models\Transaksi\TransCA;
@@ -34,7 +36,7 @@ class MasterCAA_Controller extends BaseController
 
         $id_cabang = $pic->id_mk_cabang;
 
-        $query = TransCA::with('pic', 'cabang')->where('id_cabang', $id_cabang)->where('status_ca', 1)->get();
+        $query = TransCA::with('so', 'pic', 'cabang')->where('id_cabang', $id_cabang)->where('status_ca', 1)->get();
 
         if ($query == '[]') {
             return response()->json([
@@ -45,7 +47,28 @@ class MasterCAA_Controller extends BaseController
         }
 
 
+
         foreach ($query as $key => $val) {
+            $id_agu_ta = explode (",",$val->so['ao']['id_agunan_tanah']);
+            $AguTa = AgunanTanah::whereIn('id', $id_agu_ta)->get();
+
+            foreach ($AguTa as $key => $value) {
+                $Tan[$key] = array(
+                    'id' => $value->id,
+                    'jenis' => $value->jenis_sertifikat
+                );
+            }
+
+
+            $id_agu_ke = explode (",",$val->so['ao']['id_agunan_kendaraan']);
+            $AguKe = AgunanKendaraan::whereIn('id', $id_agu_ke)->get();
+
+            foreach ($AguKe as $key => $value) {
+                $Ken[$key] = array(
+                    'id' => $value->id,
+                    'jenis' => $value->jenis
+                );
+            }
 
             if ($val->status_ca == 1) {
                 $status_ca = 'recommend';
@@ -72,6 +95,10 @@ class MasterCAA_Controller extends BaseController
                     'tenor'  => $val->so['faspin']['tenor']
                 ],
                 'nama_debitur'   => $val->so['debt']['nama_lengkap'],
+                'agunan' => [
+                    'tanah'     => $Tan,
+                    'kendaraan' => $Ken
+                ],
                 'status_ca'      => $status_ca
             ];
         }
@@ -565,16 +592,18 @@ class MasterCAA_Controller extends BaseController
 
             $id_agu_ta = explode (",",$val->so['ao']['id_agunan_tanah']);
 
-            foreach ($id_agu_ta as $key => $value) {
+            $AguTa = AgunanTanah::whereIn('id', $id_agu_ta)->get();
+
+            foreach ($AguTa as $key => $value) {
                 $idTan[$key] = array(
-                    'id' => $value,
-                    'jenis' => $val->so['ao']['tan']['jenis_sertifikat'],
+                    'id' => $value->id,
+                    'jenis' => $value->jenis_sertifikat,
                     'lampiran' => [
-                        'agunan_depan'    => $val->so['ao']['tan']['lamp_agunan_depan'],
-                        'agunan_kanan'    => $val->so['ao']['tan']['lamp_agunan_kanan'],
-                        'agunan_kiri'     => $val->so['ao']['tan']['lamp_agunan_kiri'],
-                        'agunan_belakang' => $val->so['ao']['tan']['lamp_agunan_belakang'],
-                        'agunan_dalam'    => $val->so['ao']['tan']['lamp_agunan_dalam'],
+                        'agunan_depan'    => $value->lamp_agunan_depan,
+                        'agunan_kanan'    => $value->lamp_agunan_kanan,
+                        'agunan_kiri'     => $value->lamp_agunan_kiri,
+                        'agunan_belakang' => $value->lamp_agunan_belakang,
+                        'agunan_dalam'    => $value->lamp_agunan_dalam
                     ]
                 );
             }
@@ -582,16 +611,18 @@ class MasterCAA_Controller extends BaseController
 
             $id_agu_ke = explode (",",$val->so['ao']['id_agunan_kendaraan']);
 
-            foreach ($id_agu_ke as $key => $value) {
+            $AguKe = AgunanKendaraan::whereIn('id', $id_agu_ke)->get();
+
+            foreach ($AguKe as $key => $value) {
                 $idKen[$key] = array(
-                    'id' => $value,
-                    'jenis' => $val->so['ao']['ken']['jenis'],
+                    'id' => $value->id,
+                    'jenis' => $value->jenis,
                     'lampiran' => [
-                        'agunan_depan'    => $val->so['ao']['ken']['lamp_agunan_depan'],
-                        'agunan_kanan'    => $val->so['ao']['ken']['lamp_agunan_kanan'],
-                        'agunan_kiri'     => $val->so['ao']['ken']['lamp_agunan_kiri'],
-                        'agunan_belakang' => $val->so['ao']['ken']['lamp_agunan_belakang'],
-                        'agunan_dalam'    => $val->so['ao']['ken']['lamp_agunan_dalam'],
+                        'agunan_depan'    => $value->lamp_agunan_depan,
+                        'agunan_kanan'    => $value->lamp_agunan_kanan,
+                        'agunan_kiri'     => $value->lamp_agunan_kiri,
+                        'agunan_belakang' => $value->lamp_agunan_belakang,
+                        'agunan_dalam'    => $value->lamp_agunan_dalam,
                     ]
                 );
             }
@@ -710,16 +741,18 @@ class MasterCAA_Controller extends BaseController
 
         $id_agu_ta = explode (",",$val->so['ao']['id_agunan_tanah']);
 
-        foreach ($id_agu_ta as $key => $value) {
+        $AguTa = AgunanTanah::whereIn('id', $id_agu_ta)->get();
+
+        foreach ($AguTa as $key => $value) {
             $idTan[$key] = array(
-                'id' => $value,
-                'jenis' => $val->so['ao']['tan']['jenis_sertifikat'],
+                'id' => $value->id,
+                'jenis' => $value->jenis_sertifikat,
                 'lampiran' => [
-                    'agunan_depan'    => $val->so['ao']['tan']['lamp_agunan_depan'],
-                    'agunan_kanan'    => $val->so['ao']['tan']['lamp_agunan_kanan'],
-                    'agunan_kiri'     => $val->so['ao']['tan']['lamp_agunan_kiri'],
-                    'agunan_belakang' => $val->so['ao']['tan']['lamp_agunan_belakang'],
-                    'agunan_dalam'    => $val->so['ao']['tan']['lamp_agunan_dalam'],
+                    'agunan_depan'    => $value->lamp_agunan_depan,
+                    'agunan_kanan'    => $value->lamp_agunan_kanan,
+                    'agunan_kiri'     => $value->lamp_agunan_kiri,
+                    'agunan_belakang' => $value->lamp_agunan_belakang,
+                    'agunan_dalam'    => $value->lamp_agunan_dalam
                 ]
             );
         }
@@ -727,97 +760,105 @@ class MasterCAA_Controller extends BaseController
 
         $id_agu_ke = explode (",",$val->so['ao']['id_agunan_kendaraan']);
 
-            foreach ($id_agu_ke as $key => $value) {
-                $idKen[$key] = array(
-                    'id' => $value,
-                    'jenis' => $val->so['ao']['ken']['jenis'],
-                    'lampiran' => [
-                        'agunan_depan'    => $val->so['ao']['ken']['lamp_agunan_depan'],
-                        'agunan_kanan'    => $val->so['ao']['ken']['lamp_agunan_kanan'],
-                        'agunan_kiri'     => $val->so['ao']['ken']['lamp_agunan_kiri'],
-                        'agunan_belakang' => $val->so['ao']['ken']['lamp_agunan_belakang'],
-                        'agunan_dalam'    => $val->so['ao']['ken']['lamp_agunan_dalam'],
-                    ]
-                );
-            }
+        $AguKe = AgunanKendaraan::whereIn('id', $id_agu_ke)->get();
 
-            if ($val->status_caa == 1) {
-                $status_caa = 'recommend';
-            }elseif($val->status_caa == 2){
-                $status_caa = 'not recommend';
-            }else{
-                $status_caa = 'waiting';
-            }
-
-            $data = array(
-                'id_trans_so'    => $val->id_trans_so,
-                'transaksi'   => [
-                    'so' => [
-                        'nomor' => $val->so['nomor_so'],
-                        'nama'  => $val->so['pic']['nama']
-                    ],
-                    'ao' => [
-                        'nomor' => $val->so['ao']['nomor_ao'],
-                        'nama'  => $val->so['ao']['pic']['nama']
-                    ],
-                    'ca' => [
-                        'nomor' => $val->so['ca']['nomor_ca'],
-                        'nama'  => $val->so['ca']['pic']['nama']
-                    ],
-                    'caa' => [
-                        'nomor' => $val->nomor_caa,
-                        'nama'  => $val->pic['nama']
-                    ]
-                ],
-
-                'nama_marketing' => $val->so['nama_marketing'],
-
-                'pic'  => [
-                    'id'   => $val->id_pic,
-                    'nama' => $val->pic['nama'],
-                ],
-                'cabang' => [
-                    'id'   => $val->id_cabang,
-                    'nama' => $val->cabang['nama'],
-                ],
-                'asaldata' => [
-                    'id'   => $val->so['asaldata']['id'],
-                    'nama' => $val->so['asaldata']['nama'],
-                ],
-                'pengajuan' => [
-                    'plafon' => $val->so['faspin']['plafon'],
-                    'tenor'  => $val->so['faspin']['tenor']
-                ],
-                'data_debitur' => [
-                    'id'           => $val->so['id_calon_debitur'],
-                    'nama_lengkap' => $val->so['debt']['nama_lengkap'],
-                    'lamp_usaha'   => $val->so['debt']['lamp_foto_usaha']
-                ],
-                'data_agunan' => [
-                    'agunan_tanah'     => $idTan,
-                    'agunan_kendaraan' => $idKen
-                ],
-                'pendapatan_usaha' => ['id' => $val->so['ao']['id_pendapatan_usaha']],
-                'rekomendasi_ao'   => [
-                    'id'     => $val->so['ao']['id_recom_ao'],
-                    'plafon' => $val->so['ao']['recom_ao']['plafon_kredit'],
-                    'tenor'  => $val->so['ao']['recom_ao']['jangka_waktu']
-                ],
-                'rekomendasi_ca' => [
-                    'id'     => $val->so['ca']['id_recom_ca'],
-                    'plafon' => $val->so['ca']['recom_ca']['plafon_kredit'],
-                    'tenor'  => $val->so['ca']['recom_ca']['jangka_waktu']
-                ],
+        foreach ($AguKe as $key => $value) {
+            $idKen[$key] = array(
+                'id' => $value->id,
+                'jenis' => $val->jenis,
                 'lampiran' => [
-                    'file_report_mao'     => $val->file_report_mao,
-                    'file_report_mca'     => $val->file_report_mca,
-                    'file_agunan'         => explode(";", $val->file_agunan),
-                    'file_usaha'          => explode(";", $val->file_usaha),
-                    'file_tempat_tinggal' => $val->file_tempat_tinggal,
-                    'file_lain'           => explode(";", $val->file_lain)
-                ],
-                'status_caa' => $status_caa
+                    'agunan_depan'    => $value->lamp_agunan_depan,
+                    'agunan_kanan'    => $value->lamp_agunan_kanan,
+                    'agunan_kiri'     => $value->lamp_agunan_kiri,
+                    'agunan_belakang' => $value->lamp_agunan_belakang,
+                    'agunan_dalam'    => $value->lamp_agunan_dalam,
+                ]
             );
+        }
+
+        if ($val->status_caa == 1) {
+            $status_caa = 'recommend';
+        }elseif($val->status_caa == 2){
+            $status_caa = 'not recommend';
+        }else{
+            $status_caa = 'waiting';
+        }
+
+        $data = array(
+            'id_trans_so'    => $val->id_trans_so,
+            'transaksi'   => [
+                'so' => [
+                    'nomor' => $val->so['nomor_so'],
+                    'nama'  => $val->so['pic']['nama']
+                ],
+                'ao' => [
+                    'nomor' => $val->so['ao']['nomor_ao'],
+                    'nama'  => $val->so['ao']['pic']['nama']
+                ],
+                'ca' => [
+                    'nomor' => $val->so['ca']['nomor_ca'],
+                    'nama'  => $val->so['ca']['pic']['nama']
+                ],
+                'caa' => [
+                    'nomor' => $val->nomor_caa,
+                    'nama'  => $val->pic['nama']
+                ]
+            ],
+
+            'nama_marketing' => $val->so['nama_marketing'],
+            'pic'  => [
+                'id'   => $val->id_pic,
+                'nama' => $val->pic['nama'],
+            ],
+            'cabang' => [
+                'id'   => $val->id_cabang,
+                'nama' => $val->cabang['nama'],
+            ],
+            'asaldata' => [
+                'id'   => $val->so['asaldata']['id'],
+                'nama' => $val->so['asaldata']['nama'],
+            ],
+            'data_debitur' => [
+                'id'           => $val->so['id_calon_debitur'],
+                'nama_lengkap' => $val->so['debt']['nama_lengkap'],
+                    'lamp_usaha'   => $val->so['debt']['lamp_foto_usaha']
+            ],
+            'data_agunan' => [
+                'agunan_tanah'     => $idTan,
+                'agunan_kendaraan' => $idKen
+            ],
+            'pendapatan_usaha' => ['id' => $val->so['ao']['id_pendapatan_usaha']],
+            'pengajuan' => [
+                'plafon' => $val->so['faspin']['plafon'],
+                'tenor'  => $val->so['faspin']['tenor'],
+                'jenis_pinjaman' => $val->so['faspin']['jenis_pinjaman']
+            ],
+            'rekomendasi_ao'   => [
+                'id'               => $val->so['ao']['id_recom_ao'],
+                'produk'           => $val->so['ao']['recom_ao']['produk'],
+                'plafon'           => $val->so['ao']['recom_ao']['plafon_kredit'],
+                'tenor'            => $val->so['ao']['recom_ao']['jangka_waktu'],
+                'suku_bunga'       => $val->so['ao']['recom_ao']['suku_bunga'],
+                'pembayaran_bunga' => $val->so['ao']['recom_ao']['pembayaran_bunga']
+            ],
+            'rekomendasi_ca' => [
+                'id'               => $val->so['ca']['id_recom_ca'],
+                'produk'           => $val->so['ca']['recom_ca']['produk'],
+                'plafon'           => $val->so['ca']['recom_ca']['plafon_kredit'],
+                'tenor'            => $val->so['ca']['recom_ca']['jangka_waktu'],
+                'suku_bunga'       => $val->so['ca']['recom_ca']['suku_bunga'],
+                'pembayaran_bunga' => $val->so['ca']['recom_ca']['pembayaran_bunga']
+            ],
+            'lampiran' => [
+                'file_report_mao'     => $val->file_report_mao,
+                'file_report_mca'     => $val->file_report_mca,
+                'file_agunan'         => explode(";", $val->file_agunan),
+                'file_usaha'          => explode(";", $val->file_usaha),
+                'file_tempat_tinggal' => $val->file_tempat_tinggal,
+                'file_lain'           => explode(";", $val->file_lain)
+            ],
+            'status_caa' => $status_caa
+        );
 
         try {
             return response()->json([
