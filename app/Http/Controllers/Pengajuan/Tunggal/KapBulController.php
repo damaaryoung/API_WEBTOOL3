@@ -50,6 +50,7 @@ class KapBulController extends BaseController
                 'total'         => $check->total_pengeluaran
             ),
             'penghasilan_bersih' => $check->penghasilan_bersih
+            // 'disposable_income'  => $check->disposable_income
         );
 
         try {
@@ -103,6 +104,7 @@ class KapBulController extends BaseController
             'total_pemasukan'       => (empty($req->input('pemasukan_debitur')) ? $check->pemasukan_debitur : $req->input('pemasukan_debitur')) + (empty($req->input('pemasukan_pasangan')) ? $check->pemasukan_pasangan : $req->input('pemasukan_pasangan')) + (empty($req->input('pemasukan_penjamin')) ? $check->pemasukan_penjamin : $req->input('pemasukan_penjamin')),
 
             'total_pengeluaran'     => (empty($req->input('biaya_rumah_tangga')) ? $check->biaya_rumah_tangga : $req->input('biaya_rumah_tangga')) + (empty($req->input('biaya_transport')) ? $check->biaya_transport : $req->input('biaya_transport')) + (empty($req->input('biaya_pendidikan')) ? $check->biaya_pendidikan : $req->input('biaya_pendidikan')) + (empty($req->input('biaya_telp_listr_air')) ? $check->biaya_telp_listr_air : $req->input('biaya_telp_listr_air')) + (empty($req->input('angsuran')) ? $check->angsuran : $req->input('angsuran')) + (empty($req->input('biaya_lain')) ? $check->biaya_lain : $req->input('biaya_lain')),
+
             'penghasilan_bersih'    => ((empty($req->input('pemasukan_debitur')) ? $check->pemasukan_debitur : $req->input('pemasukan_debitur')) + (empty($req->input('pemasukan_pasangan')) ? $check->pemasukan_pasangan : $req->input('pemasukan_pasangan')) + (empty($req->input('pemasukan_penjamin')) ? $check->pemasukan_penjamin : $req->input('pemasukan_penjamin'))) - ((empty($req->input('biaya_rumah_tangga')) ? $check->biaya_rumah_tangga : $req->input('biaya_rumah_tangga')) + (empty($req->input('biaya_transport')) ? $check->biaya_transport : $req->input('biaya_transport')) + (empty($req->input('biaya_pendidikan')) ? $check->biaya_pendidikan : $req->input('biaya_pendidikan')) + (empty($req->input('biaya_telp_listr_air')) ? $check->biaya_telp_listr_air : $req->input('biaya_telp_listr_air')) + (empty($req->input('angsuran')) ? $check->angsuran : $req->input('angsuran')) + (empty($req->input('biaya_lain')) ? $check->biaya_lain : $req->input('biaya_lain')))
         );
 

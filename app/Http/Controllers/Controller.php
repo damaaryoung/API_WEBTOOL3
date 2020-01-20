@@ -109,4 +109,9 @@ class Controller extends BaseController
 
         return $result;
     }
+
+    public static function recom_angs($num){
+        return (int) ceil($num / 1000) * 1000;
+        // return ($num > 0) ? ceil($num) : floor($num);
+    }
 }

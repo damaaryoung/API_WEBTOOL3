@@ -118,149 +118,6 @@ class MasterCAA_Controller extends BaseController
         }
     }
 
-    // public function show($id, Request $req){
-    //     $user_id = $req->auth->user_id;
-    //     $pic     = PIC::with('jpic','area','cabang')->where('user_id', $user_id)->first();
-
-    //     if ($pic == null) {
-    //         return response()->json([
-    //             "code"    => 404,
-    //             "status"  => "not found",
-    //             "message" => "User_ID anda adalah '".$user_id."' dengan username '".$req->auth->user."' . Namun anda belum terdaftar sebagai PIC(CAA). Harap daftarkan diri sebagai PIC(CAA) pada form PIC atau hubungi bagian IT"
-    //         ], 404);
-    //     }
-
-    //     $id_cabang = $pic->id_mk_cabang;
-
-    //     $val = TransCA::with('pic', 'cabang')->where('id_cabang', $id_cabang)->where('id_trans_so', $id)->first();
-
-    //     if ($val == null) {
-    //         return response()->json([
-    //             'code'    => 404,
-    //             'status'  => 'not found',
-    //             'message' => 'Data kosong'
-    //         ], 404);
-    //     }
-
-
-    //     $id_agu_ta = explode (",",$val->so['ao']['id_agunan_tanah']);
-
-    //     foreach ($id_agu_ta as $key => $value) {
-    //         $idTan[$key] = array(
-    //             'id' => $value,
-    //             'jenis' => $val->so['ao']['tan']['jenis_sertifikat'],
-    //             'lampiran' => [
-    //                 'agunan_depan'    => $val->so['ao']['tan']['lamp_agunan_depan'],
-    //                 'agunan_kanan'    => $val->so['ao']['tan']['lamp_agunan_kanan'],
-    //                 'agunan_kiri'     => $val->so['ao']['tan']['lamp_agunan_kiri'],
-    //                 'agunan_belakang' => $val->so['ao']['tan']['lamp_agunan_belakang'],
-    //                 'agunan_dalam'    => $val->so['ao']['tan']['lamp_agunan_dalam'],
-    //             ]
-    //         );
-    //     }
-
-
-    //     $id_agu_ke = explode (",",$val->so['ao']['id_agunan_kendaraan']);
-
-    //     foreach ($id_agu_ke as $key => $value) {
-    //         $idKen[$key] = array(
-    //             'id' => $value,
-    //             'jenis' => $val->so['ao']['ken']['jenis'],
-    //             'lampiran' => [
-    //                 'agunan_depan'    => $val->so['ao']['ken']['lamp_agunan_depan'],
-    //                 'agunan_kanan'    => $val->so['ao']['ken']['lamp_agunan_kanan'],
-    //                 'agunan_kiri'     => $val->so['ao']['ken']['lamp_agunan_kiri'],
-    //                 'agunan_belakang' => $val->so['ao']['ken']['lamp_agunan_belakang'],
-    //                 'agunan_dalam'    => $val->so['ao']['ken']['lamp_agunan_dalam'],
-    //             ]
-    //         );
-    //     }
-
-    //     if ($val->status_ca == 1) {
-    //         $status_ca = 'recommend';
-    //     }elseif($val->status_ca == 2){
-    //         $status_ca = 'not recommend';
-    //     }else{
-    //         $status_ca = 'waiting';
-    //     }
-
-    //     $data[] = [
-    //         'id_trans_so'    => $val->id_trans_so,
-    //         'transaksi'   => [
-    //             'so' => [
-    //                 'nomor' => $val->so['nomor_so'],
-    //                 'nama'  => $val->so['pic']['nama']
-    //             ],
-    //             'ao' => [
-    //                 'nomor' => $val->so['ao']['nomor_ao'],
-    //                 'nama'  => $val->so['ao']['pic']['nama']
-    //             ],
-    //             'ca' => [
-    //                 'nomor' => $val->so['ca']['nomor_ca'],
-    //                 'nama'  => $val->so['ca']['pic']['nama']
-    //             ],
-    //             // 'caa' => [
-    //             //     'nomor' => $val->so['caa']['nomor_caa'],
-    //             //     'nama'  => $val->so['caa']['pic']['nama']
-    //             // ]
-    //         ],
-
-    //         'nama_marketing' => $val->so['nama_marketing'],
-
-    //         'pic'  => [
-    //             'id'   => $val->id_pic,
-    //             'nama' => $val->pic['nama'],
-    //         ],
-    //         'cabang' => [
-    //             'id'   => $val->id_cabang,
-    //             'nama' => $val->cabang['nama'],
-    //         ],
-    //         'asaldata' => [
-    //             'id'   => $val->so['asaldata']['id'],
-    //             'nama' => $val->so['asaldata']['nama'],
-    //         ],
-    //         'pengajuan' => [
-    //             'plafon' => $val->so['faspin']['plafon'],
-    //             'tenor'  => $val->so['faspin']['tenor']
-    //         ],
-    //         'data_debitur' => [
-    //             'id'           => $val->so['id_calon_debitur'],
-    //             'nama_lengkap' => $val->so['debt']['nama_lengkap'],
-    //             'lamp_usaha'   => $val->so['debt']['lamp_foto_usaha']
-    //         ],
-    //         'data_agunan' => [
-    //             'agunan_tanah'     => $idTan,
-    //             'agunan_kendaraan' => $idKen
-    //         ],
-    //         'pendapatan_usaha' => ['id' => $val->so['ao']['id_pendapatan_usaha']],
-    //         'rekomendasi_ao'   => [
-    //             'id'     => $val->so['ao']['id_recom_ao'],
-    //             'plafon' => $val->so['ao']['recom_ao']['plafon_kredit'],
-    //             'tenor'  => $val->so['ao']['recom_ao']['jangka_waktu']
-    //         ],
-    //         'rekomendasi_ca' => [
-    //             'id'     => $val->id_recom_ca,
-    //             'plafon' => $val->recom_ca['plafon_kredit'],
-    //             'tenor'  => $val->recom_ca['jangka_waktu']
-    //         ],
-    //         'status_ao' => $status_ca
-    //     ];
-
-    //     try {
-    //         return response()->json([
-    //             'code'   => 200,
-    //             'status' => 'success',
-    //             'data'   => $data[0]
-    //         ], 200);
-    //     } catch (Exception $e) {
-    //         return response()->json([
-    //             "code"    => 501,
-    //             "status"  => "error",
-    //             "message" => $e
-    //         ], 501);
-    //     }
-    // }
-
     public function update($id, Request $request, BlankRequest $req){
         $user_id  = $request->auth->user_id;
         $username = $request->auth->user;
@@ -549,6 +406,27 @@ class MasterCAA_Controller extends BaseController
 
             foreach ($query as $key => $val) {
 
+                $id_agu_ta = explode (",",$val->so['ao']['id_agunan_tanah']);
+                $AguTa = AgunanTanah::whereIn('id', $id_agu_ta)->get();
+
+                foreach ($AguTa as $key => $value) {
+                    $Tan[$key] = array(
+                        'id' => $value->id,
+                        'jenis' => $value->jenis_sertifikat
+                    );
+                }
+
+
+                $id_agu_ke = explode (",",$val->so['ao']['id_agunan_kendaraan']);
+                $AguKe = AgunanKendaraan::whereIn('id', $id_agu_ke)->get();
+
+                foreach ($AguKe as $key => $value) {
+                    $Ken[$key] = array(
+                        'id' => $value->id,
+                        'jenis' => $value->jenis
+                    );
+                }
+
                 if ($val->status_caa == 1) {
                     $status_caa = 'recommend';
                 }elseif($val->status_caa == 2){
@@ -574,7 +452,11 @@ class MasterCAA_Controller extends BaseController
                         'tenor'  => $val->so['faspin']['tenor']
                     ],
                     'nama_debitur'   => $val->so['debt']['nama_lengkap'],
-                    'status_caa'     => $status_caa
+                    'agunan' => [
+                        'tanah'     => $Tan,
+                        'kendaraan' => $Ken
+                    ],
+                    'status_caa' => $status_caa
                 ];
             }
         }else{
@@ -745,8 +627,16 @@ class MasterCAA_Controller extends BaseController
 
         foreach ($AguTa as $key => $value) {
             $idTan[$key] = array(
-                'id' => $value->id,
-                'jenis' => $value->jenis_sertifikat,
+                'id'             => $value->id,
+                'jenis'          => $value->jenis_sertifikat,
+                'tipe_lokasi'    => $value->tipe_lokasi,
+                'luas' => [
+                    'tanah'    => $value->luas_tanah,
+                    'bangunan' => $value->luas_bangunan
+                ],
+                'tgl_berlaku_shgb'        => Carbon::parse($value->tgl_berlaku_shgb)->format("d-m-Y"),
+                'nama_pemilik_sertifikat' => $value->nama_pemilik_sertifikat,
+                'tgl_atau_no_ukur'        => $value->tgl_ukur_sertifikat,
                 'lampiran' => [
                     'agunan_depan'    => $value->lamp_agunan_depan,
                     'agunan_kanan'    => $value->lamp_agunan_kanan,
@@ -764,8 +654,16 @@ class MasterCAA_Controller extends BaseController
 
         foreach ($AguKe as $key => $value) {
             $idKen[$key] = array(
-                'id' => $value->id,
-                'jenis' => $val->jenis,
+                'id'                    => $value->id,
+                'jenis'                 => 'BPKB',
+                'tipe_kendaraan'        => $value->jenis,
+                'merk'                  => $value->merk,
+                'tgl_kadaluarsa_pajak'  => Carbon::parse($value->tgl_kadaluarsa_pajak)->format('d-m-Y'),
+                'tgl_kadaluarsa_stnk'   => Carbon::parse($value->tgl_kadaluarsa_stnk)->format('d-m-Y'),
+                'nama_pemilik'          => $value->nama_pemilik,
+                'no_bpkb'               => $value->no_bpkb,
+                'no_polisi'             => $value->no_polisi,
+                'no_stnk'               => $value->no_stnk,
                 'lampiran' => [
                     'agunan_depan'    => $value->lamp_agunan_depan,
                     'agunan_kanan'    => $value->lamp_agunan_kanan,
@@ -775,6 +673,7 @@ class MasterCAA_Controller extends BaseController
                 ]
             );
         }
+
 
         if ($val->status_caa == 1) {
             $status_caa = 'recommend';
@@ -821,7 +720,29 @@ class MasterCAA_Controller extends BaseController
             'data_debitur' => [
                 'id'           => $val->so['id_calon_debitur'],
                 'nama_lengkap' => $val->so['debt']['nama_lengkap'],
-                    'lamp_usaha'   => $val->so['debt']['lamp_foto_usaha']
+                'alamat_domisili' => [
+                    'alamat_singkat' => $val->so['debt']['alamat_domisili'],
+                    'rt'             => $val->so['debt']['rt_domisili'],
+                    'rw'             => $val->so['debt']['rw_domisili'],
+                    'kelurahan' => [
+                        'id'    => $val->so['debt']['id_kel_tempat_kerja'],
+                        'nama'  => $val->so['debt']['kel_dom']['nama']
+                    ],
+                    'kecamatan' => [
+                        'id'    => $val->so['debt']['id_kec_domisili'],
+                        'nama'  => $val->so['debt']['kec_dom']['nama']
+                    ],
+                    'kabupaten' => [
+                        'id'    => $val->so['debt']['id_kab_domisili'],
+                        'nama'  => $val->so['debt']['kab_dom']['nama'],
+                    ],
+                    'provinsi'  => [
+                        'id'   => $val->so['debt']['id_prov_domisili'],
+                        'nama' => $val->so['debt']['prov_dom']['nama'],
+                    ],
+                    'kode_pos' => $val->so['debt']['kel_dom']['kode_pos']
+                ],
+                'lamp_usaha'   => $val->so['debt']['lamp_foto_usaha']
             ],
             'data_agunan' => [
                 'agunan_tanah'     => $idTan,
@@ -847,7 +768,36 @@ class MasterCAA_Controller extends BaseController
                 'plafon'           => $val->so['ca']['recom_ca']['plafon_kredit'],
                 'tenor'            => $val->so['ca']['recom_ca']['jangka_waktu'],
                 'suku_bunga'       => $val->so['ca']['recom_ca']['suku_bunga'],
-                'pembayaran_bunga' => $val->so['ca']['recom_ca']['pembayaran_bunga']
+                'pembayaran_bunga' => $val->so['ca']['recom_ca']['pembayaran_bunga'],
+                'rekomendasi_angsuran' => $val->so['ca']['recom_ca']['rekom_angsuran']
+            ],
+            'data_biaya' => [
+                'reguler' => $reguler = array(
+                    'biaya_provisi'         => $val->so['ca']['recom_ca']['biaya_provisi'],
+                    'biaya_administrasi'    => $val->so['ca']['recom_ca']['biaya_administrasi'],
+                    'biaya_premi' => [
+                        'asuransi_jiwa'     => $val->so['ca']['recom_ca']['biaya_asuransi_jiwa'],
+                        'asuransi_jaminan'  => $val->so['ca']['recom_ca']['biaya_asuransi_jaminan']
+                    ],
+                    'biaya_tabungan'                    => $val->so['ca']['recom_ca']['biaya_tabungan'],
+                    'biaya_notaris'                     => $val->so['ca']['recom_ca']['notaris'],
+                    'angsuran_pertama_bungan_berjalan'  => $val->so['ca']['recom_ca']['angs_pertama_bunga_berjalan'],
+                    'pelunasan_nasabah_ro'              => $val->so['ca']['recom_ca']['pelunasan_nasabah_ro']
+                ),
+
+                'hold_dana' => $hold_dana = array(
+                    'pelunasan_tempat_lain'         => $val->so['ca']['recom_ca']['pelunasan_tempat_lain'],
+                    'blokir' => [
+                        'tempat_lain'               => $val->so['ca']['recom_ca']['blokir_dana'],
+                        'dua_kali_angsuran_kredit'  => $val->so['ca']['recom_ca']['blokir_angs_kredit']
+                    ]
+                ),
+
+                'total' => array(
+                    'biaya_reguler'     => $ttl1 = array_sum($reguler + $reguler['biaya_premi']),
+                    'biaya_hold_dana'   => $ttl2 = array_sum($hold_dana + $hold_dana['blokir']),
+                    'jml_total'         => $ttl1 + $ttl2
+                )
             ],
             'lampiran' => [
                 'file_report_mao'     => $val->file_report_mao,

@@ -235,7 +235,7 @@ class MasterCA_Controller extends BaseController
         }
     }
 
-    public function update($id, Request $request, BlankRequest $req) {
+    public function update($id, Request $request, BlankRequest $req, Helper $help) {
         $user_id  = $request->auth->user_id;
         $username = $request->auth->user;
 
@@ -336,21 +336,101 @@ class MasterCA_Controller extends BaseController
             }
         }
 
+
+        // Rekomendasi CA
+        $inputRecomCA = array(
+            'produk'                => $req->input('produk'),
+            'plafon_kredit'         => $req->input('plafon_kredit'), //45000000
+            'jangka_waktu'          => $req->input('jangka_waktu'), // 48
+            'suku_bunga'            => $req->input('suku_bunga'), // 1.70
+            'pembayaran_bunga'      => $req->input('pembayaran_bunga'),
+            'akad_kredit'           => $req->input('akad_kredit'),
+            'ikatan_agunan'         => $req->input('ikatan_agunan'),
+            'biaya_provisi'         => $req->input('biaya_provisi'),
+            'biaya_administrasi'    => $req->input('biaya_administrasi'),
+            'biaya_credit_checking' => $req->input('biaya_credit_checking'),
+            'biaya_asuransi_jiwa'   => $req->input('biaya_asuransi_jiwa'),
+            'biaya_asuransi_jaminan'=> $req->input('biaya_asuransi_jaminan'),
+            'notaris'               => $req->input('notaris'),
+            'biaya_tabungan'        => $req->input('biaya_tabungan')
+        );
+
+        // Analisa Kuantitatif dan Kualitatif
+        $staticMin = 35;
+        $staticMax = 80;
+        $staticPlafon = 70000000;
+        $ltvMax = 70;
+        $percent = 100;
+
+        // Rekomendasi Angsuran pada table recom_ca
+        $plaf  = $inputRecomCA['plafon_kredit'];
+        $ten   = $inputRecomCA['jangka_waktu'];
+        $bunga = $inputRecomCA['suku_bunga'] / $percent;
+        $exec  = ($plaf + ($plaf * $ten * $bunga)) / $ten;
+        $recom_angs = $help->recom_angs($exec);
+
+        $passRecomCA = array(
+            'rekom_angsuran' => $recom_angs,
+            'angs_pertama_bunga_berjalan' => empty($req->input('angs_pertama_bunga_berjalan')) ? null : $req->input('angs_pertama_bunga_berjalan'),
+            'pelunasan_nasabah_ro' => empty($req->input('pelunasan_nasabah_ro')) ? null : $req->input('pelunasan_nasabah_ro'),
+            'blokir_dana' => empty($req->input('blokir_dana')) ? null : $req->input('blokir_dana'),
+            'pelunasan_tempat_lain' => empty($req->input('pelunasan_tempat_lain')) ? null : $req->input('pelunasan_tempat_lain'),
+            'blokir_angs_kredit' => empty($req->input('blokir_angs_kredit')) ? null : $req->input('blokir_angs_kredit')
+        );
+
+        $recomCA = array_merge($inputRecomCA, $passRecomCA);
+
+
+        $recom_pendapatan  = $check->ao['kapbul']['total_pemasukan'];
+        $recom_pengeluaran = $check->ao['kapbul']['total_pengeluaran'];
+        $recom_angsuran    = $check->ao['kapbul']['angsuran'];
+        $recom_pend_bersih = $recom_pendapatan - $recom_pengeluaran;
+
+        $disposable_income = $recom_pendapatan - $recom_pengeluaran - $recom_angs;
+
+
+        $recom_ltv = ($plaf / $staticPlafon) * $percent;
+        $recom_idir = ($recom_angs / ($recom_pendapatan - $recom_pengeluaran)) * $percent;
+        $recom_dsr = ($recom_angs / ($recom_pendapatan - $recom_angsuran)) * $percent;
+
+
+        if ($recom_dsr <= $staticMin && $recom_ltv <= $ltvMax && $recom_idir > 0 && $recom_idir < $staticMax) {
+
+            $recom_hasil = 'LAYAK';
+
+        }elseif ($recom_dsr <= $staticMin && $recom_ltv > $ltvMax) {
+
+            $recom_hasil = 'DIPERTIMBANGKAN';
+
+        }elseif ($recom_dsr > $staticMin && $recom_ltv <= $ltvMax) {
+
+            $recom_hasil = 'DIPERTIMBANGKAN';
+
+        }elseif ($recom_dsr <= $staticMin && $recom_ltv <= $ltvMax) {
+            $recom_hasil = 'DIPERTIMBANGKAN';
+
+        }else{
+            $recom_hasil = 'RESIKO TINGGI';
+        }
+
+        // Data Ringkasan Analisa CA
         $dataRingkasan = array(
-            'kuantitatif_ttl_pendapatan' => empty($req->input('kuantitatif_ttl_pendapatan')) ? null : $req->input('kuantitatif_ttl_pendapatan'),
-            'kuantitatif_ttl_pengeluaran' => empty($req->input('kuantitatif_ttl_pengeluaran')) ? null : $req->input('kuantitatif_ttl_pengeluaran'),
-            'kuantitatif_pendapatan' => empty($req->input('kuantitatif_pendapatan')) ? null : $req->input('kuantitatif_pendapatan'),
-            'kuantitatif_angsuran' => empty($req->input('kuantitatif_angsuran')) ? null : $req->input('kuantitatif_angsuran'),
-            'kuantitatif_ltv' => empty($req->input('kuantitatif_ltv')) ? null : $req->input('kuantitatif_ltv'),
-            'kuantitatif_dsr' => empty($req->input('kuantitatif_dsr')) ? null : $req->input('kuantitatif_dsr'),
-            'kuantitatif_idir' => empty($req->input('kuantitatif_idir')) ? null : $req->input('kuantitatif_idir'),
-            'kuantitatif_hasil' => empty($req->input('kuantitatif_hasil')) ? null : $req->input('kuantitatif_hasil'),
-            'kualitatif_analisa' => empty($req->input('kualitatif_analisa')) ? null : $req->input('kualitatif_analisa'),
-            'kualitatif_swot' => empty($req->input('kualitatif_swot')) ? null : $req->input('kualitatif_swot'),
-            'kualitatif_strenght' => empty($req->input('kualitatif_strenght')) ? null : $req->input('kualitatif_strenght'),
-            'kualitatif_weakness' => empty($req->input('kualitatif_weakness')) ? null : $req->input('kualitatif_weakness'),
-            'kualitatif_opportunity' => empty($req->input('kualitatif_opportunity')) ? null : $req->input('kualitatif_opportunity'),
-            'kualitatif_threatness' => empty($req->input('kualitatif_threatness')) ? null : $req->input('kualitatif_threatness')
+            'kuantitatif_ttl_pendapatan'    => $recom_pendapatan,
+            'kuantitatif_ttl_pengeluaran'   => $recom_pengeluaran,
+            'kuantitatif_pendapatan_bersih' => $recom_pend_bersih,
+            'kuantitatif_angsuran'          => $recom_angs,
+            'kuantitatif_ltv'               => round($recom_ltv, 2),
+            'kuantitatif_dsr'               => round($recom_dsr, 2),
+            'kuantitatif_idir'              => round($recom_idir, 2),
+            'kuantitatif_hasil'             => $recom_hasil,
+
+
+            'kualitatif_analisa'            => empty($req->input('kualitatif_analisa')) ? null : $req->input('kualitatif_analisa'),
+            'kualitatif_strenght'           => empty($req->input('kualitatif_strenght')) ? null : $req->input('kualitatif_strenght'),
+            'kualitatif_weakness'           => empty($req->input('kualitatif_weakness')) ? null : $req->input('kualitatif_weakness'),
+            'kualitatif_opportunity'        => empty($req->input('kualitatif_opportunity')) ? null : $req->input('kualitatif_opportunity'),
+            'kualitatif_threatness'         => empty($req->input('kualitatif_threatness')) ? null : $req->input('kualitatif_threatness'),
+            'disposable_income'             => $disposable_income
         );
 
         $rekomPinjaman = array(
@@ -364,19 +444,13 @@ class MasterCA_Controller extends BaseController
             'note_recom' => empty($req->input('note_recom')) ? null : $req->input('note_recom')
         );
 
-        $recomCA = array(
-            'produk'                => $req->input('produk'),
-            'plafon_kredit'         => $req->input('plafon_kredit'),
-            'jangka_waktu'          => $req->input('jangka_waktu'),
-            'suku_bunga'            => $req->input('suku_bunga'),
-            'pembayaran_bunga'      => $req->input('pembayaran_bunga'),
-            'akad_kredit'           => $req->input('akad_kredit'),
-            'ikatan_agunan'         => $req->input('ikatan_agunan'),
-            'biaya_provisi'         => $req->input('biaya_provisi'),
-            'biaya_administrasi'    => $req->input('biaya_administrasi'),
-            'biaya_credit_checking' => $req->input('biaya_credit_checking'),
-            'notaris'               => $req->input('notaris'),
-            'biaya_tabungan'        => $req->input('biaya_tabungan')
+        // Tambahan Rekomendasi CA
+        $recomCaOL = array(
+            'angs_pertama_bunga_berjalan' => $req->input('angs_pertama_bunga_berjalan'),
+            'pelunasan_nasabah_ro'        => $req->input('pelunasan_nasabah_ro'),
+            'blokir_dana'                 => $req->input('blokir_dana'),
+            'pelunasan_tempat_lain'       => $req->input('pelunasan_tempat_lain'),
+            'blokir_angs_kredit'          => $req->input('blokir_angs_kredit')
         );
 
         $asJiwa = array(
@@ -405,7 +479,7 @@ class MasterCA_Controller extends BaseController
 
             if ($check_ca == null) {
 
-                if (!empty($req->input('nama_bank_mutasi'))) {
+                if (!empty($dataMuBa)) {
                     for ($i = 0; $i < count($dataMuBa); $i++) {
                         $mutasi = MutasiBank::create($dataMuBa[$i]);
 
@@ -417,7 +491,7 @@ class MasterCA_Controller extends BaseController
                     $MutasiID = null;
                 }
 
-                if (!empty($req->input('no_rekening'))) {
+                if (!empty($dataTabUang)) {
                     $tabungan = TabDebt::create($dataTabUang);
 
                     $idTabungan = $tabungan->id;
@@ -425,7 +499,7 @@ class MasterCA_Controller extends BaseController
                     $idTabungan = null;
                 }
 
-                if (!empty($req->input('nama_bank_acc'))) {
+                if (!empty($dataACC)) {
                     for ($i = 0; $i < count($dataACC); $i++) {
                         $IACC = InfoACC::create($dataACC[$i]);
 
@@ -437,14 +511,14 @@ class MasterCA_Controller extends BaseController
                     $idInfo = null;
                 }
 
-                if (!empty($req->input('kuantitatif_ttl_pendapatan'))) {
+                if (!empty($dataRingkasan)) {
                     $analisa = RingkasanAnalisa::create($dataRingkasan);
                     $idAnalisa = $analisa->id;
                 }else{
                     $idAnalisa = null;
                 }
 
-                if (!empty($req->input('penyimpangan_struktur'))) {
+                if (!empty($rekomPinjaman)) {
                     $recomPin = RekomendasiPinjaman::create($rekomPinjaman);
                     $idrecomPin = $recomPin->id;
                 }else{
@@ -466,12 +540,7 @@ class MasterCA_Controller extends BaseController
                 }
 
                 if (!empty($recomCA)) {
-                    $arrJaminan = array(
-                        'id_asuransi_jiwa'    => $idJiwa,
-                        'id_asuransi_jaminan' => $idJaminan,
-                    );
-
-                    $newRecom = array_merge($recomCA, $arrJaminan);
+                    $newRecom = array_merge($recomCA, $recomCaOL);
 
                     $reCA = RekomendasiCA::create($newRecom);;
                     $idReCA = $reCA->id;
@@ -490,33 +559,32 @@ class MasterCA_Controller extends BaseController
                     'id_asuransi_jaminan'     => $idJaminan
                 );
 
-                // dd($dataID);
-
                 $newTransCA = array_merge($transCA, $dataID);
 
                 $CA = TransCA::create($newTransCA);
                 TransSO::where('id', $id)->update(['id_trans_ca' => $CA->id]);
             }else{
-                if (!empty($check_ca->id_mutasi_bank)) {
-                    $ex_mutasi = explode(",", $check_ca->id_mutasi_bank);
+                if (!empty($dataMuBa)) {
 
-                    for ($i = 0; $i < count($dataMuBa); $i++){
-                        MutasiBank::where('id', $ex_mutasi[$i])->update($dataMuBa[$i]);
+                    if (!empty($check_ca->id_mutasi_bank)) {
+                        $ex_mutasi = explode(",", $check_ca->id_mutasi_bank);
 
-                        $id_mutasi['id'][$i] = $ex_mutasi[$i];
+                        MutasiBank::whereIn('id', $ex_mutasi)->delete();
                     }
-                }else{
+
                     for ($i = 0; $i < count($dataMuBa); $i++){
                         $mutasi = MutasiBank::create($dataMuBa[$i]);
 
                         $id_mutasi['id'][$i] = $mutasi->id;
                     }
+
+                    $MutasiID   = implode(",", $id_mutasi['id']);
+                }else{
+                    $MutasiID = $check_ca->id_mutasi_bank;
                 }
 
-                $MutasiID   = implode(",", $id_mutasi['id']);
 
-
-                if (!empty($check_ca->no_rekening)) {
+                if (!empty($check_ca->id_log_tabungan)) {
                     $tabungan = TabDebt::where('id', $check_ca->id_log_tabungan)->update($dataTabUang);
 
                     $idTabungan = $check_ca->id_log_tabungan;
@@ -526,17 +594,22 @@ class MasterCA_Controller extends BaseController
                     $idTabungan = $tabungan->id;
                 }
 
-                if (!empty($check_ca->id_info_analisa_cc)) {
-                    $ex_iacc = explode(",", $check_ca->id_info_analisa_cc);
+                if (!empty($dataACC)) {
 
-                    for ($i = 0; $i < count($dataACC); $i++) {
-                        $IACC = InfoACC::where('id', $ex_iacc[$i])->update($dataACC[$i]);
+                    if (!empty($check_ca->id_info_analisa_cc)) {
+                        $ex_info = explode(",", $check_ca->id_info_analisa_cc);
+                        InfoACC::whereIn('id', $ex_info)->delete();
                     }
 
-                    $idInfo = $check_ca->id_info_analisa_cc;
+                    for ($i = 0; $i < count($dataACC); $i++) {
+                        $IACC = InfoACC::create($dataACC[$i]);
+
+                        $arrACC['id'][$i] = $IACC->id;
+                    }
+
+                    $idInfo = implode(",", $arrACC['id']);
                 }else{
-                    $info = InfoACC::create($dataACC);
-                    $idInfo = $info->id;
+                    $idInfo = $check_ca->id_info_analisa_cc;
                 }
 
                 if (!empty($check_ca->id_ringkasan_analisa)) {
@@ -571,23 +644,13 @@ class MasterCA_Controller extends BaseController
                     $idJaminan = $jaminan->id;
                 }
 
-                if (!empty($check_ca->id_rekomendasi_ca)) {
-                    $idJaminan = array(
-                        'id_asuransi_jiwa'    => $idJiwa,
-                        'id_asuransi_jaminan' => $idJaminan,
-                    );
+                if (!empty($check_ca->id_recom_ca)) {
+                    $newRecom = array_merge($recomCA, $recomCaOL);
 
-                    $newRecom = array_merge($recomCA, $idJaminan);
-
-                    $reCA = RekomendasiCA::where('id', $check_ca->id_rekomendasi_ca)->update($newRecom);
-                    $idReCA = $check_ca->id_rekomendasi_ca;
+                    $reCA = RekomendasiCA::where('id', $check_ca->id_recom_ca)->update($newRecom);
+                    $idReCA = $check_ca->id_recom_ca;
                 }else{
-                    $arrJaminan = array(
-                        'id_asuransi_jiwa'    => $idJiwa,
-                        'id_asuransi_jaminan' => $idJaminan,
-                    );
-
-                    $newRecom = array_merge($recomCA, $arrJaminan);
+                    $newRecom = array_merge($recomCA, $recomCaOL);
 
                     $reCA = RekomendasiCA::create($newRecom);
                     $idReCA = $reCA->id;
@@ -609,6 +672,8 @@ class MasterCA_Controller extends BaseController
                 TransCA::where('id', $check_ca->id)->update($newTransCA);
                 TransSO::where('id', $id)->update(['id_trans_ca' => $check_ca->id]);
             }
+
+            KapBulanan::where('id', $check->ao['id_kapasitas_bulanan'])->update(['disposable_income' => $disposable_income]);
 
             DB::connection('web')->commit();
 

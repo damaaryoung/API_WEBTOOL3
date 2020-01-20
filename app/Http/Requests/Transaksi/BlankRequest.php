@@ -138,7 +138,6 @@ class BlankRequest extends FormRequest
 
                 // Transaksi AO
                 // 'jangka_waktu'          => 'integer|in:12;18;24;30;36;48;60',
-                'suku_bunga'            => 'integer',
                 'pembayaran_bunga'      => 'integer',
                 'akad_kredit'           => 'in:ADENDUM,NOTARIS,INTERNAL',
                 'ikatan_agunan'         => 'in:APHT,SKMHT,FIDUSIA',
@@ -294,13 +293,13 @@ class BlankRequest extends FormRequest
                 // Transaksi CAA
                 'penyimpangan'       => 'in:ADA,TIDAK',
                 // 'team_caa'           => 'required',
-                'file_report_mao'    => 'mimes:jpg,jpeg,png,pdf|max:2048',
-                'file_report_mca'    => 'mimes:jpg,jpeg,png,pdf|max:2048',
-                'status_file_agunan' => 'in:ORIGINAL,CUSTOM',
-                'status_file_usaha'  => 'in:ORIGINAL,CUSTOM',
+                // 'file_report_mao'    => 'mimes:jpg,jpeg,png,pdf|max:2048',
+                // 'file_report_mca'    => 'mimes:jpg,jpeg,png,pdf|max:2048',
+                // 'status_file_agunan' => 'in:ORIGINAL,CUSTOM',
+                // 'status_file_usaha'  => 'in:ORIGINAL,CUSTOM',
                 // 'file_agunan.*'      => 'mimes:jpg,jpeg,png,pdf|max:2048',
                 // 'file_usaha.*'       => 'mimes:jpg,jpeg,png,pdf|max:2048',
-                'file_lain'          => 'mimes:jpg,jpeg,png,pdf|max:2048'
+                // 'file_lain'          => 'mimes:jpg,jpeg,png,pdf|max:2048'
             ];
         }else{
 
@@ -532,7 +531,6 @@ class BlankRequest extends FormRequest
             // Transaksi AO
             'jangka_waktu.integer'          => $integer,
             // 'jangka_waktu.in'               => $in,
-            'suku_bunga.integer'            => $integer,
             'pembayaran_bunga.integer'      => $integer,
             'akad_kredit.in'                => $in,
             'ikatan_agunan.in'              => $in,

@@ -794,7 +794,8 @@ class MasterAO_Controller extends BaseController
             }
         }
 
-        $kapBul = array(
+        // Start Kapasitas Bulanan
+        $inputKapBul = array(
             'pemasukan_cadebt'      => empty($req->input('pemasukan_debitur')) ? null : (int) $req->input('pemasukan_debitur'),
             'pemasukan_pasangan'    => empty($req->input('pemasukan_pasangan')) ? null : (int) $req->input('pemasukan_pasangan'),
             'pemasukan_penjamin'    => empty($req->input('pemasukan_penjamin')) ? null : (int) $req->input('pemasukan_penjamin'),
@@ -804,14 +805,21 @@ class MasterAO_Controller extends BaseController
             'biaya_telp_listr_air'  => empty($req->input('biaya_telp_listr_air')) ? null : (int) $req->input('biaya_telp_listr_air'),
             'angsuran'              => empty($req->input('angsuran')) ? null : $req->input('angsuran'),
             'biaya_lain'            => empty($req->input('biaya_lain')) ? null : (int) $req->input('biaya_lain'),
-
-            'total_pemasukan'       => (empty($req->input('pemasukan_debitur')) ? 0 : $req->input('pemasukan_debitur')) + (empty($req->input('pemasukan_pasangan')) ? 0 : $req->input('pemasukan_pasangan')) + (empty($req->input('pemasukan_penjamin')) ? 0 : $req->input('pemasukan_penjamin')),
-            'total_pengeluaran'     => (empty($req->input('biaya_rumah_tangga')) ? 0 : $req->input('biaya_rumah_tangga')) + (empty($req->input('biaya_transport')) ? 0 : $req->input('biaya_transport')) + (empty($req->input('biaya_pendidikan')) ? 0 : $req->input('biaya_pendidikan')) + (empty($req->input('biaya_telp_listr_air')) ? 0 : $req->input('biaya_telp_listr_air')) + (empty($req->input('angsuran')) ? 0 : $req->input('angsuran')) + (empty($req->input('biaya_lain')) ? 0 : $req->input('biaya_lain')),
-            'penghasilan_bersih'    => ((empty($req->input('pemasukan_debitur')) ? 0 : $req->input('pemasukan_debitur')) + (empty($req->input('pemasukan_pasangan')) ? 0 : $req->input('pemasukan_pasangan')) + (empty($req->input('pemasukan_penjamin')) ? 0 : $req->input('pemasukan_penjamin'))) - ((empty($req->input('biaya_rumah_tangga')) ? 0 : $req->input('biaya_rumah_tangga')) + (empty($req->input('biaya_transport')) ? 0 : $req->input('biaya_transport')) + (empty($req->input('biaya_pendidikan')) ? 0 : $req->input('biaya_pendidikan')) + (empty($req->input('biaya_telp_listr_air')) ? 0 : $req->input('biaya_telp_listr_air')) + (empty($req->input('angsuran')) ? 0 : $req->input('angsuran')) + (empty($req->input('biaya_lain')) ? 0 : $req->input('biaya_lain')))
         );
 
+        $total_KapBul = array(
+            'total_pemasukan'       => $ttl1 = array_sum(array_slice($inputKapBul, 0, 2)),
+            'total_pengeluaran'     => $ttl2 = array_sum(array_slice($inputKapBul, 2)),
+            'penghasilan_bersih'    => $ttl1 - $ttl2
+        );
+
+        $kapBul = array_merge($inputKapBul, $total_KapBul);
+        // End Kapasitas Bulanan
+
+
         if (!empty($req->input('pemasukan_tunai'))) {
-            $dataKeUsaha = array(
+            // $dataKeUsaha = array(
+            $inputKeUsaha = array(
                 'pemasukan_tunai'      => empty($req->input('pemasukan_tunai')) ? null : (int) $req->input('pemasukan_tunai'),
                 'pemasukan_kredit'     => empty($req->input('pemasukan_kredit')) ? null : (int) $req->input('pemasukan_kredit'),
                 'biaya_sewa'           => empty($req->input('biaya_sewa')) ? null : (int) $req->input('biaya_sewa'),
@@ -822,21 +830,26 @@ class MasterAO_Controller extends BaseController
                 'biaya_kirim_barang'   => empty($req->input('biaya_kirim_barang')) ? null : (int) $req->input('biaya_kirim_barang'),
                 'biaya_hutang_dagang'  => empty($req->input('biaya_hutang_dagang')) ? null : (int) $req->input('biaya_hutang_dagang'),
                 'biaya_angsuran'       => empty($req->input('biaya_angsuran')) ? null : (int) $req->input('biaya_angsuran'),
-                'biaya_lain_lain'      => empty($req->input('biaya_lain_lain')) ? null : (int) $req->input('biaya_lain_lain'),
-                'total_pemasukan'      => (empty($req->input('pemasukan_tunai')) ? 0 : $req->input('pemasukan_tunai')) + (empty($req->input('pemasukan_kredit')) ? 0 : $req->input('pemasukan_kredit')),
-                'total_pengeluaran'    => (empty($req->input('biaya_sewa')) ? 0 : $req->input('biaya_sewa')) + (empty($req->input('biaya_gaji_pegawai')) ? 0 : $req->input('biaya_gaji_pegawai')) + (empty($req->input('biaya_belanja_brg')) ? 0 : $req->input('biaya_belanja_brg')) + (empty($req->input('biaya_telp_listr_air')) ? 0 : $req->input('biaya_telp_listr_air')) + (empty($req->input('biaya_sampah_kemanan')) ? 0 : $req->input('biaya_sampah_kemanan')) + (empty($req->input('biaya_kirim_barang')) ? 0 : $req->input('biaya_kirim_barang')) + (empty($req->input('biaya_hutang_dagang')) ? 0 : $req->input('biaya_hutang_dagang')) + (empty($req->input('biaya_angsuran')) ? 0 : $req->input('biaya_angsuran')) + (empty($req->input('biaya_lain_lain')) ? 0 : $req->input('biaya_lain_lain')),
-                'laba_usaha'           => ((empty($req->input('pemasukan_tunai')) ? 0 : $req->input('pemasukan_tunai')) + (empty($req->input('pemasukan_kredit')) ? 0 : $req->input('pemasukan_kredit'))) - ((empty($req->input('biaya_sewa')) ? 0 : $req->input('biaya_sewa')) + (empty($req->input('biaya_gaji_pegawai')) ? 0 : $req->input('biaya_gaji_pegawai')) + (empty($req->input('biaya_belanja_brg')) ? 0 : $req->input('biaya_belanja_brg')) + (empty($req->input('biaya_telp_listr_air')) ? 0 : $req->input('biaya_telp_listr_air')) + (empty($req->input('biaya_sampah_kemanan')) ? 0 : $req->input('biaya_sampah_kemanan')) + (empty($req->input('biaya_kirim_barang')) ? 0 : $req->input('biaya_kirim_barang')) + (empty($req->input('biaya_hutang_dagang')) ? 0 : $req->input('biaya_hutang_dagang')) + (empty($req->input('biaya_angsuran')) ? 0 : $req->input('biaya_angsuran')) + (empty($req->input('biaya_lain_lain')) ? 0 : $req->input('biaya_lain_lain')))
+                'biaya_lain_lain'      => empty($req->input('biaya_lain_lain')) ? null : (int) $req->input('biaya_lain_lain')
             );
+
+            $total_KeUsaha = array(
+                'total_pemasukan'      => $ttl1 = array_sum(array_slice($inputKeUsaha, 0, 2)),
+                'total_pengeluaran'    => $ttl2 = array_sum(array_slice($inputKeUsaha, 2)),
+                'laba_usaha'           => $ttl1 - $ttl2
+            );
+
+            $dataKeUsaha = array_merge($inputKeUsaha, $total_KeUsaha);
         }
 
         $check_ao = TransAO::where('id_trans_so', $id)->first();
 
         DB::connection('web')->beginTransaction();
-        try{
+        // try{
 
             if ($check_ao == null) {
 
-                if (!empty($req->input('tipe_lokasi_agunan'))) {
+                if (!empty($daAguTa)) {
                     for ($i = 0; $i < count($daAguTa); $i++) {
 
                         $tanah = AgunanTanah::create($daAguTa[$i]);
@@ -860,7 +873,7 @@ class MasterAO_Controller extends BaseController
                 }
 
 
-                if (!empty($req->input('no_bpkb_ken'))) {
+                if (!empty($daAguKe)) {
                     for ($i = 0; $i < count($daAguKe); $i++) {
                         $kendaraan = AgunanKendaraan::create($daAguKe[$i]);
 
@@ -892,14 +905,14 @@ class MasterAO_Controller extends BaseController
                 $kap = KapBulanan::create($kapBul);
                 $id_kapbul = $kap->id;
 
-                if (!empty($req->input('pemasukan_tunai'))) {
+                if (!empty($dataKeUsaha)) {
                     $keuangan = PendapatanUsaha::create($dataKeUsaha);
                     $id_usaha = $keuangan->id;
                 }else{
                     $id_usaha = null;
                 }
 
-                if (!empty($req->input('produk'))) {
+                if (!empty($recom_AO)) {
                     $recom = RekomendasiAO::create($recom_AO);
                     $id_recom = $recom->id;
                 }else{
@@ -924,42 +937,36 @@ class MasterAO_Controller extends BaseController
 
                 TransSO::where('id', $id)->update(['id_trans_ao' => $new_TransAO->id]);
             }else{
-                if (!empty($req->input('tipe_lokasi_agunan'))) {
+                if (!empty($daAguTa)) {
 
                     if (!empty($check_ao->id_agunan_tanah)) {
-                        for ($i = 0; $i < count($daAguTa); $i++) {
+                        $id_aguta = explode(",", $check_ao->id_agunan_tanah);
 
-                            $id_aguta = explode(",", $check_ao->id_agunan_tanah);
-                            $tanah = AgunanTanah::where('id', $id_aguta)->update($daAguTa[$i]);
-
-                            $id_tanah['id'][$i] = $id_aguta[$i];
-                        }
-                    }else{
-                        for ($i = 0; $i < count($daAguTa); $i++) {
-
-                            $tanah = AgunanTanah::create($daAguTa[$i]);
-
-                            $id_tanah['id'][$i] = $tanah->id;
-                        }
+                        AgunanTanah::whereIn('id', $id_aguta)->delete();
                     }
 
-                    if (!empty($check_ao->id_periksa_agunan_tanah)){
-                        for ($i = 0; $i < count($pemAguTa); $i++) {
-                            $pemAguTa_N[$i] = array_merge(array('id_agunan_tanah' => $id_tanah['id'][$i]), $pemAguTa[$i]);
 
-                            $id_pe_aguta = explode(",", $check_ao->id_periksa_agunan_tanah);
-                            $tanah = PemeriksaanAgunTan::where('id', $id_pe_aguta)->update($pemAguTa_N[$i]);
+                    for ($i = 0; $i < count($daAguTa); $i++) {
+                        // $x[] = $id_aguta[$i];
+                        $tanah = AgunanTanah::create($daAguTa[$i]);
 
-                            $id_pem_tan['id'][$i] = $id_pe_aguta[$i];
-                        }
-                    }else{
-                        for ($i = 0; $i < count($pemAguTa); $i++) {
-                            $pemAguTa_N[$i] = array_merge(array('id_agunan_tanah' => $id_tanah['id'][$i]), $pemAguTa[$i]);
+                        $id_tanah['id'][$i] = $tanah->id;
+                    }
 
-                            $pemTanah = PemeriksaanAgunTan::create($pemAguTa_N[$i]);
 
-                            $id_pem_tan['id'][$i] = $pemTanah->id;
-                        }
+                    if (!empty($check_ao->id_periksa_agunan_tanah)) {
+                        $id_pe_aguta = explode(",", $check_ao->id_periksa_agunan_tanah);
+
+                        PemeriksaanAgunTan::whereIn('id', $id_pe_aguta)->delete();
+                    }
+
+                    for ($i = 0; $i < count($pemAguTa); $i++) {
+
+                        $pemAguTa_N[$i] = array_merge(array('id_agunan_tanah' => $id_tanah['id'][$i]), $pemAguTa[$i]);
+
+                        $pemTanah = PemeriksaanAgunTan::create($pemAguTa_N[$i]);
+
+                        $id_pem_tan['id'][$i] = $pemTanah->id;
                     }
 
 
@@ -971,41 +978,35 @@ class MasterAO_Controller extends BaseController
                 }
 
 
-                if (!empty($req->input('no_bpkb_ken'))) {
+                if (!empty($daAguKe)) {
 
                     if (!empty($check_ao->id_agunan_kendaraan)) {
-                        for ($i = 0; $i < count($daAguKe); $i++) {
-                            $id_aguke = explode(",", $check_ao->id_agunan_kendaraan);
-                            $tanah = AgunanKendaraan::where('id', $id_aguke)->update($daAguKe[$i]);
+                        $id_aguke = explode(",", $check_ao->id_agunan_kendaraan);
 
-                            $id_kendaraan['id'][$i] = $id_aguke[$i];
-                        }
-                    }else{
-                        for ($i = 0; $i < count($daAguKe); $i++) {
-                            $kendaraan = AgunanKendaraan::create($daAguKe[$i]);
-
-                            $id_kendaraan['id'][$i] = $kendaraan->id;
-                        }
+                        AgunanKendaraan::whereIn('id', $id_aguke)->delete();
                     }
 
+                    for ($i = 0; $i < count($daAguKe); $i++) {
+
+                        $kendaraan = AgunanKendaraan::create($daAguKe[$i]);
+
+                        $id_kendaraan['id'][$i] = $kendaraan->id;
+                    }
+
+
                     if (!empty($check_ao->id_periksa_agunan_kendaraan)) {
-                        for ($i = 0; $i < count($pemAguKe); $i++) {
+                        $id_pe_aguke = explode(",", $check_ao->id_periksa_agunan_kendaraan);
 
-                            $pemAguKe_N[$i] = array_merge(array('id_agunan_kendaraan' => $id_kendaraan['id'][$i]), $pemAguKe[$i]);
+                        PemeriksaanAgunKen::where('id', $id_pe_aguke)->delete();
+                    }
 
-                            $id_pe_aguke = explode(",", $check_ao->id_periksa_agunan_kendaraan);
-                            $tanah = PemeriksaanAgunKen::where('id', $id_pe_aguke)->update($pemAguKe_N[$i]);
+                    for ($i = 0; $i < count($pemAguKe); $i++) {
 
-                            $id_pem_ken['id'][$i] = $id_pe_aguke[$i];
-                        }
-                    }else{
-                        for ($i = 0; $i < count($pemAguKe); $i++) {
-                            $pemAguKe_N[$i] = array_merge(array('id_agunan_kendaraan' => $id_kendaraan['id'][$i]), $pemAguKe[$i]);
+                        $pemAguKe_N[$i] = array_merge(array('id_agunan_kendaraan' => $id_kendaraan['id'][$i]), $pemAguKe[$i]);
 
-                            $pemKendaraan = PemeriksaanAgunKen::create($pemAguKe_N[$i]);
+                        $pemKendaraan = PemeriksaanAgunKen::create($pemAguKe_N[$i]);
 
-                            $id_pem_ken['id'][$i] = $pemKendaraan->id;
-                        }
+                        $id_pem_ken['id'][$i] = $pemKendaraan->id;
                     }
 
 
@@ -1041,14 +1042,14 @@ class MasterAO_Controller extends BaseController
                 }
 
                 if (!empty($check_ao->id_pendapatan_usaha)) {
-                    if (!empty($req->input('pemasukan_tunai'))) {
+                    if (!empty($dataKeUsaha)) {
                         $keuangan = PendapatanUsaha::where('id', $check_ao->id_pendapatan_usaha)->update($dataKeUsaha);
                         $id_usaha = $check_ao->id_pendapatan_usaha;
                     }else{
                         $id_usaha = $check_ao->id_pendapatan_usaha;
                     }
                 }else{
-                    if (!empty($req->input('pemasukan_tunai'))){
+                    if (!empty($dataKeUsaha)){
                         $keuangan = PendapatanUsaha::create($dataKeUsaha);
                         $id_usaha = $keuangan->id;
                     }else{
@@ -1057,14 +1058,14 @@ class MasterAO_Controller extends BaseController
                 }
 
                 if (!empty($check_ao->id_recom_ao)){
-                    if (!empty($req->input('produk'))) {
+                    if (!empty($recom_AO)) {
                         $recom = RekomendasiAO::where('id', $check_ao->id_recom_ao)->update($recom_AO);
                         $id_recom = $check_ao->id_recom_ao;
                     }else{
                         $id_recom = $check_ao->id_recom_ao;
                     }
                 }else{
-                    if (!empty($req->input('produk'))) {
+                    if (!empty($recom_AO)) {
                         $recom = RekomendasiAO::create($recom_AO);
                         $id_recom = $recom->id;
                     }else{
@@ -1099,14 +1100,14 @@ class MasterAO_Controller extends BaseController
                 'message'=> 'Data untuk AO berhasil dikirim'
                 // 'message'=> $msg
             ], 200);
-        } catch (\Exception $e) {
-            $err = DB::connection('web')->rollback();
-            return response()->json([
-                'code'    => 501,
-                'status'  => 'error',
-                'message' => $err
-            ], 501);
-        }
+        // } catch (\Exception $e) {
+        //     $err = DB::connection('web')->rollback();
+        //     return response()->json([
+        //         'code'    => 501,
+        //         'status'  => 'error',
+        //         'message' => $err
+        //     ], 501);
+        // }
     }
 
     public function search($search, Request $req){

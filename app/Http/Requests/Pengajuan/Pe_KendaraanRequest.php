@@ -20,7 +20,7 @@ class Pe_KendaraanRequest extends FormRequest
 
     public function rules(Request $request)
     {
-        $single = $request->segment(3);
+        $single = $request->segment(4);
 
         if (empty($single)){
             $rules = [

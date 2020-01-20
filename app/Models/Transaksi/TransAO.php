@@ -63,7 +63,7 @@ class TransAO extends Model implements AuthenticatableContract, AuthorizableCont
     }
 
     public function kapbul(){
-        return $this->belongsTo('App\Models\Pengajuan\AO\KapasitasBulanan', 'id_kapasitas_bulanan');
+        return $this->belongsTo('App\Models\Pengajuan\AO\KapBulanan', 'id_kapasitas_bulanan');
     }
 
     public function usaha(){
