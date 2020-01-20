@@ -322,11 +322,18 @@ class MasterCAA_Controller extends BaseController
         }
 
         // Email Team CAA
-        $reqTeam = $req->input('team_caa');
-        for ($i = 0; $i < count($reqTeam); $i++) {
-            $arrTeam['email'] = $req->team_caa;
+        // $reqTeam[] = $req->team_caa;
+        if (!empty($req->input('team_caa'))) {
+            for ($i = 0; $i < count($req->input('team_caa')); $i++) {
+                $arrTeam['email'][$i] = $req->input('team_caa')[$i];
+
+            }
+
+            $team_caa = implode(";", $arrTeam['email']);
+        }else{
+            $team_caa = 'xxx@email.com';
         }
-        $team_caa = implode(";", $arrTeam['email']);
+
 
 
         $transCAA = array(

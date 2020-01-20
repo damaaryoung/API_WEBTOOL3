@@ -13,6 +13,8 @@ $router->post('/push', 'ImgController@push');
 $router->post('/img', 'ImgController@upload');
 $router->get('/img', 'ImgController@getDecode');
 
+$router->post('/up_caa', 'ImgController@uploadCAA');
+
 $router->group(['prefix' => '/wilayah'], function () use ($router) {
     $router->get('/', function () use ($router) {
         return 'add parameters after slash';
