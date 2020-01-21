@@ -91,6 +91,7 @@ class FlagAuthorController extends BaseController
 
             $j = 0;
 
+            $arrData = array();
             foreach ($query as $key => $val) {
 
                 $pesan = str_replace(array("\r\n","\r","\n"),";", $val->pesan);
@@ -108,6 +109,7 @@ class FlagAuthorController extends BaseController
             // Group data by the "tgl_trans" key
             $byGroup = $help->group_by("tgl", $arrData);
 
+            $data = array();
             foreach ($byGroup as $key => $val) {
                 $data[$j]['tgl'] = $val['tgl'];
                 $data[$j] = $val;
@@ -146,6 +148,8 @@ class FlagAuthorController extends BaseController
             }
 
             $pesan = str_replace(array("\r\n","\r","\n"),";", $val->pesan);
+
+            $data = array();
 
             $data['id']      = $val->id;
             $data['email']   = $val->email;
@@ -342,6 +346,7 @@ class FlagAuthorController extends BaseController
 
             $j = 0;
 
+            $arrData = array();
             foreach ($query as $key => $val) {
 
                 $pesan = str_replace(array("\r\n","\r","\n"),";", $val->pesan);
@@ -359,6 +364,7 @@ class FlagAuthorController extends BaseController
             // Group data by the "tgl_trans" key
             $byGroup = $help->group_by("tgl", $arrData);
 
+            $res = array();
             foreach ($byGroup as $key => $val) {
                 $res[$j]['tgl'] = $val['tgl'];
                 $res[$j] = $val;
@@ -397,6 +403,8 @@ class FlagAuthorController extends BaseController
             }
 
             $pesan = str_replace(array("\r\n","\r","\n"),";", $val->pesan);
+
+            $data = array();
 
             $data['id']      = $val->id;
             $data['email']   = $val->email;
@@ -749,6 +757,7 @@ class FlagAuthorController extends BaseController
             ], 404);
         }
 
+        $data = array();
         foreach ($query as $key => $val) {
             if ($val->otorisasi == 1) {
                 $msg = 'accepted';
@@ -807,6 +816,7 @@ class FlagAuthorController extends BaseController
             ], 404);
         }
 
+        $data = array();
         foreach ($query as $key => $val) {
             if ($val->otorisasi == 1) {
                 $msg = 'accepted';
@@ -866,6 +876,7 @@ class FlagAuthorController extends BaseController
             ], 404);
         }
 
+        $data = array();
         foreach ($query as $key => $val) {
             if ($val->otorisasi == 1) {
                 $msg = 'accepted';
@@ -1076,6 +1087,7 @@ class FlagAuthorController extends BaseController
 
         $check_FLG = FlgOto::where('user_id', $user_id)->where('id_modul', '<=', 0)->get();
 
+        $ids = array();
         foreach ($check_FLG as $value) {
             $ids[] = array(
                 'id' => $value->id
@@ -1107,6 +1119,7 @@ class FlagAuthorController extends BaseController
 
         $check_FLG = FlgOto::where('user_id', $user_id)->where('id_modul', '>', 0)->get();
 
+        $ids = array();
         foreach ($check_FLG as $value) {
             $ids[] = array(
                 'id' => $value->id

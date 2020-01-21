@@ -50,6 +50,22 @@ class MasterCC_Controller extends BaseController
             ], 404);
         }else{
             foreach ($query as $key => $val) {
+                if ($val->status_das == 1) {
+                    $status_das = 'complete';
+                }elseif($val->status_das == 2){
+                    $status_das = 'not complete';
+                }else{
+                    $status_das = 'waiting';
+                }
+
+                if ($val->status_hm == 1) {
+                    $status_hm = 'complete';
+                }elseif ($val->status_hm == 2) {
+                    $status_hm = 'not complete';
+                }else{
+                    $status_hm = 'waiting';
+                }
+
                 $res[$key] = [
                     'id'              => $val->id,
                     'nomor_so'        => $val->nomor_so,
@@ -58,7 +74,15 @@ class MasterCC_Controller extends BaseController
                     'cabang'          => $val->cabang['nama'],
                     'asal_data'       => $val->asaldata['nama'],
                     'nama_marketing'  => $val->nama_marketing,
-                    'nama_calon_debt' => $val->debt['nama_lengkap']
+                    'nama_calon_debt' => $val->debt['nama_lengkap'],
+                    'das'            => [
+                        'status'  => $status_das,
+                        'catatan' => $val->catatan_das
+                    ],
+                    'hm'            => [
+                        'status'  => $status_hm,
+                        'catatan' => $val->catatan_hm
+                    ]
                 ];
             }
 

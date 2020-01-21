@@ -248,8 +248,8 @@ class MasterCAA_Controller extends BaseController
         // Usaha Files Condition
         $statusFileUsaha = $req->input('status_file_usaha');
         if ($statusFileUsaha == 'ORIGINAL') {
-            for ($i = 0; $i < count($req->file_usaha); $i++){
-                $listUsaha['usaha'] = $req->file_usaha;
+            for ($i = 0; $i < count($req->input('file_usaha')); $i++){
+                $listUsaha['usaha'] = $req->input('file_usaha');
             }
 
             $file_usaha = implode(";", $listUsaha['usaha']);
@@ -274,6 +274,8 @@ class MasterCAA_Controller extends BaseController
 
                     $listUsaha['usaha'][] = $path.'/'.$name;
                 }
+
+                // dd($listUsaha);
 
                 $file_usaha = implode(";", $listUsaha['usaha']);
             }
@@ -433,6 +435,25 @@ class MasterCAA_Controller extends BaseController
                     );
                 }
 
+                $rekomendasi_ao = array(
+                    'id'               => $val->so['ao']['id_recom_ao'],
+                    'produk'           => $val->so['ao']['recom_ao']['produk'],
+                    'plafon'           => $val->so['ao']['recom_ao']['plafon_kredit'],
+                    'tenor'            => $val->so['ao']['recom_ao']['jangka_waktu'],
+                    'suku_bunga'       => $val->so['ao']['recom_ao']['suku_bunga'],
+                    'pembayaran_bunga' => $val->so['ao']['recom_ao']['pembayaran_bunga']
+                );
+
+                $rekomendasi_ca = array(
+                    'id'               => $val->so['ca']['id_recom_ca'],
+                    'produk'           => $val->so['ca']['recom_ca']['produk'],
+                    'plafon'           => $val->so['ca']['recom_ca']['plafon_kredit'],
+                    'tenor'            => $val->so['ca']['recom_ca']['jangka_waktu'],
+                    'suku_bunga'       => $val->so['ca']['recom_ca']['suku_bunga'],
+                    'pembayaran_bunga' => $val->so['ca']['recom_ca']['pembayaran_bunga'],
+                    'rekomendasi_angsuran' => $val->so['ca']['recom_ca']['rekom_angsuran']
+                );
+
                 if ($val->status_caa == 1) {
                     $status_caa = 'recommend';
                 }elseif($val->status_caa == 2){
@@ -457,6 +478,8 @@ class MasterCAA_Controller extends BaseController
                         'plafon' => $val->so['faspin']['plafon'],
                         'tenor'  => $val->so['faspin']['tenor']
                     ],
+                    'rekomendasi_ao' => $rekomendasi_ao,
+                    'rekomendasi_ca' => $rekomendasi_ca,
                     'nama_debitur'   => $val->so['debt']['nama_lengkap'],
                     'agunan' => [
                         'tanah'     => $Tan,
