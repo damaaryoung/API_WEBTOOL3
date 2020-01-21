@@ -47,7 +47,7 @@ class AsalDataController extends BaseController
 
     public function index() {
         try {
-            $query = AsalData::select('nama', 'info')->where('flg_aktif', 1)->get();
+            $query = AsalData::select('id', 'nama', 'info')->where('flg_aktif', 1)->get();
 
             if ($query == '[]') {
                 return response()->json([
