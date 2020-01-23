@@ -188,13 +188,12 @@ $router->group(['middleware' => 'jwt.auth'], function () use ($router) {
                 $router->group(['prefix' => '/pic'], function () use ($router){
                     $router->get('/', 'PICController@index');
                     $router->post('/', 'PICController@store');
-                    $router->get('/{id}', 'ICController@show');
+                    $router->get('/{id}', 'PICController@show');
                     $router->put('/{id}', 'PICController@update');
                     $router->delete('/{id}', 'PICController@delete');
                     $router->get('/{search}/search', 'PICController@search');
 
                 });
-                $router->get('/team_caa', 'PICController@teamCAA');
 
                 //Jenis PIC
                 $router->group(['prefix' => '/jenis_pic'], function () use ($router){
@@ -250,15 +249,22 @@ $router->group(['middleware' => 'jwt.auth'], function () use ($router) {
                     $router->get('/{search}/search', 'MasterCA_Controller@search');
                 });
 
+                $router->get('/team_caa', 'TeamCAA_Controller@list_team');  // Get List Team CAA
+
                 // Trans CAA
                 $router->group(['prefix' => '/mcaa'], function() use ($router) {
+                    $router->get('/{search}/search', 'MasterCAA_Controller@search');
+                    // Tahap 1
                     $router->get('/', 'MasterCAA_Controller@index'); // All Memorandum Credit Analyst
                     // $router->get('/{id}', 'MasterCAA_Controller@show'); //GEt CA BY ID
                     $router->get('/{idOrString}', 'MasterCAA_Controller@idOrString'); //GEt CA BY ID Or to Route
-                    $router->get('/{id}/detail', 'MasterCAA_Controller@detail'); //GEt CA BY ID after caa
                     $router->post('/{id}', 'MasterCAA_Controller@update'); //Update CA BY ID
-                    $router->get('/{search}/search', 'MasterCAA_Controller@search');
+
+                    // Tahap 2 - Team CAA
+                    $router->get('/{id}/detail', 'MasterCAA_Controller@detail'); //GEt CA BY ID after caa
+                    $router->post('/{id}/confirm', 'TeamCAA_Controller@approve');
                 });
+
             });
         });
 

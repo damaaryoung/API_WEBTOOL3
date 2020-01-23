@@ -73,9 +73,15 @@ class ImgController extends BaseController
         $auth = 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJCUFIgS3JlZGl0IE1hbmRpcmkgSW5kb25lc2lhIiwiaWQiOjExMzAsIm5payI6IjAyMTkwNzA4OSIsInVzZW5hbWUiOiJhZ2lmIiwia2RfY2FiYW5nIjoyLCJkaXZpc2lfaWQiOiJJVCIsImphYmF0YW4iOiJJVCBTVEFGRiIsImVtYWlsIjoiaXRAa3JlZGl0bWFuZGlyaS5jby5pZCIsIm5hbWEiOiJBUFJFTEEgQUdJRiBTT0ZZQU4iLCJpYXQiOjE1Nzk1MTAyNTEsImV4cCI6MTU4MDExNTA1MX0.1l30NvuMaxRXUsqogoIpAD1A0G6eegRfIXZL3vmO9qo';
 
         $headers = array(
-            // "Accept: application/json",
-            "Authorization: ".$auth,
-            'Content-Type: multipart/form-data'
+            'Acept: application/json',
+            // 'Content-Type: application/json',
+            'Authorization: '.$auth,
+            'Content-Type: multipart/form-data',
+            // 'Content-Type: application/x-www-form-urlencoded',
+            // 'Content-Length: 395',
+            // 'User-Agent: Wget/1.12 (solaris2.10)',
+            // 'Connection: Keep-Alive',
+            // 'Accept: */*'
         );
 
         // $files = array();
@@ -93,23 +99,23 @@ class ImgController extends BaseController
 
 
         $fields = array(
-            'penyimpangan'       => $req->input('penyimpangan'),
-            // 'team_caa[]'         => $req->team_caa,
-            // 'rincian'            => $req->input('rincian'),
+            // 'penyimpangan'       => $req->input('penyimpangan'),
+            'team_caa'         => $req->team_caa,
+            // 'rincian'            => $req->input('rincian')
             // 'file_report_mao'    => new \CURLFile($_FILES['file_report_mao']['tmp_name'], $_FILES['file_report_mao']['type'], $_FILES['file_report_mao']['name']),
 
             // 'file_report_mca'    => new \CURLFile($_FILES['file_report_mca']['tmp_name'], $_FILES['file_report_mca']['type'], $_FILES['file_report_mca']['name']),
 
-            'status_file_agunan' => $req->input('status_file_agunan'),
+            // 'status_file_agunan' => $req->input('status_file_agunan'),
             // 'file_agunan' => array($files),
             // 'status_file_usaha'  => $req->input('status_file_usaha'),
             // 'file_usaha[]'       => new \CURLFile($_FILES['file_usaha']['tmp_name'], $_FILES['file_usaha']['type'], $_FILES['file_usaha']['name']),
             // 'file_tempat_tinggal'=> new \CURLFile($_FILES['file_tempat_tinggal']['tmp_name'], $_FILES['file_tempat_tinggal']['type'], $_FILES['file_tempat_tinggal']['name']),
             // 'file_lain'          => new \CURLFile($_FILES['file_lain']['tmp_name'], $_FILES['file_lain']['type'], $_FILES['file_lain']['name']),
-            'catatan_caa'        => $req->input('catatan_caa')
+            // 'catatan_caa'        => $req->input('catatan_caa')
         );
 
-        // dd($fields);
+        // dd(json_encode($fields['team_caa']));
 
         // $data = $fields + $files;
 
@@ -117,13 +123,13 @@ class ImgController extends BaseController
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($fields));
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $fields);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+        // curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
         // curl_setopt($ch, CURLOPT_MAXREDIRS, 10);
-        curl_setopt($ch, CURLINFO_HEADER_OUT, 1);
+        // curl_setopt($ch, CURLINFO_HEADER_OUT, 1);
         // curl_setopt($ch, CURLOPT_USERAGENT, "Mozilla/5.0 ;Windows NT 6.1; WOW64; AppleWebKit/537.36 ;KHTML, like Gecko; Chrome/39.0.2171.95 Safari/537.36");
         // echo json_encode($fields);
 

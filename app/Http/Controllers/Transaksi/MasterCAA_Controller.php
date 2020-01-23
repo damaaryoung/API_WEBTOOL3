@@ -8,9 +8,11 @@ use App\Http\Requests\Transaksi\BlankRequest;
 use App\Models\Pengajuan\AO\AgunanKendaraan;
 use App\Models\Pengajuan\AO\AgunanTanah;
 use Illuminate\Support\Facades\File;
+use App\Models\Transaksi\TransTCAA;
 use App\Models\Transaksi\TransCAA;
 use App\Models\Transaksi\TransCA;
 use App\Models\Transaksi\TransSO;
+use App\Models\Transaksi\TransAO;
 use App\Models\AreaKantor\JPIC;
 use App\Models\AreaKantor\PIC;
 use Illuminate\Http\Request;
@@ -36,7 +38,11 @@ class MasterCAA_Controller extends BaseController
 
         $id_cabang = $pic->id_mk_cabang;
 
-        $query = TransCA::with('so', 'pic', 'cabang')->where('id_cabang', $id_cabang)->where('status_ca', 1)->get();
+        if ($id_cabang == 0) {
+            $query = TransCA::with('so', 'pic', 'cabang')->where('status_ca', 1)->get();
+        }elseif ($id_cabang != 0) {
+            $query = TransCA::with('so', 'pic', 'cabang')->where('id_cabang', $id_cabang)->where('status_ca', 1)->get();
+        }
 
         if ($query == '[]') {
             return response()->json([
@@ -46,29 +52,7 @@ class MasterCAA_Controller extends BaseController
             ], 404);
         }
 
-
-
         foreach ($query as $key => $val) {
-            $id_agu_ta = explode (",",$val->so['ao']['id_agunan_tanah']);
-            $AguTa = AgunanTanah::whereIn('id', $id_agu_ta)->get();
-
-            foreach ($AguTa as $key => $value) {
-                $Tan[$key] = array(
-                    'id' => $value->id,
-                    'jenis' => $value->jenis_sertifikat
-                );
-            }
-
-
-            $id_agu_ke = explode (",",$val->so['ao']['id_agunan_kendaraan']);
-            $AguKe = AgunanKendaraan::whereIn('id', $id_agu_ke)->get();
-
-            foreach ($AguKe as $key => $value) {
-                $Ken[$key] = array(
-                    'id' => $value->id,
-                    'jenis' => $value->jenis
-                );
-            }
 
             if ($val->status_ca == 1) {
                 $status_ca = 'recommend';
@@ -78,7 +62,39 @@ class MasterCAA_Controller extends BaseController
                 $status_ca = 'waiting';
             }
 
-            $data[$key] = [
+            if($val->so['caa']['status_caa'] == 0){
+                $status_caa = 'waiting';
+            }elseif ($val->so['caa']['status_caa'] == 1) {
+                $status_caa = 'recommend';
+            }elseif($val->so['caa']['status_caa'] == 2){
+                $status_caa = 'not recommend';
+            }elseif ($val->so['caa']['status_caa'] == null || $val->so['caa']['status_caa'] == "") {
+                $status_caa = 'null';
+            }
+
+            $id_agu_ta = explode (",",$val->so['ao']['id_agunan_tanah']);
+            $AguTa = AgunanTanah::whereIn('id', $id_agu_ta)->get();
+
+            $Tan = array();
+            foreach ($AguTa as $key => $value) {
+                $Tan[$key] = array(
+                    'id'    => $id_agu_ta[$key],
+                    'jenis' => $value->jenis_sertifikat
+                );
+            }
+
+            $id_agu_ke = explode (",",$val->so['ao']['id_agunan_kendaraan']);
+            $AguKe = AgunanKendaraan::whereIn('id', $id_agu_ke)->get();
+
+            $Ken = array();
+            foreach ($AguKe as $key => $value) {
+                $Ken[$key] = array(
+                    'id'    => $id_agu_ke[$key],
+                    'jenis' => $value->jenis
+                );
+            }
+
+            $data[] = [
                 'id_trans_so'    => $val->id_trans_so,
                 'nomor_so'       => $val->so['nomor_so'],
 
@@ -86,7 +102,7 @@ class MasterCAA_Controller extends BaseController
                 'nomor_ca'       => $val->nomor_ca,
                 // 'nomor_caa'      => $val->so['caa']['nomor_caa'],
 
-                'pic'            => $val->pic['nama'],
+                'pic'         => $val->pic['nama'],
                 'cabang'         => $val->cabang['nama'],
                 'asal_data'      => $val->so['asaldata']['nama'],
                 'nama_marketing' => $val->so['nama_marketing'],
@@ -99,7 +115,9 @@ class MasterCAA_Controller extends BaseController
                     'tanah'     => $Tan,
                     'kendaraan' => $Ken
                 ],
-                'status_ca'      => $status_ca
+                'status_ca'     => $status_ca,
+                'status_caa'    => $status_caa,
+                'tgl_transaksi' => Carbon::parse($val->created_at)->format("d-m-Y H:i:s")
             ];
         }
 
@@ -326,25 +344,26 @@ class MasterCAA_Controller extends BaseController
         // Email Team CAA
         if (!empty($req->input('team_caa'))) {
             for ($i = 0; $i < count($req->input('team_caa')); $i++) {
-                $arrTeam['email'][$i] = $req->input('team_caa')[$i];
-
+                $arrTeam['team'][$i] = $req->input('team_caa')[$i];
             }
 
-            $team_caa = implode(";", $arrTeam['email']);
+            $team_caa = implode(",", $arrTeam['team']);
         }else{
-            $team_caa = 'xxx@email.com';
+
+            $arrTeam['team'] = null;
+            $team_caa = null;
         }
 
+        // dd($team_caa);
 
-
-        $transCAA = array(
+        $data = array(
             'nomor_caa'          => $nomor_caa,
             'user_id'            => $user_id,
             'id_trans_so'        => $id,
             'id_pic'             => $PIC->id,
             'id_cabang'          => $PIC->id_mk_cabang,
             'penyimpangan'       => $req->input('penyimpangan'),
-            'team_caa'           => $team_caa,
+            'pic_team_caa'       => $team_caa,
             'rincian'            => $req->input('rincian'),
             'file_report_mao'    => $file_report_mao,
             'file_report_mca'    => $file_report_mca,
@@ -354,19 +373,73 @@ class MasterCAA_Controller extends BaseController
             'file_usaha'         => $file_usaha,
             'file_tempat_tinggal'=> $file_tempat_tinggal,
             'file_lain'          => $file_lain,
-            'catatan_caa'        => $req->input('catatan_caa'),
-            'status_caa'         => empty($req->input('status_caa')) ? 1 : $req->input('status_caa'),
+            'status_caa'         => 1
         );
 
         DB::connection('web')->beginTransaction();
 
         try {
             if ($check_caa == null) {
-                $CAA = TransCAA::create($transCAA);
+
+                $CAA = TransCAA::create($data);
 
                 TransSO::where('id', $id)->update(['id_trans_caa' => $CAA->id]);
+
+                if (!empty(count(explode(",", $data['pic_team_caa'])))) {
+                    for ($i = 0; $i < count(explode(",", $data['pic_team_caa'])); $i++) {
+                        $tr[] = TransTCAA::create([
+                            'id_trans_so'  => $id,
+                            'id_trans_caa' => $CAA->id,
+                            'id_pic'       => $arrTeam['team'][$i],
+                            'id_cabang'    => $PIC->id_mk_cabang
+                        ])->toArray();
+
+                        $id_tr_tcaa['id'][$i] = $tr[$i]['id'];
+                    }
+
+                    // dd($id_tr_tcaa);
+
+                    $ex = implode(",", $id_tr_tcaa['id']);
+
+                    $newData = array_merge($data, ['id_trans_tcaa' => $ex]);
+                }else{
+                    $newData = $data;
+                }
+
+                TransCAA::where('id', $CAA->id)->update($newData);
+
             }else{
-                TransCAA::where('id', $check_caa->id)->update($transCAA);
+
+                TransSO::where('id', $id)->update(['id_trans_caa' => $check_caa->id]);
+
+                if (!empty($check_caa->pic_team_caa)) {
+                    TransTCAA::where('id_trans_so', $id)->delete();
+                }
+
+                if (!empty(count(explode(",", $data['pic_team_caa'])))) {
+                    for ($i = 0; $i < count(explode(",", $data['pic_team_caa'])); $i++) {
+                        $tr[] = TransTCAA::create([
+                            'id_trans_so'  => $id,
+                            'id_trans_caa' => $check_caa->id,
+                            'id_pic'       => $arrTeam['team'][$i],
+                            'id_cabang'    => $PIC->id_mk_cabang
+                        ])->toArray();
+
+                        $id_tr_tcaa['id'][$i] = $tr[$i]['id'];
+                    }
+
+                    $ex = implode(",", $id_tr_tcaa['id']);
+
+                    // dd($ex);
+
+                    $newData = array_merge($data, ['id_trans_tcaa' => $ex]);
+                }else{
+                    $newData = $data;
+                }
+
+                // dd($newData);
+
+                TransCAA::where('id', $check_caa->id)->update($newData);
             }
 
             DB::connection('web')->commit();
@@ -401,14 +474,26 @@ class MasterCAA_Controller extends BaseController
 
         $id_cabang = $pic->id_mk_cabang;
 
+        // List Sdi Tahap 2
         if($idOrString == 'list_done'){
-            $query = TransCAA::with('so', 'pic', 'cabang')->where('id_cabang', $id_cabang)->where('status_caa', 1)->get();
+
+            if ($id_cabang == 0) {
+                $query = TransCAA::with('so', 'pic', 'cabang')
+                ->where('status_caa', 1)
+                ->get();
+            }elseif ($id_cabang != 0) {
+                $query = TransCAA::with('so', 'pic', 'cabang')
+                    ->where('id_cabang', $id_cabang)
+                    ->where('status_caa', 1)
+                    ->get();
+            }
+
 
             if ($query == '[]') {
                 return response()->json([
                     'code'    => 404,
                     'status'  => 'not found',
-                    'message' => 'Data kosong lho'
+                    'message' => 'Data kosong'
                 ], 404);
             }
 
@@ -417,20 +502,21 @@ class MasterCAA_Controller extends BaseController
                 $id_agu_ta = explode (",",$val->so['ao']['id_agunan_tanah']);
                 $AguTa = AgunanTanah::whereIn('id', $id_agu_ta)->get();
 
+                $Tan = array();
                 foreach ($AguTa as $key => $value) {
                     $Tan[$key] = array(
-                        'id' => $value->id,
+                        'id'    => $id_agu_ta[$key],
                         'jenis' => $value->jenis_sertifikat
                     );
                 }
 
-
                 $id_agu_ke = explode (",",$val->so['ao']['id_agunan_kendaraan']);
                 $AguKe = AgunanKendaraan::whereIn('id', $id_agu_ke)->get();
 
+                $Ken = array();
                 foreach ($AguKe as $key => $value) {
                     $Ken[$key] = array(
-                        'id' => $value->id,
+                        'id'    => $id_agu_ke[$key],
                         'jenis' => $value->jenis
                     );
                 }
@@ -454,15 +540,17 @@ class MasterCAA_Controller extends BaseController
                     'rekomendasi_angsuran' => $val->so['ca']['recom_ca']['rekom_angsuran']
                 );
 
-                if ($val->status_caa == 1) {
-                    $status_caa = 'recommend';
-                }elseif($val->status_caa == 2){
-                    $status_caa = 'not recommend';
-                }else{
+                if ($val->status_caa == 0) {
                     $status_caa = 'waiting';
+                }elseif ($val->status_caa == 1) {
+                    $status_caa = 'approve';
+                }elseif($val->status_caa == 2){
+                    $status_caa = 'return';
+                }elseif($val->status_caa == 3){
+                    $status_caa = 'reject';
                 }
 
-                $data[$key] = [
+                $data[] = [
                     'id_trans_so'    => $val->id_trans_so,
 
                     'nomor_so'       => $val->so['nomor_so'],
@@ -485,13 +573,25 @@ class MasterCAA_Controller extends BaseController
                         'tanah'     => $Tan,
                         'kendaraan' => $Ken
                     ],
-                    'status_caa' => $status_caa
+                    'status_caa'    => $status_caa,
+                    'tgl_transaksi' => Carbon::parse($val->updated_at)->format("d-m-Y H:i:s"),
                 ];
             }
         }else{
             $id = $idOrString;
 
-            $val = TransCA::with('pic', 'cabang')->where('id_cabang', $id_cabang)->where('id_trans_so', $id)->first();
+            if ($id_cabang == 0) {
+
+                $val = TransCA::with('pic', 'cabang')->where('id_trans_so', $id)->first();
+
+            }elseif ($id_cabang != 0) {
+
+                $val = TransCA::with('pic', 'cabang')
+                        ->where('id_cabang', $id_cabang)
+                        ->where('id_trans_so', $id)
+                        ->first();
+            }
+
 
             if ($val == null) {
                 return response()->json([
@@ -640,7 +740,15 @@ class MasterCAA_Controller extends BaseController
 
         $id_cabang = $pic->id_mk_cabang;
 
-        $val = TransCAA::with('so', 'pic', 'cabang')->where('id_cabang', $id_cabang)->where('id_trans_so', $id)->first();
+        if ($id_cabang == 0) {
+            $val = TransCAA::with('so', 'pic', 'cabang')->where('id_trans_so', $id)->first();
+        }elseif ($id_cabang != 0) {
+            $val = TransCAA::with('so', 'pic', 'cabang')
+                ->where('id_cabang', $id_cabang)
+                ->where('id_trans_so', $id)
+                ->first();
+        }
+
 
         if ($val == null) {
             return response()->json([
@@ -701,6 +809,17 @@ class MasterCAA_Controller extends BaseController
                     'agunan_dalam'    => $value->lamp_agunan_dalam,
                 ]
             );
+        }
+
+        $pic_team_caa = explode(",", $val->pic_team_caa);
+
+        $get_pic = PIC::with('jpic')->whereIn('id', $pic_team_caa)->get()->toArray();
+
+        for ($i = 0; $i < count($get_pic); $i++) {
+            $ptc[] = [
+                'id_pic'    => $get_pic[$i]['id'],
+                'jenis_pic' => $get_pic[$i]['jpic']['nama_jenis']
+            ];
         }
 
 
@@ -778,6 +897,8 @@ class MasterCAA_Controller extends BaseController
                 'agunan_kendaraan' => $idKen
             ],
             'pendapatan_usaha' => ['id' => $val->so['ao']['id_pendapatan_usaha']],
+            'penyimpangan' => $val->penyimpangan,
+            'team_caa'  => $ptc,
             'pengajuan' => [
                 'plafon' => $val->so['faspin']['plafon'],
                 'tenor'  => $val->so['faspin']['tenor'],
@@ -869,11 +990,22 @@ class MasterCAA_Controller extends BaseController
 
         $id_cabang = $pic->id_mk_cabang;
 
-        $query = TransCA::with('pic', 'cabang')
-                ->where('id_cabang', $id_cabang)
+        if ($id_cabang == 0) {
+
+            $query = TransCA::with('pic', 'cabang')
                 ->where('status_ca', 1)
                 ->where('nomor_ca', 'like', '%'.$search.'%')
                 ->get();
+
+        }elseif ($id_cabang != 0) {
+
+            $query = TransCA::with('pic', 'cabang')
+                    ->where('id_cabang', $id_cabang)
+                    ->where('status_ca', 1)
+                    ->where('nomor_ca', 'like', '%'.$search.'%')
+                    ->get();
+        }
+
 
         if ($query == '[]') {
             return response()->json([

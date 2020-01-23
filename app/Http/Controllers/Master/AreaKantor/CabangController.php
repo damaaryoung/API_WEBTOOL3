@@ -37,7 +37,7 @@ class CabangController extends BaseController
                 "nama_kecamatan" => $val->kec['nama'],
                 "nama_kelurahan" => $val->kel['nama'],
                 "jenis_kantor"   => $val->jenis_kantor,
-                "flg_aktif"      => $value->flg_aktif == 1 ? "true" : "false",
+                "flg_aktif"      => $val->flg_aktif == 1 ? "true" : "false",
                 "created_at"     => $val->created_at,
                 "upated_at"      => $val->updated_at
             ];
@@ -144,11 +144,11 @@ class CabangController extends BaseController
             "nama_area"      => $check->area['nama'],
             "id_provinsi"    => $check->id_provinsi,
             "nama_provinsi"  => $check->prov['nama'],
-            "id_kabupaten"   => $check->kab['id_kabupaten'],
+            "id_kabupaten"   => $check->id_kabupaten,
             "nama_kabupaten" => $check->kab['nama'],
-            "id_kecamatan"   => $check->kec['id_kecamatan'],
+            "id_kecamatan"   => $check->id_kecamatan,
             "nama_kecamatan" => $check->kec['nama'],
-            "id_kelurahan"   => $check->kel['id_kelurahan'],
+            "id_kelurahan"   => $check->id_kelurahan,
             "nama_kelurahan" => $check->kel['nama'],
             "kode_pos"       => $check->kel['kode_pos'],
             "jenis_kantor"   => $check->jenis_kantor,
@@ -183,7 +183,7 @@ class CabangController extends BaseController
         }
 
         $data = array(
-            'id_mk_area'     => empty($req->input('id_master_area')) ? $check->id_master_area : $req->input('id_master_area'),
+            'id_mk_area'     => empty($req->input('id_mk_area')) ? $check->id_mk_area : $req->input('id_mk_area'),
             'nama'           => empty($req->input('nama')) ? $check->nama : $req->input('nama'),
             'id_provinsi'    => empty($req->input('id_provinsi')) ? $check->id_provinsi : $req->input('id_provinsi'),
             'id_kabupaten'   => empty($req->input('id_kabupaten')) ? $check->id_kabupaten : $req->input('id_kabupaten'),

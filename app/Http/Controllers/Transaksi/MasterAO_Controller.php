@@ -46,7 +46,16 @@ class MasterAO_Controller extends BaseController
 
         $id_cabang = $pic->id_mk_cabang;
 
-        $query = TransSO::with('pic', 'cabang', 'asaldata', 'debt', 'pas', 'faspin', 'ao', 'ca')->where('id_cabang', $id_cabang)->get();
+        if ($id_cabang == 0) {
+            $query = TransSO::with('pic', 'cabang', 'asaldata', 'debt', 'pas', 'faspin', 'ao', 'ca')
+                ->get();
+        }elseif ($id_cabang != 0) {
+            $query = TransSO::with('pic', 'cabang', 'asaldata', 'debt', 'pas', 'faspin', 'ao', 'ca')
+                    ->where('id_cabang', $id_cabang)
+                    ->get();
+        }
+
+
         if ($query == '[]') {
             return response()->json([
                 'code'    => 404,
@@ -140,7 +149,16 @@ class MasterAO_Controller extends BaseController
 
         $id_cabang = $pic->id_mk_cabang;
 
-        $val = TransSO::with('pic', 'cabang', 'asaldata', 'debt', 'pas', 'faspin', 'ao', 'ca')->where('id', $id)->where('id_cabang', $id_cabang)->first();
+        if ($id_cabang == 0) {
+            $val = TransSO::with('pic', 'cabang', 'asaldata', 'debt', 'pas', 'faspin', 'ao', 'ca')
+                ->where('id', $id)
+                ->first();
+        }elseif ($id_cabang != 0) {
+            $val = TransSO::with('pic', 'cabang', 'asaldata', 'debt', 'pas', 'faspin', 'ao', 'ca')
+                    ->where('id', $id)->where('id_cabang', $id_cabang)
+                    ->first();
+        }
+
 
         if (!$val) {
             return response()->json([
@@ -1125,10 +1143,17 @@ class MasterAO_Controller extends BaseController
 
         $id_cabang = $pic->id_mk_cabang;
 
-        $query = TransSO::with('pic', 'cabang', 'asaldata', 'debt', 'pas', 'faspin', 'ao', 'ca')
-                ->where('id_cabang', $id_cabang)
+        if ($id_cabang == 0) {
+            $query = TransSO::with('pic', 'cabang', 'asaldata', 'debt', 'pas', 'faspin', 'ao', 'ca')
                 ->where('nomor_so', 'like', '%'.$search.'%')
                 ->get();
+        }elseif ($id_cabang != 0) {
+            $query = TransSO::with('pic', 'cabang', 'asaldata', 'debt', 'pas', 'faspin', 'ao', 'ca')
+                    ->where('id_cabang', $id_cabang)
+                    ->where('nomor_so', 'like', '%'.$search.'%')
+                    ->get();
+        }
+
         if ($query == '[]') {
             return response()->json([
                 'code'    => 404,

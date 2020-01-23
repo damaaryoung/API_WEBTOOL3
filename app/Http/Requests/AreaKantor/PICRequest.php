@@ -23,7 +23,7 @@ class PICRequest extends FormRequest
 
         switch ($method) {
             case 'POST':
-                $value = 'required|integer';
+                $value = 'integer';
                 break;
 
             case 'PUT':
@@ -42,7 +42,7 @@ class PICRequest extends FormRequest
 
     public function messages(){
         return [
-            'user_id.required'      => ':attribute wajib diisi',
+            // 'user_id.required'      => ':attribute wajib diisi',
             'user_id.integer'       => ':attribute harus berupa angka',
             'id_mk_area.required'   => ':attribute wajib diisi',
             'id_mk_cabang.required' => ':attribute wajib diisi',

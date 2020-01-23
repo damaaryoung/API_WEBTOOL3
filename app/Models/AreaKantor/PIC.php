@@ -41,4 +41,8 @@ class PIC extends Model implements AuthenticatableContract, AuthorizableContract
     public function jpic(){
         return $this->belongsTo('App\Models\AreaKantor\JPIC', 'id_mj_pic');
     }
+
+    // public function jpic_caa(){
+    //     return $this->belongsTo('App\Models\AreaKantor\JPIC', 'id_mj_pic')->where('keterangan', 'Team CAA');
+    // }
 }

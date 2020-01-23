@@ -8,7 +8,7 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Lumen\Auth\Authorizable;
 
-class TransCAA extends Model implements AuthenticatableContract, AuthorizableContract
+class TransTCAA extends Model implements AuthenticatableContract, AuthorizableContract
 {
     use Authenticatable, Authorizable;
 
@@ -19,15 +19,21 @@ class TransCAA extends Model implements AuthenticatableContract, AuthorizableCon
      */
     protected $connection = 'web';
 
-    protected $table = 'trans_caa';
+    protected $table = 'trans_tcaa';
     protected $primaryKey = 'id';
 
     protected $fillable = [
-        'nomor_caa', 'user_id', 'id_trans_so', 'id_pic', 'id_cabang', 'pic_team_caa', 'penyimpangan', 'rincian', 'file_report_mao', 'file_report_mca', 'status_file_agunan', 'file_agunan', 'status_file_usaha', 'file_tempat_tinggal', 'file_lain', 'rincian', 'status_caa', 'id_trans_tcaa', 'status_team_caa', 'flg_aktif'
+        'user_id', 'id_trans_so', 'id_trans_caa', 'id_pic', 'id_cabang', 'plafon', 'tenor', 'rincian', 'status', 'tanggal'
     ];
+
+    public $timestamps = false;
 
     public function so(){
         return $this->belongsTo('App\Models\Transaksi\TransSO', 'id_trans_so');
+    }
+
+    public function caa(){
+        return $this->belongsTo('App\Models\Transaksi\TransCAA', 'id_trans_caa');
     }
 
     public function pic(){

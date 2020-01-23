@@ -13,56 +13,6 @@ use DB;
 
 class PICController extends BaseController
 {
-    public function teamCAA(Request $req) {
-        $user_id = $req->auth->user_id;
-        $pic     = PIC::where('user_id', $user_id)->first();
-
-        if ($pic == null) {
-            return response()->json([
-                "code"    => 404,
-                "status"  => "not found",
-                "message" => "User_ID anda adalah '".$user_id."' dengan username '".$req->auth->user."' . Namun anda belum terdaftar sebagai PIC(CAA). Harap daftarkan diri sebagai PIC(CAA) pada form PIC atau hubungi bagian IT"
-            ], 404);
-        }
-
-        $id_cabang = $pic->id_mk_cabang;
-
-        $query = PIC::with('jpic','area','cabang')->where('id_mk_cabang', $id_cabang)->get();
-
-        if ($query == '[]') {
-            return response()->json([
-                'code'    => 404,
-                'status'  => 'not found',
-                'message' => 'Data kosong'
-            ], 404);
-        }
-
-        foreach ($query as $key => $val) {
-            $data[$key]= [
-                "id"          => $val->id,
-                "nama"        => $val->nama,
-                "jenis_pic"   => $val->jpic['nama_jenis'],
-                "nama_area"   => $val->area['nama'],
-                "nama_cabang" => $val->cabang['nama'],
-                "email"       => $val->user['email']
-            ];
-        }
-
-        try {
-            return response()->json([
-                'code'   => 200,
-                'status' => 'success',
-                'data'   => $data
-            ], 200);
-        } catch (Exception $e) {
-            return response()->json([
-                "code"    => 501,
-                "status"  => "error",
-                "message" => $e
-            ], 501);
-        }
-    }
-
     public function all() {
         $query = PIC::with('jpic','area','cabang')->get();
 
@@ -103,7 +53,18 @@ class PICController extends BaseController
     }
 
     public function index() {
-        $query = PIC::with('jpic','area','cabang')->where('flg_aktif', 1)->get();
+
+        $value = 'Team CAA';
+        $value_dir = 'Team CAA DIR';
+
+        $query = PIC::with('jpic','area','cabang')
+                ->whereHas('jpic', function($q) use($value, $value_dir) {
+                    // Query the name field in status table
+                    $q->where('keterangan', '!=', $value); // '=' is optional
+                    $q->where('keterangan', '!=', $value_dir);
+                })
+                ->where('flg_aktif', 1)
+                ->get();
 
         if ($query == '[]') {
             return response()->json([
@@ -118,7 +79,9 @@ class PICController extends BaseController
                 "id"          => $val->id,
                 "nama"        => $val->nama,
                 "jenis_pic"   => $val->jpic['nama_jenis'],
+                "id_area"     => $val->id_mk_area,
                 "nama_area"   => $val->area['nama'],
+                "id_cabang"   => $val->id_mk_cabang,
                 "nama_cabang" => $val->cabang['nama']
             ];
         }
@@ -143,7 +106,7 @@ class PICController extends BaseController
         $data = array(
             'user_id'       => $req->input('user_id'),
             'id_mk_area'    => $req->input('id_mk_area'),
-            'id_mk_cabang'  => $req->input('id_mk_cabang'),
+            'id_mk_cabang'  => empty($req->input('id_mk_cabang')) ? 0 : $req->input('id_mk_cabang'),
             'id_mj_pic'     => $req->input('id_mj_pic'),
             'nama'          => empty($req->input('nama')) ? $username : $req->input('nama')
         );

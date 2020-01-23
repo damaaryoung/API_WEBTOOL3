@@ -292,14 +292,14 @@ class BlankRequest extends FormRequest
 
                 // Transaksi CAA
                 'penyimpangan'       => 'in:ADA,TIDAK',
-                // 'team_caa'           => 'required',
-                // 'file_report_mao'    => 'mimes:jpg,jpeg,png,pdf|max:2048',
-                // 'file_report_mca'    => 'mimes:jpg,jpeg,png,pdf|max:2048',
-                // 'status_file_agunan' => 'in:ORIGINAL,CUSTOM',
-                // 'status_file_usaha'  => 'in:ORIGINAL,CUSTOM',
+                'team_caa.*'         => 'required|integer',
+                'file_report_mao'    => 'mimes:jpg,jpeg,png,pdf|max:2048',
+                'file_report_mca'    => 'mimes:jpg,jpeg,png,pdf|max:2048',
+                'status_file_agunan' => 'in:ORIGINAL,CUSTOM',
+                'status_file_usaha'  => 'in:ORIGINAL,CUSTOM',
                 // 'file_agunan.*'      => 'mimes:jpg,jpeg,png,pdf|max:2048',
                 // 'file_usaha.*'       => 'mimes:jpg,jpeg,png,pdf|max:2048',
-                // 'file_lain'          => 'mimes:jpg,jpeg,png,pdf|max:2048'
+                'file_lain'          => 'mimes:jpg,jpeg,png,pdf|max:2048'
             ];
         }else{
 
@@ -702,14 +702,15 @@ class BlankRequest extends FormRequest
             // Transaksi CAA
             // 'penyimpangan.required'       => $required,
             'penyimpangan.in'             => $in,
-            // 'team_caa.required'           => $required,
+            'team_caa.*.required'         => $required,
+            'team_caa.*.integer'          => $integer,
             'file_report_mao.mimes'       => $in,
             'file_report_mao.max'         => $max,
             'file_report_mca.mimes'       => $in,
             'file_report_mca.max'         => $max,
-            // 'status_file_agunan.required' => $required,
+            'status_file_agunan.required' => $required,
             'status_file_agunan.in'       => $in,
-            // 'status_file_usaha.required'  => $required,
+            'status_file_usaha.required'  => $required,
             'status_file_usaha.in'        => $in,
             // 'file_agunan.*.required'      => $required,
             // 'file_agunan.*.mimes'         => $in,

@@ -16,6 +16,7 @@ class AreaPICController extends BaseController
     public function all() {
         $query = AreaPIC::get();
 
+        $res = array();
         foreach ($query as $key => $val) {
             $res[$key] = [
                 'id'                => $val->id,
@@ -46,8 +47,17 @@ class AreaPICController extends BaseController
     }
 
     public function index() {
-        $query = AreaPIC::where('flg_aktif', 1)->get();
+        $query = AreaPIC::with('area', 'cabang', 'kel')->where('flg_aktif', 1)->get();
 
+        if ($query == '[]') {
+            return response()->json([
+                'code'    => 404,
+                'status'  => 'not found',
+                'message' => 'Data kosong'
+            ], 404);
+        }
+
+        $res = array();
         foreach ($query as $key => $val) {
             $res[$key] = [
                 'id'                => $val->id,
@@ -76,13 +86,13 @@ class AreaPICController extends BaseController
 
     public function store(AreaPICReq $req) {
         $data = array(
-            'id_mk_area'    => $req->input('id_area'),
-            'id_mk_cabang'  => $req->input('id_cabang'),
+            'id_mk_area'    => $req->input('id_mk_area'),
+            'id_mk_cabang'  => $req->input('id_mk_cabang'),
             'nama_area_pic' => $req->input('nama_area_pic'),
-            'id_provinsi'   => $req->input('id_prov'),
-            'id_kabupaten'  => $req->input('id_kab'),
-            'id_kecamatan'  => $req->input('id_kec'),
-            'id_kelurahan'  => $req->input('id_kel')
+            'id_provinsi'   => $req->input('id_provinsi'),
+            'id_kabupaten'  => $req->input('id_kabupaten'),
+            'id_kecamatan'  => $req->input('id_kecamatan'),
+            'id_kelurahan'  => $req->input('id_kelurahan')
         );
 
         AreaPIC::create($data);
@@ -211,6 +221,7 @@ class AreaPICController extends BaseController
     public function search($search) {
         $query = AreaPIC::where('flg_aktif', 1)->where('nama_area_pic', 'like', '%'.$search.'%')->get();
 
+        $res = array();
         foreach ($query as $key => $val) {
             $res[$key] = [
                 'id'                => $val->id,

@@ -43,7 +43,17 @@ class MasterCA_Controller extends BaseController
 
         $id_cabang = $pic->id_mk_cabang;
 
-        $query = TransAO::with('so', 'pic', 'cabang')->where('id_cabang', $id_cabang)->where('status_ao', 1)->get();
+        if ($id_cabang == 0) {
+            $query = TransAO::with('so', 'pic', 'cabang')
+                ->where('status_ao', 1)
+                ->get();
+        }elseif ($id_cabang != 0) {
+            $query = TransAO::with('so', 'pic', 'cabang')
+                    ->where('status_ao', 1)
+                    ->where('id_cabang', $id_cabang)
+                    ->get();
+        }
+
 
         // 'so', 'pic', 'cabang', 'valid', 'verif', 'tan', 'ken', 'pe_tan', 'pe_ken', 'kapbul', 'usaha', 'recom_ao'
 
@@ -111,7 +121,17 @@ class MasterCA_Controller extends BaseController
 
         $id_cabang = $pic->id_mk_cabang;
 
-        $val = TransAO::with('so', 'pic', 'cabang')->where('id_cabang', $id_cabang)->where('id_trans_so', $id)->first();
+        if ($id_cabang == 0) {
+            $val = TransAO::with('so', 'pic', 'cabang')
+                ->where('id_trans_so', $id)
+                ->first();
+        }elseif ($id_cabang != 0) {
+            $val = TransAO::with('so', 'pic', 'cabang')
+                    ->where('id_trans_so', $id)
+                    ->where('id_cabang', $id_cabang)
+                    ->first();
+        }
+
 
         if (!$val) {
             return response()->json([
@@ -707,11 +727,19 @@ class MasterCA_Controller extends BaseController
 
         $id_cabang = $pic->id_mk_cabang;
 
-        $query = TransAO::with('so', 'pic', 'cabang')
-                ->where('id_cabang', $id_cabang)
+        if ($id_cabang == 0) {
+            $query = TransAO::with('so', 'pic', 'cabang')
                 ->where('status_ao', 1)
                 ->orWhere('nomor_ao', 'like', '%'.$search.'%')
                 ->get();
+        }elseif ($id_cabang != 0) {
+            $query = TransAO::with('so', 'pic', 'cabang')
+                    ->where('status_ao', 1)
+                    ->where('id_cabang', $id_cabang)
+                    ->orWhere('nomor_ao', 'like', '%'.$search.'%')
+                    ->get();
+        }
+
 
         // 'so', 'pic', 'cabang', 'valid', 'verif', 'tan', 'ken', 'pe_tan', 'pe_ken', 'kapbul', 'usaha', 'recom_ao'
 

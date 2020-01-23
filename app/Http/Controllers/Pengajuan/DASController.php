@@ -21,11 +21,7 @@ class DASController extends BaseController
 {
     public function index(Request $req){
         $user_id = $req->auth->user_id;
-        // $kode_kantor = $req->auth->kd_cabang;
-
-        // $query = DB::connection('web')->table('trans_so')->where('kode_kantor', $kode_kantor)->get();
         $query = TransSO::with('pic', 'cabang', 'asaldata','debt', 'faspin')->get();
-        // $query = DB::connection('web')->select("SELECT * FROM trans_so WHERE kode_kantor=?",[$kode_kantor]);
 
         if ($query == '[]') {
             return response()->json([
@@ -78,8 +74,6 @@ class DASController extends BaseController
     }
 
     public function show($id, Request $req){
-        // $kode_kantor = $req->auth->kd_cabang;
-        // $val = TransSO::where('id', $id)->where('kode_kantor', $kode_kantor)->first();
         $val = TransSO::with('asaldata','debt', 'pic')->where('id', $id)->first();
         if (!$val) {
             return response()->json([
@@ -351,13 +345,9 @@ class DASController extends BaseController
 
     public function search($search, Request $req){
         $user_id = $req->auth->user_id;
-        // $kode_kantor = $req->auth->kd_cabang;
-
-        // $query = DB::connection('web')->table('trans_so')->where('kode_kantor', $kode_kantor)->get();
         $query = TransSO::with('pic', 'cabang', 'asaldata','debt', 'faspin')
                 ->where('nomor_so', 'like', '%'.$search.'%')
                 ->get();
-        // $query = DB::connection('web')->select("SELECT * FROM trans_so WHERE kode_kantor=?",[$kode_kantor]);
 
         if ($query == '[]') {
             return response()->json([

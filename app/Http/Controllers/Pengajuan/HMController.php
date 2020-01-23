@@ -19,8 +19,6 @@ use Carbon\Carbon;
 class HMController extends BaseController
 {
     public function index(Request $req){
-        // $kode_kantor = $req->auth->kd_cabang;
-        // $query = TransSO::where('kode_kantor', $kode_kantor)->get();
         $query = TransSO::with('asaldata','debt', 'pic')->get();
 
         if ($query == '[]') {
@@ -84,8 +82,6 @@ class HMController extends BaseController
     }
 
     public function show($id, Request $req){
-        // $kode_kantor = $req->auth->kd_cabang;
-        // $val = TransSO::where('id', $id)->where('kode_kantor', $kode_kantor)->first();
         $val = TransSO::with('asaldata','debt', 'pic')->where('id', $id)->first();
         if (!$val) {
             return response()->json([
@@ -310,8 +306,6 @@ class HMController extends BaseController
     }
 
     public function search($search, Request $req){
-        // $kode_kantor = $req->auth->kd_cabang;
-        // $query = TransSO::where('kode_kantor', $kode_kantor)->get();
         $query = TransSO::with('asaldata','debt', 'pic')
                 ->where('nomor_so', 'like', '%'.$search.'%')
                 ->get();
