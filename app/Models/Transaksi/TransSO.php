@@ -8,6 +8,21 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Lumen\Auth\Authorizable;
 
+use App\Models\Transaksi\TransAO;
+use App\Models\Transaksi\TransCA;
+use App\Models\Transaksi\TransCAA;
+
+use App\Models\User;
+
+use App\Models\AreaKantor\PIC;
+use App\Models\AreaKantor\Area;
+use App\Models\AreaKantor\Cabang;
+use App\Models\AreaKantor\AsalData;
+use App\Models\Pengajuan\SO\Debitur;
+use App\Models\Pengajuan\SO\Pasangan;
+use App\Models\Pengajuan\SO\Penjamin;
+use App\Models\Pengajuan\SO\FasilitasPinjaman;
+
 class TransSO extends Model implements AuthenticatableContract, AuthorizableContract
 {
     use Authenticatable, Authorizable;
@@ -23,46 +38,90 @@ class TransSO extends Model implements AuthenticatableContract, AuthorizableCont
     protected $primaryKey = 'id';
 
     protected $fillable = [
-        'nomor_so', 'user_id', 'id_pic', 'id_cabang', 'id_asal_data', 'nama_marketing', 'nama_so', 'id_fasilitas_pinjaman', 'id_calon_debitur', 'id_pasangan', 'id_penjamin', 'id_trans_ao', 'id_trans_ca', 'id_trans_caa', 'catatan_das', 'catatan_hm', 'status_das', 'status_hm', 'lamp_ideb', 'lamp_pefindo', 'flg_aktif'
+        'nomor_so', 'user_id', 'id_pic', 'id_area', 'id_cabang', 'id_asal_data', 'nama_marketing', 'nama_so', 'id_fasilitas_pinjaman', 'id_calon_debitur', 'id_pasangan', 'id_penjamin', 'id_trans_ao', 'id_trans_ca', 'id_trans_caa', 'catatan_das', 'catatan_hm', 'status_das', 'status_hm', 'lamp_ideb', 'lamp_pefindo', 'flg_aktif'
     ];
 
     public function pic(){
-        return $this->belongsTo('App\Models\AreaKantor\PIC', 'id_pic');
+        return $this->belongsTo(PIC::class, 'id_pic')
+            ->withDefault(function () {
+                return new PIC();
+            });
+    }
+
+    public function user(){
+        return $this->belongsTo(User::class, 'user_id')
+            ->withDefault(function () {
+                return new User();
+            });
+    }
+
+    public function area(){
+        return $this->belongsTo(Area::class, 'id_area')
+            ->withDefault(function () {
+                return new Area();
+            });
     }
 
     public function cabang(){
-        return $this->belongsTo('App\Models\AreaKantor\Cabang', 'id_cabang');
+        return $this->belongsTo(Cabang::class, 'id_cabang')
+            ->withDefault(function () {
+                return new Cabang();
+            });
     }
 
     public function asaldata(){
-        return $this->belongsTo('App\Models\AreaKantor\AsalData', 'id_asal_data');
+        return $this->belongsTo(AsalData::class, 'id_asal_data')
+            ->withDefault(function () {
+                return new AsalData();
+            });
     }
 
     public function debt(){
-        return $this->belongsTo('App\Models\Pengajuan\SO\Debitur', 'id_calon_debitur');
+        return $this->belongsTo(Debitur::class, 'id_calon_debitur')
+            ->withDefault(function () {
+                return new Debitur();
+            });
     }
 
     public function pas(){
-        return $this->belongsTo('App\Models\Pengajuan\SO\Pasangan', 'id_pasangan');
+        return $this->belongsTo(Pasangan::class, 'id_pasangan')
+            ->withDefault(function () {
+                return new Pasangan();
+            });
     }
 
-    // public function penjamin(){
-    //     return $this->belongsTo('App\Models\Pengajuan\SO\Penjamin', 'id_penjamin');
-    // }
+    public function penjamin(){
+         return $this->belongsTo(Penjamin::class, 'id_penjamin')
+        ->withDefault(function () {
+                return new Penjamin();
+            });
+    }
 
     public function faspin(){
-        return $this->belongsTo('App\Models\Pengajuan\SO\FasilitasPinjaman', 'id_fasilitas_pinjaman');
+        return $this->belongsTo(FasilitasPinjaman::class, 'id_fasilitas_pinjaman')
+            ->withDefault(function () {
+                return new FasilitasPinjaman();
+            });
     }
 
     public function ao(){
-        return $this->belongsTo('App\Models\Transaksi\TransAO', 'id_trans_ao');
+        return $this->belongsTo(TransAO::class, 'id_trans_ao')
+            ->withDefault(function () {
+                return new TransAO();
+            });
     }
 
     public function ca(){
-        return $this->belongsTo('App\Models\Transaksi\TransCA', 'id_trans_ca');
+        return $this->belongsTo(TransCA::class, 'id_trans_ca')
+            ->withDefault(function () {
+                return new TransCA();
+            });
     }
 
     public function caa(){
-        return $this->belongsTo('App\Models\Transaksi\TransCAA', 'id_trans_caa');
+        return $this->belongsTo(TransCAA::class, 'id_trans_caa')
+            ->withDefault(function () {
+                return new TransCAA();
+            });
     }
 }

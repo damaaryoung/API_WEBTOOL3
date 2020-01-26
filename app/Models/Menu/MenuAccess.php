@@ -8,6 +8,9 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Lumen\Auth\Authorizable;
 
+use App\Models\Menu\MenuMaster;
+use App\Models\Menu\MenuSub;
+
 class MenuAccess extends Model implements AuthenticatableContract, AuthorizableContract
 {
     use Authenticatable, Authorizable;
@@ -23,12 +26,18 @@ class MenuAccess extends Model implements AuthenticatableContract, AuthorizableC
 
     public function menu_master()
     {
-        return $this->belongsTo('App\Models\Menu\MenuMaster', 'id_menu_master');
+        return $this->belongsTo(MenuMaster::class, 'id_menu_master')
+            ->withDefault(function () {
+                return new MenuMaster();
+            });
     }
 
     public function menu_sub()
     {
-        return $this->belongsTo('App\Models\Menu\MenuSub', 'id_menu_sub');
+        return $this->belongsTo(MenuSub::class, 'id_menu_sub')
+            ->withDefault(function () {
+                return new MenuSub();
+            });
     }
 
     public $timestamps = false;

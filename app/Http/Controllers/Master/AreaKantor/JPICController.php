@@ -70,21 +70,30 @@ class JPICController extends BaseController
                 'status'  => 'not found',
                 'message' => 'Data tidak ada'
             ], 404);
-        }else{
-            try {
-                return response()->json([
-                    'code'   => 200,
-                    'status' => 'success',
-                    'data'   => $query
-                ], 200);
-            } catch (Exception $e) {
-                return response()->json([
-                    'code'   => 501,
-                    'status' => 'error',
-                    'data'   => $e
-                ], 501);
-            }
-        }    }
+        }
+
+        $data = array(
+            'id'         => $query->id,
+            'nama_jenis' => $query->nama_jenis,
+            'keterangan' => $query->keterangan,
+            'created_at' => Carbon::parse($query->created_at)->format('d-m-Y H:i:s'),
+            'updated_at' => Carbon::parse($query->updated_at)->format('d-m-Y H:i:s')
+        );
+
+        try {
+            return response()->json([
+                'code'   => 200,
+                'status' => 'success',
+                'data'   => $data
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                'code'   => 501,
+                'status' => 'error',
+                'data'   => $e
+            ], 501);
+        }
+    }
 
     public function update($id, JenisPICReq $req) {
         $check = JPIC::where('id', $id)->first();

@@ -133,6 +133,14 @@ class KabupatenController extends BaseController
         if(preg_match("/^[0-9]{1,}$/", $IdOrName)){
             $query = Kabupaten::with('prov')->select('id', 'nama', 'id_provinsi', 'flg_aktif')->where('id', $IdOrName)->first();
 
+            if ($query == null) {
+                return response()->json([
+                    'code'    => 404,
+                    'status'  => 'not found',
+                    'message' => 'Data kosong!!'
+                ], 404);
+            }
+
             $res = [
                 'id'             => $query->id,
                 'nama'           => $query->nama,
@@ -142,6 +150,14 @@ class KabupatenController extends BaseController
             ];
         }else{
             $query = Kabupaten::with('prov')->select('id', 'nama', 'id_provinsi', 'flg_aktif')->where('nama','like','%'.$IdOrName.'%')->get();
+
+            if ($query == '[]') {
+                return response()->json([
+                    'code'    => 404,
+                    'status'  => 'not found',
+                    'message' => 'Data kosong!!'
+                ], 404);
+            }
 
             foreach ($query as $key => $val) {
                 $res[$key] = [
@@ -153,19 +169,11 @@ class KabupatenController extends BaseController
         }
 
         try {
-            if ($query == '[]') {
-                return response()->json([
-                    'code'    => 404,
-                    'status'  => 'not found',
-                    'message' => 'Data kosong!!'
-                ], 404);
-            }else{
-                return response()->json([
-                    'code'    => 200,
-                    'status'  => 'success',
-                    'data'    => $res
-                ], 200);
-            }
+            return response()->json([
+                'code'    => 200,
+                'status'  => 'success',
+                'data'    => $res
+            ], 200);
         } catch (Exception $e) {
             return response()->json([
                 "code"    => 501,

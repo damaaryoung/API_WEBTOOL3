@@ -1,4 +1,7 @@
-<?php
+
+    ->withDefault(function () {
+                return new Kelurahan();
+            });<?php
 
 namespace App\Models\Pengajuan\SO;
 
@@ -7,6 +10,11 @@ use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Lumen\Auth\Authorizable;
+
+use App\Models\Wilayah\Provinsi;
+use App\Models\Wilayah\Kabupaten;
+use App\Models\Wilayah\Kecamatan;
+use App\Models\Wilayah\Kelurahan;
 
 class Pasangan extends Model implements AuthenticatableContract, AuthorizableContract
 {
@@ -24,18 +32,30 @@ class Pasangan extends Model implements AuthenticatableContract, AuthorizableCon
 
     // Tempat Kerja
     public function prov_kerja(){
-        return $this->belongsTo('App\Models\Wilayah\Provinsi', 'id_prov_tempat_kerja')->select(['id', 'nama']);
+        return $this->belongsTo(Provinsi::class, 'id_prov_tempat_kerja')->select(['id', 'nama'])
+            ->withDefault(function () {
+                return new Provinsi();
+            });
     }
 
     public function kab_kerja(){
-        return $this->belongsTo('App\Models\Wilayah\Kabupaten', 'id_kab_tempat_kerja')->select(['id', 'nama']);
+        return $this->belongsTo(Kabupaten::class, 'id_kab_tempat_kerja')->select(['id', 'nama'])
+            ->withDefault(function () {
+                return new Kabupaten();
+            });
     }
 
     public function kec_kerja(){
-        return $this->belongsTo('App\Models\Wilayah\Kecamatan', 'id_kec_tempat_kerja')->select(['id', 'nama']);
+        return $this->belongsTo(Kecamatan::class, 'id_kec_tempat_kerja')->select(['id', 'nama'])
+            ->withDefault(function () {
+                return new Kecamatan();
+            });
     }
 
     public function kel_kerja(){
-        return $this->belongsTo('App\Models\Wilayah\Kelurahan', 'id_kel_tempat_kerja')->select(['id', 'nama', 'kode_pos']);
+        return $this->belongsTo(Kelurahan::class, 'id_kel_tempat_kerja')->select(['id', 'nama', 'kode_pos'])
+            ->withDefault(function () {
+                return new Kelurahan();
+            });
     }
 }

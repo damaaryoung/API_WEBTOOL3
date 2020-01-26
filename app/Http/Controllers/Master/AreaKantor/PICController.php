@@ -28,12 +28,13 @@ class PICController extends BaseController
             $res[$key]= [
                 "id"          => $val->id,
                 "nama"        => $val->nama,
+                "email"       => $val->email,
                 "jenis_pic"   => $val->jpic['nama_jenis'],
                 "nama_area"   => $val->area['nama'],
                 "nama_cabang" => $val->cabang['nama'],
                 "flg_aktif"   => $val->flg_aktif == 1 ? "true" : "false",
-                "created_at"  => $val->created_at,
-                "updated_at"  => $val->updated_at
+                "created_at"  => Carbon::parse($val->created_at)->format('d-m-Y H:i:s'),
+                "updated_at"  => Carbon::parse($val->updated_at)->format('d-m-Y H:i:s')
             ];
         }
 
@@ -77,7 +78,8 @@ class PICController extends BaseController
         foreach ($query as $key => $val) {
             $res[$key]= [
                 "id"          => $val->id,
-                "nama"        => $val->nama,
+                "nama"        => $val->email,
+                "email"       => $val->nama,
                 "jenis_pic"   => $val->jpic['nama_jenis'],
                 "id_area"     => $val->id_mk_area,
                 "nama_area"   => $val->area['nama'],
@@ -103,12 +105,14 @@ class PICController extends BaseController
 
     public function store(Request $request, PICRequest $req) {
         $username = $request->auth->user;
+        $email    = $request->auth->email;
         $data = array(
             'user_id'       => $req->input('user_id'),
             'id_mk_area'    => $req->input('id_mk_area'),
             'id_mk_cabang'  => empty($req->input('id_mk_cabang')) ? 0 : $req->input('id_mk_cabang'),
             'id_mj_pic'     => $req->input('id_mj_pic'),
-            'nama'          => empty($req->input('nama')) ? $username : $req->input('nama')
+            'nama'          => empty($req->input('nama')) ? $username : $req->input('nama'),
+            'email'         => empty($req->input('email')) ? $email : $req->input('email')
         );
 
         PIC::create($data);
@@ -141,6 +145,7 @@ class PICController extends BaseController
             $res = [
                 "id"             => $query->id,
                 "nama"           => $query->nama,
+                "email"          => $query->email,
                 "user_id"        => $query->user_id,
                 "email_user"     => $query->user['email'],
                 "id_jenis_pic"   => $query->id_mj_pic,
@@ -150,7 +155,7 @@ class PICController extends BaseController
                 "id_cabang"      => $query->id_mk_cabang,
                 "nama_cabang"    => $query->cabang['nama'],
                 "flg_aktif"      => $query->flg_aktif == 0 ? "false" : "true",
-                "created_at"     => date($query->created_at)
+                "created_at"     => Carbon::parse($query->created_at)->format('d-m-Y H:i:s')
             ];
 
             try {
@@ -182,6 +187,7 @@ class PICController extends BaseController
 
         $data = array(
             'nama'         => empty($req->input('nama')) ? $check->nama : $req->input('nama'),
+            'email'        => empty($req->input('email')) ? $check->email : $req->input('email'),
             'user_id'      => empty($req->input('user_id')) ? $check->user_id : $req->input('user_id'),
             'id_mk_area'   => empty($req->input('id_mk_area')) ? $check->id_mk_area : $req->input('id_mk_area'),
             'id_mk_cabang' => empty($req->input('id_mk_cabang')) ? $check->id_mk_cabang : $req->input('id_mk_cabang'),
@@ -249,6 +255,7 @@ class PICController extends BaseController
             $res[$key]= [
                 "id"          => $val->id,
                 "nama"        => $val->nama,
+                "email"       => $val->email,
                 "jenis_pic"   => $val->jpic['nama_jenis'],
                 "nama_area"   => $val->area['nama'],
                 "nama_cabang" => $val->cabang['nama']

@@ -32,8 +32,8 @@ class AreaController extends BaseController
                 "nama_provinsi"  => $val->prov['nama'],
                 "nama_kabupaten" => $val->kab['nama'],
                 "flg_aktif"      => $val->flg_aktif == 1 ? "true" : "false",
-                "created_at"     => $val->created_at,
-                "updated_at"     => $val->updated_at
+                "created_at"     => Carbon::parse($val->created_at)->format('d-m-Y H:i:s'),
+                "updated_at"     => Carbon::parse($val->updated_at)->format('d-m-Y H:i:s')
             ];
         }
 
@@ -131,7 +131,7 @@ class AreaController extends BaseController
             "id_kabupaten"   => $val->id_kabupaten,
             "nama_kabupaten" => $val->kab['nama'],
             "flg_aktif"      => $val->flg_aktif == 0 ? "false" : "true",
-            "created_at"     => date($val->created_at)
+            "created_at"     => Carbon::parse($val->created_at)->format('d-m-Y H:i:s')
         );
 
         try {

@@ -110,6 +110,16 @@ class ProvinsiController extends BaseController
         $res = array();
         if(preg_match("/^[0-9]{1,}$/", $IdOrName)){
             $query = Provinsi::select('id','nama','flg_aktif')->where('id', $IdOrName)->first();
+
+
+            if ($query == null) {
+                return response()->json([
+                    'code'    => 404,
+                    'status'  => 'not found',
+                    'message' => 'Data kosong!!'
+                ], 404);
+            }
+
             $res = array(
                 "id"            => $query->id,
                 "nama_provinsi" => $query->nama,
@@ -117,6 +127,15 @@ class ProvinsiController extends BaseController
             );
         }else{
             $query = Provinsi::select('id','nama','flg_aktif')->where('nama','like','%'.$IdOrName.'%')->get();
+
+            if ($query == '[]') {
+                return response()->json([
+                    'code'    => 404,
+                    'status'  => 'not found',
+                    'message' => 'Data kosong!!'
+                ], 404);
+            }
+
             foreach ($query as $key => $val) {
                 $res[$key] = [
                     "id"            => $val->id,
@@ -126,19 +145,11 @@ class ProvinsiController extends BaseController
         }
 
         try {
-            if ($query == '[]' || $query == null) {
-                return response()->json([
-                    'code'    => 404,
-                    'status'  => 'not found',
-                    'message' => 'Data kosong!!'
-                ], 404);
-            }else{
-                return response()->json([
-                    'code'    => 200,
-                    'status'  => 'success',
-                    'data'    => $res
-                ], 200);
-            }
+            return response()->json([
+                'code'    => 200,
+                'status'  => 'success',
+                'data'    => $res
+            ], 200);
         } catch (Exception $e) {
             return response()->json([
                 "code"    => 501,

@@ -8,6 +8,8 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Lumen\Auth\Authorizable;
 
+use App\Models\Menu\MenuMaster;
+
 class MenuSub extends Model implements AuthenticatableContract, AuthorizableContract
 {
     use Authenticatable, Authorizable;
@@ -23,7 +25,10 @@ class MenuSub extends Model implements AuthenticatableContract, AuthorizableCont
 
     public function menu_master()
     {
-        return $this->belongsTo('App\Models\Menu\MenuMaster', 'id_menu_master')->select(['id', 'nama']);
+        return $this->belongsTo(MenuMaster::class, 'id_menu_master')->select(['id', 'nama'])
+            ->withDefault(function () {
+                return new MenuMaster();
+            });
     }
 
     public $timestamps = false;

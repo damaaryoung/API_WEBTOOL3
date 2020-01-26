@@ -27,7 +27,7 @@ class AsalDataController extends BaseController
                 $data[] = [
                     'nama'      => $value->nama,
                     'info'      => $value->info,
-                    'flg_aktif' => $value->flg_aktif == 1 ? "true" : "false"
+                    'flg_aktif' => (bool) $value->flg_aktif
                 ];
             }
 
@@ -98,10 +98,26 @@ class AsalDataController extends BaseController
         try {
             $query = AsalData::where('id', $id)->first();
 
+            if ($query == null) {
+                return response()->json([
+                    "code"    => 404,
+                    "status"  => "not found",
+                    "message" => "Data kosong"
+                ], 404);
+            }
+
+            $data[] = array(
+                'nama'      => $query->nama,
+                'info'      => $query->info,
+                'flg_aktif' => (bool) $query->flg_aktif,
+                'created_at'=> Carbon::parse($query->created_at)->format('d-m-Y H:i:s'),
+                'updated_at'=> Carbon::parse($query->updated_at)->format('d-m-Y H:i:s')
+            );
+
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'data'   => $query
+                'data'   => $data
             ], 200);
         } catch (Exception $e) {
             return response()->json([
@@ -124,8 +140,9 @@ class AsalDataController extends BaseController
         }
 
         $data = array(
-            'nama' => empty($req->input('nama')) ? $check->nama : $req->input('nama'),
-            'info' => empty($req->input('info')) ? $check->info : $req->input('info')
+            'nama'      => empty($req->input('nama')) ? $check->nama : $req->input('nama'),
+            'info'      => empty($req->input('info')) ? $check->info : $req->input('info')
+            'flg_aktif' => empty($req->input('flg_aktif')) ? $check->flg_aktif : ($req->input('flg_aktif') == 'true' ? 1 : 0)
         );
 
         AsalData::where('id', $id)->update($data);

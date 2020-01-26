@@ -133,11 +133,14 @@ $router->group(['middleware' => 'jwt.auth'], function () use ($router) {
 
         $router->group(['prefix' => '/master'], function () use ($router) {
 
-            $router->group(['namespace' => 'Master\AreaKantor'], function () use ($router){
-
+            $router->group(['namespace' => 'Master\Bisnis'], function () use ($router){
                 // Mitra Bisnis
-                $router->get('/mitra', 'Bisnis\MitraController@index');
-                $router->get('/mitra/{kode_mitra}', 'Bisnis\MitraController@show');
+                $router->get('/mitra', 'MitraController@index');
+                $router->get('/mitra/{kode_mitra}', 'MitraController@show');
+                $router->get('/mitra/{search}/search', 'MitraController@search');
+            });
+
+            $router->group(['namespace' => 'Master\AreaKantor'], function () use ($router){
 
                 // Asal Data
                 $router->get('/all/asal_data', 'AsalDataController@all');
@@ -249,7 +252,6 @@ $router->group(['middleware' => 'jwt.auth'], function () use ($router) {
                     $router->get('/{search}/search', 'MasterCA_Controller@search');
                 });
 
-                $router->get('/team_caa', 'TeamCAA_Controller@list_team');  // Get List Team CAA
 
                 // Trans CAA
                 $router->group(['prefix' => '/mcaa'], function() use ($router) {
@@ -262,7 +264,13 @@ $router->group(['middleware' => 'jwt.auth'], function () use ($router) {
 
                     // Tahap 2 - Team CAA
                     $router->get('/{id}/detail', 'MasterCAA_Controller@detail'); //GEt CA BY ID after caa
-                    $router->post('/{id}/confirm', 'TeamCAA_Controller@approve');
+                });
+
+                $router->get('/team_caa', 'TeamCAA_Controller@list_team');  // Get List Team CAA
+                $router->group(['prefix' => '/approval'], function() use ($router){
+                    $router->get('/', 'TeamCAA_Controller@index');
+                    $router->get('/{id}', 'TeamCAA_Controller@show');
+                    $router->post('/{id}', 'TeamCAA_Controller@approve');
                 });
 
             });

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\AreaKantor;
+namespace App\Models\Karyawan;
 
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
@@ -9,32 +9,36 @@ use Illuminate\Database\Eloquent\Model;
 use Laravel\Lumen\Auth\Authorizable;
 
 use App\Models\User;
+use App\Models\AreaKantor\JPIC;
 use App\Models\AreaKantor\Area;
 use App\Models\AreaKantor\Cabang;
-use App\Models\AreaKantor\JPIC;
 
-class PIC extends Model implements AuthenticatableContract, AuthorizableContract
+class TeamCAA extends Model implements AuthenticatableContract, AuthorizableContract
 {
     use Authenticatable, Authorizable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
     protected $connection = 'web';
 
-    protected $table = 'm_pic';
+    protected $table = 'team_caa';
     protected $primaryKey = 'id';
 
     protected $fillable = [
-        'user_id', 'id_mk_area', 'id_mk_cabang', 'id_mj_pic', 'nama', 'email', 'flg_aktif'
+       'id','user_id','id_mj_pic','id_mk_area','id_mk_cabang','nama','email'
     ];
 
+    public $timestamps = false;
+
     public function user(){
-        return $this->belongsTo(User::class, 'user_id')
+        return $this->belongsTo(User::class, 'id_provinsi')->select(['id', 'nama'])
             ->withDefault(function () {
                 return new User();
+            });
+    }
+
+    public function jpic(){
+        return $this->belongsTo(JPIC::class, 'id_mj_pic')
+            ->withDefault(function () {
+                return new JPIC();
             });
     }
 
@@ -51,15 +55,4 @@ class PIC extends Model implements AuthenticatableContract, AuthorizableContract
                 return new Cabang();
             });
     }
-
-    public function jpic(){
-        return $this->belongsTo(JPIC::class, 'id_mj_pic')
-            ->withDefault(function () {
-                return new JPIC();
-            });
-    }
-
-    // public function jpic_caa(){
-    //     return $this->belongsTo('App\Models\AreaKantor\JPIC', 'id_mj_pic')->where('keterangan', 'Team CAA');
-    // }
 }

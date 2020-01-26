@@ -38,8 +38,8 @@ class CabangController extends BaseController
                 "nama_kelurahan" => $val->kel['nama'],
                 "jenis_kantor"   => $val->jenis_kantor,
                 "flg_aktif"      => $val->flg_aktif == 1 ? "true" : "false",
-                "created_at"     => $val->created_at,
-                "upated_at"      => $val->updated_at
+                "created_at"     => Carbon::parse($val->created_at)->format('d-m-Y H:i:s'),
+                "upated_at"      => Carbon::parse($val->updated_at)->format('d-m-Y H:i:s')
             ];
         }
 
@@ -153,7 +153,7 @@ class CabangController extends BaseController
             "kode_pos"       => $check->kel['kode_pos'],
             "jenis_kantor"   => $check->jenis_kantor,
             "flg_aktif"      => $check->flg_aktif == 0 ? "false" : "true",
-            "created_at"     => date($check->created_at)
+            "created_at"     => Carbon::parse($check->created_at)->format('d-m-Y H:i:s')
         );
 
         try {

@@ -8,6 +8,8 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Lumen\Auth\Authorizable;
 
+use App\Models\Pengajuan\AgunanKendaraan;
+
 class PemeriksaanAgunKen extends Model implements AuthenticatableContract, AuthorizableContract
 {
     use Authenticatable, Authorizable;
@@ -29,6 +31,9 @@ class PemeriksaanAgunKen extends Model implements AuthenticatableContract, Autho
     public $timestamps = false;
 
     public function kendaraan(){
-        return $this->belongsTo('App\Models\Pengajuan\AgunanKendaraan', 'id_agunan_kendaraan');
+        return $this->belongsTo(AgunanKendaraan::class, 'id_agunan_kendaraan')
+            ->withDefault(function () {
+                return new AgunanKendaraan();
+            });
     }
 }

@@ -8,6 +8,14 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Lumen\Auth\Authorizable;
 
+use App\Models\Transaksi\TransSO;
+
+use App\Models\User;
+
+use App\Models\AreaKantor\PIC;
+use App\Models\AreaKantor\Area;
+use App\Models\AreaKantor\Cabang;
+
 class TransCAA extends Model implements AuthenticatableContract, AuthorizableContract
 {
     use Authenticatable, Authorizable;
@@ -23,18 +31,41 @@ class TransCAA extends Model implements AuthenticatableContract, AuthorizableCon
     protected $primaryKey = 'id';
 
     protected $fillable = [
-        'nomor_caa', 'user_id', 'id_trans_so', 'id_pic', 'id_cabang', 'pic_team_caa', 'penyimpangan', 'rincian', 'file_report_mao', 'file_report_mca', 'status_file_agunan', 'file_agunan', 'status_file_usaha', 'file_tempat_tinggal', 'file_lain', 'rincian', 'status_caa', 'id_trans_tcaa', 'status_team_caa', 'flg_aktif'
+        'nomor_caa', 'user_id', 'id_trans_so', 'id_pic', 'id_area', 'id_cabang', 'pic_team_caa', 'penyimpangan', 'rincian', 'file_report_mao', 'file_report_mca', 'status_file_agunan', 'file_agunan', 'status_file_usaha', 'file_tempat_tinggal', 'file_lain', 'rincian', 'status_caa', 'status_team_caa', 'flg_aktif'
     ];
 
     public function so(){
-        return $this->belongsTo('App\Models\Transaksi\TransSO', 'id_trans_so');
+        return $this->belongsTo(TransSO::class, 'id_trans_so')
+            ->withDefault(function () {
+                return new TransSO();
+            });
+    }
+
+    public function user(){
+        return $this->belongsTo(User::class, 'user_id')
+            ->withDefault(function () {
+                return new User();
+            });
     }
 
     public function pic(){
-        return $this->belongsTo('App\Models\AreaKantor\PIC', 'id_pic');
+        return $this->belongsTo(PIC::class, 'id_pic')
+            ->withDefault(function () {
+                return new PIC();
+            });
+    }
+
+    public function area(){
+        return $this->belongsTo(Area::class, 'id_area')
+            ->withDefault(function () {
+                return new Area();
+            });
     }
 
     public function cabang(){
-        return $this->belongsTo('App\Models\AreaKantor\Cabang', 'id_cabang');
+        return $this->belongsTo(Cabang::class, 'id_cabang')
+            ->withDefault(function () {
+                return new Cabang();
+            });
     }
 }

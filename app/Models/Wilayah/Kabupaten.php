@@ -8,6 +8,13 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Lumen\Auth\Authorizable;
 
+use App\Models\Wilayah\Provinsi;
+use App\Models\Wilayah\Kecamatan;
+use App\Models\Pengajuan\SO\Debitur;
+use App\Models\Pengajuan\SO\Pasangan;
+use App\Models\Pengajuan\SO\Penjamin;
+use App\Models\Pengajuan\AO\AgunanTanah;
+
 class Kabupaten extends Model implements AuthenticatableContract, AuthorizableContract
 {
     use Authenticatable, Authorizable;
@@ -24,26 +31,44 @@ class Kabupaten extends Model implements AuthenticatableContract, AuthorizableCo
     public $timestamps = false;
 
     public function prov(){
-        return $this->belongsTo('App\Models\Wilayah\Provinsi', 'id_provinsi')->select(['id', 'nama']);
+        return $this->belongsTo(Provinsi::class, 'id_provinsi')->select(['id', 'nama'])
+            ->withDefault(function () {
+                return new Provinsi();
+            });
     }
 
     public function kec(){
-        return $this->hasMany('App\Models\Wilayah\Kecamatan');
+        return $this->hasMany(Kecamatan::class)
+            ->withDefault(function () {
+                return new Kecamatan();
+            });
     }
 
     public function debt(){
-        return $this->hasMany('App\Models\Pengajuan\Debitur');
+        return $this->hasMany(Debitur::class)
+            ->withDefault(function () {
+                return new Debitur();
+            });
     }
 
     public function pas(){
-        return $this->hasMany('App\Models\Pengajuan\Pasangan');
+        return $this->hasMany(Pasangan::class)
+            ->withDefault(function () {
+                return new Pasangan();
+            });
     }
 
     public function penj(){
-        return $this->hasMany('App\Models\Pengajuan\Penjamin');
+        return $this->hasMany(Penjamin::class)
+            ->withDefault(function () {
+                return new Penjamin();
+            });
     }
 
     public function tanah(){
-        return $this->hasMany('App\Models\Pengajuan\AgunanTanah');
+        return $this->hasMany(AgunanTanah::class)
+            ->withDefault(function () {
+                return new AgunanTanah();
+            });
     }
 }

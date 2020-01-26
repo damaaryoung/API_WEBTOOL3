@@ -33,6 +33,7 @@ class PICRequest extends FormRequest
 
         return [
             'user_id'      => $value,
+            'email'        => 'email|unique:dpm.user,email',
             'id_mk_area'   => $value,
             'id_mk_cabang' => $value,
             'id_mj_pic'    => $value,
@@ -44,6 +45,8 @@ class PICRequest extends FormRequest
         return [
             // 'user_id.required'      => ':attribute wajib diisi',
             'user_id.integer'       => ':attribute harus berupa angka',
+            'email.email'           => ':attribute harus berupa email',
+            'email.unique'          => ':attribute telah ada yang menggunakan',
             'id_mk_area.required'   => ':attribute wajib diisi',
             'id_mk_cabang.required' => ':attribute wajib diisi',
             'id_mj_pic.required'    => ':attribute wajib diisi',

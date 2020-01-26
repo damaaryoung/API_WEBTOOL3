@@ -59,7 +59,7 @@ class PasanganController extends BaseController
                     'rw'             => $val->rw_tempat_kerja,
                     'kelurahan' => [
                         'id'    => $val->id_kel_tempat_kerja,
-                        'nama'  => $val->kel_kerja['nama']
+                        'nama'  => val->kel_kerja['nama']
                     ],
                     'kecamatan' => [
                         'id'    => $val->id_kec_tempat_kerja,
@@ -73,7 +73,7 @@ class PasanganController extends BaseController
                         'id'   => $val->id_prov_tempat_kerja,
                         'nama' => $val->prov_kerja['nama'],
                     ],
-                    'kode_pos' => $val->kel_kerja['kode_pos']
+                    'kode_pos' => val->kel_kerja['kode_pos']
                 ]
             ],
             'lampiran' => [

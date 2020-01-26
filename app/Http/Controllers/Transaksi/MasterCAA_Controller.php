@@ -102,7 +102,8 @@ class MasterCAA_Controller extends BaseController
                 'nomor_ca'       => $val->nomor_ca,
                 // 'nomor_caa'      => $val->so['caa']['nomor_caa'],
 
-                'pic'         => $val->pic['nama'],
+                'pic'            => $val->pic['nama'],
+                'area'           => $val->area['nama'],
                 'cabang'         => $val->cabang['nama'],
                 'asal_data'      => $val->so['asaldata']['nama'],
                 'nama_marketing' => $val->so['nama_marketing'],
@@ -342,17 +343,17 @@ class MasterCAA_Controller extends BaseController
         }
 
         // Email Team CAA
-        if (!empty($req->input('team_caa'))) {
-            for ($i = 0; $i < count($req->input('team_caa')); $i++) {
-                $arrTeam['team'][$i] = $req->input('team_caa')[$i];
-            }
+        // if (!empty($req->input('team_caa'))) {
+        //     for ($i = 0; $i < count($req->input('team_caa')); $i++) {
+        //         $arrTeam['team'][$i] = $req->input('team_caa')[$i];
+        //     }
 
-            $team_caa = implode(",", $arrTeam['team']);
-        }else{
+        //     $team_caa = implode(",", $arrTeam['team']);
+        // }else{
 
-            $arrTeam['team'] = null;
-            $team_caa = null;
-        }
+        //     $arrTeam['team'] = null;
+        //     $team_caa = null;
+        // }
 
         // dd($team_caa);
 
@@ -361,6 +362,7 @@ class MasterCAA_Controller extends BaseController
             'user_id'            => $user_id,
             'id_trans_so'        => $id,
             'id_pic'             => $PIC->id,
+            'id_area'            => $PIC->id_mk_area,
             'id_cabang'          => $PIC->id_mk_cabang,
             'penyimpangan'       => $req->input('penyimpangan'),
             'pic_team_caa'       => $team_caa,
@@ -385,61 +387,11 @@ class MasterCAA_Controller extends BaseController
 
                 TransSO::where('id', $id)->update(['id_trans_caa' => $CAA->id]);
 
-                if (!empty(count(explode(",", $data['pic_team_caa'])))) {
-                    for ($i = 0; $i < count(explode(",", $data['pic_team_caa'])); $i++) {
-                        $tr[] = TransTCAA::create([
-                            'id_trans_so'  => $id,
-                            'id_trans_caa' => $CAA->id,
-                            'id_pic'       => $arrTeam['team'][$i],
-                            'id_cabang'    => $PIC->id_mk_cabang
-                        ])->toArray();
-
-                        $id_tr_tcaa['id'][$i] = $tr[$i]['id'];
-                    }
-
-                    // dd($id_tr_tcaa);
-
-                    $ex = implode(",", $id_tr_tcaa['id']);
-
-                    $newData = array_merge($data, ['id_trans_tcaa' => $ex]);
-                }else{
-                    $newData = $data;
-                }
-
-                TransCAA::where('id', $CAA->id)->update($newData);
-
             }else{
 
                 TransSO::where('id', $id)->update(['id_trans_caa' => $check_caa->id]);
 
-                if (!empty($check_caa->pic_team_caa)) {
-                    TransTCAA::where('id_trans_so', $id)->delete();
-                }
-
-                if (!empty(count(explode(",", $data['pic_team_caa'])))) {
-                    for ($i = 0; $i < count(explode(",", $data['pic_team_caa'])); $i++) {
-                        $tr[] = TransTCAA::create([
-                            'id_trans_so'  => $id,
-                            'id_trans_caa' => $check_caa->id,
-                            'id_pic'       => $arrTeam['team'][$i],
-                            'id_cabang'    => $PIC->id_mk_cabang
-                        ])->toArray();
-
-                        $id_tr_tcaa['id'][$i] = $tr[$i]['id'];
-                    }
-
-                    $ex = implode(",", $id_tr_tcaa['id']);
-
-                    // dd($ex);
-
-                    $newData = array_merge($data, ['id_trans_tcaa' => $ex]);
-                }else{
-                    $newData = $data;
-                }
-
-                // dd($newData);
-
-                TransCAA::where('id', $check_caa->id)->update($newData);
+                TransCAA::where('id', $check_caa->id)->update($data);
             }
 
             DB::connection('web')->commit();
@@ -472,6 +424,7 @@ class MasterCAA_Controller extends BaseController
             ], 404);
         }
 
+        $id_area   = $pic->id_mk_area;
         $id_cabang = $pic->id_mk_cabang;
 
         // List Sdi Tahap 2
@@ -559,6 +512,7 @@ class MasterCAA_Controller extends BaseController
                     'nomor_caa'      => $val->nomor_caa,
 
                     'pic'            => $val->pic['nama'],
+                    'area'           => $val->area['nama'],
                     'cabang'         => $val->cabang['nama'],
                     'asal_data'      => $val->so['asaldata']['nama'],
                     'nama_marketing' => $val->so['nama_marketing'],
@@ -672,6 +626,10 @@ class MasterCAA_Controller extends BaseController
                 'pic'  => [
                     'id'   => $val->id_pic,
                     'nama' => $val->pic['nama'],
+                ],
+                'area' => [
+                    'id'   => $val->id_area,
+                    'nama' => $val->area['nama'],
                 ],
                 'cabang' => [
                     'id'   => $val->id_cabang,
@@ -813,14 +771,22 @@ class MasterCAA_Controller extends BaseController
 
         $pic_team_caa = explode(",", $val->pic_team_caa);
 
-        $get_pic = PIC::with('jpic')->whereIn('id', $pic_team_caa)->get()->toArray();
 
-        for ($i = 0; $i < count($get_pic); $i++) {
-            $ptc[] = [
-                'id_pic'    => $get_pic[$i]['id'],
-                'jenis_pic' => $get_pic[$i]['jpic']['nama_jenis']
-            ];
+        $get_pic = PIC::with('jpic')->whereIn('id', explode(",", $val->pic_team_caa))->get();
+
+        if($get_pic == '[]'){
+            $ptc = null;
+        }else{
+            $ptc = array();
+            for ($i = 0; $i < count($get_pic); $i++) {
+                $ptc[] = [
+                    'id_pic'    => $get_pic[$i]['id'],
+                    'nama'      => $get_pic[$i]['nama'],
+                    'jabatan'   => $get_pic[$i]['jpic']['nama_jenis']
+                ];
+            }
         }
+
 
 
         if ($val->status_caa == 1) {

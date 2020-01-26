@@ -8,6 +8,11 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Lumen\Auth\Authorizable;
 
+use App\Models\Wilayah\Provinsi;
+use App\Models\Wilayah\Kabupaten;
+use App\Models\Wilayah\Kecamatan;
+use App\Models\Wilayah\Kelurahan;
+
 class Debitur extends Model implements AuthenticatableContract, AuthorizableContract
 {
     use Authenticatable, Authorizable;
@@ -30,52 +35,88 @@ class Debitur extends Model implements AuthenticatableContract, AuthorizableCont
 
     // KTP
     public function prov_ktp(){
-        return $this->belongsTo('App\Models\Wilayah\Provinsi', 'id_prov_ktp')->select(['id', 'nama']);
+        return $this->belongsTo(Provinsi::class, 'id_prov_ktp')->select(['id', 'nama'])
+            ->withDefault(function () {
+                return new Provinsi();
+            });
     }
 
     public function kab_ktp(){
-        return $this->belongsTo('App\Models\Wilayah\Kabupaten', 'id_kab_ktp')->select(['id', 'nama']);
+        return $this->belongsTo(Kabupaten::class, 'id_kab_ktp')->select(['id', 'nama'])
+            ->withDefault(function () {
+                return new Kabupaten();
+            });
     }
 
     public function kec_ktp(){
-        return $this->belongsTo('App\Models\Wilayah\Kecamatan', 'id_kec_ktp')->select(['id', 'nama']);
+        return $this->belongsTo(Kecamatan::class, 'id_kec_ktp')->select(['id', 'nama'])
+            ->withDefault(function () {
+                return new Kecamatan();
+            });
     }
 
     public function kel_ktp(){
-        return $this->belongsTo('App\Models\Wilayah\Kelurahan', 'id_kel_ktp')->select(['id', 'nama', 'kode_pos']);
+        return $this->belongsTo(Kelurahan::class, 'id_kel_ktp')->select(['id', 'nama', 'kode_pos'])
+            ->withDefault(function () {
+                return new Kelurahan();
+            });
     }
 
     // Domisili
     public function prov_dom(){
-        return $this->belongsTo('App\Models\Wilayah\Provinsi', 'id_prov_domisili')->select(['id', 'nama']);
+        return $this->belongsTo(Provinsi::class, 'id_prov_domisili')->select(['id', 'nama'])
+            ->withDefault(function () {
+                return new Provinsi();
+            });
     }
 
     public function kab_dom(){
-        return $this->belongsTo('App\Models\Wilayah\Kabupaten', 'id_kab_domisili')->select(['id', 'nama']);
+        return $this->belongsTo(Kabupaten::class, 'id_kab_domisili')->select(['id', 'nama'])
+            ->withDefault(function () {
+                return new Kabupaten();
+            });
     }
 
     public function kec_dom(){
-        return $this->belongsTo('App\Models\Wilayah\Kecamatan', 'id_kec_domisili')->select(['id', 'nama']);
+        return $this->belongsTo(Kecamatan::class, 'id_kec_domisili')->select(['id', 'nama'])
+            ->withDefault(function () {
+                return new Kecamatan();
+            });
     }
 
     public function kel_dom(){
-        return $this->belongsTo('App\Models\Wilayah\Kelurahan', 'id_kel_domisili')->select(['id', 'nama', 'kode_pos']);
+        return $this->belongsTo(Kelurahan::class, 'id_kel_domisili')->select(['id', 'nama', 'kode_pos'])
+            ->withDefault(function () {
+                return new Kelurahan();
+            });
     }
 
     // Tempat Kerja
     public function prov_kerja(){
-        return $this->belongsTo('App\Models\Wilayah\Provinsi', 'id_prov_tempat_kerja')->select(['id', 'nama']);
+        return $this->belongsTo(Provinsi::class, 'id_prov_tempat_kerja')->select(['id', 'nama'])
+            ->withDefault(function () {
+                return new Provinsi();
+            });
     }
 
     public function kab_kerja(){
-        return $this->belongsTo('App\Models\Wilayah\Kabupaten', 'id_kab_tempat_kerja')->select(['id', 'nama']);
+        return $this->belongsTo(Kabupaten::class, 'id_kab_tempat_kerja')->select(['id', 'nama'])
+            ->withDefault(function () {
+                return new Kabupaten();
+            });
     }
 
     public function kec_kerja(){
-        return $this->belongsTo('App\Models\Wilayah\Kecamatan', 'id_kec_tempat_kerja')->select(['id', 'nama']);
+        return $this->belongsTo(Kecamatan::class, 'id_kec_tempat_kerja')->select(['id', 'nama'])
+            ->withDefault(function () {
+                return new Kecamatan();
+            });
     }
 
     public function kel_kerja(){
-        return $this->belongsTo('App\Models\Wilayah\Kelurahan', 'id_kel_tempat_kerja')->select(['id', 'nama', 'kode_pos']);
+        return $this->belongsTo(Kelurahan::class, 'id_kel_tempat_kerja')->select(['id', 'nama', 'kode_pos'])
+            ->withDefault(function () {
+                return new Kelurahan();
+            });
     }
 }

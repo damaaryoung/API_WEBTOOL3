@@ -107,7 +107,7 @@ class DebiturController extends BaseController
                     'rt'             => $val->rt_tempat_kerja,
                     'rw'             => $val->rw_tempat_kerja,
                     'kelurahan' => [
-                        'id'    => $val->kel_kerja['id'],
+                        'id'    => $val->kel_kel_tempat_kerja,
                         'nama'  => $val->kel_kerja['nama']
                     ],
                     'kecamatan' => [
