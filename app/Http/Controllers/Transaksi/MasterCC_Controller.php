@@ -35,16 +35,15 @@ class MasterCC_Controller extends BaseController
             ], 404);
         }
 
+        $id_area   = $pic->id_area;
         $id_cabang = $pic->id_mk_cabang;
 
-        if ($id_cabang == 0) {
-            $query = TransSO::with('pic', 'cabang', 'asaldata','debt', 'faspin')->get();
-        }elseif ($id_cabang != 0) {
-            $query = TransSO::with('pic', 'cabang', 'asaldata','debt', 'faspin')
-                    ->where('user_id', $user_id)
-                    ->where('id_cabang', $id_cabang)
-                    ->get();
-        }
+
+        $query_dir = TransSO::with('pic', 'cabang', 'asaldata','debt', 'faspin');
+
+        $method = 'get';
+
+        $query = Helper::checkDir($user_id, $jpic = $pic->jpic['nama_jenis'], $query_dir, $id_area, $id_cabang, $method);
 
 
         if ($query == '[]') {
@@ -53,57 +52,57 @@ class MasterCC_Controller extends BaseController
                 "status"  => "not found",
                 "message" => "Data kosong!!"
             ], 404);
-        }else{
-            foreach ($query as $key => $val) {
-                if ($val->status_das == 1) {
-                    $status_das = 'complete';
-                }elseif($val->status_das == 2){
-                    $status_das = 'not complete';
-                }else{
-                    $status_das = 'waiting';
-                }
+        }
 
-                if ($val->status_hm == 1) {
-                    $status_hm = 'complete';
-                }elseif ($val->status_hm == 2) {
-                    $status_hm = 'not complete';
-                }else{
-                    $status_hm = 'waiting';
-                }
-
-                $res[$key] = [
-                    'id'              => $val->id,
-                    'nomor_so'        => $val->nomor_so,
-                    'nama_so'         => $val->nama_so,
-                    'pic'             => $val->pic['nama'],
-                    'cabang'          => $val->cabang['nama'],
-                    'asal_data'       => $val->asaldata['nama'],
-                    'nama_marketing'  => $val->nama_marketing,
-                    'nama_calon_debt' => $val->debt['nama_lengkap'],
-                    'das'            => [
-                        'status'  => $status_das,
-                        'catatan' => $val->catatan_das
-                    ],
-                    'hm'            => [
-                        'status'  => $status_hm,
-                        'catatan' => $val->catatan_hm
-                    ]
-                ];
+        foreach ($query as $key => $val) {
+            if ($val->status_das == 1) {
+                $status_das = 'complete';
+            }elseif($val->status_das == 2){
+                $status_das = 'not complete';
+            }else{
+                $status_das = 'waiting';
             }
 
-            try {
-                return response()->json([
-                    'code'   => 200,
-                    'status' => 'success',
-                    'data'   => $res
-                ], 200);
-            } catch (Exception $e) {
-                return response()->json([
-                    "code"    => 501,
-                    "status"  => "error",
-                    "message" => $e
-                ], 501);
+            if ($val->status_hm == 1) {
+                $status_hm = 'complete';
+            }elseif ($val->status_hm == 2) {
+                $status_hm = 'not complete';
+            }else{
+                $status_hm = 'waiting';
             }
+
+            $res[$key] = [
+                'id'              => $val->id,
+                'nomor_so'        => $val->nomor_so,
+                'nama_so'         => $val->nama_so,
+                'pic'             => $val->pic['nama'],
+                'cabang'          => $val->cabang['nama'],
+                'asal_data'       => $val->asaldata['nama'],
+                'nama_marketing'  => $val->nama_marketing,
+                'nama_calon_debt' => $val->debt['nama_lengkap'],
+                'das'            => [
+                    'status'  => $status_das,
+                    'catatan' => $val->catatan_das
+                ],
+                'hm'            => [
+                    'status'  => $status_hm,
+                    'catatan' => $val->catatan_hm
+                ]
+            ];
+        }
+
+        try {
+            return response()->json([
+                'code'   => 200,
+                'status' => 'success',
+                'data'   => $res
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                "code"    => 501,
+                "status"  => "error",
+                "message" => $e
+            ], 501);
         }
 
     }
@@ -120,19 +119,14 @@ class MasterCC_Controller extends BaseController
             ], 404);
         }
 
+        $id_area   = $pic->id_area;
         $id_cabang = $pic->id_mk_cabang;
 
-        if ($id_cabang == 0) {
-            $val = TransSO::with('pic', 'cabang', 'asaldata', 'debt', 'pas', 'faspin', 'ao', 'ca')
-                    ->where('id', $id)
-                    ->first();
-        }elseif ($id_cabang != 0) {
-            $val = TransSO::with('pic', 'cabang', 'asaldata', 'debt', 'pas', 'faspin', 'ao', 'ca')
-                    ->where('id', $id)
-                    ->where('user_id', $user_id)
-                    ->where('id_cabang', $id_cabang)
-                    ->first();
-        }
+
+        $query_dir = TransSO::with('pic', 'cabang', 'asaldata', 'debt', 'pas', 'faspin', 'ao', 'ca')->where('id', $id);
+        $method = 'first';
+
+        $val = Helper::checkDir($user_id, $jpic = $pic->jpic['nama_jenis'], $query_dir, $id_area, $id_cabang, $method);
 
 
         if (!$val) {
@@ -1117,19 +1111,14 @@ class MasterCC_Controller extends BaseController
             ], 404);
         }
 
+        $id_area   = $pic->id_area;
         $id_cabang = $pic->id_mk_cabang;
 
-        if ($id_cabang == 0) {
-            $query = TransSO::with('pic', 'cabang', 'asaldata','debt', 'faspin')
-                ->where('nomor_so', 'like', '%'.$search.'%')
-                ->get();
-        }elseif ($id_cabang != 0) {
-            $query = TransSO::with('pic', 'cabang', 'asaldata','debt', 'faspin')
-                    ->where('id_cabang', $id_cabang)
-                    ->where('user_id', $user_id)
-                    ->where('nomor_so', 'like', '%'.$search.'%')
-                    ->get();
-        }
+
+        $query_dir = TransSO::with('pic', 'cabang', 'asaldata','debt', 'faspin')->where('nomor_so', 'like', '%'.$search.'%');
+        $method = 'get';
+
+        $query = Helper::checkDir($user_id, $jpic = $pic->jpic['nama_jenis'], $query_dir, $id_area, $id_cabang, $method);
 
 
         if ($query == '[]') {

@@ -114,4 +114,54 @@ class Controller extends BaseController
         return (int) ceil($num / 1000) * 1000;
         // return ($num > 0) ? ceil($num) : floor($num);
     }
+
+    public static function checkDir($user_id, $jpic, $query_dir, $id_area, $id_cabang, $method){
+
+        if($jpic == 'DIR UT' || $jpic == 'DIR BIS' || $jpic == 'DIR RISK'){
+
+            if ($method == 'get') {
+
+                $query = $query_dir->get();
+            }else{
+                $query = $query_dir->first();
+            }
+
+        }elseif($jpic == 'CRM' || $jpic == 'AM'){
+
+            if ($method == 'get') {
+
+                $query = $query_dir
+                        ->where('user_id', $user_id)
+                        ->where('id_area', $id_area)
+                        ->get();
+
+            }else{
+
+                $query = $query_dir
+                        ->where('user_id', $user_id)
+                        ->where('id_area', $id_area)
+                        ->first();
+            }
+
+        }else{
+
+            if ($method == 'get'){
+
+                $query = $query_dir
+                        ->where('user_id', $user_id)
+                        ->where('id_area', $id_area)
+                        ->where('id_cabang', $id_cabang)
+                        ->get();
+            }else{
+
+                $query = $query_dir
+                        ->where('user_id', $user_id)
+                        ->where('id_area', $id_area)
+                        ->where('id_cabang', $id_cabang)
+                        ->first();
+            }
+        }
+
+        return $query;
+    }
 }

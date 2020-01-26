@@ -41,21 +41,14 @@ class MasterCA_Controller extends BaseController
             ], 404);
         }
 
+        $id_area   = $pic->id_area;
         $id_cabang = $pic->id_mk_cabang;
 
-        if ($id_cabang == 0) {
-            $query = TransAO::with('so', 'pic', 'cabang')
-                ->where('status_ao', 1)
-                ->get();
-        }elseif ($id_cabang != 0) {
-            $query = TransAO::with('so', 'pic', 'cabang')
-                    ->where('status_ao', 1)
-                    ->where('id_cabang', $id_cabang)
-                    ->get();
-        }
+        $query_dir = TransAO::with('so', 'pic', 'cabang')->where('status_ao', 1);
+        $method = 'get';
 
+        $query = Helper::checkDir($user_id, $jpic = $pic->jpic['nama_jenis'], $query_dir, $id_area, $id_cabang, $method);
 
-        // 'so', 'pic', 'cabang', 'valid', 'verif', 'tan', 'ken', 'pe_tan', 'pe_ken', 'kapbul', 'usaha', 'recom_ao'
 
         if ($query == '[]') {
             return response()->json([
@@ -119,18 +112,13 @@ class MasterCA_Controller extends BaseController
             ], 404);
         }
 
+        $id_area   = $pic->id_area;
         $id_cabang = $pic->id_mk_cabang;
 
-        if ($id_cabang == 0) {
-            $val = TransAO::with('so', 'pic', 'cabang')
-                ->where('id_trans_so', $id)
-                ->first();
-        }elseif ($id_cabang != 0) {
-            $val = TransAO::with('so', 'pic', 'cabang')
-                    ->where('id_trans_so', $id)
-                    ->where('id_cabang', $id_cabang)
-                    ->first();
-        }
+        $query_dir = TransAO::with('so', 'pic', 'cabang')->where('id_trans_so', $id);
+        $method = 'first';
+
+        $val = Helper::checkDir($user_id, $jpic = $pic->jpic['nama_jenis'], $query_dir, $id_area, $id_cabang, $method);
 
 
         if (!$val) {
@@ -725,23 +713,16 @@ class MasterCA_Controller extends BaseController
             ], 404);
         }
 
+        $id_area   = $pic->id_area;
         $id_cabang = $pic->id_mk_cabang;
 
-        if ($id_cabang == 0) {
-            $query = TransAO::with('so', 'pic', 'cabang')
+        $query_dir = TransAO::with('so', 'pic', 'cabang')
                 ->where('status_ao', 1)
-                ->orWhere('nomor_ao', 'like', '%'.$search.'%')
-                ->get();
-        }elseif ($id_cabang != 0) {
-            $query = TransAO::with('so', 'pic', 'cabang')
-                    ->where('status_ao', 1)
-                    ->where('id_cabang', $id_cabang)
-                    ->orWhere('nomor_ao', 'like', '%'.$search.'%')
-                    ->get();
-        }
+                ->orWhere('nomor_ao', 'like', '%'.$search.'%');
 
+        $method = 'get';
 
-        // 'so', 'pic', 'cabang', 'valid', 'verif', 'tan', 'ken', 'pe_tan', 'pe_ken', 'kapbul', 'usaha', 'recom_ao'
+        $query = Helper::checkDir($user_id, $jpic = $pic->jpic['nama_jenis'], $query_dir, $id_area, $id_cabang, $method);
 
         if ($query == '[]') {
             return response()->json([

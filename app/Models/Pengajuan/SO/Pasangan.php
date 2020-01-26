@@ -1,7 +1,4 @@
-
-    ->withDefault(function () {
-                return new Kelurahan();
-            });<?php
+<?php
 
 namespace App\Models\Pengajuan\SO;
 

@@ -36,13 +36,13 @@ class MasterCAA_Controller extends BaseController
             ], 404);
         }
 
+        $id_area   = $pic->id_area;
         $id_cabang = $pic->id_mk_cabang;
 
-        if ($id_cabang == 0) {
-            $query = TransCA::with('so', 'pic', 'cabang')->where('status_ca', 1)->get();
-        }elseif ($id_cabang != 0) {
-            $query = TransCA::with('so', 'pic', 'cabang')->where('id_cabang', $id_cabang)->where('status_ca', 1)->get();
-        }
+        $query_dir = TransCA::with('so', 'pic', 'cabang')->where('status_ca', 1);
+        $method = 'get';
+
+        $query = Helper::checkDir($user_id, $jpic = $pic->jpic['nama_jenis'], $query_dir, $id_area, $id_cabang, $method);
 
         if ($query == '[]') {
             return response()->json([
@@ -430,16 +430,10 @@ class MasterCAA_Controller extends BaseController
         // List Sdi Tahap 2
         if($idOrString == 'list_done'){
 
-            if ($id_cabang == 0) {
-                $query = TransCAA::with('so', 'pic', 'cabang')
-                ->where('status_caa', 1)
-                ->get();
-            }elseif ($id_cabang != 0) {
-                $query = TransCAA::with('so', 'pic', 'cabang')
-                    ->where('id_cabang', $id_cabang)
-                    ->where('status_caa', 1)
-                    ->get();
-            }
+            $query_dir = TransCAA::with('so', 'pic', 'cabang')->where('status_caa', 1);
+            $method = 'get';
+
+            $query = Helper::checkDir($user_id, $jpic = $pic->jpic['nama_jenis'], $query_dir, $id_area, $id_cabang, $method);
 
 
             if ($query == '[]') {
@@ -534,18 +528,10 @@ class MasterCAA_Controller extends BaseController
         }else{
             $id = $idOrString;
 
-            if ($id_cabang == 0) {
+            $query_dir = TransCA::with('pic', 'cabang')->where('id_trans_so', $id);
+            $method = 'first';
 
-                $val = TransCA::with('pic', 'cabang')->where('id_trans_so', $id)->first();
-
-            }elseif ($id_cabang != 0) {
-
-                $val = TransCA::with('pic', 'cabang')
-                        ->where('id_cabang', $id_cabang)
-                        ->where('id_trans_so', $id)
-                        ->first();
-            }
-
+            $val = Helper::checkDir($user_id, $jpic = $pic->jpic['nama_jenis'], $query_dir, $id_area, $id_cabang, $method);
 
             if ($val == null) {
                 return response()->json([
@@ -696,17 +682,13 @@ class MasterCAA_Controller extends BaseController
             ], 404);
         }
 
+        $id_area   = $pic->id_mk_area;
         $id_cabang = $pic->id_mk_cabang;
 
-        if ($id_cabang == 0) {
-            $val = TransCAA::with('so', 'pic', 'cabang')->where('id_trans_so', $id)->first();
-        }elseif ($id_cabang != 0) {
-            $val = TransCAA::with('so', 'pic', 'cabang')
-                ->where('id_cabang', $id_cabang)
-                ->where('id_trans_so', $id)
-                ->first();
-        }
+        $query_dir = TransCAA::with('so', 'pic', 'cabang')->where('id_trans_so', $id);
+        $method = 'first';
 
+        $val = Helper::checkDir($user_id, $jpic = $pic->jpic['nama_jenis'], $query_dir, $id_area, $id_cabang, $method);
 
         if ($val == null) {
             return response()->json([
@@ -954,23 +936,16 @@ class MasterCAA_Controller extends BaseController
             ], 404);
         }
 
+        $id_area   = $pic->id_mk_area;
         $id_cabang = $pic->id_mk_cabang;
 
-        if ($id_cabang == 0) {
-
-            $query = TransCA::with('pic', 'cabang')
+        $query_dir = TransCA::with('pic', 'cabang')
                 ->where('status_ca', 1)
-                ->where('nomor_ca', 'like', '%'.$search.'%')
-                ->get();
+                ->where('nomor_ca', 'like', '%'.$search.'%');
 
-        }elseif ($id_cabang != 0) {
+        $method = 'get';
 
-            $query = TransCA::with('pic', 'cabang')
-                    ->where('id_cabang', $id_cabang)
-                    ->where('status_ca', 1)
-                    ->where('nomor_ca', 'like', '%'.$search.'%')
-                    ->get();
-        }
+        $query = Helper::checkDir($user_id, $jpic = $pic->jpic['nama_jenis'], $query_dir, $id_area, $id_cabang, $method);
 
 
         if ($query == '[]') {

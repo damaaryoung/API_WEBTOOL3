@@ -33,11 +33,10 @@ class TeamCAA_Controller extends BaseController
             ], 404);
         }
 
-        $id_area   = $pic->id_mk_area;
+        $id_area   = $pic->id_area;
         $id_cabang = $pic->id_mk_cabang;
 
-        if($pic->jpic['nama_jenis'] == 'DIR UT' || $pic->jpic['nama_jenis'] == 'DIR BIS' || $pic->jpic['nama_jenis'] == 'DIR RISK'){
-            $query = PIC::with(['jpic', 'area','cabang'])
+        $query_dir = PIC::with(['jpic', 'area','cabang'])
                 ->whereHas('jpic', function($q) {
                     // Query the name field in status table
                     $q->where('nama_jenis', '=', 'DIR UT'); // '=' is optional
@@ -48,41 +47,11 @@ class TeamCAA_Controller extends BaseController
                     $q->orWhere('nama_jenis', '=', 'PC');
                 })
                 ->where('flg_aktif', 1)
-                ->where('id', '!=', $pic->id)
-                ->get();
+                ->where('id', '!=', $pic->id);
 
-        }elseif($pic->jpic['nama_jenis'] == 'CRM' || $pic->jpic['nama_jenis'] == 'AM'){
-            $query = PIC::with(['jpic', 'area','cabang'])
-                ->whereHas('jpic', function($q) {
-                    // Query the name field in status table
-                    $q->where('nama_jenis', '=', 'DIR UT'); // '=' is optional
-                    $q->orWhere('nama_jenis', '=', 'DIR BIS');
-                    $q->orWhere('nama_jenis', '=', 'DIR RISK');
-                    $q->orWhere('nama_jenis', '=', 'CRM');
-                    $q->orWhere('nama_jenis', '=', 'AM');
-                    $q->orWhere('nama_jenis', '=', 'PC');
-                })
-                ->where('flg_aktif', 1)
-                ->where('id_mk_area', $id_area)
-                ->where('id', '!=', $pic->id)
-                ->get();
-        }else{
-            $query = PIC::with(['jpic', 'area','cabang'])
-                ->whereHas('jpic', function($q) {
-                    // Query the name field in status table
-                    $q->where('nama_jenis', '=', 'DIR UT'); // '=' is optional
-                    $q->orWhere('nama_jenis', '=', 'DIR BIS');
-                    $q->orWhere('nama_jenis', '=', 'DIR RISK');
-                    $q->orWhere('nama_jenis', '=', 'CRM');
-                    $q->orWhere('nama_jenis', '=', 'AM');
-                    $q->orWhere('nama_jenis', '=', 'PC');
-                })
-                ->where('flg_aktif', 1)
-                ->where('id_mk_area', $id_area)
-                ->where('id_mk_cabang', $id_cabang)
-                ->where('id', '!=', $pic->id)
-                ->get();
-        }
+        $method = 'get';
+
+        $query = Helper::checkDir($user_id, $jpic = $pic->jpic['nama_jenis'], $query_dir, $id_area, $id_cabang, $method);
 
         if ($query == '[]') {
             return response()->json([
@@ -134,25 +103,15 @@ class TeamCAA_Controller extends BaseController
             ], 404);
         }
 
-
-        $id_area   = $pic->id_mk_area;
+        $id_area   = $pic->id_area;
         $id_cabang = $pic->id_mk_cabang;
 
-        if($pic->jpic['nama_jenis'] == 'DIR UT' || $pic->jpic['nama_jenis'] == 'DIR BIS' || $pic->jpic['nama_jenis'] == 'DIR RISK'){
+        $query_dir = TransCAA::where('status_caa', 1)
+                ->where('id_area', $id_area)->where('pic_team_caa', 'like', "%{$pic->id}%");
 
-            $query = TransCAA::where('status_caa', 1)->get();
+        $method = 'get';
 
-        }elseif($pic->jpic['nama_jenis'] == 'CRM' || $pic->jpic['nama_jenis'] == 'AM'){
-
-            $query = TransCAA::where('status_caa', 1)
-                ->where('id_area', $id_area)->where('pic_team_caa', 'like', "%{$pic->id}%")->get();
-
-        }else{
-
-            $query = TransCAA::where('status_caa', 1)
-                ->where('id_area', $id_area)->where('id_cabang', $id_cabang)->where('pic_team_caa', 'like', "%{$pic->id}%")->get();
-
-        }
+        $query = Helper::checkDir($user_id, $jpic = $pic->jpic['nama_jenis'], $query_dir, $id_area, $id_cabang, $method);
 
         if ($query == '[]') {
             return response()->json([
@@ -271,29 +230,14 @@ class TeamCAA_Controller extends BaseController
             ], 404);
         }
 
-
-        $id_area   = $pic->id_mk_area;
+        $id_area   = $pic->id_area;
         $id_cabang = $pic->id_mk_cabang;
 
-        if($pic->jpic['nama_jenis'] == 'DIR UT' || $pic->jpic['nama_jenis'] == 'DIR BIS' || $pic->jpic['nama_jenis'] == 'DIR RISK'){
+        $query_dir = TransCAA::where('status_caa', 1)->where('id_trans_so', $id);
 
-            $query = TransCAA::where('status_caa', 1)->where('id_trans_so', $id)->first();
+        $method = 'first';
 
-        }elseif($pic->jpic['nama_jenis'] == 'CRM' || $pic->jpic['nama_jenis'] == 'AM'){
-
-            $query = TransCAA::where('status_caa', 1)
-                ->where('id_area', $id_area)
-                ->where('id_trans_so', $id)
-                ->first();
-
-        }else{
-
-            $query = TransCAA::where('status_caa', 1)
-                ->where('id_area', $id_area)->where('id_cabang', $id_cabang)
-                ->where('id_trans_so', $id)
-                ->first();
-
-        }
+        $query = Helper::checkDir($user_id, $jpic = $pic->jpic['nama_jenis'], $query_dir, $id_area, $id_cabang, $method);
 
         if ($query == null) {
             return response()->json([
