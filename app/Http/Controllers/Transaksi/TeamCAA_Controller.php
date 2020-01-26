@@ -515,7 +515,7 @@ class TeamCAA_Controller extends BaseController
     }
 
     public function approve($id, Request $req){
-        $user_id = 358; // $req->auth->user_id;
+        $user_id = $req->auth->user_id;
 
         $pic = PIC::where('user_id', $user_id)->first();
 
