@@ -69,6 +69,14 @@ class MasterCA_Controller extends BaseController
                 $status_ao = 'waiting';
             }
 
+            if ($val->so['ca']['status_ca'] == 1) {
+                $status_ca = 'recommend';
+            }elseif($val->so['ca']['status_ca'] == 2){
+                $status_ca = 'not recommend';
+            }else{
+                $status_ca = 'waiting';
+            }
+
             $data[$key] = [
                 'id_trans_so'    => $val->id_trans_so,
                 'nomor_so'       => $val->so['nomor_so'],
@@ -81,7 +89,14 @@ class MasterCA_Controller extends BaseController
                 'nama_debitur'   => $val->so['debt']['nama_lengkap'],
                 'plafon'         => $val->so['faspin']['plafon'],
                 'tenor'          => $val->so['faspin']['tenor'],
-                'status_ao'      => $status_ao
+                "ao" => [
+                    'status_ao'     => $status_ao,
+                    'catatan_ao'    => $val->catatan_ao
+                ],
+                "ca" => [
+                    'status_ca'     => $status_ca,
+                    'catatan_ca'    => $val->so['ca']['catatan_ca']
+                ],
             ];
         }
 

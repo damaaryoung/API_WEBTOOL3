@@ -131,14 +131,12 @@ class Controller extends BaseController
             if ($method == 'get') {
 
                 $query = $query_dir
-                        ->where('user_id', $user_id)
                         ->where('id_area', $id_area)
                         ->get();
 
             }else{
 
                 $query = $query_dir
-                        ->where('user_id', $user_id)
                         ->where('id_area', $id_area)
                         ->first();
             }
@@ -148,14 +146,12 @@ class Controller extends BaseController
             if ($method == 'get'){
 
                 $query = $query_dir
-                        ->where('user_id', $user_id)
                         ->where('id_area', $id_area)
                         ->where('id_cabang', $id_cabang)
                         ->get();
             }else{
 
                 $query = $query_dir
-                        ->where('user_id', $user_id)
                         ->where('id_area', $id_area)
                         ->where('id_cabang', $id_cabang)
                         ->first();

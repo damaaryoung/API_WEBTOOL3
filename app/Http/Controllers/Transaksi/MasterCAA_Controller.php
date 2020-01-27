@@ -685,6 +685,7 @@ class MasterCAA_Controller extends BaseController
         $id_area   = $pic->id_mk_area;
         $id_cabang = $pic->id_mk_cabang;
 
+
         $query_dir = TransCAA::with('so', 'pic', 'cabang')->where('id_trans_so', $id);
         $method = 'first';
 
@@ -764,11 +765,11 @@ class MasterCAA_Controller extends BaseController
                 $ptc[] = [
                     'id_pic'    => $get_pic[$i]['id'],
                     'nama'      => $get_pic[$i]['nama'],
-                    'jabatan'   => $get_pic[$i]['jpic']['nama_jenis']
+                    'jabatan'   => $get_pic[$i]['jpic']['nama_jenis'],
+                    'user_id'   => $get_pic[$i]['user_id']
                 ];
             }
         }
-
 
 
         if ($val->status_caa == 1) {
@@ -873,6 +874,7 @@ class MasterCAA_Controller extends BaseController
                 'reguler' => $reguler = array(
                     'biaya_provisi'         => $val->so['ca']['recom_ca']['biaya_provisi'],
                     'biaya_administrasi'    => $val->so['ca']['recom_ca']['biaya_administrasi'],
+                    'biaya_credit_checking' => $val->so['ca']['recom_ca']['biaya_credit_checking'],
                     'biaya_premi' => [
                         'asuransi_jiwa'     => $val->so['ca']['recom_ca']['biaya_asuransi_jiwa'],
                         'asuransi_jaminan'  => $val->so['ca']['recom_ca']['biaya_asuransi_jaminan']
