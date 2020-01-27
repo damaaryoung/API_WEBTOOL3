@@ -36,7 +36,7 @@ class MasterCC_Controller extends BaseController
         }
 
         $id_area   = $pic->id_area;
-        $id_cabang = $pic->id_mk_cabang;
+        $id_cabang = $pic->id_cabang;
 
 
         $query_dir = TransSO::with('pic', 'cabang', 'asaldata','debt', 'faspin');
@@ -120,7 +120,7 @@ class MasterCC_Controller extends BaseController
         }
 
         $id_area   = $pic->id_area;
-        $id_cabang = $pic->id_mk_cabang;
+        $id_cabang = $pic->id_cabang;
 
 
         $query_dir = TransSO::with('pic', 'cabang', 'asaldata', 'debt', 'pas', 'faspin', 'ao', 'ca')->where('id', $id);
@@ -402,13 +402,13 @@ class MasterCC_Controller extends BaseController
         $JPIC   = JPIC::where('id', $PIC->id_mj_pic)->first();
 
         //  ID-Cabang - AO / CA / SO - Bulan - Tahun - NO. Urut
-        $nomor_so = $PIC->id_mk_cabang.'-'.$JPIC->nama_jenis.'-'.$month.'-'.$year.'-'.$lastNumb; //  ID-Cabang - AO / CA / SO - Bulan - Tahun - NO. Urut
+        $nomor_so = $PIC->id_cabang.'-'.$JPIC->nama_jenis.'-'.$month.'-'.$year.'-'.$lastNumb; //  ID-Cabang - AO / CA / SO - Bulan - Tahun - NO. Urut
 
         $trans_so = array(
             'nomor_so'       => $nomor_so,
             'user_id'        => $user_id,
             'id_pic'         => $PIC->id,
-            'id_cabang'      => $PIC->id_mk_cabang,
+            'id_cabang'      => $PIC->id_cabang,
             'nama_so'        => $PIC->nama,
             'id_asal_data'   => $req->input('id_asal_data'),
             'nama_marketing' => $req->input('nama_marketing')
@@ -1112,7 +1112,7 @@ class MasterCC_Controller extends BaseController
         }
 
         $id_area   = $pic->id_area;
-        $id_cabang = $pic->id_mk_cabang;
+        $id_cabang = $pic->id_cabang;
 
 
         $query_dir = TransSO::with('pic', 'cabang', 'asaldata','debt', 'faspin')->where('nomor_so', 'like', '%'.$search.'%');

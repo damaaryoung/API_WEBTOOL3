@@ -42,7 +42,7 @@ class MasterCA_Controller extends BaseController
         }
 
         $id_area   = $pic->id_area;
-        $id_cabang = $pic->id_mk_cabang;
+        $id_cabang = $pic->id_cabang;
 
         $query_dir = TransAO::with('so', 'pic', 'cabang')->where('status_ao', 1);
         $method = 'get';
@@ -128,7 +128,7 @@ class MasterCA_Controller extends BaseController
         }
 
         $id_area   = $pic->id_area;
-        $id_cabang = $pic->id_mk_cabang;
+        $id_cabang = $pic->id_cabang;
 
         $query_dir = TransAO::with('so', 'pic', 'cabang')->where('id_trans_so', $id);
         $method = 'first';
@@ -292,7 +292,7 @@ class MasterCA_Controller extends BaseController
         $JPIC   = JPIC::where('id', $PIC->id_mj_pic)->first();
 
         //  ID-Cabang - AO / CA / SO - Bulan - Tahun - NO. Urut
-        $nomor_ca = $PIC->id_mk_cabang.'-'.$JPIC->nama_jenis.'-'.$month.'-'.$year.'-'.$lastNumb;
+        $nomor_ca = $PIC->id_cabang.'-'.$JPIC->nama_jenis.'-'.$month.'-'.$year.'-'.$lastNumb;
 
         $check = TransSO::where('id',$id)->first();
 
@@ -309,7 +309,7 @@ class MasterCA_Controller extends BaseController
             'user_id'     => $user_id,
             'id_trans_so' => $id,
             'id_pic'      => $PIC->id,
-            'id_cabang'   => $PIC->id_mk_cabang,
+            'id_cabang'   => $PIC->id_cabang,
             'catatan_ca'  => $req->input('catatan_ca'),
             'status_ca'   => empty($req->input('status_ca')) ? 1 : $req->input('status_ca')
         );
@@ -729,7 +729,7 @@ class MasterCA_Controller extends BaseController
         }
 
         $id_area   = $pic->id_area;
-        $id_cabang = $pic->id_mk_cabang;
+        $id_cabang = $pic->id_cabang;
 
         $query_dir = TransAO::with('so', 'pic', 'cabang')
                 ->where('status_ao', 1)

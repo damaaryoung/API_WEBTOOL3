@@ -45,7 +45,7 @@ class MasterAO_Controller extends BaseController
         }
 
         $id_area   = $pic->id_area;
-        $id_cabang = $pic->id_mk_cabang;
+        $id_cabang = $pic->id_cabang;
 
 
         $query_dir = TransSO::with('pic', 'cabang', 'asaldata', 'debt', 'pas', 'faspin', 'ao', 'ca');
@@ -146,7 +146,7 @@ class MasterAO_Controller extends BaseController
         }
 
         $id_area   = $pic->id_area;
-        $id_cabang = $pic->id_mk_cabang;
+        $id_cabang = $pic->id_cabang;
 
         $query_dir = TransSO::with('pic', 'cabang', 'asaldata', 'debt', 'pas', 'faspin', 'ao', 'ca')->where('id', $id);
         $method = 'first';
@@ -299,7 +299,7 @@ class MasterAO_Controller extends BaseController
         $JPIC   = JPIC::where('id', $PIC->id_mj_pic)->first();
 
         //  ID-Cabang - AO / CA / SO - Bulan - Tahun - NO. Urut
-        $nomor_ao = $PIC->id_mk_cabang.'-'.$JPIC->nama_jenis.'-'.$month.'-'.$year.'-'.$lastNumb;
+        $nomor_ao = $PIC->id_cabang.'-'.$JPIC->nama_jenis.'-'.$month.'-'.$year.'-'.$lastNumb;
 
         $check = TransSO::where('id',$id)->first();
 
@@ -318,7 +318,7 @@ class MasterAO_Controller extends BaseController
             'id_trans_so'           => $id,
             'user_id'               => $user_id,
             'id_pic'                => $PIC->id,
-            'id_cabang'             => $PIC->id_mk_cabang,
+            'id_cabang'             => $PIC->id_cabang,
             'catatan_ao'            => $req->input('catatan_ao'),
             'status_ao'             => empty($req->input('status_ao')) ? 1 : $req->input('status_ao')
         );
@@ -946,7 +946,7 @@ class MasterAO_Controller extends BaseController
         }
 
         $id_area   = $pic->id_area;
-        $id_cabang = $pic->id_mk_cabang;
+        $id_cabang = $pic->id_cabang;
 
         $query_dir = TransSO::with('pic', 'cabang', 'asaldata', 'debt', 'pas', 'faspin', 'ao', 'ca')
                 ->where('nomor_so', 'like', '%'.$search.'%');
@@ -1030,6 +1030,49 @@ class MasterAO_Controller extends BaseController
                 "code"    => 501,
                 "status"  => "error",
                 "message" => $e
+            ], 501);
+        }
+    }
+
+    public function report_approval($id, Request $req){
+        // $user_id = 507; // $req->auth->user_id;
+
+        // $pic = PIC::where('user_id', $user_id)->first();
+
+        // if ($pic == null) {
+        //     return response()->json([
+        //         "code"    => 404,
+        //         "status"  => "not found",
+        //         "message" => "User_ID anda adalah '".$user_id."' dengan username '".$req->auth->user."'. Yang berhak melihat halaman ini adalah Direktur, CRM, PC dan AM. Mohon cek dimenu Team CAA untuk validasi data anda atau silahkan hubungin tim IT"
+        //     ], 404);
+        // }
+
+        $check_caa = TransCAA::where('status_caa', 1)->where('id_trans_so', $id)->first();
+
+        if ($check == null) {
+            return response()->json([
+                "code"    => 404,
+                "status"  => "not found",
+                "message" => "Data yang akan anda eksekusi tidak ada, mohon cek URL anda"
+            ], 404);
+        }
+
+        $check_team = TransTCAA::where('id_trans_so', $id)->whereIn('id_pic', $check_caa->pic_team_caa)->get()->toArray();
+
+        $data = $check_team;
+
+        try{
+            return response()->json([
+                'code'   => 200,
+                'status' => 'success',
+                'message'=> $data
+            ], 200);
+        } catch (Exception $e) {
+            $err = DB::connection('web')->rollback();
+            return response()->json([
+                'code'    => 501,
+                'status'  => 'error',
+                'message' => $err
             ], 501);
         }
     }

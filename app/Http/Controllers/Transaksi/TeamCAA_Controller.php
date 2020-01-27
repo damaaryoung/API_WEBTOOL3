@@ -34,7 +34,7 @@ class TeamCAA_Controller extends BaseController
         }
 
         $id_area   = $pic->id_area;
-        $id_cabang = $pic->id_mk_cabang;
+        $id_cabang = $pic->id_cabang;
 
         $query_dir = PIC::with(['jpic', 'area','cabang'])
                 ->whereHas('jpic', function($q) {
@@ -42,7 +42,9 @@ class TeamCAA_Controller extends BaseController
                     $q->where('nama_jenis', '=', 'DIR UT'); // '=' is optional
                     $q->orWhere('nama_jenis', '=', 'DIR BIS');
                     $q->orWhere('nama_jenis', '=', 'DIR RISK');
+                    $q->orWhere('nama_jenis', '=', 'KEPATUHAN');
                     $q->orWhere('nama_jenis', '=', 'CRM');
+                    $q->orWhere('nama_jenis', '=', 'CA');
                     $q->orWhere('nama_jenis', '=', 'AM');
                     $q->orWhere('nama_jenis', '=', 'PC');
                 })
@@ -91,7 +93,7 @@ class TeamCAA_Controller extends BaseController
     }
 
     public function index(Request $req){
-        $user_id = $req->auth->user_id;
+        $user_id = 507; // $req->auth->user_id;
 
         $pic = PIC::where('user_id', $user_id)->first();
 
@@ -104,10 +106,12 @@ class TeamCAA_Controller extends BaseController
         }
 
         $id_area   = $pic->id_area;
-        $id_cabang = $pic->id_mk_cabang;
+        $id_cabang = $pic->id_cabang;
 
         $query_dir = TransCAA::where('status_caa', 1)
-                ->where('id_area', $id_area)->where('pic_team_caa', 'like', "%{$pic->id}%");
+            ->where('pic_team_caa', 'like', "%{$pic->id}%")
+            ->where('status_team_caa', 'not like', '%accept%')
+            ->where('status_team_caa', 'not like', '%reject%');
 
         $method = 'get';
 
@@ -165,14 +169,12 @@ class TeamCAA_Controller extends BaseController
                 'rekomendasi_angsuran' => $val->so['ca']['recom_ca']['rekom_angsuran']
             );
 
-            if ($val->status_caa == 0) {
-                $status_caa = 'waiting';
-            }elseif ($val->status_caa == 1) {
-                $status_caa = 'approve';
+            if ($val->status_caa == 1) {
+                $status_caa = 'recommend';
             }elseif($val->status_caa == 2){
-                $status_caa = 'return';
-            }elseif($val->status_caa == 3){
-                $status_caa = 'reject';
+                $status_caa = 'not recommend';
+            }else{
+                $status_caa = 'waiting';
             }
 
             $data[] = [
@@ -231,7 +233,7 @@ class TeamCAA_Controller extends BaseController
         }
 
         $id_area   = $pic->id_area;
-        $id_cabang = $pic->id_mk_cabang;
+        $id_cabang = $pic->id_cabang;
 
         $query_dir = TransCAA::where('status_caa', 1)->where('id_trans_so', $id);
 
@@ -459,7 +461,7 @@ class TeamCAA_Controller extends BaseController
     }
 
     public function approve($id, Request $req){
-        $user_id = $req->auth->user_id;
+        $user_id = 507; // $req->auth->user_id;
 
         $pic = PIC::where('user_id', $user_id)->first();
 
@@ -481,16 +483,8 @@ class TeamCAA_Controller extends BaseController
             ], 404);
         }
 
-        // $self = TransTCAA::where('id_trans_caa', $check->id)->where('tujuan_forward', 'like', "%{$pic->id}%")->get();
-
-        // if($self != '[]'){
-        //     if ($self->tujuan_forward) {
-
-        //     }
-        // }
-
-        $id_area   = $pic->id_mk_area;
-        $id_cabang = $pic->id_mk_cabang;
+        $id_area   = $pic->id_area;
+        $id_cabang = $pic->id_cabang;
 
         $form = array(
             'user_id'       => $user_id,
@@ -530,6 +524,10 @@ class TeamCAA_Controller extends BaseController
 
             }
 
+            if ($form['status'] == 'return') {
+                TransCAA::where('id_trans_so', $id)->update(['status_caa' => 0, 'status_team_caa' => $status]);
+            }
+
             TransCAA::where('id_trans_so', $id)->update(['status_team_caa' => $status]);
 
             DB::connection('web')->commit();
@@ -548,4 +546,28 @@ class TeamCAA_Controller extends BaseController
             ], 501);
         }
     }
+
+        // public function report_approval($id, Request $req){
+        //     $user_id = 507; // $req->auth->user_id;
+
+        //     $pic = PIC::where('user_id', $user_id)->first();
+
+        //     if ($pic == null) {
+        //         return response()->json([
+        //             "code"    => 404,
+        //             "status"  => "not found",
+        //             "message" => "User_ID anda adalah '".$user_id."' dengan username '".$req->auth->user."'. Yang berhak melihat halaman ini adalah Direktur, CRM, PC dan AM. Mohon cek dimenu Team CAA untuk validasi data anda atau silahkan hubungin tim IT"
+        //         ], 404);
+        //     }
+
+        //     $check = TransCAA::where('status_caa', 1)->where('id_trans_so', $id)->where('pic_team_caa', 'like', "%{$pic->id}%")->first();
+
+        //     if ($check == null) {
+        //         return response()->json([
+        //             "code"    => 404,
+        //             "status"  => "not found",
+        //             "message" => "Data yang akan anda eksekusi tidak ada, mohon cek URL anda"
+        //         ], 404);
+        //     }
+        // }
 }

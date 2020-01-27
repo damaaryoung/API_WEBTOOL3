@@ -37,7 +37,7 @@ class MasterCAA_Controller extends BaseController
         }
 
         $id_area   = $pic->id_area;
-        $id_cabang = $pic->id_mk_cabang;
+        $id_cabang = $pic->id_cabang;
 
         $query_dir = TransCA::with('so', 'pic', 'cabang')->where('status_ca', 1);
         $method = 'get';
@@ -171,7 +171,7 @@ class MasterCAA_Controller extends BaseController
         $JPIC   = JPIC::where('id', $PIC->id_mj_pic)->first();
 
         //  ID-Cabang - AO / CA / SO - Bulan - Tahun - NO. Urut
-        $nomor_caa = $PIC->id_mk_cabang.'-'.$JPIC->nama_jenis.'-'.$month.'-'.$year.'-'.$lastNumb;
+        $nomor_caa = $PIC->id_cabang.'-'.$JPIC->nama_jenis.'-'.$month.'-'.$year.'-'.$lastNumb;
 
         $check = TransSO::where('id',$id)->first();
 
@@ -362,8 +362,8 @@ class MasterCAA_Controller extends BaseController
             'user_id'            => $user_id,
             'id_trans_so'        => $id,
             'id_pic'             => $PIC->id,
-            'id_area'            => $PIC->id_mk_area,
-            'id_cabang'          => $PIC->id_mk_cabang,
+            'id_area'            => $PIC->id_area,
+            'id_cabang'          => $PIC->id_cabang,
             'penyimpangan'       => $req->input('penyimpangan'),
             'pic_team_caa'       => $team_caa,
             'rincian'            => $req->input('rincian'),
@@ -424,8 +424,8 @@ class MasterCAA_Controller extends BaseController
             ], 404);
         }
 
-        $id_area   = $pic->id_mk_area;
-        $id_cabang = $pic->id_mk_cabang;
+        $id_area   = $pic->id_area;
+        $id_cabang = $pic->id_cabang;
 
         // List Sdi Tahap 2
         if($idOrString == 'list_done'){
@@ -487,14 +487,12 @@ class MasterCAA_Controller extends BaseController
                     'rekomendasi_angsuran' => $val->so['ca']['recom_ca']['rekom_angsuran']
                 );
 
-                if ($val->status_caa == 0) {
-                    $status_caa = 'waiting';
-                }elseif ($val->status_caa == 1) {
-                    $status_caa = 'approve';
+                if ($val->status_caa == 1) {
+                    $status_caa = 'recommend';
                 }elseif($val->status_caa == 2){
-                    $status_caa = 'return';
-                }elseif($val->status_caa == 3){
-                    $status_caa = 'reject';
+                    $status_caa = 'not recommend';
+                }else{
+                    $status_caa = 'waiting';
                 }
 
                 $data[] = [
@@ -682,8 +680,8 @@ class MasterCAA_Controller extends BaseController
             ], 404);
         }
 
-        $id_area   = $pic->id_mk_area;
-        $id_cabang = $pic->id_mk_cabang;
+        $id_area   = $pic->id_area;
+        $id_cabang = $pic->id_cabang;
 
 
         $query_dir = TransCAA::with('so', 'pic', 'cabang')->where('id_trans_so', $id);
@@ -907,6 +905,7 @@ class MasterCAA_Controller extends BaseController
                 'file_tempat_tinggal' => $val->file_tempat_tinggal,
                 'file_lain'           => explode(";", $val->file_lain)
             ],
+            'rincian'    => $val->rincian,
             'status_caa' => $status_caa
         );
 
@@ -938,8 +937,8 @@ class MasterCAA_Controller extends BaseController
             ], 404);
         }
 
-        $id_area   = $pic->id_mk_area;
-        $id_cabang = $pic->id_mk_cabang;
+        $id_area   = $pic->id_area;
+        $id_cabang = $pic->id_cabang;
 
         $query_dir = TransCA::with('pic', 'cabang')
                 ->where('status_ca', 1)
