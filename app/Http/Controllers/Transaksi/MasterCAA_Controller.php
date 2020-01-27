@@ -343,17 +343,17 @@ class MasterCAA_Controller extends BaseController
         }
 
         // Email Team CAA
-        // if (!empty($req->input('team_caa'))) {
-        //     for ($i = 0; $i < count($req->input('team_caa')); $i++) {
-        //         $arrTeam['team'][$i] = $req->input('team_caa')[$i];
-        //     }
+        if (!empty($req->input('team_caa'))) {
+            for ($i = 0; $i < count($req->input('team_caa')); $i++) {
+                $arrTeam['team'][$i] = $req->input('team_caa')[$i];
+            }
 
-        //     $team_caa = implode(",", $arrTeam['team']);
-        // }else{
+            $team_caa = implode(",", $arrTeam['team']);
+        }else{
 
-        //     $arrTeam['team'] = null;
-        //     $team_caa = null;
-        // }
+            $arrTeam['team'] = null;
+            $team_caa = null;
+        }
 
         // dd($team_caa);
 
@@ -380,6 +380,8 @@ class MasterCAA_Controller extends BaseController
 
         DB::connection('web')->beginTransaction();
 
+        // dd(explode(",", $data['pic_team_caa']));
+
         try {
             if ($check_caa == null) {
 
@@ -387,11 +389,29 @@ class MasterCAA_Controller extends BaseController
 
                 TransSO::where('id', $id)->update(['id_trans_caa' => $CAA->id]);
 
+                for ($i=0; $i < count(explode(",", $data['pic_team_caa'])); $i++){
+                    TransTCAA::create([
+                        'id_trans_so'  => $id,
+                        'id_trans_caa' => $CAA->id,
+                        'id_pic'       => $i,
+                        'status'       => 'waiting'
+                    ]);
+                }
+
             }else{
 
                 TransSO::where('id', $id)->update(['id_trans_caa' => $check_caa->id]);
 
                 TransCAA::where('id', $check_caa->id)->update($data);
+
+                for ($i=0; $i < count(explode(",", $data['pic_team_caa'])); $i++){
+                    TransTCAA::create([
+                        'id_trans_so'  => $id,
+                        'id_trans_caa' => $check_caa->id,
+                        'id_pic'       => $i,
+                        'status'       => 'waiting'
+                    ]);
+                }
             }
 
             DB::connection('web')->commit();

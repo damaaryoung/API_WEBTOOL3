@@ -54,23 +54,32 @@ class Handler extends ExceptionHandler
           return parent::render($request, $e);
         }
 
+
         $status = Response::HTTP_INTERNAL_SERVER_ERROR;
+
+        // if ($e instanceof ModelNotFoundException && $request->wantsJson()) {
+        //     $status = Response::HTTP_NOT_FOUND;
+        //     $e = new NotFoundHttpException('HTTP_NOT_FOUND', $e);
+        // }
 
         if ($e instanceof HttpResponseException) {
           $status = Response::HTTP_INTERNAL_SERVER_ERROR;
-        } elseif ($e instanceof MethodNotAllowedHttpException) {
+        }elseif ($e instanceof MethodNotAllowedHttpException) {
           $status = Response::HTTP_METHOD_NOT_ALLOWED;
           $e = new MethodNotAllowedHttpException([], 'HTTP_METHOD_NOT_ALLOWED', $e);
-        } elseif ($e instanceof NotFoundHttpException) {
+        }elseif ($e instanceof NotFoundHttpException) {
           $status = Response::HTTP_NOT_FOUND;
           $e = new NotFoundHttpException('HTTP_NOT_FOUND', $e);
-        } elseif ($e instanceof AuthorizationException) {
+        }elseif ($e instanceof ModelNotFoundException) {
+          $status = Response::HTTP_NOT_FOUND;
+          $e = new ModelNotFoundException('HTTP_NOT_FOUND', $e);
+        }elseif ($e instanceof AuthorizationException) {
           $status = Response::HTTP_FORBIDDEN;
           $e = new AuthorizationException('HTTP_FORBIDDEN', $status);
-        } elseif ($e instanceof \Dotenv\Exception\ValidationException && $e->getResponse()) {
+        }elseif ($e instanceof \Dotenv\Exception\ValidationException && $e->getResponse()) {
           $status = Response::HTTP_BAD_REQUEST;
           $e = new \Dotenv\Exception\ValidationException('HTTP_BAD_REQUEST', $status, $e);
-        } elseif ($e) {
+        }elseif ($e) {
           $e = new HttpException($status, 'HTTP_INTERNAL_SERVER_ERROR');
         }
 

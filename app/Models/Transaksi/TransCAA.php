@@ -31,7 +31,7 @@ class TransCAA extends Model implements AuthenticatableContract, AuthorizableCon
     protected $primaryKey = 'id';
 
     protected $fillable = [
-        'nomor_caa', 'user_id', 'id_trans_so', 'id_pic', 'id_area', 'id_cabang', 'pic_team_caa', 'penyimpangan', 'rincian', 'file_report_mao', 'file_report_mca', 'status_file_agunan', 'file_agunan', 'status_file_usaha', 'file_tempat_tinggal', 'file_lain', 'rincian', 'status_caa', 'status_team_caa', 'flg_aktif'
+        'nomor_caa', 'user_id', 'id_trans_so', 'id_pic', 'id_area', 'id_cabang', 'pic_team_caa', 'penyimpangan', 'rincian', 'file_report_mao', 'file_report_mca', 'status_file_agunan', 'file_agunan', 'status_file_usaha', 'file_usaha', 'file_tempat_tinggal', 'file_lain', 'rincian', 'status_caa', 'status_team_caa', 'flg_aktif'
     ];
 
     public function so(){

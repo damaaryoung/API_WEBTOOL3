@@ -1033,47 +1033,4 @@ class MasterAO_Controller extends BaseController
             ], 501);
         }
     }
-
-    public function report_approval($id, Request $req){
-        // $user_id = 507; // $req->auth->user_id;
-
-        // $pic = PIC::where('user_id', $user_id)->first();
-
-        // if ($pic == null) {
-        //     return response()->json([
-        //         "code"    => 404,
-        //         "status"  => "not found",
-        //         "message" => "User_ID anda adalah '".$user_id."' dengan username '".$req->auth->user."'. Yang berhak melihat halaman ini adalah Direktur, CRM, PC dan AM. Mohon cek dimenu Team CAA untuk validasi data anda atau silahkan hubungin tim IT"
-        //     ], 404);
-        // }
-
-        $check_caa = TransCAA::where('status_caa', 1)->where('id_trans_so', $id)->first();
-
-        if ($check == null) {
-            return response()->json([
-                "code"    => 404,
-                "status"  => "not found",
-                "message" => "Data yang akan anda eksekusi tidak ada, mohon cek URL anda"
-            ], 404);
-        }
-
-        $check_team = TransTCAA::where('id_trans_so', $id)->whereIn('id_pic', $check_caa->pic_team_caa)->get()->toArray();
-
-        $data = $check_team;
-
-        try{
-            return response()->json([
-                'code'   => 200,
-                'status' => 'success',
-                'message'=> $data
-            ], 200);
-        } catch (Exception $e) {
-            $err = DB::connection('web')->rollback();
-            return response()->json([
-                'code'    => 501,
-                'status'  => 'error',
-                'message' => $err
-            ], 501);
-        }
-    }
 }

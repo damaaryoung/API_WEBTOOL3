@@ -23,7 +23,7 @@ class TeamCAA extends Model implements AuthenticatableContract, AuthorizableCont
     protected $primaryKey = 'id';
 
     protected $fillable = [
-       'id','user_id','id_mj_pic','id_mk_area','id_mk_cabang','nama','email'
+       'id','user_id','id_mj_pic','id_area','id_cabang','nama','email'
     ];
 
     public $timestamps = false;
@@ -43,14 +43,14 @@ class TeamCAA extends Model implements AuthenticatableContract, AuthorizableCont
     }
 
     public function area(){
-        return $this->belongsTo(Area::class, 'id_mk_area')
+        return $this->belongsTo(Area::class, 'id_area')
             ->withDefault(function () {
                 return new Area();
             });
     }
 
     public function cabang(){
-        return $this->belongsTo(Cabang::class, 'id_mk_cabang')
+        return $this->belongsTo(Cabang::class, 'id_cabang')
             ->withDefault(function () {
                 return new Cabang();
             });

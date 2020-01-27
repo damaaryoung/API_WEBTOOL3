@@ -28,7 +28,7 @@ class PIC extends Model implements AuthenticatableContract, AuthorizableContract
     protected $primaryKey = 'id';
 
     protected $fillable = [
-        'user_id', 'id_mk_area', 'id_mk_cabang', 'id_mj_pic', 'nama', 'email', 'flg_aktif'
+        'user_id', 'id_area', 'id_cabang', 'id_mj_pic', 'nama', 'email', 'flg_aktif'
     ];
 
     public function user(){
@@ -39,14 +39,14 @@ class PIC extends Model implements AuthenticatableContract, AuthorizableContract
     }
 
     public function area(){
-        return $this->belongsTo(Area::class, 'id_mk_area')
+        return $this->belongsTo(Area::class, 'id_area')
             ->withDefault(function () {
                 return new Area();
             });
     }
 
     public function cabang(){
-        return $this->belongsTo(Cabang::class, 'id_mk_cabang')
+        return $this->belongsTo(Cabang::class, 'id_cabang')
             ->withDefault(function () {
                 return new Cabang();
             });

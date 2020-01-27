@@ -90,6 +90,7 @@ class AuthController extends Controller
 
 		// Check request Password valid or no
         if (md5($password) != $user->password) {
+        // if ($password != $user->password) {
             return response()->json([
                 "code"    => 422,
                 "status"  => "bad request",
@@ -131,6 +132,7 @@ class AuthController extends Controller
         // }
         // Login & Create Token
         if ($user->user == $username && $user->password == md5($password)){
+        // if ($user->user == $username && $user->password == $password){
 
             User::where('user', $username)->update(['fcm_token' => $fcm_token]);
 

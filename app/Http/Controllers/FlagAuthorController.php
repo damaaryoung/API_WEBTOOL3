@@ -89,6 +89,14 @@ class FlagAuthorController extends BaseController
                     ->limit($limit)
                     ->get();
 
+            if ($query == '[]') {
+                return response()->json([
+                    'code'    => 404,
+                    'status'  => 'not found',
+                    'message' => 'Data kosong'
+                ], 404);
+            }
+
             $j = 0;
 
             $arrData = array();
@@ -343,6 +351,14 @@ class FlagAuthorController extends BaseController
                     ->orderBy('jam', 'desc')
                     ->limit($limit)
                     ->get();
+
+            if ($query == '[]') {
+                return response()->json([
+                    'code'    => 404,
+                    'status'  => 'not found',
+                    'message' => 'Data kosong'
+                ], 404);
+            }
 
             $j = 0;
 

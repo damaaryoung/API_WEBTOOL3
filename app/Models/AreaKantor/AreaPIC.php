@@ -31,18 +31,18 @@ class AreaPIC extends Model implements AuthenticatableContract, AuthorizableCont
     protected $primaryKey = 'id';
 
     protected $fillable = [
-        'id_mk_area', 'id_mk_cabang', 'nama_area_pic', 'id_provinsi', 'id_kabupaten', 'id_kecamatan', 'id_kelurahan', 'flg_aktif'
+        'id_area', 'id_cabang', 'nama_area_pic', 'id_provinsi', 'id_kabupaten', 'id_kecamatan', 'id_kelurahan', 'flg_aktif'
     ];
 
     public function area(){
-        return $this->belongsTo(Area::class, 'id_mk_area')->select(['id', 'nama'])
+        return $this->belongsTo(Area::class, 'id_area')->select(['id', 'nama'])
             ->withDefault(function () {
                 return new Area();
             });
     }
 
     public function cabang(){
-        return $this->belongsTo(Cabang::class, 'id_mk_cabang')->select(['id','nama'])
+        return $this->belongsTo(Cabang::class, 'id_cabang')->select(['id','nama'])
             ->withDefault(function () {
                 return new Cabang();
             });

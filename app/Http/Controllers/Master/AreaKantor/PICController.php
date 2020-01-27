@@ -81,9 +81,9 @@ class PICController extends BaseController
                 "nama"        => $val->email,
                 "email"       => $val->nama,
                 "jenis_pic"   => $val->jpic['nama_jenis'],
-                "id_area"     => $val->id_mk_area,
+                "id_area"     => $val->id_area,
                 "nama_area"   => $val->area['nama'],
-                "id_cabang"   => $val->id_mk_cabang,
+                "id_cabang"   => $val->id_cabang,
                 "nama_cabang" => $val->cabang['nama']
             ];
         }
@@ -108,8 +108,8 @@ class PICController extends BaseController
         $email    = $request->auth->email;
         $data = array(
             'user_id'       => $req->input('user_id'),
-            'id_mk_area'    => $req->input('id_mk_area'),
-            'id_mk_cabang'  => empty($req->input('id_mk_cabang')) ? 0 : $req->input('id_mk_cabang'),
+            'id_area'       => $req->input('id_mk_area'),
+            'id_cabang'     => empty($req->input('id_mk_cabang')) ? 0 : $req->input('id_mk_cabang'),
             'id_mj_pic'     => $req->input('id_mj_pic'),
             'nama'          => empty($req->input('nama')) ? $username : $req->input('nama'),
             'email'         => empty($req->input('email')) ? $email : $req->input('email')
@@ -150,9 +150,9 @@ class PICController extends BaseController
                 "email_user"     => $query->user['email'],
                 "id_jenis_pic"   => $query->id_mj_pic,
                 "nama_jenis_pic" => $query->jpic['nama_jenis'],
-                "id_area"        => $query->id_mk_area,
+                "id_area"        => $query->id_area,
                 "nama_area"      => $query->area['nama'],
-                "id_cabang"      => $query->id_mk_cabang,
+                "id_cabang"      => $query->id_cabang,
                 "nama_cabang"    => $query->cabang['nama'],
                 "flg_aktif"      => $query->flg_aktif == 0 ? "false" : "true",
                 "created_at"     => Carbon::parse($query->created_at)->format('d-m-Y H:i:s')
@@ -189,8 +189,8 @@ class PICController extends BaseController
             'nama'         => empty($req->input('nama')) ? $check->nama : $req->input('nama'),
             'email'        => empty($req->input('email')) ? $check->email : $req->input('email'),
             'user_id'      => empty($req->input('user_id')) ? $check->user_id : $req->input('user_id'),
-            'id_mk_area'   => empty($req->input('id_mk_area')) ? $check->id_mk_area : $req->input('id_mk_area'),
-            'id_mk_cabang' => empty($req->input('id_mk_cabang')) ? $check->id_mk_cabang : $req->input('id_mk_cabang'),
+            'id_area'      => empty($req->input('id_mk_area')) ? $check->id_area : $req->input('id_mk_area'),
+            'id_cabang'    => empty($req->input('id_mk_cabang')) ? $check->id_cabang : $req->input('id_mk_cabang'),
             'id_mj_pic'    => empty($req->input('id_mj_pic')) ? $check->id_mj_pic : $req->input('id_mj_pic'),
             'flg_aktif'    => empty($req->input('flg_aktif')) ? $check->flg_aktif : ($req->input('flg_aktif') == 'false' ? 0 : 1)
         );

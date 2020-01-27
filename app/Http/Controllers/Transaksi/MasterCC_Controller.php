@@ -1157,4 +1157,78 @@ class MasterCC_Controller extends BaseController
         }
 
     }
+
+    // Team Caa
+    public function report_approval($id, Request $req){
+
+        $check_caa = \App\Models\Transaksi\TransCAA::where('status_caa', 1)->where('id_trans_so', $id)->first();
+
+        if ($check_caa == null) {
+            return response()->json([
+                "code"    => 404,
+                "status"  => "not found",
+                "message" => "Data yang akan anda eksekusi tidak ada, mohon cek URL anda"
+            ], 404);
+        }
+
+        $check_team = \App\Models\Transaksi\TransTCAA::where('id_trans_so', $id)->whereIn('id_pic', explode(",", $check_caa->pic_team_caa))->get();
+
+        $data = array();;
+        foreach ($check_team as $key => $val) {
+            $data[] = [
+                'jabatan' => $val->pic['jpic']['nama_jenis'],
+                'id_pic'  => $val->id_pic,
+                'user_id' => $val->user_id,
+                'nama_pic'=> $val->pic['nama'],
+                'plafon'  => $val->plafon,
+                'tenor'   => $val->plafon,
+                'status'  => $val->status
+            ];
+
+            // $approved_user = array_search('accept', $data[$key], true);
+        }
+
+        $url_in_array = in_array('accept', array_column($data, 'status'));
+
+        $num_sts = array_search('accept', array_column($data, 'status'), true);
+
+        if($url_in_array) {
+            echo 'value is in multidim array';
+        }
+        else {
+            echo 'value is not in multidim array';
+        }
+
+        $result = array(
+            'id_transaksi' => $val->id_trans_so,
+            'debitur' => [
+                'id'   => $val->so['id_calon_debitur'],
+                'nama' => $val->so['debt']['nama_lengkap']
+            ],
+            'approved' => [
+                'id_pic'  => $val->id_pic,
+                'user_id' => $val->user_id,
+                'nama'    => $val->pic['nama'],
+                'tenor'   => $data[$num_sts]['tenor'],
+                'plafon'  => $data[$num_sts]['plafon'],
+
+            ],
+            'list_approver' => $data
+        );
+
+        try{
+            return response()->json([
+                'code'   => 200,
+                'status' => 'success',
+                'message'=> $result
+            ], 200);
+        } catch (Exception $e) {
+            $err = DB::connection('web')->rollback();
+            return response()->json([
+                'code'    => 501,
+                'status'  => 'error',
+                'message' => $err
+            ], 501);
+        }
+    }
 }

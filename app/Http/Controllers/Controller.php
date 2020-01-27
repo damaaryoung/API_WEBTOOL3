@@ -117,7 +117,7 @@ class Controller extends BaseController
 
     public static function checkDir($user_id, $jpic, $query_dir, $id_area, $id_cabang, $method){
 
-        if($jpic == 'DIR UT' || $jpic == 'DIR BIS' || $jpic == 'DIR RISK'){
+        if($jpic == 'DIR UT' || $jpic == 'DIR BIS' || $jpic == 'DIR RISK' ||  $jpic == 'KEPATUHAN'){
 
             if ($method == 'get') {
 
@@ -126,7 +126,7 @@ class Controller extends BaseController
                 $query = $query_dir->first();
             }
 
-        }elseif($jpic == 'CRM' || $jpic == 'AM'){
+        }elseif($jpic == 'CRM' || $jpic == 'AM' || $jpic == 'CA'){
 
             if ($method == 'get') {
 

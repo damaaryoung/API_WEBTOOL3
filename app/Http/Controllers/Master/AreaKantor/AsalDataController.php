@@ -141,7 +141,7 @@ class AsalDataController extends BaseController
 
         $data = array(
             'nama'      => empty($req->input('nama')) ? $check->nama : $req->input('nama'),
-            'info'      => empty($req->input('info')) ? $check->info : $req->input('info')
+            'info'      => empty($req->input('info')) ? $check->info : $req->input('info'),
             'flg_aktif' => empty($req->input('flg_aktif')) ? $check->flg_aktif : ($req->input('flg_aktif') == 'true' ? 1 : 0)
         );
 

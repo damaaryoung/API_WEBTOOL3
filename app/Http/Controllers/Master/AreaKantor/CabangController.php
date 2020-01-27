@@ -100,7 +100,7 @@ class CabangController extends BaseController
 
     public function store(CabangRequest $req) {
         $data = array(
-            'id_mk_area'   => $req->input('id_mk_area'),
+            'id_area'      => $req->input('id_mk_area'),
             'nama'         => $req->input('nama'),
             'id_provinsi'  => $req->input('id_provinsi'),
             'id_kabupaten' => $req->input('id_kabupaten'),
@@ -140,7 +140,7 @@ class CabangController extends BaseController
         $res = array(
             "id"             => $check->id,
             "nama_cabang"    => $check->nama,
-            "id_area"        => $check->id_mk_area,
+            "id_area"        => $check->id_area,
             "nama_area"      => $check->area['nama'],
             "id_provinsi"    => $check->id_provinsi,
             "nama_provinsi"  => $check->prov['nama'],
@@ -183,7 +183,7 @@ class CabangController extends BaseController
         }
 
         $data = array(
-            'id_mk_area'     => empty($req->input('id_mk_area')) ? $check->id_mk_area : $req->input('id_mk_area'),
+            'id_area'        => empty($req->input('id_mk_area')) ? $check->id_area : $req->input('id_mk_area'),
             'nama'           => empty($req->input('nama')) ? $check->nama : $req->input('nama'),
             'id_provinsi'    => empty($req->input('id_provinsi')) ? $check->id_provinsi : $req->input('id_provinsi'),
             'id_kabupaten'   => empty($req->input('id_kabupaten')) ? $check->id_kabupaten : $req->input('id_kabupaten'),
