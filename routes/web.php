@@ -261,7 +261,7 @@ $router->group(['middleware' => 'jwt.auth'], function () use ($router) {
                     // Tahap 1
                     $router->get('/', 'MasterCAA_Controller@index'); // All Memorandum Credit Analyst
                     // $router->get('/{id}', 'MasterCAA_Controller@show'); //GEt CA BY ID
-                    $router->get('/{idOrString}', 'MasterCAA_Controller@idOrString'); //GEt CA BY ID Or to Route
+                    $router->get('/{id}', 'MasterCAA_Controller@show'); //GEt CA BY ID Or to Route
                     $router->post('/{id}', 'MasterCAA_Controller@update'); //Update CA BY ID
 
                     // Tahap 2 - Team CAA

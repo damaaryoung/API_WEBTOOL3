@@ -358,7 +358,7 @@ class Approval_Controller extends BaseController
     // Team Caa
     public function report_approval($id){
 
-        $check_caa = \App\Models\Transaksi\TransCAA::where('status_caa', 1)->where('id_trans_so', $id)->first();
+        $check_caa = TransCAA::where('status_caa', 1)->where('id_trans_so', $id)->first();
 
         if ($check_caa == null) {
             return response()->json([
@@ -368,7 +368,7 @@ class Approval_Controller extends BaseController
             ], 404);
         }
 
-        $check_team = \App\Models\Transaksi\Approval::where('id_trans_so', $id)->whereIn('id_pic', explode(",", $check_caa->pic_team_caa))->get();
+        $check_team = Approval::where('id_trans_so', $id)->whereIn('id_pic', explode(",", $check_caa->pic_team_caa))->get();
 
         if ($check_team == null) {
             return response()->json([
