@@ -17,7 +17,7 @@ use App\Models\AreaKantor\PIC;
 use App\Models\AreaKantor\Area;
 use App\Models\AreaKantor\Cabang;
 
-class TransTCAA extends Model implements AuthenticatableContract, AuthorizableContract
+class Approval extends Model implements AuthenticatableContract, AuthorizableContract
 {
     use Authenticatable, Authorizable;
 
@@ -28,14 +28,14 @@ class TransTCAA extends Model implements AuthenticatableContract, AuthorizableCo
      */
     protected $connection = 'web';
 
-    protected $table = 'trans_tcaa';
+    protected $table = 'tb_approval';
     protected $primaryKey = 'id';
 
     protected $fillable = [
-        'user_id', 'id_trans_so', 'id_trans_caa', 'id_pic', 'id_area', 'id_cabang', 'plafon', 'tenor', 'rincian', 'status', 'tujuan_forward', 'tanggal'
+        'user_id', 'id_trans_so', 'id_trans_caa', 'id_pic', 'id_area', 'id_cabang', 'plafon', 'tenor', 'rincian', 'status', 'tujuan_forward', 'flg_aktif'
     ];
 
-    public $timestamps = false;
+    // public $timestamps = false;
 
     public function user(){
         return $this->belongsTo(User::class, 'user_id')

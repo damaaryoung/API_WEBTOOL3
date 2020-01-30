@@ -82,6 +82,8 @@ $router->group(['middleware' => 'jwt.auth'], function () use ($router) {
     //For Non User (Debitur)
     $router->group(['prefix' => '/api'], function () use ($router) {
 
+        // $router->get('/{id_tr_so}/approval', 'Wilayah\ProvinsiController@app');
+
         // Logs (History)
         $router->group(['prefix' => '/logs'], function () use ($router){
             $router->get('/', 'LogsController@index'); //Log History All
@@ -266,14 +268,14 @@ $router->group(['middleware' => 'jwt.auth'], function () use ($router) {
                     $router->get('/{id}/detail', 'MasterCAA_Controller@detail'); //GEt CA BY ID after caa
 
                     // Approval By Team CAA
-                    $router->get('/{id}/approval', 'TeamCAA_Controller@index');
-                    $router->post('/{id}/approval/{id_approval}', 'TeamCAA_Controller@approve');
+                    $router->get('/{id}/approval', 'Approval_Controller@index');
+                    $router->post('/{id}/approval/{id_approval}', 'Approval_Controller@approve');
                 });
 
-                $router->get('/team_caa', 'TeamCAA_Controller@list_team');  // Get List Team CAA
+                $router->get('/team_caa', 'Approval_Controller@list_team');  // Get List Team CAA
+                $router->get('/report/approval/{id_trans_so}', 'Approval_Controller@report_approval');
                 // $router->group(['prefix' => '/approval'], function() use ($router){
-                //     // $router->get('/{id}', 'TeamCAA_Controller@show');
-                //     // $router->get('/{id}/report', 'MasterCC_Controller@report_approval');
+                //     // $router->get('/{id}', 'Approval_Controller@show');
                 // });
 
             });

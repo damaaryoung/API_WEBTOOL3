@@ -26,23 +26,23 @@ class Pe_TanahRequest extends FormRequest
             $rules = [
                 // Pemeriksaan Agunan Tanah
                 'status_penghuni.*'       => 'in:PEMILIK,PENYEWA',
-                'bentuk_bangunan.*'       => 'in:RUMAH,KONTRAKAN,VILLA,RUKO,APARTMENT',
+                // 'bentuk_bangunan.*'       => 'in:RUMAH,KONTRAKAN,VILLA,RUKO,APARTMENT',
                 'kondisi_bangunan.*'      => 'in:LAYAK,KURANG,TIDAK',
-                'nilai_taksasi_agunan.*'  => 'integer',
-                'nilai_taksasi_bangunan.*'=> 'integer',
+                // 'nilai_taksasi_agunan.*'  => 'integer',
+                // 'nilai_taksasi_bangunan.*'=> 'integer',
                 'tgl_taksasi.*'           => 'date_format:d-m-Y',
-                'nilai_likuidasi.*'       => 'integer'
+                // 'nilai_likuidasi.*'       => 'integer'
             ];
         }else{
             $rules = [
                 // Pemeriksaan Agunan Tanah
                 'status_penghuni'        => 'in:PEMILIK,PENYEWA',
-                'bentuk_bangunan'        => 'in:RUMAH,KONTRAKAN,VILLA,RUKO,APARTMENT',
+                // 'bentuk_bangunan'        => 'in:RUMAH,KONTRAKAN,VILLA,RUKO,APARTMENT',
                 'kondisi_bangunan'       => 'in:LAYAK,KURANG,TIDAK',
-                'nilai_taksasi_agunan'   => 'integer',
-                'nilai_taksasi_bangunan' => 'integer',
+                // 'nilai_taksasi_agunan'   => 'integer',
+                // 'nilai_taksasi_bangunan' => 'integer',
                 'tgl_taksasi'            => 'date_format:d-m-Y',
-                'nilai_likuidasi'        => 'integer'
+                // 'nilai_likuidasi'        => 'integer'
             ];
         }
 

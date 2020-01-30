@@ -8,7 +8,7 @@ use App\Http\Requests\Transaksi\BlankRequest;
 use App\Models\Pengajuan\AO\AgunanKendaraan;
 use App\Models\Pengajuan\AO\AgunanTanah;
 use Illuminate\Support\Facades\File;
-use App\Models\Transaksi\TransTCAA;
+use App\Models\Transaksi\Approval;
 use App\Models\Transaksi\TransCAA;
 use App\Models\Transaksi\TransCA;
 use App\Models\Transaksi\TransSO;
@@ -378,6 +378,8 @@ class MasterCAA_Controller extends BaseController
             'status_caa'         => 1
         );
 
+        $teamS = explode(",", $data['pic_team_caa']);
+
         DB::connection('web')->beginTransaction();
 
         // dd(explode(",", $data['pic_team_caa']));
@@ -389,11 +391,11 @@ class MasterCAA_Controller extends BaseController
 
                 TransSO::where('id', $id)->update(['id_trans_caa' => $CAA->id]);
 
-                for ($i=0; $i < count(explode(",", $data['pic_team_caa'])); $i++){
-                    TransTCAA::create([
+                for ($i=0; $i < count($teamS); $i++){
+                    Approval::create([
                         'id_trans_so'  => $id,
                         'id_trans_caa' => $CAA->id,
-                        'id_pic'       => $i,
+                        'id_pic'       => $teamS[$i],
                         'status'       => 'waiting'
                     ]);
                 }
@@ -404,11 +406,11 @@ class MasterCAA_Controller extends BaseController
 
                 TransCAA::where('id', $check_caa->id)->update($data);
 
-                for ($i=0; $i < count(explode(",", $data['pic_team_caa'])); $i++){
-                    TransTCAA::create([
+                for ($i=0; $i < count($teamS); $i++){
+                    Approval::create([
                         'id_trans_so'  => $id,
                         'id_trans_caa' => $check_caa->id,
-                        'id_pic'       => $i,
+                        'id_pic'       => $teamS[$i],
                         'status'       => 'waiting'
                     ]);
                 }

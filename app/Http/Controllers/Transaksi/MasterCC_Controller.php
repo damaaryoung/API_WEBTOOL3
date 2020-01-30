@@ -158,23 +158,8 @@ class MasterCC_Controller extends BaseController
         }else{
             foreach ($pen as $key => $value) {
                 $penjamin[$key] = [
-                    "id"               => $value->id,
-                    // "nama"             => $value->nama_ktp,
-                    // "nama_ibu_kandung" => $value->nama_ibu_kandung,
-                    // "no_ktp"           => $value->no_ktp,
-                    // "no_npwp"          => $value->no_npwp,
-                    // "tempat_lahir"     => $value->tempat_lahir,
-                    // "tgl_lahir"        => Carbon::parse($value->tgl_lahir)->format('d-m-Y'),
-                    // "jenis_kelamin"    => $value->jenis_kelamin,
-                    // "alamat_ktp"       => $value->alamat_ktp,
-                    // "no_telp"          => $value->no_telp,
-                    // "hubungan_debitur" => $value->hubungan_debitur,
-                    // "lampiran" => [
-                    //     "lamp_ktp"          => $value->lamp_ktp,
-                    //     "lamp_ktp_pasangan" => $value->lamp_ktp_pasangan,
-                    //     "lamp_kk"           => $value->lamp_kk,
-                    //     "lamp_buku_nikah"   => $value->lamp_buku_nikah
-                    // ]
+                    "id"    => $value->id,
+                    "nama"  => $value->nama_ktp,
                 ];
             }
         }
@@ -243,109 +228,16 @@ class MasterCC_Controller extends BaseController
             ],
             'nama_marketing'    => $val->nama_marketing,
             'fasilitas_pinjaman'  => [
-                'id'              => $val->id_fasilitas_pinjaman,
-                // 'jenis_pinjaman'  => $val->faspin['jenis_pinjaman'],
-                // 'tujuan_pinjaman' => $val->faspin['tujuan_pinjaman'],
-                // 'plafon'          => (int) $val->faspin['plafon'],
-                // 'tenor'           => (int) $val->faspin['tenor']
+                'id'              => $val->id_fasilitas_pinjaman
             ],
-            'calon_debitur'          => [
-                'id'                => $val->id_calon_debitur,
-                // 'nama_lengkap'      => $val->debt['nama_lengkap'],
-                // 'gelar_keagamaan'   => $val->debt['gelar_keagamaan'],
-                // 'gelar_pendidikan'  => $val->debt['gelar_pendidikan'],
-                // 'jenis_kelamin'     => $val->debt['jenis_kelamin'],
-                // 'status_nikah'      => $val->debt['status_nikah'],
-                // 'ibu_kandung'       => $val->debt['ibu_kandung'],
-                // 'no_ktp'            => $val->debt['no_ktp'],
-                // 'no_ktp_kk'         => $val->debt['no_ktp_kk'],
-                // 'no_kk'             => $val->debt['no_kk'],
-                // 'no_npwp'           => $val->debt['no_npwp'],
-                // 'tempat_lahir'      => $val->debt['tempat_lahir'],
-                // 'tgl_lahir'         => Carbon::parse($val->debt['tgl_lahir'])->format('d-m-Y'),
-                // 'agama'             => $val->debt['agama'],
-                // 'alamat_ktp' => [
-                //     'alamat_singkat' => $val->debt['alamat_ktp'],
-                //     'rt'     => $val->debt['rt_ktp'],
-                //     'rw'     => $val->debt['rw_ktp'],
-                //     'kelurahan' => [
-                //         'id'    => $val->debt['kel_ktp']['id'],
-                //         'nama'  => $val->debt['kel_ktp']['nama']
-                //     ],
-                //     'kecamatan' => [
-                //         'id'    => $val->debt['kec_ktp']['id'],
-                //         'nama'  => $val->debt['kec_ktp']['nama']
-                //     ],
-                //     'kabupaten' => [
-                //         'id'    => $val->debt['kab_ktp']['id'],
-                //         'nama'  => $val->debt['kab_ktp']['nama'],
-                //     ],
-                //     'provinsi'  => [
-                //         'id'   => $val->debt['prov_ktp']['id'],
-                //         'nama' => $val->debt['prov_ktp']['nama'],
-                //     ],
-                //     'kode_pos' => $val->debt['kel_ktp']['kode_pos']
-                // ],
-                // 'alamat_domisili' => [
-                //     'alamat_singkat' => $val->debt['alamat_domisili'],
-                //     'rt'             => $val->debt['rt_domisili'],
-                //     'rw'             => $val->debt['rw_domisili'],
-                //     'kelurahan' => [
-                //         'id'    => $val->debt['kel_dom']['id'],
-                //         'nama'  => $val->debt['kel_dom']['nama']
-                //     ],
-                //     'kecamatan' => [
-                //         'id'    => $val->debt['kec_dom']['id'],
-                //         'nama'  => $val->debt['kec_dom']['nama']
-                //     ],
-                //     'kabupaten' => [
-                //         'id'    => $val->debt['kab_dom']['id'],
-                //         'nama'  => $val->debt['kab_dom']['nama'],
-                //     ],
-                //     'provinsi'  => [
-                //         'id'   => $val->debt['prov_dom']['id'],
-                //         'nama' => $val->debt['prov_dom']['nama'],
-                //     ],
-                //     'kode_pos' => $val->debt['kel_dom']['kode_pos']
-                // ],
-
-                // 'pendidikan_terakhir'   => $val->debt['pendidikan_terakhir'],
-                // 'jumlah_tanggungan'     => $val->debt['jumlah_tanggungan'],
-                // 'no_telp'               => $val->debt['no_telp'],
-                // 'no_hp'                 => $val->debt['no_hp'],
-                // 'alamat_surat'          => $val->debt['alamat_surat'],
-                // 'lampiran' => [
-                //     // 'lamp_surat_cerai'      => $val->debt['lamp_surat_cerai'],
-                //     'lamp_ktp'              => $val->debt['lamp_ktp'],
-                //     'lamp_kk'               => $val->debt['lamp_kk'],
-                //     // 'lamp_buku_tabungan'    => $val->debt['lamp_buku_tabungan'],
-                //     'lamp_sttp_pbb'         => $val->debt['lamp_sttp_pbb'],
-                //     'lamp_sertifikat'       => $val->debt['lamp_sertifikat'],
-                //     'lamp_imb'              => $val->debt['lamp_imb'],
-                //     // 'lamp_sku'              => $val->debt['lamp_sku'],
-                //     // 'lamp_slip_gaji'        => $val->debt['lamp_slip_gaji'],
-                //     'lamp_foto_usaha'       => $val->debt['lamp_foto_usaha']
-                // ]
+            'calon_debitur'     => [
+                'id'            => $val->id_calon_debitur,
+                'nama_lengkap'  => $val->debt['nama_lengkap']
             ],
 
-            'pasangan'         => [
-                'id'                => $val->id_pasangan,
-                // 'nama'              => $val->pas['nama_lengkap'],
-                // 'nama_ibu_kandung'    => $val->pas['nama_ibu_kandung'],
-                // // 'gelar_keagamaan'     => $pas['gelar_keagamaan'],
-                // // 'gelar_pendidikan'    => $pas['gelar_pendidikan'],
-                // 'jenis_kelamin'       => $val->pas['jenis_kelamin'],
-                // 'no_ktp'              => $val->pas['no_ktp'],
-                // 'no_ktp_kk'           => $val->pas['no_ktp_kk'],
-                // 'no_npwp'             => $val->pas['no_npwp'],
-                // 'tempat_lahir'        => $val->pas['tempat_lahir'],
-                // 'tgl_lahir'           => Carbon::parse($val->pas['tgl_lahir'])->format('d-m-Y'),
-                // 'alamat_ktp'          => $val->pas['alamat_ktp'],
-                // 'no_telp'             => $val->pas['no_telp'],
-                // 'lampiran' => [
-                //     'lamp_ktp'        => $val->pas['lamp_ktp'],
-                //     'lamp_buku_nikah' => $val->pas['lamp_buku_nikah']
-                // ]
+            'pasangan'    => [
+                'id'      => $val->id_pasangan,
+                'nama'    => $val->pas['nama_lengkap'],
             ],
             'penjamin'  => $penjamin,
             'flg_aktif' => $val->flg_aktif == 0 ? "false" : "true"
@@ -476,6 +368,16 @@ class MasterCC_Controller extends BaseController
             $imbDebt = null;
         }
 
+        if($file = $req->file('foto_agunan_rumah')){
+            $path = $lamp_dir.'/debitur';
+            $name = 'foto_agunan_rumah.'.$file->getClientOriginalExtension();
+            $file->move($path,$name);
+
+            $foto_agunan_rumah = $path.'/'.$name;
+        }else{
+            $foto_agunan_rumah = null;
+        }
+
         // Data Calon Debitur
         $dataDebitur = array(
             'nama_lengkap'          => $req->input('nama_lengkap'),
@@ -514,7 +416,8 @@ class MasterCC_Controller extends BaseController
             'lamp_kk'               => $kkDebt,
             'lamp_sertifikat'       => $sertifikatDebt,
             'lamp_sttp_pbb'         => $pbbDebt,
-            'lamp_imb'              => $imbDebt
+            'lamp_imb'              => $imbDebt,
+            'foto_agunan_rumah'     => $foto_agunan_rumah
         );
 
         if($file = $req->file('lamp_ktp_pas')){
@@ -604,20 +507,20 @@ class MasterCC_Controller extends BaseController
             for ($i = 0; $i < count($req->input('nama_ktp_pen')); $i++) {
 
                 $DP[] = [
-                    'nama_ktp'         => empty($req->nama_ktp_pen[$i]) ? null[$i] : $req->nama_ktp_pen[$i],
-                    'nama_ibu_kandung' => empty($req->nama_ibu_kandung_pen[$i]) ? null[$i] : $req->nama_ibu_kandung_pen[$i],
-                    'no_ktp'           => empty($req->no_ktp_pen[$i]) ? null[$i] : $req->no_ktp_pen[$i],
-                    'no_npwp'          => empty($req->no_npwp_pen[$i]) ? null[$i] : $req->no_npwp_pen[$i],
-                    'tempat_lahir'     => empty($req->tempat_lahir_pen[$i]) ? null[$i] : $req->tempat_lahir_pen[$i],
-                    'tgl_lahir'        => empty($req->tgl_lahir_pen[$i]) ? null[$i] : Carbon::parse($req->tgl_lahir_pen[$i])->format('Y-m-d'),
-                    'jenis_kelamin'    => empty($req->jenis_kelamin_pen[$i]) ? null[$i] : strtoupper($req->jenis_kelamin_pen[$i]),
-                    'alamat_ktp'       => empty($req->alamat_ktp_pen[$i]) ? null[$i] : $req->alamat_ktp_pen[$i],
-                    'no_telp'          => empty($req->no_telp_pen[$i]) ? null[$i] : $req->no_telp_pen[$i],
-                    'hubungan_debitur' => empty($req->hubungan_debitur_pen[$i]) ? null[$i] : $req->hubungan_debitur_pen[$i],
-                    'lamp_ktp'         => empty($ktpPen[$i]) ? null[$i] : $ktpPen[$i],
-                    'lamp_ktp_pasangan'=> empty($ktpPenPAS[$i]) ? null[$i] : $ktpPenPAS[$i],
-                    'lamp_kk'          => empty($kkPen[$i]) ? null[$i] : $kkPen[$i],
-                    'lamp_buku_nikah'  => empty($bukuNikahPen[$i]) ? null[$i] : $bukuNikahPen[$i]
+                    'nama_ktp'         => empty($req->nama_ktp_pen[$i]) ? null : $req->nama_ktp_pen[$i],
+                    'nama_ibu_kandung' => empty($req->nama_ibu_kandung_pen[$i]) ? null : $req->nama_ibu_kandung_pen[$i],
+                    'no_ktp'           => empty($req->no_ktp_pen[$i]) ? null : $req->no_ktp_pen[$i],
+                    'no_npwp'          => empty($req->no_npwp_pen[$i]) ? null : $req->no_npwp_pen[$i],
+                    'tempat_lahir'     => empty($req->tempat_lahir_pen[$i]) ? null : $req->tempat_lahir_pen[$i],
+                    'tgl_lahir'        => empty($req->tgl_lahir_pen[$i]) ? null : Carbon::parse($req->tgl_lahir_pen[$i])->format('Y-m-d'),
+                    'jenis_kelamin'    => empty($req->jenis_kelamin_pen[$i]) ? null : strtoupper($req->jenis_kelamin_pen[$i]),
+                    'alamat_ktp'       => empty($req->alamat_ktp_pen[$i]) ? null : $req->alamat_ktp_pen[$i],
+                    'no_telp'          => empty($req->no_telp_pen[$i]) ? null : $req->no_telp_pen[$i],
+                    'hubungan_debitur' => empty($req->hubungan_debitur_pen[$i]) ? null : $req->hubungan_debitur_pen[$i],
+                    'lamp_ktp'         => empty($ktpPen[$i]) ? null : $ktpPen[$i],
+                    'lamp_ktp_pasangan'=> empty($ktpPenPAS[$i]) ? null : $ktpPenPAS[$i],
+                    'lamp_kk'          => empty($kkPen[$i]) ? null : $kkPen[$i],
+                    'lamp_buku_nikah'  => empty($bukuNikahPen[$i]) ? null : $bukuNikahPen[$i]
                 ];
 
                 /*if ($DP[$i]['lamp_ktp'] == null) {
@@ -1154,81 +1057,6 @@ class MasterCC_Controller extends BaseController
                     "message" => $e
                 ], 501);
             }
-        }
-
-    }
-
-    // Team Caa
-    public function report_approval($id, Request $req){
-
-        $check_caa = \App\Models\Transaksi\TransCAA::where('status_caa', 1)->where('id_trans_so', $id)->first();
-
-        if ($check_caa == null) {
-            return response()->json([
-                "code"    => 404,
-                "status"  => "not found",
-                "message" => "Data yang akan anda eksekusi tidak ada, mohon cek URL anda"
-            ], 404);
-        }
-
-        $check_team = \App\Models\Transaksi\TransTCAA::where('id_trans_so', $id)->whereIn('id_pic', explode(",", $check_caa->pic_team_caa))->get();
-
-        $data = array();;
-        foreach ($check_team as $key => $val) {
-            $data[] = [
-                'jabatan' => $val->pic['jpic']['nama_jenis'],
-                'id_pic'  => $val->id_pic,
-                'user_id' => $val->user_id,
-                'nama_pic'=> $val->pic['nama'],
-                'plafon'  => $val->plafon,
-                'tenor'   => $val->plafon,
-                'status'  => $val->status
-            ];
-
-            // $approved_user = array_search('accept', $data[$key], true);
-        }
-
-        $url_in_array = in_array('accept', array_column($data, 'status'));
-
-        $num_sts = array_search('accept', array_column($data, 'status'), true);
-
-        if($url_in_array) {
-            echo 'value is in multidim array';
-        }
-        else {
-            echo 'value is not in multidim array';
-        }
-
-        $result = array(
-            'id_transaksi' => $val->id_trans_so,
-            'debitur' => [
-                'id'   => $val->so['id_calon_debitur'],
-                'nama' => $val->so['debt']['nama_lengkap']
-            ],
-            'approved' => [
-                'id_pic'  => $val->id_pic,
-                'user_id' => $val->user_id,
-                'nama'    => $val->pic['nama'],
-                'tenor'   => $data[$num_sts]['tenor'],
-                'plafon'  => $data[$num_sts]['plafon'],
-
-            ],
-            'list_approver' => $data
-        );
-
-        try{
-            return response()->json([
-                'code'   => 200,
-                'status' => 'success',
-                'message'=> $result
-            ], 200);
-        } catch (Exception $e) {
-            $err = DB::connection('web')->rollback();
-            return response()->json([
-                'code'    => 501,
-                'status'  => 'error',
-                'message' => $err
-            ], 501);
         }
     }
 }

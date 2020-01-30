@@ -28,7 +28,7 @@ class PIC extends Model implements AuthenticatableContract, AuthorizableContract
     protected $primaryKey = 'id';
 
     protected $fillable = [
-        'user_id', 'id_area', 'id_cabang', 'id_mj_pic', 'nama', 'email', 'flg_aktif'
+        'user_id', 'id_area', 'id_cabang', 'id_mj_pic', 'nama', 'email', 'plafon_caa', 'flg_aktif'
     ];
 
     public function user(){
@@ -58,8 +58,4 @@ class PIC extends Model implements AuthenticatableContract, AuthorizableContract
                 return new JPIC();
             });
     }
-
-    // public function jpic_caa(){
-    //     return $this->belongsTo('App\Models\AreaKantor\JPIC', 'id_mj_pic')->where('keterangan', 'Team CAA');
-    // }
 }

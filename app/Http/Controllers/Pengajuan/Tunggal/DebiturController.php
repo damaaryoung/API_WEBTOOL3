@@ -136,7 +136,8 @@ class DebiturController extends BaseController
                 'lamp_buku_tabungan'    => $val->lamp_buku_tabungan,
                 'lamp_sertifikat'       => $val->lamp_sertifikat,
                 'lamp_sttp_pbb'         => $val->lamp_sttp_pbb,
-                'lamp_imb'              => $val->lamp_imb
+                'lamp_imb'              => $val->lamp_imb,
+                'foto_agunan_rumah'     => $val->foto_agunan_rumah
             ]
         );
 
@@ -324,7 +325,10 @@ class DebiturController extends BaseController
             $fotoUsaha = $check->lamp_foto_usaha;
         }
 
-        if ($req->input('nama_anak')) {
+        if(empty($req->input('nama_anak'))){
+            $nama_anak = $check->nama_anak;
+            $tgl_lhr_anak = $check->tgl_lhr_anak;
+        }else{
             for ($i = 0; $i < count($req->nama_anak); $i++){
                 $namaAnak[] = empty($req->nama_anak[$i]) ? $check->nama_anak[$i] : $req->nama_anak[$i];
 
@@ -333,9 +337,6 @@ class DebiturController extends BaseController
 
             $nama_anak    = implode(",", $namaAnak);
             $tgl_lhr_anak = implode(",", $tglLahirAnak);
-        }else{
-            $nama_anak = $check->nama_anak;
-            $tgl_lhr_anak = $check->tgl_lhr_anak;
         }
 
         // Data Debitur

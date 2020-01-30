@@ -8,7 +8,7 @@ use App\Models\Pengajuan\AO\AgunanKendaraan;
 use App\Http\Requests\Transaksi\ApprovalReq;
 use App\Models\Pengajuan\AO\AgunanTanah;
 use Illuminate\Support\Facades\File;
-use App\Models\Transaksi\TransTCAA;
+use App\Models\Transaksi\Approval;
 use App\Models\Transaksi\TransCAA;
 use App\Models\Transaksi\TransSO;
 use App\Models\Karyawan\TeamCAA;
@@ -19,7 +19,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use DB;
 
-class TeamCAA_Controller extends BaseController
+class Approval_Controller extends BaseController
 {
     public function list_team(Request $req) {
         $user_id  = $req->auth->user_id; //1725540
@@ -149,9 +149,10 @@ class TeamCAA_Controller extends BaseController
         $id_area   = $pic->id_area;
         $id_cabang = $pic->id_cabang;
 
-        $query = TransTCAA::where('id_trans_so', $id)->get();
-
-        // $query = Helper::checkDir($user_id, $jpic = $pic->jpic['nama_jenis'], $query_dir, $id_area, $id_cabang, $method);
+        $query = Approval::with('so', 'caa', 'pic')
+                ->where('id_trans_so', $id)
+                ->get()
+                ->sortByDesc('pic.jpic.urutan_jabatan');
 
         if ($query == '[]') {
             return response()->json([
@@ -171,13 +172,23 @@ class TeamCAA_Controller extends BaseController
             }
 
             $data[] = [
+                'id_approval'    => $val->id,
                 'id_trans_so'    => $val->id_trans_so,
+                'user_id'        => $val->user_id,
                 'nomor_so'       => $val->so['nomor_so'],
                 'nomor_ao'       => $val->so['ao']['nomor_ao'],
                 'nomor_ca'       => $val->so['ca']['nomor_ca'],
                 'nomor_caa'      => $val->caa['nomor_caa'],
+                'id_pic'         => $val->id_pic,
+                'nama_pic'       => $val->pic['nama'],
+                // 'id_jenis_pic'   => $val->pic['id_mj_pic'],
+                'jabatan'        => $val->pic['jpic']['nama_jenis'],
+                // 'urutan_jabatan' => $val->pic['jpic']['urutan_jabatan'],
+                'plafon'         => $val->plafon,
+                'tenor'          => $val->tenor,
+                'rincian'        => $val->rincian,
                 'status_approval'=> $status,
-                'tanggal'        => empty($val->tanggal) ? null : Carbon::parse($val->tanggal)->format("d-m-Y H:i:s"),
+                'tanggal'        => empty($val->updated_at) ? null : Carbon::parse($val->updated_at)->format("d-m-Y H:i:s"),
             ];
         }
 
@@ -452,7 +463,7 @@ class TeamCAA_Controller extends BaseController
 
         // $check = TransCAA::where('status_caa', 1)->where('id_trans_so', $id)->where('pic_team_caa', 'like', "%{$pic->id}%")->first();
 
-        $check = TransTCAA::where('id', $id_approval)->first();
+        $check = Approval::where('id', $id_approval)->first();
 
         if ($check == null) {
             return response()->json([
@@ -474,7 +485,7 @@ class TeamCAA_Controller extends BaseController
             'rincian'       => $request->input('rincian'),
             'status'        => $request->input('status'),
             'tujuan_forward'=> $request->input('tujuan_forward'),
-            'tanggal'       => Carbon::now()->toDateTimeString()
+            // 'tanggal'       => Carbon::now()->toDateTimeString()
         );
 
         DB::connection('web')->beginTransaction();
@@ -494,7 +505,7 @@ class TeamCAA_Controller extends BaseController
 
             TransCAA::where('id_trans_so', $check->id_trans_so)->update(['status_team_caa' => $status]);
 
-            TransTCAA::where('id', $id_approval)->update($form);
+            Approval::where('id', $id_approval)->update($form);
 
             DB::connection('web')->commit();
 
@@ -513,27 +524,106 @@ class TeamCAA_Controller extends BaseController
         }
     }
 
-    // public function report_approval($id, Request $req){
-    //     $user_id = 507; // $req->auth->user_id;
+    // Team Caa
+    public function report_approval($id){
 
-    //     $pic = PIC::where('user_id', $user_id)->first();
+        $check_caa = \App\Models\Transaksi\TransCAA::where('status_caa', 1)->where('id_trans_so', $id)->first();
 
-    //     if ($pic == null) {
-    //         return response()->json([
-    //             "code"    => 404,
-    //             "status"  => "not found",
-    //             "message" => "User_ID anda adalah '".$user_id."' dengan username '".$req->auth->user."'. Yang berhak melihat halaman ini adalah Direktur, CRM, PC dan AM. Mohon cek dimenu Team CAA untuk validasi data anda atau silahkan hubungin tim IT"
-    //         ], 404);
-    //     }
+        if ($check_caa == null) {
+            return response()->json([
+                "code"    => 404,
+                "status"  => "not found",
+                "message" => "Data yang akan anda eksekusi tidak ada, mohon cek URL anda"
+            ], 404);
+        }
 
-    //     $check = TransCAA::where('status_caa', 1)->where('id_trans_so', $id)->where('pic_team_caa', 'like', "%{$pic->id}%")->first();
+        $check_team = \App\Models\Transaksi\Approval::where('id_trans_so', $id)->whereIn('id_pic', explode(",", $check_caa->pic_team_caa))->get();
 
-    //     if ($check == null) {
-    //         return response()->json([
-    //             "code"    => 404,
-    //             "status"  => "not found",
-    //             "message" => "Data yang akan anda eksekusi tidak ada, mohon cek URL anda"
-    //         ], 404);
-    //     }
-    // }
+        if ($check_team == null) {
+            return response()->json([
+                "code"    => 404,
+                "status"  => "not found",
+                "message" => "Data Approval masih kosong, mohon cek URL anda"
+            ], 404);
+        }
+
+        $data = array();;
+        foreach ($check_team as $key => $val) {
+            $data[] = [
+                'jabatan' => $val->pic['jpic']['nama_jenis'],
+                'id_pic'  => $val->id_pic,
+                'user_id' => $val->user_id,
+                'nama_pic'=> $val->pic['nama'],
+                'plafon'  => $val->plafon,
+                'tenor'   => $val->plafon,
+                'status'  => $val->status
+            ];
+
+            // $approved_user = array_search('accept', $data[$key], true);
+        }
+
+        // dd($data);
+
+        $url_in_array = in_array('accept', array_column($data, 'status'));
+
+        if($url_in_array != true){
+
+            $result = array(
+                'id_transaksi' => $check_caa->id_trans_so,
+                'debitur' => [
+                    'id'   => $check_caa->so['id_calon_debitur'],
+                    'nama' => $check_caa->so['debt']['nama_lengkap']
+                ],
+                'approved' => [
+                    'id_pic'  => $check_caa->id_pic,
+                    'user_id' => $check_caa->user_id,
+                    'nama'    => $check_caa->pic['nama'],
+                    'tenor'   => null,
+                    'plafon'  => null,
+                    'rincian' => $check_caa->rincian
+
+                ],
+                'list_approver' => $data
+            );
+
+        }else{
+
+            $num_sts = array_search('accept', array_column($data, 'status'), true);
+
+            $result = array(
+                'id_transaksi' => $check_caa->id_trans_so,
+                'debitur' => [
+                    'id'   => $check_caa->so['id_calon_debitur'],
+                    'nama' => $check_caa->so['debt']['nama_lengkap']
+                ],
+                'approved' => [
+                    'id_pic'  => $check_caa->id_pic,
+                    'user_id' => $check_caa->user_id,
+                    'nama'    => $check_caa->pic['nama'],
+                    'tenor'   => $data[$num_sts]['tenor'],
+                    'plafon'  => $data[$num_sts]['plafon'],
+                    'rincian' => $check_caa->rincian
+
+                ],
+                'list_approver' => $data
+            );
+        }
+
+
+
+        try{
+            return response()->json([
+                'code'   => 200,
+                'status' => 'success',
+                'message'=> $result
+            ], 200);
+        } catch (Exception $e) {
+            $err = DB::connection('web')->rollback();
+            return response()->json([
+                'code'    => 501,
+                'status'  => 'error',
+                'message' => $err
+            ], 501);
+        }
+    }
 }
