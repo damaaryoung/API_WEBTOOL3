@@ -48,11 +48,20 @@ class HMController extends BaseController
                 $status_hm = 'waiting';
             }
 
+            if ($val->ao['status_ao'] == 1) {
+                $status_ao = 'recommend';
+            }elseif ($val->ao['status_ao'] == 2) {
+                $status_ao = 'not recommend';
+            }else{
+                $status_ao = 'waiting';
+            }
+
             $data[$key] = [
                 'id'             => $val->id,
                 'nomor_so'       => $val->nomor_so,
                 'nama_so'        => $val->nama_so,
                 'pic'            => $val->pic['nama'],
+                'area'           => $val->area['nama'],
                 'cabang'         => $val->cabang['nama'],
                 'asal_data'      => $val->asaldata['nama'],
                 'nama_marketing' => $val->nama_marketing,
@@ -62,7 +71,8 @@ class HMController extends BaseController
                 'das_status'     => $status_das,
                 'das_note'       => $val->catatan_das,
                 'hm_status'      => $status_hm,
-                'hm_note'        => $val->catatan_hm
+                'hm_note'        => $val->catatan_hm,
+                'status_ao'      => $status_ao
             ];
         }
 
@@ -138,10 +148,22 @@ class HMController extends BaseController
             $status_hm = 'waiting';
         }
 
+        if ($val->ao['status_ao'] == 1) {
+            $status_ao = 'recommend';
+        }elseif ($val->ao['status_ao'] == 2) {
+            $status_ao = 'not recommend';
+        }else{
+            $status_ao = 'waiting';
+        }
+
         $data = [
             'id'             => $val->id,
             'nomor_so'       => $val->nomor_so,
             'nama_so'        => $val->nama_so,
+            'area'   => [
+                'id'    => $val->id_area,
+                'nama'  => $val->area['nama']
+            ],
             'id_cabang'      => $val->pic['id_mk_cabang'],
             'nama_cabang'    => $val->pic['cabang']['nama'],
             'asal_data'      => $val->asaldata['nama'],
@@ -219,6 +241,7 @@ class HMController extends BaseController
             'das_note'      => $val->catatan_das,
             'hm_status'     => $status_hm,
             'hm_note'       => $val->catatan_hm,
+            'status_ao'     => $status_ao,
             'lampiran'  => [
                 'ideb'    => explode(";", $val->lamp_ideb),
                 'pefindo' => explode(";", $val->lamp_pefindo)
@@ -337,11 +360,20 @@ class HMController extends BaseController
                 $status_hm = 'waiting';
             }
 
+            if ($val->ao['status_ao'] == 1) {
+                $status_ao = 'recommend';
+            }elseif ($val->ao['status_ao'] == 2) {
+                $status_ao = 'not recommend';
+            }else{
+                $status_ao = 'waiting';
+            }
+
             $data[$key] = [
                 'id'             => $val->id,
                 'nomor_so'       => $val->nomor_so,
                 'nama_so'        => $val->nama_so,
                 'pic'            => $val->pic['nama'],
+                'area'           => $val->area['nama'],
                 'cabang'         => $val->cabang['nama'],
                 'asal_data'      => $val->asaldata['nama'],
                 'nama_marketing' => $val->nama_marketing,
@@ -351,7 +383,8 @@ class HMController extends BaseController
                 'das_status'     => $status_das,
                 'das_note'       => $val->catatan_das,
                 'hm_status'      => $status_hm,
-                'hm_note'        => $val->catatan_hm
+                'hm_note'        => $val->catatan_hm,
+                'status_ao'      => $status_ao
             ];
         }
 

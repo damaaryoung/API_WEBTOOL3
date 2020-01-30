@@ -339,6 +339,23 @@ class DebiturController extends BaseController
             $tgl_lhr_anak = implode(",", $tglLahirAnak);
         }
 
+        if($file = $req->file('foto_agunan_rumah')){
+            $path = $lamp_dir.'/debitur';
+            $name = 'foto_agunan_rumah.'.$file->getClientOriginalExtension();
+
+            if(!empty($check->lamp_foto_usaha))
+            {
+                File::delete($check->lamp_foto_usaha);
+            }
+
+            $file->move($path,$name);
+
+            $foto_agunan_rumah = $path.'/'.$name;
+        }else{
+            $foto_agunan_rumah = null;
+        }
+
+
         // Data Debitur
         $dataDebitur = array(
             'nama_lengkap'          => empty($req->input('nama_lengkap')) ? $check->nama_lengkap : $req->input('nama_lengkap'),
@@ -404,7 +421,8 @@ class DebiturController extends BaseController
             'lamp_buku_tabungan'    => $tabungan,
             'lamp_sku'              => $sku,
             'lamp_slip_gaji'        => $slipGaji,
-            'lamp_foto_usaha'       => $fotoUsaha
+            'lamp_foto_usaha'       => $fotoUsaha,
+            'foto_agunan_rumah'     => $foto_agunan_rumah
         );
 
         DB::connection('web')->beginTransaction();

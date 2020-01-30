@@ -76,15 +76,16 @@ class MasterCC_Controller extends BaseController
                 'nomor_so'        => $val->nomor_so,
                 'nama_so'         => $val->nama_so,
                 'pic'             => $val->pic['nama'],
+                'area'            => $val->area['nama'],
                 'cabang'          => $val->cabang['nama'],
                 'asal_data'       => $val->asaldata['nama'],
                 'nama_marketing'  => $val->nama_marketing,
                 'nama_calon_debt' => $val->debt['nama_lengkap'],
-                'das'            => [
+                'das' => [
                     'status'  => $status_das,
                     'catatan' => $val->catatan_das
                 ],
-                'hm'            => [
+                'hm'  => [
                     'status'  => $status_hm,
                     'catatan' => $val->catatan_hm
                 ]
@@ -213,6 +214,10 @@ class MasterCC_Controller extends BaseController
             'nama_so'     => $val->nama_so,
             'id_pic'      => $val->id_pic,
             'nama_pic'    => $val->pic['nama'],
+            'area'   => [
+                'id'      => $val->id_area,
+                'nama'    => $val->area['nama']
+            ],
             'id_cabang'   => $val->id_cabang,
             'nama_cabang' => $val->cabang['nama'],
             'tracking'  => [
@@ -300,6 +305,7 @@ class MasterCC_Controller extends BaseController
             'nomor_so'       => $nomor_so,
             'user_id'        => $user_id,
             'id_pic'         => $PIC->id,
+            'id_area'        => $PIC->id_area,
             'id_cabang'      => $PIC->id_cabang,
             'nama_so'        => $PIC->nama,
             'id_asal_data'   => $req->input('id_asal_data'),
@@ -1037,6 +1043,7 @@ class MasterCC_Controller extends BaseController
                     'nomor_so'        => $val->nomor_so,
                     'nama_so'         => $val->nama_so,
                     'pic'             => $val->pic['nama'],
+                    'area'            => $val->area['nama'],
                     'cabang'          => $val->cabang['nama'],
                     'asal_data'       => $val->asaldata['nama'],
                     'nama_marketing'  => $val->nama_marketing,

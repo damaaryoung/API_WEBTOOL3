@@ -744,6 +744,10 @@ class MasterCAA_Controller extends BaseController
                 'id'   => $val->id_pic,
                 'nama' => $val->pic['nama'],
             ],
+            'area'   => [
+                'id'   => $val->id_area,
+                'nama' => $val->area['nama']
+            ],
             'cabang' => [
                 'id'   => $val->id_cabang,
                 'nama' => $val->cabang['nama'],
@@ -917,6 +921,7 @@ class MasterCAA_Controller extends BaseController
                 // 'nomor_caa'      => $val->so['caa']['nomor_caa'],
 
                 'pic'            => $val->pic['nama'],
+                'area'           => $val->area['nama'],
                 'cabang'         => $val->cabang['nama'],
                 'asal_data'      => $val->so['asaldata']['nama'],
                 'nama_marketing' => $val->so['nama_marketing'],

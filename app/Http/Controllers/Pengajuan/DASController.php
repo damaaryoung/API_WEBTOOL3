@@ -47,6 +47,7 @@ class DASController extends BaseController
                 'nomor_so'        => $val->nomor_so,
                 'nama_so'         => $val->nama_so,
                 'pic'             => $val->pic['nama'],
+                'area'            => $val->area['nama'],
                 'cabang'          => $val->cabang['nama'],
                 'asal_data'       => $val->asaldata['nama'],
                 'nama_marketing'  => $val->nama_marketing,
@@ -126,6 +127,10 @@ class DASController extends BaseController
             'id'             => $val->id,
             'nomor_so'       => $val->nomor_so,
             'nama_so'        => $val->nama_so,
+            'area'   => [
+                'id'    => $val->id_area,
+                'nama'  => $val->area['nama']
+            ],
             'id_cabang'      => $val->pic['id_mk_cabang'],
             'nama_cabang'    => $val->pic['cabang']['nama'],
             'asal_data'      => $val->asaldata['nama'],
@@ -373,6 +378,7 @@ class DASController extends BaseController
                 'nomor_so'        => $val->nomor_so,
                 'nama_so'         => $val->nama_so,
                 'pic'             => $val->pic['nama'],
+                'area'            => $val->area['nama'],
                 'cabang'          => $val->cabang['nama'],
                 'asal_data'       => $val->asaldata['nama'],
                 'nama_marketing'  => $val->nama_marketing,

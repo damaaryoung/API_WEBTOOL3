@@ -90,9 +90,11 @@ class MasterAO_Controller extends BaseController
 
             $data[$key] = [
                 'id'             => $val->id,
+                'id_trans_ao'    => $val->id_trans_ao,
                 'nomor_so'       => $val->nomor_so,
                 // 'nomor_ao'       => $val->ao['nomor_ao'],
                 'pic'            => $val->pic['nama'],
+                'area'           => $val->area['nama'],
                 'cabang'         => $val->cabang['nama'],
                 'asal_data'      => $val->asaldata['nama'],
                 'nama_marketing' => $val->nama_marketing,
@@ -111,10 +113,6 @@ class MasterAO_Controller extends BaseController
                     'status'  => $status_ao,
                     'catatan' => $val->catatan_ao
                 ]
-                // 'das_status'     => $status_das,
-                // 'das_note'       => $val->catatan_das,
-                // 'hm_status'      => $status_das,
-                // 'hm_note'        => $val->catatan_hm,
             ];
         }
 
@@ -203,11 +201,16 @@ class MasterAO_Controller extends BaseController
 
         $data[] = [
             'id'          => $val->id,
+            'id_trans_ao' => $val->id_trans_ao,
             'nomor_so'    => $val->nomor_so,
             // 'nomor_ao'    => $val->ao['nomor_ao'],
             'nama_so'     => $val->nama_so,
             'id_pic'      => $val->id_pic,
             'nama_pic'    => $val->pic['nama'],
+            'area'   => [
+                'id'      => $val->id_area,
+                'nama'    => $val->area['nama']
+            ],
             'id_cabang'   => $val->id_cabang,
             'nama_cabang' => $val->cabang['nama'],
             'asaldata'  => [
@@ -314,13 +317,14 @@ class MasterAO_Controller extends BaseController
         $id_penj = explode (",",$check->id_penjamin);
 
         $TransAO = array(
-            'nomor_ao'              => $nomor_ao,
-            'id_trans_so'           => $id,
-            'user_id'               => $user_id,
-            'id_pic'                => $PIC->id,
-            'id_cabang'             => $PIC->id_cabang,
-            'catatan_ao'            => $req->input('catatan_ao'),
-            'status_ao'             => empty($req->input('status_ao')) ? 1 : $req->input('status_ao')
+            'nomor_ao'     => $nomor_ao,
+            'id_trans_so'  => $id,
+            'user_id'      => $user_id,
+            'id_pic'       => $PIC->id,
+            'id_area'      => $PIC->id_area,
+            'id_cabang'    => $PIC->id_cabang,
+            'catatan_ao'   => $req->input('catatan_ao'),
+            'status_ao'    => empty($req->input('status_ao')) ? 1 : $req->input('status_ao')
         );
 
         $recom_AO = array(
@@ -991,9 +995,11 @@ class MasterAO_Controller extends BaseController
 
             $data[$key] = [
                 'id'             => $val->id,
+                'id_trans_ao'    => $val->id_trans_ao,
                 'nomor_so'       => $val->nomor_so,
                 // 'nomor_ao'       => $val->ao['nomor_ao'],
                 'pic'            => $val->pic['nama'],
+                'area'           => $val->area['nama'],
                 'cabang'         => $val->cabang['nama'],
                 'asal_data'      => $val->asaldata['nama'],
                 'nama_marketing' => $val->nama_marketing,
