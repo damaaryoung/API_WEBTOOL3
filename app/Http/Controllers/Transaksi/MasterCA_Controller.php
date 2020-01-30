@@ -298,7 +298,7 @@ class MasterCA_Controller extends BaseController
 
             $arr = explode("-", $no, 5);
 
-            $lastNumb = $arr[4] + 1;
+            $lastNumb = str_replace(" [revisi]","",$arr[4]) + 1;
         }
 
         //Data Transaksi SO
@@ -337,16 +337,16 @@ class MasterCA_Controller extends BaseController
         if (!empty($req->input('no_rekening_mutasi'))){
             for ($i = 0; $i < count($req->input('no_rekening_mutasi')); $i++) {
                 $dataMuBa[] = array(
-                    'urutan_mutasi'  => empty($req->input('urutan_mutasi')[$i]) ? null[$i] : $req->urutan_mutasi[$i],
-                    'nama_bank'      => empty($req->input('nama_bank_mutasi')[$i]) ? null[$i] : $req->nama_bank_mutasi[$i],
-                    'no_rekening'    => empty($req->input('no_rekening_mutasi')[$i]) ? null[$i] : $req->no_rekening_mutasi[$i],
-                    'nama_pemilik'   => empty($req->input('nama_pemilik_mutasi')[$i]) ? null[$i] : $req->nama_pemilik_mutasi[$i],
-                    'periode'        => empty($req->input('periode_mutasi')[$i]) ? null[$i] : implode(";", $req->periode_mutasi[$i]),
-                    'frek_debet'     => empty($req->input('frek_debet_mutasi')[$i]) ? null[$i] : implode(";", $req->frek_debet_mutasi[$i]),
-                    'nominal_debet'  => empty($req->input('nominal_debet_mutasi')[$i]) ? null[$i] : implode(";", $req->nominal_debet_mutasi[$i]),
-                    'frek_kredit'    => empty($req->input('frek_kredit_mutasi')[$i]) ? null[$i] : implode(";", $req->frek_kredit_mutasi[$i]),
-                    'nominal_kredit' => empty($req->input('nominal_kredit_mutasi')[$i]) ? null[$i] : implode(";", $req->nominal_kredit_mutasi[$i]),
-                    'saldo'          => empty($req->input('saldo_mutasi')[$i]) ? null[$i] : implode(";", $req->saldo_mutasi[$i])
+                    'urutan_mutasi'  => empty($req->input('urutan_mutasi')[$i]) ? null : $req->urutan_mutasi[$i],
+                    'nama_bank'      => empty($req->input('nama_bank_mutasi')[$i]) ? null : $req->nama_bank_mutasi[$i],
+                    'no_rekening'    => empty($req->input('no_rekening_mutasi')[$i]) ? null : $req->no_rekening_mutasi[$i],
+                    'nama_pemilik'   => empty($req->input('nama_pemilik_mutasi')[$i]) ? null : $req->nama_pemilik_mutasi[$i],
+                    'periode'        => empty($req->input('periode_mutasi')[$i]) ? null : implode(";", $req->periode_mutasi[$i]),
+                    'frek_debet'     => empty($req->input('frek_debet_mutasi')[$i]) ? null : implode(";", $req->frek_debet_mutasi[$i]),
+                    'nominal_debet'  => empty($req->input('nominal_debet_mutasi')[$i]) ? null : implode(";", $req->nominal_debet_mutasi[$i]),
+                    'frek_kredit'    => empty($req->input('frek_kredit_mutasi')[$i]) ? null : implode(";", $req->frek_kredit_mutasi[$i]),
+                    'nominal_kredit' => empty($req->input('nominal_kredit_mutasi')[$i]) ? null : implode(";", $req->nominal_kredit_mutasi[$i]),
+                    'saldo'          => empty($req->input('saldo_mutasi')[$i]) ? null : implode(";", $req->saldo_mutasi[$i])
                 );
             }
         }
@@ -368,12 +368,12 @@ class MasterCA_Controller extends BaseController
         if (!empty($req->input('nama_bank_acc'))) {
             for ($i = 0; $i < count($req->input('nama_bank_acc')); $i++) {
                 $dataACC[] = array(
-                    'nama_bank' => empty($req->input('nama_bank_acc')[$i]) ? null[$i] : $req->nama_bank_acc[$i],
-                    'plafon' => empty($req->input('plafon_acc')[$i]) ? null[$i] : $req->plafon_acc[$i],
-                    'baki_debet' => empty($req->input('baki_debet_acc')[$i]) ? null[$i] : $req->baki_debet_acc[$i],
-                    'angsuran' => empty($req->input('angsuran_acc')[$i]) ? null[$i] : $req->angsuran_acc[$i],
-                    'collectabilitas' => empty($req->input('collectabilitas_acc')[$i]) ? null[$i] : $req->collectabilitas_acc[$i],
-                    'jenis_kredit' => empty($req->input('jenis_kredit_acc')[$i]) ? null[$i] : $req->jenis_kredit_acc[$i]
+                    'nama_bank' => empty($req->input('nama_bank_acc')[$i]) ? null : $req->nama_bank_acc[$i],
+                    'plafon' => empty($req->input('plafon_acc')[$i]) ? null : $req->plafon_acc[$i],
+                    'baki_debet' => empty($req->input('baki_debet_acc')[$i]) ? null : $req->baki_debet_acc[$i],
+                    'angsuran' => empty($req->input('angsuran_acc')[$i]) ? null : $req->angsuran_acc[$i],
+                    'collectabilitas' => empty($req->input('collectabilitas_acc')[$i]) ? null : $req->collectabilitas_acc[$i],
+                    'jenis_kredit' => empty($req->input('jenis_kredit_acc')[$i]) ? null : $req->jenis_kredit_acc[$i]
                 );
             }
         }
@@ -506,11 +506,24 @@ class MasterCA_Controller extends BaseController
         );
 
 
-        $asJaminan = array(
-            'nama_asuransi'       => $req->input('nama_asuransi_jaminan'),
-            'jangka_waktu'        => $req->input('jangka_waktu_as_jaminan'),
-            'nilai_pertanggungan' => $req->input('nilai_pertanggungan_as_jaminan'),
-            'jatuh_tempo'         => Carbon::parse($req->input('jatuh_tempo_as_jaminan'))->format('Y-m-d')
+        if ($req->input('jangka_waktu_as_jaminan')) {
+            for ($i = 0; $i < count($req->input('jangka_waktu_as_jaminan')); $i++) {
+
+                $asJaminan[] = array(
+                    'nama_asuransi'       => empty($req->input('nama_asuransi_jaminan')[$i]) ? 'null' : $req->input('nama_asuransi_jaminan')[$i],
+                    'jangka_waktu'        => empty($req->input('jangka_waktu_as_jaminan')[$i]) ? 'null' : $req->input('jangka_waktu_as_jaminan')[$i],
+                    'nilai_pertanggungan' => empty($req->input('nilai_pertanggungan_as_jaminan')[$i]) ? 'null' : $req->input('nilai_pertanggungan_as_jaminan')[$i],
+                    'jatuh_tempo'         => empty($req->input('jatuh_tempo_as_jaminan')[$i]) ? 'null' : Carbon::parse($req->input('jatuh_tempo_as_jaminan')[$i])->format('Y-m-d')
+                );
+            }
+        }
+
+
+        $jaminanImplode = array(
+            'nama_asuransi'       => implode(";", array_column($asJaminan, 'nama_asuransi')),
+            'jangka_waktu'        => implode(";", array_column($asJaminan, 'jangka_waktu')),
+            'nilai_pertanggungan' => implode(";", array_column($asJaminan, 'nilai_pertanggungan')),
+            'jatuh_tempo'         => implode(";", array_column($asJaminan, 'jatuh_tempo'))
         );
 
 

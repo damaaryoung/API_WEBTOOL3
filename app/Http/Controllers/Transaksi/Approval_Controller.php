@@ -451,7 +451,6 @@ class Approval_Controller extends BaseController
         }
 
 
-
         try{
             return response()->json([
                 'code'   => 200,

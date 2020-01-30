@@ -287,8 +287,8 @@ class BlankRequest extends FormRequest
 
                 // Asuransi Jaminan pada CA
                 // 'jangka_waktu_as_jaminan'        => 'integer|in:12;18;24;30;36;48;60',
-                'nilai_pertanggungan_as_jaminan' => 'integer',
-                'jatuh_tempo_as_jaminan'         => 'date_format:d-m-Y',
+                'nilai_pertanggungan_as_jaminan.*' => 'integer',
+                'jatuh_tempo_as_jaminan.*'         => 'date_format:d-m-Y',
 
                 // Transaksi CAA
                 'penyimpangan'       => 'in:ADA,TIDAK',
@@ -685,7 +685,7 @@ class BlankRequest extends FormRequest
             'plafon_kredit' => $integer,
 
             // Asuransi Jiwa pada CA
-            'jangka_waktu_as_jiwa.integer'        => $integer,
+            // 'jangka_waktu_as_jiwa.integer'        => $integer,
             // 'jangka_waktu_as_jiwa.in'             => $in,
             'nilai_pertanggungan_as_jiwa.integer' => $integer,
             'jatuh_tempo_as_jiwa.date_format'     => $date_format,
@@ -694,10 +694,10 @@ class BlankRequest extends FormRequest
             'umur_nasabah_as_jiwa.integer'        => $integer,
 
             // Asuransi Jaminan pada CA
-            'jangka_waktu_as_jaminan.integer'        => $integer,
+            // 'jangka_waktu_as_jaminan.*.integer'        => $integer,
             // 'jangka_waktu_as_jaminan.in'             => $in,
-            'nilai_pertanggungan_as_jaminan.integer' => $integer,
-            'jatuh_tempo_as_jaminan.date_format'     => $date_format,
+            'nilai_pertanggungan_as_jaminan.*.integer' => $integer,
+            'jatuh_tempo_as_jaminan.*.date_format'     => $date_format,
 
             // Transaksi CAA
             // 'penyimpangan.required'       => $required,
