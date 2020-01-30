@@ -269,6 +269,7 @@ $router->group(['middleware' => 'jwt.auth'], function () use ($router) {
 
                     // Approval By Team CAA
                     $router->get('/{id}/approval', 'Approval_Controller@index');
+                    $router->get('/{id}/approval/{id_approval}', 'Approval_Controller@show');
                     $router->post('/{id}/approval/{id_approval}', 'Approval_Controller@approve');
                 });
 
