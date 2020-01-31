@@ -10,6 +10,7 @@ use App\Models\Pengajuan\AO\AgunanTanah;
 use Illuminate\Support\Facades\File;
 use App\Models\Transaksi\Approval;
 use App\Models\Transaksi\TransCAA;
+use App\Models\Transaksi\TransCA;
 use App\Models\Transaksi\TransSO;
 use App\Models\Karyawan\TeamCAA;
 use App\Models\AreaKantor\PIC;
@@ -358,9 +359,12 @@ class Approval_Controller extends BaseController
     // Team Caa
     public function report_approval($id){
 
-        $check_caa = TransCAA::where('status_caa', 1)->where('id_trans_so', $id)->first();
+        // $check_caa = TransCAA::where('status_caa', 1)->where('id_trans_so', $id)->first();
 
-        if ($check_caa == null) {
+        $check_ca = TransCA::where('status_ca', 1)->where('id_trans_so', $id)->latest()->first();
+        // dd($check_ca);
+
+        if ($check_ca == null) {
             return response()->json([
                 "code"    => 404,
                 "status"  => "not found",
@@ -368,7 +372,7 @@ class Approval_Controller extends BaseController
             ], 404);
         }
 
-        $check_team = Approval::where('id_trans_so', $id)->whereIn('id_pic', explode(",", $check_caa->pic_team_caa))->get();
+        $check_team = Approval::where('id_trans_so', $id)->whereIn('id_pic', explode(",", $check_ca->so['caa']['pic_team_caa']))->get();
 
         if ($check_team == null) {
             return response()->json([
@@ -388,7 +392,7 @@ class Approval_Controller extends BaseController
                 'plafon'  => $val->plafon,
                 'tenor'   => $val->plafon,
                 'status'  => $val->status,
-                'rincian' => $check_caa->rincian
+                'rincian' => $val->rincian
             ];
 
             // $approved_user = array_search('accept', $data[$key], true);
@@ -411,44 +415,34 @@ class Approval_Controller extends BaseController
 
         if($url_in_array != true){
 
-            $result = array(
-                'id_transaksi' => $check_caa->id_trans_so,
-                'debitur' => [
-                    'id'   => $check_caa->so['id_calon_debitur'],
-                    'nama' => $check_caa->so['debt']['nama_lengkap']
-                ],
-                'approved' => [
-                    'id_pic'  => $check_caa->id_pic,
-                    'user_id' => $check_caa->user_id,
-                    'nama'    => $check_caa->pic['nama'],
-                    'tenor'   => null,
-                    'plafon'  => null,
-                    'jaminan' => $imTan
-                ],
-                'list_approver' => $data
-            );
+            $tenor = null;
+            $plafon = null;
 
         }else{
 
             $num_sts = array_search('accept', array_column($data, 'status'), true);
 
-            $result = array(
-                'id_transaksi' => $check_caa->id_trans_so,
-                'debitur' => [
-                    'id'   => $check_caa->so['id_calon_debitur'],
-                    'nama' => $check_caa->so['debt']['nama_lengkap']
-                ],
-                'approved' => [
-                    'id_pic'  => $check_caa->id_pic,
-                    'user_id' => $check_caa->user_id,
-                    'nama'    => $check_caa->pic['nama'],
-                    'tenor'   => $data[$num_sts]['tenor'],
-                    'plafon'  => $data[$num_sts]['plafon'],
-                    'jaminan' => $imTan
-                ],
-                'list_approver' => $data
-            );
+            $tenor  = $data[$num_sts]['tenor'];
+            $plafon = $data[$num_sts]['plafon'];
+
         }
+
+        $result = array(
+            'id_transaksi' => $check_ca->id_trans_so,
+            'debitur' => [
+                'id'   => $check_ca->so['id_calon_debitur'],
+                'nama' => $check_ca->so['debt']['nama_lengkap']
+            ],
+            'approved' => [
+                'id_pic'  => $check_ca->id_pic,
+                'user_id' => $check_ca->user_id,
+                'nama_ca' => $check_ca->pic['nama'],
+                'tenor'   => $data[$num_sts]['tenor'],
+                'plafon'  => $data[$num_sts]['plafon'],
+                'jaminan' => $imTan
+            ],
+            'list_approver' => $data
+        );
 
 
         try{

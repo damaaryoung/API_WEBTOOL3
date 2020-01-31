@@ -231,11 +231,11 @@ $router->group(['middleware' => 'jwt.auth'], function () use ($router) {
 
                 // Trans SO
                 $router->group(['prefix' => '/mcc',], function() use ($router) {
-                    $router->post('/', 'MasterCC_Controller@store'); // Memorandum Credit Checking
-                    $router->get('/', 'MasterCC_Controller@index');
-                    $router->get('/{id}', 'MasterCC_Controller@show');
-                    $router->post('/{id}', 'MasterCC_Controller@update'); // Update MCC
-                    $router->get('/{search}/search', 'MasterCC_Controller@search');
+                    $router->post('/', 'MasterSO_Controller@store'); // Memorandum Credit Checking
+                    $router->get('/', 'MasterSO_Controller@index');
+                    $router->get('/{id}', 'MasterSO_Controller@show');
+                    $router->post('/{id}', 'MasterSO_Controller@update'); // Update MCC
+                    $router->get('/{search}/search', 'MasterSO_Controller@search');
                 });
 
                 // Trans AO

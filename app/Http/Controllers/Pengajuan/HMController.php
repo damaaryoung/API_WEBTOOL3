@@ -72,7 +72,7 @@ class HMController extends BaseController
                 'das_note'       => $val->catatan_das,
                 'hm_status'      => $status_hm,
                 'hm_note'        => $val->catatan_hm,
-                'status_ao'      => $status_ao
+                // 'status_ao'      => $status_ao
             ];
         }
 
@@ -148,13 +148,13 @@ class HMController extends BaseController
             $status_hm = 'waiting';
         }
 
-        if ($val->ao['status_ao'] == 1) {
-            $status_ao = 'recommend';
-        }elseif ($val->ao['status_ao'] == 2) {
-            $status_ao = 'not recommend';
-        }else{
-            $status_ao = 'waiting';
-        }
+        // if ($val->ao['status_ao'] == 1) {
+        //     $status_ao = 'recommend';
+        // }elseif ($val->ao['status_ao'] == 2) {
+        //     $status_ao = 'not recommend';
+        // }else{
+        //     $status_ao = 'waiting';
+        // }
 
         $data = [
             'id'             => $val->id,
@@ -241,7 +241,7 @@ class HMController extends BaseController
             'das_note'      => $val->catatan_das,
             'hm_status'     => $status_hm,
             'hm_note'       => $val->catatan_hm,
-            'status_ao'     => $status_ao,
+            // 'status_ao'     => $status_ao,
             'lampiran'  => [
                 'ideb'    => explode(";", $val->lamp_ideb),
                 'pefindo' => explode(";", $val->lamp_pefindo)
@@ -360,13 +360,13 @@ class HMController extends BaseController
                 $status_hm = 'waiting';
             }
 
-            if ($val->ao['status_ao'] == 1) {
-                $status_ao = 'recommend';
-            }elseif ($val->ao['status_ao'] == 2) {
-                $status_ao = 'not recommend';
-            }else{
-                $status_ao = 'waiting';
-            }
+            // if ($val->ao['status_ao'] == 1) {
+            //     $status_ao = 'recommend';
+            // }elseif ($val->ao['status_ao'] == 2) {
+            //     $status_ao = 'not recommend';
+            // }else{
+            //     $status_ao = 'waiting';
+            // }
 
             $data[$key] = [
                 'id'             => $val->id,
@@ -384,7 +384,7 @@ class HMController extends BaseController
                 'das_note'       => $val->catatan_das,
                 'hm_status'      => $status_hm,
                 'hm_note'        => $val->catatan_hm,
-                'status_ao'      => $status_ao
+                // 'status_ao'      => $status_ao
             ];
         }
 

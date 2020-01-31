@@ -21,7 +21,7 @@ Use App\Models\User;
 use Carbon\Carbon;
 use DB;
 
-class MasterCC_Controller extends BaseController
+class MasterSO_Controller extends BaseController
 {
     public function index(Request $req){
         $user_id = $req->auth->user_id;
@@ -81,6 +81,8 @@ class MasterCC_Controller extends BaseController
                 'asal_data'       => $val->asaldata['nama'],
                 'nama_marketing'  => $val->nama_marketing,
                 'nama_calon_debt' => $val->debt['nama_lengkap'],
+                'plafon'          => $val->faspin['plafon'],
+                'tenor'           => $val->faspin['tenor'],
                 'das' => [
                     'status'  => $status_das,
                     'catatan' => $val->catatan_das
@@ -90,6 +92,7 @@ class MasterCC_Controller extends BaseController
                     'catatan' => $val->catatan_hm
                 ]
             ];
+
         }
 
         try {
@@ -399,20 +402,20 @@ class MasterCC_Controller extends BaseController
             'tempat_lahir'          => $req->input('tempat_lahir'),
             'tgl_lahir'             => Carbon::parse($req->input('tgl_lahir'))->format('Y-m-d'),
             'agama'                 => strtoupper($req->input('agama')),
-            'alamat_ktp'            => $req->input('alamat_ktp'),
-            'rt_ktp'                => $req->input('rt_ktp'),
-            'rw_ktp'                => $req->input('rw_ktp'),
-            'id_prov_ktp'           => $req->input('id_provinsi_ktp'),
-            'id_kab_ktp'            => $req->input('id_kabupaten_ktp'),
-            'id_kec_ktp'            => $req->input('id_kecamatan_ktp'),
-            'id_kel_ktp'            => $req->input('id_kelurahan_ktp'),
-            'alamat_domisili'       => $req->input('alamat_domisili'),
-            'rt_domisili'           => $req->input('rt_domisili'),
-            'rw_domisili'           => $req->input('rw_domisili'),
-            'id_prov_domisili'      => $req->input('id_provinsi_domisili'),
-            'id_kab_domisili'       => $req->input('id_kabupaten_domisili'),
-            'id_kec_domisili'       => $req->input('id_kecamatan_domisili'),
-            'id_kel_domisili'       => $req->input('id_kelurahan_domisili'),
+            'alamat_ktp'            => $alamat_ktp = $req->input('alamat_ktp'),
+            'rt_ktp'                => $rt_ktp = $req->input('rt_ktp'),
+            'rw_ktp'                => $rw_ktp = $req->input('rw_ktp'),
+            'id_prov_ktp'           => $id_prov_ktp = $req->input('id_provinsi_ktp'),
+            'id_kab_ktp'            => $id_kab_ktp = $req->input('id_kabupaten_ktp'),
+            'id_kec_ktp'            => $id_kec_ktp = $req->input('id_kecamatan_ktp'),
+            'id_kel_ktp'            => $id_kel_ktp = $req->input('id_kelurahan_ktp'),
+            'alamat_domisili'       => empty($req->input('alamat_domisili')) ? $alamat_ktp : $req->input('alamat_domisili'),
+            'rt_domisili'           => empty($req->input('rt_domisili')) ? $rt_ktp : $req->input('rt_domisili'),
+            'rw_domisili'           => empty($req->input('rw_domisili')) ? $rw_ktp : $req->input('rw_domisili'),
+            'id_prov_domisili'      => empty($req->input('id_provinsi_domisili')) ? $id_prov_ktp : $req->input('id_provinsi_domisili'),
+            'id_kab_domisili'       => empty($req->input('id_kabupaten_domisili')) ? $id_kab_ktp : $req->input('id_kabupaten_domisili'),
+            'id_kec_domisili'       => empty($req->input('id_kecamatan_domisili')) ? $id_kec_ktp : $req->input('id_kecamatan_domisili'),
+            'id_kel_domisili'       => empty($req->input('id_kelurahan_domisili')) ? $id_kel_ktp : $req->input('id_kelurahan_domisili'),
             'pendidikan_terakhir'   => $req->input('pendidikan_terakhir'),
             'jumlah_tanggungan'     => $req->input('jumlah_tanggungan'),
             'no_telp'               => $req->input('no_telp'),

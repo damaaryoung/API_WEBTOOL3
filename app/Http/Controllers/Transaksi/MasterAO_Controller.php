@@ -111,7 +111,7 @@ class MasterAO_Controller extends BaseController
                 ],
                 'ao'            => [
                     'status'  => $status_ao,
-                    'catatan' => $val->catatan_ao
+                    'catatan' => $val->ao['catatan_ao']
                 ]
             ];
         }
@@ -244,7 +244,7 @@ class MasterAO_Controller extends BaseController
             ],
             'ao' => [
                 'status'  => $status_ao,
-                'catatan' => $val->catatan_ao
+                'catatan' => $val->ao['catatan_ao']
             ],
             'lampiran'  => [
                 "ideb"      => explode(";", $val->lamp_ideb),
@@ -1016,7 +1016,7 @@ class MasterAO_Controller extends BaseController
                 ],
                 'ao'            => [
                     'status'  => $status_ao,
-                    'catatan' => $val->catatan_ao
+                    'catatan' => $val->ao['catatan_ao']
                 ]
                 // 'das_status'     => $status_das,
                 // 'das_note'       => $val->catatan_das,
