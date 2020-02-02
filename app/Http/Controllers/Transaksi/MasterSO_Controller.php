@@ -329,7 +329,7 @@ class MasterSO_Controller extends BaseController
 
         if($file = $req->file('lamp_ktp')){
             $path = $lamp_dir.'/debitur';
-            $name = 'ktp.'.$file->getClientOriginalExtension();
+            $name = 'ktp.' . $file->getClientOriginalName();
             $file->move($path,$name);
 
             $ktpDebt = $path.'/'.$name;
@@ -339,7 +339,7 @@ class MasterSO_Controller extends BaseController
 
         if($file = $req->file('lamp_kk')){
             $path = $lamp_dir.'/debitur';
-            $name = 'kk.'.$file->getClientOriginalExtension();
+            $name = 'kk.' . $file->getClientOriginalName();
             $file->move($path,$name);
 
             $kkDebt = $path.'/'.$name;
@@ -349,7 +349,7 @@ class MasterSO_Controller extends BaseController
 
         if($file = $req->file('lamp_sertifikat')){
             $path = $lamp_dir.'/debitur';
-            $name = 'sertifikat.'.$file->getClientOriginalExtension();
+            $name = 'sertifikat.' . $file->getClientOriginalName();
             $file->move($path,$name);
 
             $sertifikatDebt = $path.'/'.$name;
@@ -359,7 +359,7 @@ class MasterSO_Controller extends BaseController
 
         if($file = $req->file('lamp_pbb')){
             $path = $lamp_dir.'/debitur';
-            $name = 'pbb.'.$file->getClientOriginalExtension();
+            $name = 'pbb.' . $file->getClientOriginalName();
             $file->move($path,$name);
 
             $pbbDebt = $path.'/'.$name;
@@ -369,7 +369,7 @@ class MasterSO_Controller extends BaseController
 
         if($file = $req->file('lamp_imb')){
             $path = $lamp_dir.'/debitur';
-            $name = 'imb.'.$file->getClientOriginalExtension();
+            $name = 'imb.' . $file->getClientOriginalName();
             $file->move($path,$name);
 
             $imbDebt = $path.'/'.$name;
@@ -379,7 +379,7 @@ class MasterSO_Controller extends BaseController
 
         if($file = $req->file('foto_agunan_rumah')){
             $path = $lamp_dir.'/debitur';
-            $name = 'foto_agunan_rumah.'.$file->getClientOriginalExtension();
+            $name = 'foto_agunan_rumah.' . $file->getClientOriginalName();
             $file->move($path,$name);
 
             $foto_agunan_rumah = $path.'/'.$name;
@@ -431,7 +431,7 @@ class MasterSO_Controller extends BaseController
 
         if($file = $req->file('lamp_ktp_pas')){
             $path = $lamp_dir.'/pasangan';
-            $name = 'ktp.'.$file->getClientOriginalExtension();
+            $name = 'ktp.' . $file->getClientOriginalName();
             $file->move($path,$name);
 
             $ktpPass = $path.'/'.$name;
@@ -441,7 +441,7 @@ class MasterSO_Controller extends BaseController
 
         if($file = $req->file('lamp_buku_nikah_pas')){
             $path = $lamp_dir.'/pasangan';
-            $name = 'buku_nikah.'.$file->getClientOriginalExtension();
+            $name = 'buku_nikah.' . $file->getClientOriginalName();
             $file->move($path,$name);
 
             $bukuNikahPass = $path.'/'.$name;
@@ -466,12 +466,12 @@ class MasterSO_Controller extends BaseController
         );
 
         // Data Penjamin
-        $a = 1; $b = 1; $c = 1; $d = 1;
+        // $a = 1; $b = 1; $c = 1; $d = 1;
 
         if($files = $req->file('lamp_ktp_pen')){
             foreach($files as $file){
                 $path = $lamp_dir.'/penjamin';
-                $name = 'ktp_penjamin'.$a.'.'.$file->getClientOriginalExtension();
+                $name = 'ktp_penjamin.' . $file->getClientOriginalName();
                 $file->move($path,$name);
                 $a++;
 
@@ -482,7 +482,7 @@ class MasterSO_Controller extends BaseController
         if($files = $req->file('lamp_ktp_pasangan_pen')){
             foreach($files as $file){
                 $path = $lamp_dir.'/penjamin';
-                $name = 'ktp_pasangan'.$b.'.'.$file->getClientOriginalExtension();
+                $name = 'ktp_pasangan.' . $file->getClientOriginalName();
                 $file->move($path,$name);
                 $b++;
 
@@ -493,7 +493,7 @@ class MasterSO_Controller extends BaseController
         if($files = $req->file('lamp_kk_pen')){
             foreach($files as $file){
                 $path = $lamp_dir.'/penjamin';
-                $name = 'kk_penjamin'.$c.'.'.$file->getClientOriginalExtension();
+                $name = 'kk_penjamin.' . $file->getClientOriginalName();
                 $file->move($path,$name);
                 $c++;
 
@@ -504,7 +504,7 @@ class MasterSO_Controller extends BaseController
         if($files = $req->file('lamp_buku_nikah_pen')){
             foreach($files as $file){
                 $path = $lamp_dir.'/penjamin';
-                $name = 'buku_nikah_penjamin'.$d.'.'.$file->getClientOriginalExtension();
+                $name = 'buku_nikah_penjamin.' . $file->getClientOriginalName();
                 $file->move($path,$name);
                 $d++;
 
@@ -668,7 +668,7 @@ class MasterSO_Controller extends BaseController
 
         if($file = $req->file('lamp_ktp')){
             $path = $lamp_dir.'/debitur';
-            $name = 'ktp.'.$file->getClientOriginalExtension();
+            $name = 'ktp.' . $file->getClientOriginalName();
 
             if(!empty($trans->debt['lamp_ktp']))
             {
@@ -684,7 +684,7 @@ class MasterSO_Controller extends BaseController
 
         if($file = $req->file('lamp_kk')){
             $path = $lamp_dir.'/debitur';
-            $name = 'kk.'.$file->getClientOriginalExtension();
+            $name = 'kk.' . $file->getClientOriginalName();
 
             if(!empty($trans->debt['lamp_kk']))
             {
@@ -700,7 +700,7 @@ class MasterSO_Controller extends BaseController
 
         if($file = $req->file('lamp_sertifikat')){
             $path = $lamp_dir.'/debitur';
-            $name = 'sertifikat.'.$file->getClientOriginalExtension();
+            $name = 'sertifikat.' . $file->getClientOriginalName();
 
             if(!empty($trans->debt['lamp_sertifikat']))
             {
@@ -716,7 +716,7 @@ class MasterSO_Controller extends BaseController
 
         if($file = $req->file('lamp_pbb')){
             $path = $lamp_dir.'/debitur';
-            $name = 'pbb.'.$file->getClientOriginalExtension();
+            $name = 'pbb.' . $file->getClientOriginalName();
 
             if(!empty($trans->debt['lamp_pbb']))
             {
@@ -732,7 +732,7 @@ class MasterSO_Controller extends BaseController
 
         if($file = $req->file('lamp_imb')){
             $path = $lamp_dir.'/debitur';
-            $name = 'imb.'.$file->getClientOriginalExtension();
+            $name = 'imb.' . $file->getClientOriginalName();
 
             if(!empty($trans->debt['lamp_imb']))
             {
@@ -789,7 +789,7 @@ class MasterSO_Controller extends BaseController
 
         if($file = $req->file('lamp_ktp_pas')){
             $path = $lamp_dir.'/pasangan';
-            $name = 'ktp.'.$file->getClientOriginalExtension();
+            $name = 'ktp.' . $file->getClientOriginalName();
 
             if(!empty($trans->pas['lamp_ktp']))
             {
@@ -805,7 +805,7 @@ class MasterSO_Controller extends BaseController
 
         if($file = $req->file('lamp_buku_nikah_pas')){
             $path = $lamp_dir.'/pasangan';
-            $name = 'buku_nikah.'.$file->getClientOriginalExtension();
+            $name = 'buku_nikah.' . $file->getClientOriginalName();
 
             if(!empty($trans->pas['lamp_buku_nikah']))
             {
@@ -845,12 +845,12 @@ class MasterSO_Controller extends BaseController
 
             if ($penjamin != '[]') {
 
-                $a = 1; $b = 1; $c = 1; $d = 1;
+                // $a = 1; $b = 1; $c = 1; $d = 1;
 
                 if($files = $req->file('lamp_ktp_pen')){
                     foreach($files as $file){
 
-                        $name = 'ktp_penjamin'.$a.'.'.$file->getClientOriginalExtension();
+                        $name = 'ktp_penjamin.' . $file->getClientOriginalName();
 
                         foreach ($penjamin as $key => $val) {
 
@@ -881,7 +881,7 @@ class MasterSO_Controller extends BaseController
                 if($files = $req->file('lamp_ktp_pasangan_pen')){
                     foreach($files as $file){
 
-                        $name = 'ktp_pasangan'.$b.'.'.$file->getClientOriginalExtension();
+                        $name = 'ktp_pasangan.' . $file->getClientOriginalName();
 
                         foreach ($penjamin as $key => $val) {
                             $no_so = $val->lamp_ktp_pasangan;
@@ -907,7 +907,7 @@ class MasterSO_Controller extends BaseController
                 if($files = $req->file('lamp_kk_pen')){
                     foreach($files as $file){
 
-                        $name = 'kk_penjamin'.$c.'.'.$file->getClientOriginalExtension();
+                        $name = 'kk_penjamin.' . $file->getClientOriginalName();
 
                         foreach ($penjamin as $key => $val) {
                             $no_so = $val->lamp_kk;
@@ -933,7 +933,7 @@ class MasterSO_Controller extends BaseController
                 if($files = $req->file('lamp_buku_nikah_pen')){
                     foreach($files as $file){
 
-                        $name = 'buku_nikah_penjamin'.$d.'.'.$file->getClientOriginalExtension();
+                        $name = 'buku_nikah_penjamin.' . $file->getClientOriginalName();
 
                         foreach ($penjamin as $key => $val) {
                             $no_so = $val->lamp_buku_nikah;

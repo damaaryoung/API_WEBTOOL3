@@ -123,7 +123,7 @@ class PasanganController extends BaseController
         // Lampiran Pasangan
         if($file = $req->file('lamp_ktp_pas')){
             $path = $lamp_dir.'/pasangan';
-            $name = 'ktp.'.$file->getClientOriginalExtension();
+            $name = 'ktp.' . $file->getClientOriginalName();
 
             if(!empty($check->lamp_ktp))
             {
@@ -139,7 +139,7 @@ class PasanganController extends BaseController
 
         if($file = $req->file('lamp_buku_nikah_pas')){
             $path = $lamp_dir.'/pasangan';
-            $name = 'buku_nikah.'.$file->getClientOriginalExtension();
+            $name = 'buku_nikah.' . $file->getClientOriginalName();
 
             if(!empty($check->lamp_buku_nikah))
             {

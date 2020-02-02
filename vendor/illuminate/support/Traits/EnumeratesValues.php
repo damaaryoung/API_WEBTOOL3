@@ -604,7 +604,7 @@ trait EnumeratesValues
     /**
      * Pass the collection to the given callback and return the result.
      *
-     * @param  callable $callback
+     * @param  callable  $callback
      * @return mixed
      */
     public function pipe(callable $callback)
@@ -825,7 +825,7 @@ trait EnumeratesValues
      * Get an operator checker callback.
      *
      * @param  string  $key
-     * @param  string  $operator
+     * @param  string|null  $operator
      * @param  mixed  $value
      * @return \Closure
      */

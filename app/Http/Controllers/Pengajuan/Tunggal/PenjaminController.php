@@ -128,11 +128,11 @@ class PenjaminController extends BaseController
 
         $path = $arrPath[0].'/'.$ktp_debt.'/'.$arrPath[2];
 
-        $no = substr($arrPath[3], 12, 1);
+        // $no = substr($arrPath[3], 12, 1);
 
         if($file = $req->file('lamp_ktp_pen')){
 
-            $name = 'ktp_penjamin'.$no.'.'.$file->getClientOriginalExtension();
+            $name = 'ktp_penjamin.' . $file->getClientOriginalName();
 
             if(!empty($check->lamp_ktp))
             {
@@ -148,7 +148,7 @@ class PenjaminController extends BaseController
 
         if($file = $req->file('lamp_ktp_pasangan_pen')){
 
-            $name = 'ktp_pasangan'.$no.'.'.$file->getClientOriginalExtension();
+            $name = 'ktp_pasangan.' . $file->getClientOriginalName();
 
             if(!empty($check->lamp_ktp_pasangan))
             {
@@ -164,7 +164,7 @@ class PenjaminController extends BaseController
 
         if($file = $req->file('lamp_kk_pen')){
 
-            $name = 'kk_penjamin'.$no.'.'.$file->getClientOriginalExtension();
+            $name = 'kk_penjamin.' . $file->getClientOriginalName();
 
             if(!empty($check->lamp_kk))
             {
@@ -180,7 +180,7 @@ class PenjaminController extends BaseController
 
         if($file = $req->file('lamp_buku_nikah_pen')){
 
-            $name = 'buku_nikah_penjamin'.$no.'.'.$file->getClientOriginalExtension();
+            $name = 'buku_nikah_penjamin.' . $file->getClientOriginalName();
 
             if(!empty($check->lamp_buku_nikah))
             {

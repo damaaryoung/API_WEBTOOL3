@@ -182,7 +182,7 @@ class DebiturController extends BaseController
         // Lampiran Debitur
         if($file = $req->file('lamp_ktp')){
             $path = $lamp_dir.'/debitur';
-            $name = 'ktp.'.$file->getClientOriginalExtension();
+            $name = 'ktp.'.$file->getClientOriginalName();
 
             if(!empty($check->lamp_ktp))
             {
@@ -199,7 +199,7 @@ class DebiturController extends BaseController
 
         if($file = $req->file('lamp_kk')){
             $path = $lamp_dir.'/debitur';
-            $name = 'kk.'.$file->getClientOriginalExtension();
+            $name = 'kk.'.$file->getClientOriginalName();
 
             if(!empty($check->lamp_kk))
             {
@@ -215,7 +215,7 @@ class DebiturController extends BaseController
 
         if($file = $req->file('lamp_sertifikat')){
             $path = $lamp_dir.'/debitur';
-            $name = 'sertifikat.'.$file->getClientOriginalExtension();
+            $name = 'sertifikat.'.$file->getClientOriginalName();
 
             if(!empty($check->lamp_sertifikat))
             {
@@ -231,7 +231,7 @@ class DebiturController extends BaseController
 
         if($file = $req->file('lamp_pbb')){
             $path = $lamp_dir.'/debitur';
-            $name = 'pbb.'.$file->getClientOriginalExtension();
+            $name = 'pbb.'.$file->getClientOriginalName();
 
             if(!empty($check->lamp_pbb))
             {
@@ -247,7 +247,7 @@ class DebiturController extends BaseController
 
         if($file = $req->file('lamp_imb')){
             $path = $lamp_dir.'/debitur';
-            $name = 'imb.'.$file->getClientOriginalExtension();
+            $name = 'imb.'.$file->getClientOriginalName();
 
             if(!empty($check->lamp_imb))
             {
@@ -263,7 +263,7 @@ class DebiturController extends BaseController
 
         if($file = $req->file('lamp_buku_tabungan')){
             $path = $lamp_dir.'/debitur';
-            $name = 'buku_tabungan.'.$file->getClientOriginalExtension();
+            $name = 'buku_tabungan.'.$file->getClientOriginalName();
 
             if(!empty($check->lamp_buku_tabungan))
             {
@@ -279,7 +279,7 @@ class DebiturController extends BaseController
 
         if($file = $req->file('lamp_sku')){
             $path = $lamp_dir.'/debitur';
-            $name = 'sku.'.$file->getClientOriginalExtension();
+            $name = 'sku.'.$file->getClientOriginalName();
 
             if(!empty($check->lamp_sku))
             {
@@ -295,7 +295,7 @@ class DebiturController extends BaseController
 
         if($file = $req->file('lamp_slip_gaji')){
             $path = $lamp_dir.'/debitur';
-            $name = 'slip_gaji.'.$file->getClientOriginalExtension();
+            $name = 'slip_gaji.'.$file->getClientOriginalName();
 
             if(!empty($check->lamp_slip_gaji))
             {
@@ -311,7 +311,7 @@ class DebiturController extends BaseController
 
         if($file = $req->file('lamp_foto_usaha')){
             $path = $lamp_dir.'/debitur';
-            $name = 'tempat_usaha.'.$file->getClientOriginalExtension();
+            $name = 'tempat_usaha.'.$file->getClientOriginalName();
 
             if(!empty($check->lamp_foto_usaha))
             {
@@ -341,7 +341,7 @@ class DebiturController extends BaseController
 
         if($file = $req->file('foto_agunan_rumah')){
             $path = $lamp_dir.'/debitur';
-            $name = 'foto_agunan_rumah.'.$file->getClientOriginalExtension();
+            $name = 'foto_agunan_rumah.'.$file->getClientOriginalName();
 
             if(!empty($check->lamp_foto_usaha))
             {

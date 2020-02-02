@@ -116,7 +116,7 @@ class KendaraanController extends BaseController
         }elseif (!empty($check->lamp_agunan_dalam)) {
             $lamp_path = $check->lamp_agunan_dalam;
         }else{
-            $lamp_path = 'public/lamp_trans.2-AO-1-2020-13/agunan_kendaraan/agunan_depan1.png';
+            $lamp_path = 'public/lamp_trans.2-AO-1-2020-13/agunan_kendaraan/agunan_depan.1.png';
         }
 
         $ktp_debt = $so->debt['no_ktp'];
@@ -125,11 +125,9 @@ class KendaraanController extends BaseController
 
         $path = $arrPath[0].'/'.$ktp_debt.'/'.$arrPath[2];
 
-        $no = substr($arrPath[3], 12, 1);
-
         if($file = $req->file('lamp_agunan_depan_ken')){
 
-            $name = 'agunan_depan'.$no.'.'.$file->getClientOriginalExtension();
+            $name = 'agunan_depan.' . $file->getClientOriginalName();
 
             if(!empty($check->lamp_agunan_depan))
             {
@@ -145,7 +143,7 @@ class KendaraanController extends BaseController
 
         if($file = $req->file('lamp_agunan_kanan_ken')){
 
-            $name = 'agunan_kanan'.$no.'.'.$file->getClientOriginalExtension();
+            $name = 'agunan_kanan.' . $file->getClientOriginalName();
 
             if(!empty($check->lamp_agunan_kanan))
             {
@@ -161,7 +159,7 @@ class KendaraanController extends BaseController
 
         if($file = $req->file('lamp_agunan_kiri_ken')){
 
-            $name = 'agunan_kiri'.$no.'.'.$file->getClientOriginalExtension();
+            $name = 'agunan_kiri.' . $file->getClientOriginalName();
 
             if(!empty($check->lamp_agunan_kiri))
             {
@@ -178,7 +176,7 @@ class KendaraanController extends BaseController
 
         if($file = $req->file('lamp_agunan_belakang_ken')){
 
-            $name = 'agunan_belakang'.$no.'.'.$file->getClientOriginalExtension();
+            $name = 'agunan_belakang.' . $file->getClientOriginalName();
 
             if(!empty($check->lamp_agunan_belakang))
             {
@@ -194,7 +192,7 @@ class KendaraanController extends BaseController
 
         if($file = $req->file('lamp_agunan_dalam_ken')){
 
-            $name = 'agunan_dalam'.$no.'.'.$file->getClientOriginalExtension();
+            $name = 'agunan_dalam.' . $file->getClientOriginalName();
 
             if(!empty($check->lamp_agunan_dalam))
             {

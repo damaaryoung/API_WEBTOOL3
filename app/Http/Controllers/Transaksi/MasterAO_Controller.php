@@ -373,10 +373,9 @@ class MasterAO_Controller extends BaseController
         $lamp_dir = 'public/'.$check->debt['no_ktp'];
 
         if($files = $req->file('lamp_agunan_depan')){
-            $a = 1;
             foreach($files as $file){
                 $path = $lamp_dir.'/agunan_tanah';
-                $name = 'agunan_depan'.$a.'.'.$file->getClientOriginalExtension();
+                $name = 'agunan_depan.' . $file->getClientOriginalName();
                 $file->move($path,$name);
                 $a++;
 
@@ -385,10 +384,9 @@ class MasterAO_Controller extends BaseController
         }
 
         if ($files = $req->file('lamp_agunan_depan_ken')) {
-            $a = 1;
             foreach($files as $file){
                 $path = $lamp_dir.'/agunan_kendaraan';
-                $name = 'agunan_depan'.$a.'.'.$file->getClientOriginalExtension();
+                $name = 'agunan_depan.' . $file->getClientOriginalName();
                 $file->move($path,$name);
                 $a++;
 
@@ -400,7 +398,7 @@ class MasterAO_Controller extends BaseController
             $a = 1;
             foreach($files as $file){
                 $path = $lamp_dir.'/agunan_tanah';
-                $name = 'agunan_kanan'.$a.'.'.$file->getClientOriginalExtension();
+                $name = 'agunan_kanan.' . $file->getClientOriginalName();
                 $file->move($path,$name);
                 $a++;
 
@@ -412,7 +410,7 @@ class MasterAO_Controller extends BaseController
             $a = 1;
             foreach($files as $file){
                 $path = $lamp_dir.'/agunan_kendaraan';
-                $name = 'agunan_kanan'.$a.'.'.$file->getClientOriginalExtension();
+                $name = 'agunan_kanan.' . $file->getClientOriginalName();
                 $file->move($path,$name);
                 $a++;
 
@@ -424,7 +422,7 @@ class MasterAO_Controller extends BaseController
             $a = 1;
             foreach($files as $file){
                 $path = $lamp_dir.'/agunan_tanah';
-                $name = 'agunan_kiri'.$a.'.'.$file->getClientOriginalExtension();
+                $name = 'agunan_kiri.' . $file->getClientOriginalName();
                 $file->move($path,$name);
                 $a++;
 
@@ -436,7 +434,7 @@ class MasterAO_Controller extends BaseController
             $a = 1;
             foreach($files as $file){
                 $path = $lamp_dir.'/agunan_kendaraan';
-                $name = 'agunan_kiri'.$a.'.'.$file->getClientOriginalExtension();
+                $name = 'agunan_kiri.' . $file->getClientOriginalName();
                 $file->move($path,$name);
                 $a++;
 
@@ -449,7 +447,7 @@ class MasterAO_Controller extends BaseController
             $a = 1;
             foreach($files as $file){
                 $path = $lamp_dir.'/agunan_tanah';
-                $name = 'agunan_belakang'.$a.'.'.$file->getClientOriginalExtension();
+                $name = 'agunan_belakang.' . $file->getClientOriginalName();
                 $file->move($path,$name);
                 $a++;
 
@@ -461,7 +459,7 @@ class MasterAO_Controller extends BaseController
             $a = 1;
             foreach($files as $file){
                 $path = $lamp_dir.'/agunan_kendaraan';
-                $name = 'agunan_belakang'.$a.'.'.$file->getClientOriginalExtension();
+                $name = 'agunan_belakang.' . $file->getClientOriginalName();
                 $file->move($path,$name);
                 $a++;
 
@@ -474,7 +472,7 @@ class MasterAO_Controller extends BaseController
             $a = 1;
             foreach($files as $file){
                 $path = $lamp_dir.'/agunan_tanah';
-                $name = 'agunan_dalam'.$a.'.'.$file->getClientOriginalExtension();
+                $name = 'agunan_dalam.' . $file->getClientOriginalName();
                 $file->move($path,$name);
                 $a++;
 
@@ -486,7 +484,7 @@ class MasterAO_Controller extends BaseController
             $a = 1;
             foreach($files as $file){
                 $path = $lamp_dir.'/agunan_kendaraan';
-                $name = 'agunan_dalam'.$a.'.'.$file->getClientOriginalExtension();
+                $name = 'agunan_dalam.' . $file->getClientOriginalName();
                 $file->move($path,$name);
                 $a++;
 
@@ -499,7 +497,7 @@ class MasterAO_Controller extends BaseController
             $a = 1;
             foreach($files as $file){
                 $path = $lamp_dir.'/agunan_tanah';
-                $name = 'lamp_imb'.$a.'.'.$file->getClientOriginalExtension();
+                $name = 'lamp_imb.' . $file->getClientOriginalName();
                 $file->move($path,$name);
                 $a++;
 
@@ -511,7 +509,7 @@ class MasterAO_Controller extends BaseController
             $a = 1;
             foreach($files as $file){
                 $path = $lamp_dir.'/agunan_tanah';
-                $name = 'lamp_pbb'.$a.'.'.$file->getClientOriginalExtension();
+                $name = 'lamp_pbb.' . $file->getClientOriginalName();
                 $file->move($path,$name);
                 $a++;
 
@@ -523,7 +521,7 @@ class MasterAO_Controller extends BaseController
             $a = 1;
             foreach($files as $file){
                 $path = $lamp_dir.'/agunan_tanah';
-                $name = 'lamp_sertifikat'.$a.'.'.$file->getClientOriginalExtension();
+                $name = 'lamp_sertifikat.' . $file->getClientOriginalName();
                 $file->move($path,$name);
                 $a++;
 

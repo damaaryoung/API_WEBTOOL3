@@ -78,9 +78,9 @@ $router->post('/login', 'AuthController@login'); // Login All Level
 
 $router->put('/api/user/reset_password', 'UserController@resetPassword'); //Reset Password
 
-$router->group(['middleware' => 'jwt.auth'], function () use ($router) {
+$router->group(['middleware' => ['jwt.auth'], 'prefix' => 'api'], function () use ($router) {
     //For Non User (Debitur)
-    $router->group(['prefix' => '/api'], function () use ($router) {
+    // $router->group(['prefix' => '/api'], function () use ($router) {
 
         // $router->get('/{id_tr_so}/approval', 'Wilayah\ProvinsiController@app');
 
@@ -392,5 +392,5 @@ $router->group(['middleware' => 'jwt.auth'], function () use ($router) {
 
         });
 
-    });
+    // });
 });

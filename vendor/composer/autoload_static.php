@@ -507,6 +507,7 @@ class ComposerStaticInitc001a60f02ccbcb1ce59b19fdba85d18
         'App\\Http\\Middleware\\Authenticate' => __DIR__ . '/../..' . '/app/Http/Middleware/Authenticate.php',
         'App\\Http\\Middleware\\CorsMiddleware' => __DIR__ . '/../..' . '/app/Http/Middleware/CorsMiddleware.php',
         'App\\Http\\Middleware\\JwtMiddleware' => __DIR__ . '/../..' . '/app/Http/Middleware/JwtMiddleware.php',
+        'App\\Http\\Middleware\\VerifyCsrfToken' => __DIR__ . '/../..' . '/app/Http/Middleware/VerifyCsrfToken.php',
         'App\\Http\\Requests\\AreaKantor\\AreaPICReq' => __DIR__ . '/../..' . '/app/Http/Requests/AreaKantor/AreaPICReq.php',
         'App\\Http\\Requests\\AreaKantor\\AreaRequest' => __DIR__ . '/../..' . '/app/Http/Requests/AreaKantor/AreaRequest.php',
         'App\\Http\\Requests\\AreaKantor\\CabangRequest' => __DIR__ . '/../..' . '/app/Http/Requests/AreaKantor/CabangRequest.php',

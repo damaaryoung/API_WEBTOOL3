@@ -32,7 +32,7 @@ class PICController extends BaseController
                 "jenis_pic"   => $val->jpic['nama_jenis'],
                 "nama_area"   => $val->area['nama'],
                 "nama_cabang" => $val->cabang['nama'],
-                "plafon_caa"  => $val->plafon_caa,
+                "plafon_max"  => $val->plafon_caa,
                 "flg_aktif"   => $val->flg_aktif == 1 ? "true" : "false",
                 "created_at"  => Carbon::parse($val->created_at)->format('d-m-Y H:i:s'),
                 "updated_at"  => Carbon::parse($val->updated_at)->format('d-m-Y H:i:s')
@@ -86,7 +86,7 @@ class PICController extends BaseController
                 "nama_area"   => $val->area['nama'],
                 "id_cabang"   => $val->id_cabang,
                 "nama_cabang" => $val->cabang['nama'],
-                "plafon_caa"  => $val->plafon_caa
+                "plafon_max"  => $val->plafon_caa
             ];
         }
 

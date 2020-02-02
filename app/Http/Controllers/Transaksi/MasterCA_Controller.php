@@ -405,10 +405,10 @@ class MasterCA_Controller extends BaseController
         $percent = 100;
 
         // Rekomendasi Angsuran pada table recom_ca
-        $plaf  = $inputRecomCA['plafon_kredit'];
-        $ten   = $inputRecomCA['jangka_waktu'];
-        $bunga = $inputRecomCA['suku_bunga'] / $percent;
-        $exec  = ($plaf + ($plaf * $ten * $bunga)) / $ten;
+        $plaf  = $inputRecomCA['plafon_kredit'] == null ? 0 : $inputRecomCA['plafon_kredit'];
+        $ten   = $inputRecomCA['jangka_waktu'] == null ? 0 : $inputRecomCA['jangka_waktu'];
+        $bunga = $inputRecomCA['suku_bunga'] == null ? 0 : ($inputRecomCA['suku_bunga'] / $percent);
+        $exec  = 0; //($plaf + ($plaf * $ten * $bunga)) / $ten;
         $recom_angs = $help->recom_angs($exec);
 
         $passRecomCA = array(
@@ -507,6 +507,7 @@ class MasterCA_Controller extends BaseController
 
 
         if ($req->input('jangka_waktu_as_jaminan')) {
+            $asJaminan = array();
             for ($i = 0; $i < count($req->input('jangka_waktu_as_jaminan')); $i++) {
 
                 $asJaminan[] = array(
@@ -516,15 +517,23 @@ class MasterCA_Controller extends BaseController
                     'jatuh_tempo'         => empty($req->input('jatuh_tempo_as_jaminan')[$i]) ? 'null' : Carbon::parse($req->input('jatuh_tempo_as_jaminan')[$i])->format('Y-m-d')
                 );
             }
+
+            $jaminanImplode = array(
+                'nama_asuransi'       => implode(";", array_column($asJaminan, 'nama_asuransi')),
+                'jangka_waktu'        => implode(";", array_column($asJaminan, 'jangka_waktu')),
+                'nilai_pertanggungan' => implode(";", array_column($asJaminan, 'nilai_pertanggungan')),
+                'jatuh_tempo'         => implode(";", array_column($asJaminan, 'jatuh_tempo'))
+            );
+        }else{
+            $jaminanImplode = array(
+                'nama_asuransi'       => null,
+                'jangka_waktu'        => null,
+                'nilai_pertanggungan' => null,
+                'jatuh_tempo'         => null
+            );
         }
 
 
-        $jaminanImplode = array(
-            'nama_asuransi'       => implode(";", array_column($asJaminan, 'nama_asuransi')),
-            'jangka_waktu'        => implode(";", array_column($asJaminan, 'jangka_waktu')),
-            'nilai_pertanggungan' => implode(";", array_column($asJaminan, 'nilai_pertanggungan')),
-            'jatuh_tempo'         => implode(";", array_column($asJaminan, 'jatuh_tempo'))
-        );
 
 
         $check_ca = TransCA::where('id_trans_so', $id)->first();

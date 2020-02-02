@@ -53,6 +53,7 @@ return array(
     'App\\Http\\Middleware\\Authenticate' => $baseDir . '/app/Http/Middleware/Authenticate.php',
     'App\\Http\\Middleware\\CorsMiddleware' => $baseDir . '/app/Http/Middleware/CorsMiddleware.php',
     'App\\Http\\Middleware\\JwtMiddleware' => $baseDir . '/app/Http/Middleware/JwtMiddleware.php',
+    'App\\Http\\Middleware\\VerifyCsrfToken' => $baseDir . '/app/Http/Middleware/VerifyCsrfToken.php',
     'App\\Http\\Requests\\AreaKantor\\AreaPICReq' => $baseDir . '/app/Http/Requests/AreaKantor/AreaPICReq.php',
     'App\\Http\\Requests\\AreaKantor\\AreaRequest' => $baseDir . '/app/Http/Requests/AreaKantor/AreaRequest.php',
     'App\\Http\\Requests\\AreaKantor\\CabangRequest' => $baseDir . '/app/Http/Requests/AreaKantor/CabangRequest.php',

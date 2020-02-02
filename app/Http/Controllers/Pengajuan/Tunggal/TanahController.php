@@ -71,15 +71,16 @@ class TanahController extends BaseController
             'njop'   => $check->njop,
             'nop'    => $check->nop,
             'lampiran' => [
-                'lamp_agunan_depan' => $check->lamp_agunan_depan,
-                'lamp_agunan_kanan' => $check->lamp_agunan_kanan,
-                'lamp_agunan_kiri' => $check->lamp_agunan_kiri,
-                'lamp_agunan_belakang' => $check->lamp_agunan_belakang,
-                'lamp_agunan_dalam' => $check->lamp_agunan_dalam,
+                'agunan_bag_depan'      => $check->agunan_bag_depan,
+                'agunan_bag_jalan'      => $check->agunan_bag_jalan,
+                'agunan_bag_ruangtamu'  => $check->agunan_bag_ruangtamu,
+                'agunan_bag_kamarmandi' => $check->agunan_bag_kamarmandi,
+                'agunan_bag_dapur'      => $check->agunan_bag_dapur,
                 'lamp_sertifikat' => $check->lamp_sertifikat,
                 'lamp_imb' => $check->lamp_imb,
                 'lamp_pbb' => $check->lamp_pbb
             ]
+
         );
 
         try {
@@ -128,18 +129,18 @@ class TanahController extends BaseController
             ], 404);
         }
 
-        if (!empty($check->lamp_agunan_depan)) {
-            $lamp_path = $check->lamp_agunan_depan;
-        }elseif (!empty($check->lamp_agunan_kanan)) {
-            $lamp_path = $check->lamp_agunan_kanan;
-        }elseif (!empty($check->lamp_agunan_kiri)) {
-            $lamp_path = $check->lamp_agunan_kiri;
-        }elseif (!empty($check->lamp_agunan_belakang)) {
-            $lamp_path = $check->lamp_agunan_belakang;
-        }elseif (!empty($check->lamp_agunan_dalam)) {
-            $lamp_path = $check->lamp_agunan_dalam;
+        if (!empty($check->agunan_bag_depan)) {
+            $lamp_path = $check->agunan_bag_depan;
+        }elseif (!empty($check->aguanan_bag_jalan)) {
+            $lamp_path = $check->aguanan_bag_jalan;
+        }elseif (!empty($check->agunan_bag_ruangtamu)) {
+            $lamp_path = $check->agunan_bag_ruangtamu;
+        }elseif (!empty($check->agunan_bag_kamarmandi)) {
+            $lamp_path = $check->agunan_bag_kamarmandi;
+        }elseif (!empty($check->agunan_bag_dapur)) {
+            $lamp_path = $check->agunan_bag_dapur;
         }else{
-            $lamp_path = 'public/lamp_trans.2-AO-1-2020-13/agunan_tanah/agunan_depan1.png';
+            $lamp_path = 'public/lamp_trans.2-AO-1-2020-13/agunan_tanah/agunan_bag_depan.1.png';
         }
 
         $ktp_debt = $so->debt['no_ktp'];
@@ -148,93 +149,91 @@ class TanahController extends BaseController
 
         $path = $arrPath[0].'/'.$ktp_debt.'/'.$arrPath[2];
 
-        $no = substr($arrPath[3], 12, 1);
+        if($file = $req->file('agunan_bag_depan')){
 
-        if($file = $req->file('lamp_agunan_depan')){
+            $name = 'bag_depan.' . $file->getClientOriginalName();
 
-            $name = 'agunan_depan'.$no.'.'.$file->getClientOriginalExtension();
-
-            if(!empty($check->lamp_agunan_depan))
+            if(!empty($check->agunan_bag_depan))
             {
-                File::delete($check->lamp_agunan_depan);
+                File::delete($check->agunan_bag_depan);
             }
 
             $file->move($path,$name);
 
-            $agunanDepan = $path.'/'.$name;
+            $agunan_bag_depan = $path.'/'.$name;
         }else{
-            $agunanDepan = $check->lamp_agunan_depan;
+            $agunan_bag_depan = $check->agunan_bag_depan;
         }
 
-        if($file = $req->file('lamp_agunan_kanan')){
+        if($file = $req->file('agunan_bag_jalan')){
 
-            $name = 'agunan_kanan'.$no.'.'.$file->getClientOriginalExtension();
+            $name = 'bag_jalan.' . $file->getClientOriginalName();
 
-            if(!empty($check->lamp_agunan_kanan))
+            if(!empty($check->agunan_bag_jalan))
             {
-                File::delete($check->lamp_agunan_kanan);
+                File::delete($check->agunan_bag_jalan);
             }
 
             $file->move($path,$name);
 
-            $agunanKanan = $path.'/'.$name;
+            $agunan_bag_jalan = $path.'/'.$name;
         }else{
-            $agunanKanan = $check->lamp_agunan_kanan;
+            $agunan_bag_jalan = $check->agunan_bag_jalan;
         }
 
-        if($file = $req->file('lamp_agunan_kiri')){
+        if($file = $req->file('agunan_bag_ruangtamu')){
 
-            $name = 'agunan_kiri'.$no.'.'.$file->getClientOriginalExtension();
+            $name = 'bag_ruangtamu.' . $file->getClientOriginalName();
 
-            if(!empty($check->lamp_agunan_kiri))
+            if(!empty($check->agunan_bag_ruangtamu))
             {
-                File::delete($check->lamp_agunan_kiri);
+                File::delete($check->agunan_bag_ruangtamu);
             }
 
             $file->move($path,$name);
 
-            $agunanKiri = $path.'/'.$name;
+            $agunan_bag_ruangtamu = $path.'/'.$name;
         }else{
-            $agunanKiri = $check->lamp_agunan_kiri;
+            $agunan_bag_ruangtamu = $check->agunan_bag_ruangtamu;
         }
 
 
-        if($file = $req->file('lamp_agunan_belakang')){
+        if($file = $req->file('agunan_bag_kamarmandi')){
 
-            $name = 'agunan_belakang'.$no.'.'.$file->getClientOriginalExtension();
+            $name = 'bag_kamarmandi.' . $file->getClientOriginalName();
 
-            if(!empty($check->lamp_agunan_belakang))
+            if(!empty($check->agunan_bag_kamarmandi))
             {
-                File::delete($check->lamp_agunan_belakang);
+                File::delete($check->agunan_bag_kamarmandi);
             }
 
             $file->move($path,$name);
 
-            $agunanBelakang = $path.'/'.$name;
+            $agunan_bag_kamarmandi = $path.'/'.$name;
         }else{
-            $agunanBelakang = $check->lamp_agunan_belakang;
+            $agunan_bag_kamarmandi = $check->agunan_bag_kamarmandi;
         }
 
-        if($file = $req->file('lamp_agunan_dalam')){
+        if($file = $req->file('agunan_bag_dapur')){
 
-            $name = 'agunan_dalam'.$no.'.'.$file->getClientOriginalExtension();
+            $name = 'bag_dapur.' . $file->getClientOriginalName();
 
-            if(!empty($check->lamp_agunan_dalam))
+            if(!empty($check->agunan_bag_dapur))
             {
-                File::delete($check->lamp_agunan_dalam);
+                File::delete($check->agunan_bag_dapur);
             }
 
             $file->move($path,$name);
 
-            $agunanDalam = $path.'/'.$name;
+            $agunan_bag_dapur = $path.'/'.$name;
         }else{
-            $agunanDalam = $check->lamp_agunan_dalam;
+            $agunan_bag_dapur = $check->agunan_bag_dapur;
         }
 
         // Tambahan Agunan Tanah
         if ($file = $req->file('lamp_imb')) {
 
-            $name = 'lamp_imb'.$no.'.'.$file->getClientOriginalExtension();
+            $name = 'lamp_imb.' . $file->getClientOriginalName();
 
             if(!empty($check->lamp_imb))
             {
@@ -250,7 +249,7 @@ class TanahController extends BaseController
 
         if ($file = $req->file('lamp_pbb')) {
 
-            $name = 'lamp_pbb'.$no.'.'.$file->getClientOriginalExtension();
+            $name = 'lamp_pbb.' . $file->getClientOriginalName();
 
             if(!empty($check->lamp_pbb))
             {
@@ -266,7 +265,7 @@ class TanahController extends BaseController
 
         if ($file = $req->file('lamp_sertifikat')) {
 
-            $name = 'lamp_sertifikat'.$no.'.'.$file->getClientOriginalExtension();
+            $name = 'lamp_sertifikat.' . $file->getClientOriginalName();
 
             if(!empty($check->lamp_sertifikat))
             {
@@ -300,11 +299,11 @@ class TanahController extends BaseController
             'no_imb'                  => empty($req->input('no_imb')) ? $check->no_imb : $req->input('no_imb'),
             'njop'                    => empty($req->input('njop')) ? $check->njop : $req->input('njop'),
             'nop'                     => empty($req->input('nop')) ? $check->nop : $req->input('nop'),
-            'lamp_agunan_depan'       => empty($agunanDepan) ? $check->lamp_agunan_depan : $agunanDepan,
-            'lamp_agunan_kanan'       => empty($agunanKanan) ? $check->lamp_agunan_kanan : $agunanKanan,
-            'lamp_agunan_kiri'        => empty($agunanKiri) ? $check->lamp_agunan_kiri : $agunanKiri,
-            'lamp_agunan_belakang'    => empty($agunanBelakang) ? $check->lamp_agunan_belakang : $agunanBelakang,
-            'lamp_agunan_dalam'       => empty($agunanDalam) ? $check->lamp_agunan_dalam : $agunanDalam,
+            'agunan_bag_depan'       => empty($agunanDepan) ? $check->lamp_agunan_depan : $agunanDepan,
+            'agunan_bag_jalan'       => empty($agunanKanan) ? $check->lamp_agunan_kanan : $agunanKanan,
+            'agunan_bag_ruangtamu'    => empty($agunanKiri) ? $check->lamp_agunan_kiri : $agunanKiri,
+            'agunan_bag_kamarmandi'   => empty($agunanBelakang) ? $check->lamp_agunan_belakang : $agunanBelakang,
+            'agunan_bag_dapur'        => empty($agunanDalam) ? $check->lamp_agunan_dalam : $agunanDalam,
             'lamp_imb'                => empty($lamp_imb) ? $check->lamp_imb : $lamp_imb,
             'lamp_pbb'                => empty($lamp_pbb) ? $check->lamp_pbb : $lamp_pbb,
             'lamp_sertifikat'         => empty($lamp_sertifikat) ? $check->lamp_sertifikat : $lamp_sertifikat,

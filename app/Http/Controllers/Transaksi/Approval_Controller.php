@@ -109,6 +109,7 @@ class Approval_Controller extends BaseController
             $data[] = array(
                 "id"        => $val->id,
                 "user_id"   => $val->user_id,
+                "plafon_max"=> $val->plafon_caa,
                 "nama_area" => $val->area['nama'],
                 "cabang"    => $val->cabang['nama'],
                 "jabatan"   => $val->jpic['nama_jenis'],
