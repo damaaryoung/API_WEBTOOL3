@@ -275,6 +275,7 @@ $router->group(['middleware' => ['jwt.auth'], 'prefix' => 'api'], function () us
                 });
 
                 $router->get('/team_caa', 'Approval_Controller@list_team');  // Get List Team CAA
+                $router->get('/team_caa/{id_team}', 'Approval_Controller@detail_team');  // Get List Team CAA
                 $router->get('/report/approval/{id_trans_so}', 'Approval_Controller@report_approval');
                 // $router->group(['prefix' => '/approval'], function() use ($router){
                 //     // $router->get('/{id}', 'Approval_Controller@show');

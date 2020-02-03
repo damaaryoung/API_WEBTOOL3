@@ -156,6 +156,7 @@ class PICController extends BaseController
                 "nama_area"      => $query->area['nama'],
                 "id_cabang"      => $query->id_cabang,
                 "nama_cabang"    => $query->cabang['nama'],
+                "plafon_max"     => $query->plafon_caa,
                 "flg_aktif"      => $query->flg_aktif == 0 ? "false" : "true",
                 "created_at"     => Carbon::parse($query->created_at)->format('d-m-Y H:i:s')
             ];

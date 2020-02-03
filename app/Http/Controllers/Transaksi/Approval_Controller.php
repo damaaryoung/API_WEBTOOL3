@@ -134,6 +134,62 @@ class Approval_Controller extends BaseController
         }
     }
 
+    public function detail_team($id_team, Request $req) {
+        $user_id  = $req->auth->user_id; //1725540
+
+        $pic = PIC::where('user_id', $user_id)->first();
+
+        if ($pic == null) {
+            return response()->json([
+                "code"    => 404,
+                "status"  => "not found",
+                "message" => "User_ID anda adalah '".$user_id."' dengan username '".$req->auth->user."' . Namun anda belum terdaftar pada PIC (Karyawan) di Sevin System. Harap daftarkan diri sebagai PIC pada form PIC atau hubungi bagian IT"
+            ], 404);
+        }
+
+        $val = PIC::with(['jpic', 'area','cabang'])
+            ->where('flg_aktif', 1)
+            ->where('id', $id_team)
+            ->first();
+
+        if ($val == null) {
+            return response()->json([
+                'code'    => 404,
+                'status'  => 'not found',
+                'message' => 'Data kosong'
+            ], 404);
+        }
+
+
+         $data = array(
+            "id"        => $val->id,
+            "user_id"   => $val->user_id,
+            "id_area"   => $val->id_area,
+            "nama_area" => $val->area['nama'],
+            "id_cabang" => $val->id_cabang,
+            "cabang"    => $val->cabang['nama'],
+            "jabatan"   => $val->jpic['nama_jenis'],
+            "nama"      => $val->nama,
+            "email"     => $val->email,
+            "plafon_max"=> $val->plafon_caa,
+            "flg_aktif" => $val->flg_aktif == 1 ? "true" : "false"
+        );
+
+        try {
+            return response()->json([
+                'code'   => 200,
+                'status' => 'success',
+                'data'   => $data
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                "code"    => 501,
+                "status"  => "error",
+                "message" => $e
+            ], 501);
+        }
+    }
+
     public function index($id, Request $req){
         $user_id = $req->auth->user_id;
 
