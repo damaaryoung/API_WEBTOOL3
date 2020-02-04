@@ -25,7 +25,7 @@ class Pe_TanahRequest extends FormRequest
         if (empty($single)){
             $rules = [
                 // Pemeriksaan Agunan Tanah
-                'status_penghuni.*'       => 'in:PEMILIK,PENYEWA',
+                'status_penghuni.*'       => 'in:PEMILIK,PENYEWA, KELUARGA',
                 // 'bentuk_bangunan.*'       => 'in:RUMAH,KONTRAKAN,VILLA,RUKO,APARTMENT',
                 'kondisi_bangunan.*'      => 'in:LAYAK,KURANG,TIDAK',
                 // 'nilai_taksasi_agunan.*'  => 'integer',
@@ -36,7 +36,7 @@ class Pe_TanahRequest extends FormRequest
         }else{
             $rules = [
                 // Pemeriksaan Agunan Tanah
-                'status_penghuni'        => 'in:PEMILIK,PENYEWA',
+                'status_penghuni'        => 'in:PEMILIK,PENYEWA, KELUARGA',
                 // 'bentuk_bangunan'        => 'in:RUMAH,KONTRAKAN,VILLA,RUKO,APARTMENT',
                 'kondisi_bangunan'       => 'in:LAYAK,KURANG,TIDAK',
                 // 'nilai_taksasi_agunan'   => 'integer',

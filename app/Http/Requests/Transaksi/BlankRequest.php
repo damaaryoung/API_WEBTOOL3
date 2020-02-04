@@ -219,12 +219,12 @@ class BlankRequest extends FormRequest
                 'biaya_lain_lain'      => 'integer',
 
                 // Pemeriksaan Agunan Kendaraan
-                'status_pengguna_ken.*' => 'in:PEMILIK,PENYEWA',
+                'status_pengguna_ken.*' => 'in:PEMILIK,PENYEWA,KELUARGA',
                 'jml_roda_ken.*'        => 'integer',
                 'km_ken.*'              => 'integer',
 
                 // Pemeriksaan Agunan Tanah
-                'status_penghuni.*'       => 'in:PEMILIK,PENYEWA',
+                'status_penghuni.*'       => 'in:PEMILIK,PENYEWA,KELUARGA',
                 // 'bentuk_bangunan.*'       => 'in:RUMAH,KONTRAKAN,VILLA,RUKO,APARTMENT',
                 'kondisi_bangunan.*'      => 'in:LAYAK,KURANG,TIDAK',
                 // 'nilai_taksasi_agunan.*'  => 'integer',

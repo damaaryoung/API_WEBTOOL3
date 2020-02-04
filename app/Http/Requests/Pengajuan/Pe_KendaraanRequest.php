@@ -25,14 +25,14 @@ class Pe_KendaraanRequest extends FormRequest
         if (empty($single)){
             $rules = [
                 // Pemeriksaan Agunan Kendaraan
-                'status_pengguna_ken.*' => 'in:PEMILIK,PENYEWA',
+                'status_pengguna_ken.*' => 'in:PEMILIK,PENYEWA,KELUARGA',
                 'jml_roda_ken.*'        => 'integer',
                 'km_ken.*'              => 'integer',
             ];
         }else{
             $rules = [
                 // Pemeriksaan Agunan Kendaraan
-                'status_pengguna_ken' => 'in:PEMILIK,PENYEWA',
+                'status_pengguna_ken' => 'in:PEMILIK,PENYEWA,KELUARGA',
                 'jml_roda_ken'        => 'integer',
                 'km_ken'              => 'integer',
             ];

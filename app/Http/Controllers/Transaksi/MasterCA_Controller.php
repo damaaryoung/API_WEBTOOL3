@@ -398,26 +398,33 @@ class MasterCA_Controller extends BaseController
         );
 
         // Analisa Kuantitatif dan Kualitatif
-        $staticMin = 35;
-        $staticMax = 80;
+        $staticMin    = 35;
+        $staticMax    = 80;
         $staticPlafon = 70000000;
-        $ltvMax = 70;
-        $percent = 100;
+        $ltvMax       = 70;
+        $percent      = 100;
 
         // Rekomendasi Angsuran pada table recom_ca
         $plaf  = $inputRecomCA['plafon_kredit'] == null ? 0 : $inputRecomCA['plafon_kredit'];
-        $ten   = $inputRecomCA['jangka_waktu'] == null ? 0 : $inputRecomCA['jangka_waktu'];
-        $bunga = $inputRecomCA['suku_bunga'] == null ? 0 : ($inputRecomCA['suku_bunga'] / $percent);
-        $exec  = 0; //($plaf + ($plaf * $ten * $bunga)) / $ten;
-        $recom_angs = $help->recom_angs($exec);
+        $ten   = $inputRecomCA['jangka_waktu']  == null ? 0 : $inputRecomCA['jangka_waktu'];
+        $bunga = $inputRecomCA['suku_bunga']    == null ? 0 : ($inputRecomCA['suku_bunga'] / $percent);
+
+        if ($plaf == 0 && $ten == 0 && $bunga == 0) {
+            $exec       = 0;
+            $recom_angs = 0;
+        }else{
+            $exec       = ($plaf + ($plaf * $ten * $bunga)) / $ten;
+            $recom_angs = $help->recom_angs($exec);
+        }
+
 
         $passRecomCA = array(
-            'rekom_angsuran' => $recom_angs,
-            'angs_pertama_bunga_berjalan' => empty($req->input('angs_pertama_bunga_berjalan')) ? null : $req->input('angs_pertama_bunga_berjalan'),
-            'pelunasan_nasabah_ro' => empty($req->input('pelunasan_nasabah_ro')) ? null : $req->input('pelunasan_nasabah_ro'),
-            'blokir_dana' => empty($req->input('blokir_dana')) ? null : $req->input('blokir_dana'),
-            'pelunasan_tempat_lain' => empty($req->input('pelunasan_tempat_lain')) ? null : $req->input('pelunasan_tempat_lain'),
-            'blokir_angs_kredit' => empty($req->input('blokir_angs_kredit')) ? null : $req->input('blokir_angs_kredit')
+            'rekom_angsuran'                => $recom_angs,
+            'angs_pertama_bunga_berjalan'   => empty($req->input('angs_pertama_bunga_berjalan')) ? null : $req->input('angs_pertama_bunga_berjalan'),
+            'pelunasan_nasabah_ro'          => empty($req->input('pelunasan_nasabah_ro')) ? null : $req->input('pelunasan_nasabah_ro'),
+            'blokir_dana'                   => empty($req->input('blokir_dana')) ? null : $req->input('blokir_dana'),
+            'pelunasan_tempat_lain'         => empty($req->input('pelunasan_tempat_lain')) ? null : $req->input('pelunasan_tempat_lain'),
+            'blokir_angs_kredit'            => empty($req->input('blokir_angs_kredit')) ? null : $req->input('blokir_angs_kredit')
         );
 
         $recomCA = array_merge($inputRecomCA, $passRecomCA);
@@ -479,11 +486,11 @@ class MasterCA_Controller extends BaseController
             'penyimpangan_struktur' => empty($req->input('penyimpangan_struktur')) ? null : $req->input('penyimpangan_struktur'),
             'penyimpangan_dokumen'  => empty($req->input('penyimpangan_dokumen')) ? null : $req->input('penyimpangan_dokumen'),
 
-            'recom_nilai_pinjaman' => empty($req->input('recom_nilai_pinjaman')) ? null : $req->input('recom_nilai_pinjaman'),
-            'recom_tenor' => empty($req->input('recom_tenor')) ? null : $req->input('recom_tenor'),
-            'recom_angsuran' => empty($req->input('recom_angsuran')) ? null : $req->input('recom_angsuran'),
-            'recom_produk_kredit' => empty($req->input('recom_produk_kredit')) ? null : $req->input('recom_produk_kredit'),
-            'note_recom' => empty($req->input('note_recom')) ? null : $req->input('note_recom')
+            'recom_nilai_pinjaman'  => empty($req->input('recom_nilai_pinjaman')) ? null : $req->input('recom_nilai_pinjaman'),
+            'recom_tenor'           => empty($req->input('recom_tenor')) ? null : $req->input('recom_tenor'),
+            'recom_angsuran'        => empty($req->input('recom_angsuran')) ? null : $req->input('recom_angsuran'),
+            'recom_produk_kredit'   => empty($req->input('recom_produk_kredit')) ? null : $req->input('recom_produk_kredit'),
+            'note_recom'            => empty($req->input('note_recom')) ? null : $req->input('note_recom')
         );
 
         // Tambahan Rekomendasi CA
