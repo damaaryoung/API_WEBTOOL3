@@ -574,7 +574,9 @@ class MasterAO_Controller extends BaseController
                     'nilai_taksasi_agunan'   => empty($req->nilai_taksasi_agunan[$i]) ? null : $req->nilai_taksasi_agunan[$i],
                     'nilai_taksasi_bangunan' => empty($req->nilai_taksasi_bangunan[$i]) ? null : $req->nilai_taksasi_bangunan[$i],
                     'tgl_taksasi'       => empty($req->tgl_taksasi_agunan[$i]) ? null : Carbon::parse($req->tgl_taksasi_agunan[$i])->format('Y-m-d'),
-                    'nilai_likuidasi'   => empty($req->nilai_likuidasi_agunan[$i]) ? null : $req->nilai_likuidasi_agunan[$i]
+                    'nilai_likuidasi'   => empty($req->nilai_likuidasi_agunan[$i]) ? null : $req->nilai_likuidasi_agunan[$i],
+                    'nilai_agunan_independen'       => empty($req->nilai_agunan_independen[$i]) ? null : $req->nilai_agunan_independen[$i],
+                    'perusahaan_penilai_independen' => empty($req->perusahaan_penilai_independen[$i]) ? null : $req->perusahaan_penilai_independen[$i]
                 ];
             }
 

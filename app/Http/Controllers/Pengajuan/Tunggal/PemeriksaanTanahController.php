@@ -34,18 +34,20 @@ class PemeriksaanTanahController extends BaseController
         }
 
         $data = array(
-            'id'                     => $check->id,
-            'id_agunan_tanah'        => $check->id_agunan_tanah,
-            'nama_penghuni'          => $check->nama_penghuni,
-            'status_penghuni'        => $check->status_penghuni,
-            'bentuk_bangunan'        => $check->bentuk_bangunan,
-            'kondisi_bangunan'       => $check->kondisi_bangunan,
-            'fasilitas'              => $check->fasilitas,
-            'listrik'                => $check->listrik,
-            'nilai_taksasi_agunan'   => $check->nilai_taksasi_agunan,
-            'nilai_taksasi_bangunan' => $check->nilai_taksasi_bangunan,
-            'tgl_taksasi'            => $check->tgl_taksasi,
-            'nilai_likuidasi'        => $check->nilai_likuidasi
+            'id'                            => $check->id,
+            'id_agunan_tanah'               => $check->id_agunan_tanah,
+            'nama_penghuni'                 => $check->nama_penghuni,
+            'status_penghuni'               => $check->status_penghuni,
+            'bentuk_bangunan'               => $check->bentuk_bangunan,
+            'kondisi_bangunan'              => $check->kondisi_bangunan,
+            'fasilitas'                     => $check->fasilitas,
+            'listrik'                       => $check->listrik,
+            'nilai_taksasi_agunan'          => $check->nilai_taksasi_agunan,
+            'nilai_taksasi_bangunan'        => $check->nilai_taksasi_bangunan,
+            'tgl_taksasi'                   => $check->tgl_taksasi,
+            'nilai_likuidasi'               => $check->nilai_likuidasi,
+            'nilai_agunan_independen'       => $check->nilai_agunan_independen,
+            'perusahaan_penilai_independen' => $check->perusahaan_penilai_independen
         );
 
         try {
@@ -86,16 +88,18 @@ class PemeriksaanTanahController extends BaseController
 
         // PemeriksaanAgunTan
         $dataPemeriksaanAgunTan = array(
-            'nama_penghuni'     => empty($req->input('nama_penghuni_agunan')) ? $check->nama_penghuni : $req->input('nama_penghuni_agunan'),
-            'status_penghuni'   => empty($req->input('status_penghuni_agunan')) ? $check->status_penghuni : strtoupper($req->input('status_penghuni_agunan')),
-            'bentuk_bangunan'   => empty($req->input('bentuk_bangunan_agunan')) ? $check->bentuk_bangunan : $req->input('bentuk_bangunan_agunan'),
-            'kondisi_bangunan'  => empty($req->input('kondisi_bangunan_agunan')) ? $check->kondisi_bangunan : $req->input('kondisi_bangunan_agunan'),
-            'fasilitas'         => empty($req->input('fasilitas_agunan')) ? $check->fasilitas : $req->input('fasilitas_agunan'),
-            'listrik'           => empty($req->input('listrik_agunan')) ? $check->listrik : $req->input('listrik_agunan'),
-            'nilai_taksasi_agunan'   => empty($req->input('nilai_taksasi_agunan')) ? $check->nilai_taksasi_agunan : $req->input('nilai_taksasi_agunan'),
-            'nilai_taksasi_bangunan' => empty($req->input('nilai_taksasi_bangunan')) ? $check->nilai_taksasi_bangunan : $req->input('nilai_taksasi_bangunan'),
-            'tgl_taksasi'       => empty($req->input('tgl_taksasi_agunan')) ? $check->tgl_taksasi : Carbon::parse($req->input('tgl_taksasi_agunan'))->format('Y-m-d'),
-            'nilai_likuidasi'   => empty($req->input('nilai_likuidasi_agunan')) ? $check->nilai_likuidasi : $req->input('nilai_likuidasi_agunan')
+            'nama_penghuni'                 => empty($req->input('nama_penghuni_agunan')) ? $check->nama_penghuni : $req->input('nama_penghuni_agunan'),
+            'status_penghuni'               => empty($req->input('status_penghuni_agunan')) ? $check->status_penghuni : strtoupper($req->input('status_penghuni_agunan')),
+            'bentuk_bangunan'               => empty($req->input('bentuk_bangunan_agunan')) ? $check->bentuk_bangunan : $req->input('bentuk_bangunan_agunan'),
+            'kondisi_bangunan'              => empty($req->input('kondisi_bangunan_agunan')) ? $check->kondisi_bangunan : $req->input('kondisi_bangunan_agunan'),
+            'fasilitas'                     => empty($req->input('fasilitas_agunan')) ? $check->fasilitas : $req->input('fasilitas_agunan'),
+            'listrik'                       => empty($req->input('listrik_agunan')) ? $check->listrik : $req->input('listrik_agunan'),
+            'nilai_taksasi_agunan'          => empty($req->input('nilai_taksasi_agunan')) ? $check->nilai_taksasi_agunan : $req->input('nilai_taksasi_agunan'),
+            'nilai_taksasi_bangunan'        => empty($req->input('nilai_taksasi_bangunan')) ? $check->nilai_taksasi_bangunan : $req->input('nilai_taksasi_bangunan'),
+            'tgl_taksasi'                   => empty($req->input('tgl_taksasi_agunan')) ? $check->tgl_taksasi : Carbon::parse($req->input('tgl_taksasi_agunan'))->format('Y-m-d'),
+            'nilai_likuidasi'               => empty($req->input('nilai_likuidasi_agunan')) ? $check->nilai_likuidasi : $req->input('nilai_likuidasi_agunan'),
+            'nilai_agunan_independen'       => empty($req->nilai_agunan_independen) ? $check->nilai_agunan_independen : $req->nilai_agunan_independen,
+            'perusahaan_penilai_independen' => empty($req->perusahaan_penilai_independen) ? $check->perusahaan_penilai_independen : $req->perusahaan_penilai_independen
         );
 
         DB::connection('web')->beginTransaction();
