@@ -113,12 +113,11 @@ class Controller extends BaseController
 
     public static function recom_angs($num){
         return (int) ceil($num / 1000) * 1000;
-        // return ($num > 0) ? ceil($num) : floor($num);
     }
 
-    public static function checkDir($user_id, $jpic, $query_dir, $id_area, $id_cabang, $method){
+    public static function checkDir($user_id, $scope, $query_dir, $id_area, $id_cabang, $method){
 
-        if($jpic == 'DIR UT' || $jpic == 'DIR BIS' || $jpic == 'DIR RISK' ||  $jpic == 'KEPATUHAN'){
+        if($scope == 'Pusat'){
 
             if ($method == 'get') {
 
@@ -127,7 +126,7 @@ class Controller extends BaseController
                 $query = $query_dir->first();
             }
 
-        }elseif($jpic == 'CRM' || $jpic == 'AM' || $jpic == 'CA'){
+        }elseif($scope == 'Area'){
 
             if ($method == 'get') {
 
@@ -147,13 +146,13 @@ class Controller extends BaseController
             if ($method == 'get'){
 
                 $query = $query_dir
-                        ->where('id_area', $id_area)
+                        // ->where('id_area', $id_area)
                         ->where('id_cabang', $id_cabang)
                         ->get();
             }else{
 
                 $query = $query_dir
-                        ->where('id_area', $id_area)
+                        // ->where('id_area', $id_area)
                         ->where('id_cabang', $id_cabang)
                         ->first();
             }

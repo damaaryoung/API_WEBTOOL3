@@ -18,6 +18,6 @@ class JPIC extends Model implements AuthenticatableContract, AuthorizableContrac
     protected $primaryKey = 'id';
 
     protected $fillable = [
-        'nama_jenis', 'keterangan', 'urutan_jabatan'
+        'nama_jenis', 'cakupan', 'urutan_jabatan', 'keterangan', 'bagian'
     ];
 }

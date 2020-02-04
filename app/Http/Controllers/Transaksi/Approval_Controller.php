@@ -37,66 +37,40 @@ class Approval_Controller extends BaseController
 
         $id_area   = $pic->id_area;
         $id_cabang = $pic->id_cabang;
-        $jpic      = $pic['nama_jenis'];
+        $scope     = $pic->jpic['cakupan'];
 
-        // $query = Helper::checkDir($user_id, $jpic = $pic->jpic['nama_jenis'], $query_dir, $id_area, $id_cabang, $method);
-        if($jpic == 'CRM' || $jpic == 'AM' || $jpic == 'CA'){
-
-            $query = PIC::with(['jpic', 'area','cabang'])
+        $query = PIC::with(['jpic', 'area','cabang'])
                 ->whereHas('jpic', function($q) {
                     // Query the name field in status table
-                    $q->where('nama_jenis', '=', 'DIR UT'); // '=' is optional
-                    $q->orWhere('nama_jenis', '=', 'DIR BIS');
-                    $q->orWhere('nama_jenis', '=', 'DIR RISK');
-                    $q->orWhere('nama_jenis', '=', 'KEPATUHAN');
-                    $q->orWhere('nama_jenis', '=', 'CRM');
-                    $q->orWhere('nama_jenis', '=', 'CA');
-                    $q->orWhere('nama_jenis', '=', 'AM');
-                    $q->orWhere('nama_jenis', '=', 'PC');
+                    $q->where('bagian', '=', 'team_caa');
                 })
-                ->where('flg_aktif', 1)
-                ->where('id_area', $id_area)
-                ->where('id', '!=', $pic->id)
-                ->get();
+                ->where('flg_aktif', 1);
 
-        }elseif($jpic == 'PC'){
+        if($scope == 'CABANG'){
 
-            $query = PIC::with(['jpic', 'area','cabang'])
-                ->whereHas('jpic', function($q) {
-                    // Query the name field in status table
-                    $q->where('nama_jenis', '=', 'DIR UT'); // '=' is optional
-                    $q->orWhere('nama_jenis', '=', 'DIR BIS');
-                    $q->orWhere('nama_jenis', '=', 'DIR RISK');
-                    $q->orWhere('nama_jenis', '=', 'KEPATUHAN');
-                    $q->orWhere('nama_jenis', '=', 'CRM');
-                    $q->orWhere('nama_jenis', '=', 'CA');
-                    $q->orWhere('nama_jenis', '=', 'AM');
-                    $q->orWhere('nama_jenis', '=', 'PC');
-                })
-                ->where('flg_aktif', 1)
-                ->where('id', '!=', $pic->id)
-                ->where('id_area', $id_area)
-                ->where('id_cabang', $id_cabang)
-                ->get();
+            $parQuery = $query->whereHas('cabang', function($q) use($id_cabang) {
+                                $q->where('id', $id_cabang);
+                                $q->orWhere('nama', 'Pusat');
+                            })
+                            ->get()
+                            ->sortByDesc('jpic.urutan_jabatan');
+
+        }elseif($scope == 'AREA'){
+
+            $parQuery = $query->whereHas('area', function($q) use($id_area) {
+                                $q->where('id', $id_area);
+                                $q->orWhere('nama', 'Pusat');
+                            })
+                            ->get()
+                            ->sortByDesc('jpic.urutan_jabatan');
+
         }else{
-            $query = PIC::with(['jpic', 'area','cabang'])
-                ->whereHas('jpic', function($q) {
-                    // Query the name field in status table
-                    $q->where('nama_jenis', '=', 'DIR UT'); // '=' is optional
-                    $q->orWhere('nama_jenis', '=', 'DIR BIS');
-                    $q->orWhere('nama_jenis', '=', 'DIR RISK');
-                    $q->orWhere('nama_jenis', '=', 'KEPATUHAN');
-                    $q->orWhere('nama_jenis', '=', 'CRM');
-                    $q->orWhere('nama_jenis', '=', 'CA');
-                    $q->orWhere('nama_jenis', '=', 'AM');
-                    $q->orWhere('nama_jenis', '=', 'PC');
-                })
-                ->where('flg_aktif', 1)
-                ->where('id', '!=', $pic->id)
-                ->get();
+
+            $parQuery = $query->get()->sortByDesc('jpic.urutan_jabatan');
+
         }
 
-        if ($query == '[]') {
+        if ($parQuery == '[]') {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
@@ -105,7 +79,7 @@ class Approval_Controller extends BaseController
         }
 
         $data = array();
-        foreach ($query as $val) {
+        foreach ($parQuery as $val) {
             $data[] = array(
                 "id"        => $val->id,
                 "user_id"   => $val->user_id,

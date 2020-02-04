@@ -46,12 +46,12 @@ class MasterAO_Controller extends BaseController
 
         $id_area   = $pic->id_area;
         $id_cabang = $pic->id_cabang;
-
+        $scope     = $pic->jpic['cakupan'];
 
         $query_dir = TransSO::with('pic', 'cabang', 'asaldata', 'debt', 'pas', 'faspin', 'ao', 'ca');
         $method = 'get';
 
-        $query = Helper::checkDir($user_id, $jpic = $pic->jpic['nama_jenis'], $query_dir, $id_area, $id_cabang, $method);
+        $query = Helper::checkDir($user_id, $scope, $query_dir, $id_area, $id_cabang, $method);
 
 
         if ($query == '[]') {
@@ -145,11 +145,12 @@ class MasterAO_Controller extends BaseController
 
         $id_area   = $pic->id_area;
         $id_cabang = $pic->id_cabang;
+        $scope     = $pic->jpic['cakupan'];
 
         $query_dir = TransSO::with('pic', 'cabang', 'asaldata', 'debt', 'pas', 'faspin', 'ao', 'ca')->where('id', $id);
         $method = 'first';
 
-        $val = Helper::checkDir($user_id, $jpic = $pic->jpic['nama_jenis'], $query_dir, $id_area, $id_cabang, $method);
+        $val = Helper::checkDir($user_id, $scope, $query_dir, $id_area, $id_cabang, $method);
 
 
         if (!$val) {
@@ -949,12 +950,13 @@ class MasterAO_Controller extends BaseController
 
         $id_area   = $pic->id_area;
         $id_cabang = $pic->id_cabang;
+        $scope     = $pic->jpic['cakupan'];
 
         $query_dir = TransSO::with('pic', 'cabang', 'asaldata', 'debt', 'pas', 'faspin', 'ao', 'ca')
                 ->where('nomor_so', 'like', '%'.$search.'%');
         $method = 'get';
 
-        $query = Helper::checkDir($user_id, $jpic = $pic->jpic['nama_jenis'], $query_dir, $id_area, $id_cabang, $method);
+        $query = Helper::checkDir($user_id, $scope, $query_dir, $id_area, $id_cabang, $method);
 
 
         if ($query == '[]') {

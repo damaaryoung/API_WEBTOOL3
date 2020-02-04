@@ -43,11 +43,12 @@ class MasterCA_Controller extends BaseController
 
         $id_area   = $pic->id_area;
         $id_cabang = $pic->id_cabang;
+        $scope     = $pic->jpic['cakupan'];
 
         $query_dir = TransAO::with('so', 'pic', 'cabang')->where('status_ao', 1);
         $method = 'get';
 
-        $query = Helper::checkDir($user_id, $jpic = $pic->jpic['nama_jenis'], $query_dir, $id_area, $id_cabang, $method);
+        $query = Helper::checkDir($user_id, $scope, $query_dir, $id_area, $id_cabang, $method);
 
 
         if ($query == '[]') {
@@ -131,11 +132,12 @@ class MasterCA_Controller extends BaseController
 
         $id_area   = $pic->id_area;
         $id_cabang = $pic->id_cabang;
+        $scope     = $pic->jpic['cakupan'];
 
         $query_dir = TransAO::with('so', 'pic', 'cabang')->where('id_trans_so', $id);
         $method = 'first';
 
-        $val = Helper::checkDir($user_id, $jpic = $pic->jpic['nama_jenis'], $query_dir, $id_area, $id_cabang, $method);
+        $val = Helper::checkDir($user_id, $scope, $query_dir, $id_area, $id_cabang, $method);
 
 
         if (!$val) {
@@ -778,6 +780,7 @@ class MasterCA_Controller extends BaseController
 
         $id_area   = $pic->id_area;
         $id_cabang = $pic->id_cabang;
+        $scope     = $pic->jpic['cakupan'];
 
         $query_dir = TransAO::with('so', 'pic', 'cabang')
                 ->where('status_ao', 1)
@@ -785,7 +788,7 @@ class MasterCA_Controller extends BaseController
 
         $method = 'get';
 
-        $query = Helper::checkDir($user_id, $jpic = $pic->jpic['nama_jenis'], $query_dir, $id_area, $id_cabang, $method);
+        $query = Helper::checkDir($user_id, $scope, $query_dir, $id_area, $id_cabang, $method);
 
         if ($query == '[]') {
             return response()->json([
