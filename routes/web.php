@@ -15,6 +15,8 @@ $router->get('/img', 'ImgController@getDecode');
 
 $router->post('/up_caa', 'ImgController@uploadCAA');
 
+$router->get('produk', 'Master\CodeController@produk');
+
 $router->group(['prefix' => '/wilayah'], function () use ($router) {
     $router->get('/', function () use ($router) {
         return 'add parameters after slash';

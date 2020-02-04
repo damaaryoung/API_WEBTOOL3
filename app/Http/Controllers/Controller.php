@@ -38,7 +38,8 @@ class Controller extends BaseController
 
         $data = [
             'to'            => $fcm_token, //single token
-            'notification'  => $notification
+            'notification'  => $notification,
+            // 'data'          => 'somethng'
         ];
 
         $headers = [
