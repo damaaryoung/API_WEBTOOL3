@@ -117,7 +117,7 @@ class Controller extends BaseController
 
     public static function checkDir($user_id, $scope, $query_dir, $id_area, $id_cabang, $method){
 
-        if($scope == 'Pusat'){
+        if($scope == 'PUSAT'){
 
             if ($method == 'get') {
 
@@ -126,7 +126,7 @@ class Controller extends BaseController
                 $query = $query_dir->first();
             }
 
-        }elseif($scope == 'Area'){
+        }elseif($scope == 'AREA'){
 
             if ($method == 'get') {
 
