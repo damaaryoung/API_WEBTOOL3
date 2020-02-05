@@ -315,17 +315,32 @@ class MasterAO_Controller extends BaseController
             ], 404);
         }
 
+        $lamp_dir = 'public/'.$check->debt['no_ktp'];
+
+        // Form Persetujuan Ideb
+        if($file = $req->file('form_persetujuan_ideb')){
+            $path = $lamp_dir.'/ideb';
+            $name = 'form_persetujuan_ideb.' . $file->getClientOriginalName();
+            $file->move($path,$name);
+
+            $form_persetujuan_ideb = $path.'/'.$name;
+        }else{
+            $form_persetujuan_ideb = $check->form_persetujuan_ideb;
+        }
+
+
         $id_penj = explode (",",$check->id_penjamin);
 
         $TransAO = array(
-            'nomor_ao'     => $nomor_ao,
-            'id_trans_so'  => $id,
-            'user_id'      => $user_id,
-            'id_pic'       => $PIC->id,
-            'id_area'      => $PIC->id_area,
-            'id_cabang'    => $PIC->id_cabang,
-            'catatan_ao'   => $req->input('catatan_ao'),
-            'status_ao'    => empty($req->input('status_ao')) ? 1 : $req->input('status_ao')
+            'nomor_ao'              => $nomor_ao,
+            'id_trans_so'           => $id,
+            'user_id'               => $user_id,
+            'id_pic'                => $PIC->id,
+            'id_area'               => $PIC->id_area,
+            'id_cabang'             => $PIC->id_cabang,
+            'catatan_ao'            => $req->input('catatan_ao'),
+            'status_ao'             => empty($req->input('status_ao')) ? 1 : $req->input('status_ao'),
+            'form_persetujuan_ideb' => $form_persetujuan_ideb
         );
 
         $recom_AO = array(
@@ -371,14 +386,12 @@ class MasterAO_Controller extends BaseController
             'catatan'             => $req->input('catatan_validasi')
         );
 
-        $lamp_dir = 'public/'.$check->debt['no_ktp'];
 
         if($files = $req->file('lamp_agunan_depan')){
             foreach($files as $file){
                 $path = $lamp_dir.'/agunan_tanah';
                 $name = 'agunan_depan.' . $file->getClientOriginalName();
                 $file->move($path,$name);
-                $a++;
 
                 $agunanDepan[] = $path.'/'.$name;
             }
@@ -389,55 +402,46 @@ class MasterAO_Controller extends BaseController
                 $path = $lamp_dir.'/agunan_kendaraan';
                 $name = 'agunan_depan.' . $file->getClientOriginalName();
                 $file->move($path,$name);
-                $a++;
 
                 $agunanDepanKen[] = $path.'/'.$name;
             }
         }
 
         if($files = $req->file('lamp_agunan_kanan')){
-            $a = 1;
             foreach($files as $file){
                 $path = $lamp_dir.'/agunan_tanah';
                 $name = 'agunan_kanan.' . $file->getClientOriginalName();
                 $file->move($path,$name);
-                $a++;
 
                 $agunanKanan[] = $path.'/'.$name;
             }
         }
 
         if ($files = $req->file('lamp_agunan_kanan_ken')) {
-            $a = 1;
             foreach($files as $file){
                 $path = $lamp_dir.'/agunan_kendaraan';
                 $name = 'agunan_kanan.' . $file->getClientOriginalName();
                 $file->move($path,$name);
-                $a++;
 
                 $agunanKananKen[] = $path.'/'.$name;
             }
         }
 
         if($files = $req->file('lamp_agunan_kiri')){
-            $a = 1;
             foreach($files as $file){
                 $path = $lamp_dir.'/agunan_tanah';
                 $name = 'agunan_kiri.' . $file->getClientOriginalName();
                 $file->move($path,$name);
-                $a++;
 
                 $agunanKiri[] = $path.'/'.$name;
             }
         }
 
         if ($files = $req->file('lamp_agunan_kiri_ken')) {
-            $a = 1;
             foreach($files as $file){
                 $path = $lamp_dir.'/agunan_kendaraan';
                 $name = 'agunan_kiri.' . $file->getClientOriginalName();
                 $file->move($path,$name);
-                $a++;
 
                 $agunanKiriKen[] = $path.'/'.$name;
             }
@@ -445,19 +449,16 @@ class MasterAO_Controller extends BaseController
 
 
         if($files = $req->file('lamp_agunan_belakang')){
-            $a = 1;
             foreach($files as $file){
                 $path = $lamp_dir.'/agunan_tanah';
                 $name = 'agunan_belakang.' . $file->getClientOriginalName();
                 $file->move($path,$name);
-                $a++;
 
                 $agunanBelakang[] = $path.'/'.$name;
             }
         }
 
         if ($files = $req->file('lamp_agunan_belakang_ken')) {
-            $a = 1;
             foreach($files as $file){
                 $path = $lamp_dir.'/agunan_kendaraan';
                 $name = 'agunan_belakang.' . $file->getClientOriginalName();
@@ -470,24 +471,20 @@ class MasterAO_Controller extends BaseController
 
 
         if($files = $req->file('lamp_agunan_dalam')){
-            $a = 1;
             foreach($files as $file){
                 $path = $lamp_dir.'/agunan_tanah';
                 $name = 'agunan_dalam.' . $file->getClientOriginalName();
                 $file->move($path,$name);
-                $a++;
 
                 $agunanDalam[] = $path.'/'.$name;
             }
         }
 
         if ($files = $req->file('lamp_agunan_dalam_ken')) {
-            $a = 1;
             foreach($files as $file){
                 $path = $lamp_dir.'/agunan_kendaraan';
                 $name = 'agunan_dalam.' . $file->getClientOriginalName();
                 $file->move($path,$name);
-                $a++;
 
                 $agunanDalamKen[] = $path.'/'.$name;
             }
@@ -495,36 +492,29 @@ class MasterAO_Controller extends BaseController
 
         // Tambahan Agunan Tanah
         if ($files = $req->file('lamp_imb')) {
-            $a = 1;
             foreach($files as $file){
                 $path = $lamp_dir.'/agunan_tanah';
                 $name = 'lamp_imb.' . $file->getClientOriginalName();
                 $file->move($path,$name);
-                $a++;
 
                 $lamp_imb[] = $path.'/'.$name;
             }
         }
 
         if ($files = $req->file('lamp_pbb')) {
-            $a = 1;
             foreach($files as $file){
                 $path = $lamp_dir.'/agunan_tanah';
                 $name = 'lamp_pbb.' . $file->getClientOriginalName();
                 $file->move($path,$name);
-                $a++;
-
                 $lamp_pbb[] = $path.'/'.$name;
             }
         }
 
         if ($files = $req->file('lamp_sertifikat')) {
-            $a = 1;
             foreach($files as $file){
                 $path = $lamp_dir.'/agunan_tanah';
                 $name = 'lamp_sertifikat.' . $file->getClientOriginalName();
                 $file->move($path,$name);
-                $a++;
 
                 $lamp_sertifikat[] = $path.'/'.$name;
             }
@@ -669,6 +659,92 @@ class MasterAO_Controller extends BaseController
             $dataKeUsaha = array_merge($inputKeUsaha, $total_KeUsaha);
         }
 
+        // Lampiran Untuk Debitur
+        if ($files = $req->file('lamp_buku_tabungan')) {
+            foreach($files as $file){
+                $path = $lamp_dir.'/lamp_buku_tabungan';
+                $name = 'lamp_buku_tabungan.' . $file->getClientOriginalName();
+
+                $file->move($path,$name);
+
+                $buku_tabungan[] = $path.'/'.$name;
+
+                $lamp_buku_tabungan = implode(";",$buku_tabungan);
+            }
+        }else{
+            $lamp_buku_tabungan = $check->debt['lamp_buku_tabungan'];
+        }
+
+        if($files = $req->file('lamp_sku')){
+            foreach ($files as $file) {
+                $path = $lamp_dir.'/debitur';
+                $name = 'lamp_sku.'.$file->getClientOriginalName();
+
+                $file->move($path,$name);
+
+                $sku[] = $path.'/'.$name;
+
+                $lamp_sku = implode(";",$sku);
+            }
+        }else{
+            $lamp_sku = $check->debt['lamp_sku'];
+        }
+
+        if($file = $req->file('lamp_slip_gaji')){
+            // foreach ($files as $file) {
+                $path = $lamp_dir.'/debitur';
+                $name = 'lamp_slip_gaji.'.$file->getClientOriginalName();
+
+                $file->move($path,$name);
+
+                $slip_gaji[] = $path.'/'.$name;
+
+                $lamp_slip_gaji = implode(";",$slip_gaji);
+            // }
+        }else{
+            $lamp_slip_gaji = $check->debt['lamp_slip_gaji'];
+        }
+
+
+        if($file = $req->file('foto_pembukuan_usaha')){
+            // foreach ($files as $file) {
+                $path = $lamp_dir.'/debitur';
+                $name = 'foto_pembukuan_usaha.'.$file->getClientOriginalName();
+
+                $file->move($path,$name);
+
+                $pembukuan_usaha[] = $path.'/'.$name;
+
+                $foto_pembukuan_usaha = implode(";",$pembukuan_usaha);
+            // }
+        }else{
+            $foto_pembukuan_usaha = $check->debt['foto_pembukuan_usaha'];
+        }
+
+        if($files = $req->file('lamp_foto_usaha')){
+            foreach ($files as $file) {
+                $path = $lamp_dir.'/debitur';
+                $name = 'lamp_foto_usaha.'.$file->getClientOriginalName();
+
+                $file->move($path,$name);
+
+                $foto_usaha = $path.'/'.$name;
+
+                $lamp_foto_usaha = implode(";",$foto_usaha);
+            }
+        }else{
+            $lamp_foto_usaha = $check->debt['lamp_foto_usaha'];
+        }
+
+        $cadebt = array(
+            'lamp_buku_tabungan'    => $lamp_buku_tabungan,
+            'lamp_sku'              => $lamp_sku,
+            'lamp_slip_gaji'        => $lamp_slip_gaji,
+            'foto_pembukuan_usaha'  => $foto_pembukuan_usaha,
+            'lamp_foto_usaha'       => $lamp_foto_usaha
+        );
+
+
         $check_ao = TransAO::where('id_trans_so', $id)->first();
 
         DB::connection('web')->beginTransaction();
@@ -763,6 +839,8 @@ class MasterAO_Controller extends BaseController
                 $new_TransAO = TransAO::create($arrAO);
 
                 TransSO::where('id', $id)->update(['id_trans_ao' => $new_TransAO->id]);
+
+                Debitur::where('id', $check->id_calon_debitur)->update($cadebt);
             }else{
                 if (!empty($daAguTa)) {
 
@@ -917,6 +995,8 @@ class MasterAO_Controller extends BaseController
                 $new_TransAO = TransAO::where('id', $check_ao->id)->update($arrAO);
 
                 TransSO::where('id', $id)->update(['id_trans_ao' => $check_ao->id]);
+
+                Debitur::where('id', $check->id_calon_debitur)->update($cadebt);
             }
 
             DB::connection('web')->commit();

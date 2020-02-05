@@ -238,6 +238,7 @@ $router->group(['middleware' => ['jwt.auth'], 'prefix' => 'api'], function () us
                     $router->get('/{id}', 'MasterSO_Controller@show');
                     $router->post('/{id}', 'MasterSO_Controller@update'); // Update MCC
                     $router->get('/{search}/search', 'MasterSO_Controller@search');
+                    $router->get('/{no_ktp}/show', 'MasterSO_Controller@ktp_show');
                 });
 
                 // Trans AO

@@ -323,7 +323,48 @@ class MasterSO_Controller extends BaseController
             'tenor'           => $req->input('tenor_pinjaman')
         );
 
-        $ktp = $req->input('no_ktp');
+        $dateExpires   = strtotime($now); // time to integer
+        $day_in_second = 60 * 60 * 24 * 30;
+
+        $ktp = 3216190107670001; //$req->input('no_ktp');
+
+        // $check_ktp_web = DB::connection('web')->select("SELECT no_ktp, UNIX_TIMESTAMP(created_at) as tgl FROM calon_debitur WHERE no_ktp=? limit 1",[$ktp]);
+        $check_ktp_web = Debitur::select('no_ktp', 'created_at')->where('no_ktp', $ktp)->first();
+
+
+        if($check_ktp_web != null){
+
+            $created_at = $check_ktp_web->created_at->timestamp;
+
+            $compare_day_in_second = $dateExpires - $created_at;
+
+            if ($compare_day_in_second <= $day_in_second) {
+                return response()->json([
+                    "code"    => 403,
+                    "status"  => "Expired",
+                    'message' => "Akun belum aktif kembali, belum ada 1 bulan yang lalu no ktp melakukan pengajuan"
+                ], 403);
+            // }else{
+            //     return response()->json([
+            //         "code"    => 200,
+            //         "status"  => "success",
+            //         "message" => "Akun telah ada di sistem, apakah anda ingin menggunakan data lama ?",
+            //         "redirect"=> ""
+            //     ], 200);
+            }
+        }else{
+
+            $check_ktp_dpm = DB::connection("web")->table("view_nasabah")->where("NO_ID", $ktp)->first();
+
+            if ($check_ktp_dpm != null) {
+                return response()->json([
+                    "code"    => 404,
+                    "status"  => "not found",
+                    "message" => "Akun berdasarkan no ktp sudah pernah melakukan pengajuan sebelumnya"
+                ], 404);
+            }
+        }
+
 
         $lamp_dir = 'public/'.$ktp;
 
@@ -449,6 +490,14 @@ class MasterSO_Controller extends BaseController
             $bukuNikahPass = null;
         }
 
+        if (!empty($req->input('nama_lengkap_pas'))) {
+
+            $alamat_ktp_pas = empty($req->input('alamat_ktp_pas')) ? $dataDebitur['alamat_ktp'] : $req->input('alamat_ktp_pas');
+
+        }else{
+            $alamat_ktp_pas = null;
+        }
+
         // Data Pasangan Calon Debitur
         $dataPasangan = array(
             'nama_lengkap'     => $req->input('nama_lengkap_pas'),
@@ -459,7 +508,7 @@ class MasterSO_Controller extends BaseController
             'no_npwp'          => $req->input('no_npwp_pas'),
             'tempat_lahir'     => $req->input('tempat_lahir_pas'),
             'tgl_lahir'        => Carbon::parse($req->input('tgl_lahir_pas'))->format('Y-m-d'),
-            'alamat_ktp'       => $req->input('alamat_ktp_pas'),
+            'alamat_ktp'       => $alamat_ktp_pas,
             'no_telp'          => $req->input('no_telp_pas'),
             'lamp_ktp'         => $ktpPass,
             'lamp_buku_nikah'  => $bukuNikahPass
@@ -473,7 +522,6 @@ class MasterSO_Controller extends BaseController
                 $path = $lamp_dir.'/penjamin';
                 $name = 'ktp_penjamin.' . $file->getClientOriginalName();
                 $file->move($path,$name);
-                $a++;
 
                 $ktpPen[] = $path.'/'.$name;
             }
@@ -484,7 +532,6 @@ class MasterSO_Controller extends BaseController
                 $path = $lamp_dir.'/penjamin';
                 $name = 'ktp_pasangan.' . $file->getClientOriginalName();
                 $file->move($path,$name);
-                $b++;
 
                 $ktpPenPAS[] = $path.'/'.$name;
             }
@@ -495,7 +542,6 @@ class MasterSO_Controller extends BaseController
                 $path = $lamp_dir.'/penjamin';
                 $name = 'kk_penjamin.' . $file->getClientOriginalName();
                 $file->move($path,$name);
-                $c++;
 
                 $kkPen[] = $path.'/'.$name;
             }
@@ -506,7 +552,6 @@ class MasterSO_Controller extends BaseController
                 $path = $lamp_dir.'/penjamin';
                 $name = 'buku_nikah_penjamin.' . $file->getClientOriginalName();
                 $file->move($path,$name);
-                $d++;
 
                 $bukuNikahPen[] = $path.'/'.$name;
             }
@@ -872,8 +917,6 @@ class MasterSO_Controller extends BaseController
 
                         $file->move($path,$name);
 
-                        $a++;
-
                         $ktpPen[] = $path.'/'.$name;
                     }
                 }
@@ -897,8 +940,6 @@ class MasterSO_Controller extends BaseController
                         }
 
                         $file->move($path,$name);
-
-                        $b++;
 
                         $ktpPenPAS[] = $path.'/'.$name;
                     }
@@ -924,8 +965,6 @@ class MasterSO_Controller extends BaseController
 
                         $file->move($path,$name);
 
-                        $c++;
-
                         $kkPen[] = $path.'/'.$name;
                     }
                 }
@@ -949,8 +988,6 @@ class MasterSO_Controller extends BaseController
                         }
 
                         $file->move($path,$name);
-
-                        $d++;
 
                         $bukuNikahPen[] = $path.'/'.$name;
                     }
