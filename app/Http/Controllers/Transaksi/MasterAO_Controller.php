@@ -675,6 +675,17 @@ class MasterAO_Controller extends BaseController
             $lamp_buku_tabungan = $check->debt['lamp_buku_tabungan'];
         }
 
+        if($files = $req->file('lamp_skk')){
+            $path = $lamp_dir.'/debitur';
+            $name = 'lamp_skk.'.$file->getClientOriginalName();
+
+            $file->move($path,$name);
+
+            $lamp_skk = $path.'/'.$name;
+        }else{
+            $lamp_skk = $check->debt['lamp_skk'];
+        }
+
         if($files = $req->file('lamp_sku')){
             foreach ($files as $file) {
                 $path = $lamp_dir.'/debitur';
@@ -738,6 +749,7 @@ class MasterAO_Controller extends BaseController
 
         $cadebt = array(
             'lamp_buku_tabungan'    => $lamp_buku_tabungan,
+            'lamp_skk'              => $lamp_skk,
             'lamp_sku'              => $lamp_sku,
             'lamp_slip_gaji'        => $lamp_slip_gaji,
             'foto_pembukuan_usaha'  => $foto_pembukuan_usaha,

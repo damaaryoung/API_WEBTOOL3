@@ -19,16 +19,27 @@ class AccessLog
     public function handle($request, Closure $next)
     {
         $response = $next($request);
-        // buat log
-        DB::table('access_logs')->insert([
-        'subject' => $request->path(),
-        // 'url' => $request->fullUrl(),
-        // 'method' => $request->method(),
-        'ip' => $request->getClientIp(),
-        'agent' => $request->header('user-agent'),
-        'user_id' => $request->auth->user_id,
-        'created_at' => new DateTime,
-        'updated_at' => new DateTime
+
+        if($request->auth == null){
+            $userID   = null;
+            $userName = null;
+        }else{
+            $userID   = $request->auth->user_id;
+            $userName = $request->auth->nama;
+        }
+
+        $route = $request->route();
+
+        DB::connection('web')->table('access_logs')->insert([
+
+            'subject'   => $route[1]['subject'], //$request->path(),
+            'url'       => $request->getPathInfo(), // Or $request->fullUrl()
+            'method'    => $request->getMethod(),
+            'ip'        => $request->getClientIp(),
+            'agent'     => $request->header('User-Agent'),
+            'user_id'   => $userID,
+            'login_name'=> $userName,
+            'time'      => new DateTime
         ]);
 
         return $response;

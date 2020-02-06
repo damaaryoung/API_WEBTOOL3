@@ -326,10 +326,10 @@ class MasterSO_Controller extends BaseController
         $dateExpires   = strtotime($now); // time to integer
         $day_in_second = 60 * 60 * 24 * 30;
 
-        $ktp = 3216190107670001; //$req->input('no_ktp');
+        $ktp = $req->input('no_ktp'); // 3216190107670001;
 
         // $check_ktp_web = DB::connection('web')->select("SELECT no_ktp, UNIX_TIMESTAMP(created_at) as tgl FROM calon_debitur WHERE no_ktp=? limit 1",[$ktp]);
-        $check_ktp_web = Debitur::select('no_ktp', 'created_at')->where('no_ktp', $ktp)->first();
+        $check_ktp_web = Debitur::select('id', 'no_ktp', 'created_at')->where('no_ktp', $ktp)->first();
 
 
         if($check_ktp_web != null){
@@ -342,15 +342,15 @@ class MasterSO_Controller extends BaseController
                 return response()->json([
                     "code"    => 403,
                     "status"  => "Expired",
-                    'message' => "Akun belum aktif kembali, belum ada 1 bulan yang lalu no ktp melakukan pengajuan"
+                    'message' => "Akun belum aktif kembali, belum ada 1 bulan yang lalu, tepatnya pada tanggal ".Carbon::parse($check_ktp_web->created_at)->format("d-m-Y")." debitur dengan id {$check_ktp_web->id} telah melakukan pengajuan"
                 ], 403);
-            // }else{
-            //     return response()->json([
-            //         "code"    => 200,
-            //         "status"  => "success",
-            //         "message" => "Akun telah ada di sistem, apakah anda ingin menggunakan data lama ?",
-            //         "redirect"=> ""
-            //     ], 200);
+            }else{
+                return response()->json([
+                    "code"    => 200,
+                    "status"  => "success",
+                    "message" => "Akun telah ada di sistem, gunakan endpoint berikut apabila ingin menggunakan datanya",
+                    "endpoint"=> "/api/master/mcc/".$check_ktp_web->id
+                ], 200);
             }
         }else{
 

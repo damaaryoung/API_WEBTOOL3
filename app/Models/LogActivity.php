@@ -7,7 +7,7 @@ use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Lumen\Auth\Authorizable;
-// use App\Models\User;
+use App\Models\User;
 
 class LogActivity extends Model implements AuthenticatableContract, AuthorizableContract
 {
@@ -23,11 +23,8 @@ class LogActivity extends Model implements AuthenticatableContract, Authorizable
     protected $table = 'access_logs';
 
     protected $fillable = [
-       'subject', 'url', 'method', 'ip', 'agent', 'user_id'
+       'subject', 'url', 'method', 'ip', 'agent', 'user_id', 'login_name', 'time'
     ];
 
-    // public function user()
-    // {
-    //     return $this->belongsTo(User::class, 'user_id');
-    // }
+    public $timestamps = false;
 }
