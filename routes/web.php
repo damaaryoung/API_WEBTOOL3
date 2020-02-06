@@ -79,6 +79,7 @@ $router->group(['prefix' => '/wilayah'], function () use ($router) {
 $router->post('/login', 'AuthController@login'); // Login All Level
 
 $router->put('/api/user/reset_password', 'UserController@resetPassword'); //Reset Password
+$router->post('/api/operator/{id_trans_so}', 'Transaksi\MasterCA_Controller@operator');
 
 // $router->group(['middleware' => ['jwt.auth', 'log'], 'prefix' => 'api'], function () use ($router) {
 $router->group(['middleware' => ['jwt.auth'], 'prefix' => 'api'], function () use ($router) {

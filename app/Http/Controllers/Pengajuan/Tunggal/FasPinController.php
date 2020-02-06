@@ -34,11 +34,11 @@ class FaspinController extends BaseController
         }
 
         $data = array(
-            'id'              => $check->id,
+            'id'              => $check->id == null ? null : (int) $check->id,
             'jenis_pinjaman'  => $check->jenis_pinjaman,
             'tujuan_pinjaman' => $check->tujuan_pinjaman,
-            'plafon'          => $check->plafon,
-            'tenor'           => $check->tenor,
+            'plafon'          => (int) $check->plafon,
+            'tenor'           => (int) $check->tenor,
             'segmentasi_bpr'  => $check->segmentasi_bpr
         );
 

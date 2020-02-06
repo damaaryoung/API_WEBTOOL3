@@ -35,7 +35,7 @@ class DebiturController extends BaseController
         }
 
         $data = array(
-            'id'                    => $val->id,
+            'id'                    => $val->id == null ? null : (int) $val->id,
             'nama_lengkap'          => $val->nama_lengkap,
             'gelar_keagamaan'       => $val->gelar_keagamaan,
             'gelar_pendidikan'      => $val->gelar_pendidikan,
@@ -44,56 +44,56 @@ class DebiturController extends BaseController
             'ibu_kandung'           => $val->ibu_kandung,
             'tinggi_badan'          => $val->tinggi_badan,
             'berat_badan'           => $val->berat_badan,
-            'no_ktp'                => $val->no_ktp,
-            'no_ktp_kk'             => $val->no_ktp_kk,
-            'no_kk'                 => $val->no_ktp_kk,
-            'no_npwp'               => $val->no_npwp,
+            'no_ktp'                => $val->no_ktp    == null ? null : (int) $val->no_ktp,
+            'no_ktp_kk'             => $val->no_ktp_kk == null ? null : (int) $val->no_ktp_kk,
+            'no_kk'                 => $val->no_kk     == null ? null : (int) $val->no_kk,
+            'no_npwp'               => $val->no_npwp   == null ? null : (int) $val->no_npwp,
             'tempat_lahir'          => $val->tempat_lahir,
             'tgl_lahir'             => Carbon::parse($val->tgl_lahir)->format('d-m-Y'),
             'agama'                 => $val->agama,
             'alamat_ktp' => [
                 'alamat_singkat' => $val->alamat_ktp,
-                'rt'     => $val->rt_ktp,
-                'rw'     => $val->rw_ktp,
+                'rt'     => $val->rt_ktp == null ? null : (int) $val->rt_ktp,
+                'rw'     => $val->rw_ktp == null ? null : (int) $val->rw_ktp,
                 'kelurahan' => [
-                    'id'    => $val->id_kel_ktp,
+                    'id'    => $val->id_kel_ktp == null ? null : (int) $val->id_kel_ktp,
                     'nama'  => $val->kel_ktp['nama']
                 ],
                 'kecamatan' => [
-                    'id'    => $val->id_kec_ktp,
+                    'id'    => $val->id_kec_ktp == null ? null : (int) $val->id_kec_ktp,
                     'nama'  => $val->kec_ktp['nama']
                 ],
                 'kabupaten' => [
-                    'id'    => $val->id_kab_ktp,
+                    'id'    => $val->id_kab_ktp == null ? null : (int) $val->id_kab_ktp,
                     'nama'  => $val->kab_ktp['nama'],
                 ],
                 'provinsi'  => [
-                    'id'   => $val->id_prov_ktp,
+                    'id'   => $val->id_prov_ktp == null ? null : (int) $val->id_prov_ktp,
                     'nama' => $val->prov_ktp['nama'],
                 ],
-                'kode_pos' => $val->kel_ktp['kode_pos']
+                'kode_pos' => $val->kel_ktp['kode_pos'] == null ? null : (int) $val->kel_ktp['kode_pos']
             ],
             'alamat_domisili' => [
                 'alamat_singkat' => $val->alamat_domisili,
-                'rt'             => $val->rt_domisili,
-                'rw'             => $val->rw_domisili,
+                'rt'             => $val->rt_domisili == null ? null : (int) $val->rt_domisili,
+                'rw'             => $val->rw_domisili == null ? null : (int) $val->rw_domisili,
                 'kelurahan' => [
-                    'id'    => $val->id_kel_tempat_kerja,
+                    'id'    => $val->id_kel_tempat_kerja == null ? null : (int) $val->id_kel_tempat_kerja,
                     'nama'  => $val->kel_dom['nama']
                 ],
                 'kecamatan' => [
-                    'id'    => $val->id_kec_domisili,
+                    'id'    => $val->id_kec_domisili == null ? null : (int) $val->id_kec_domisili,
                     'nama'  => $val->kec_dom['nama']
                 ],
                 'kabupaten' => [
-                    'id'    => $val->id_kab_domisili,
+                    'id'    => $val->id_kab_domisili == null ? null : (int) $val->id_kab_domisili,
                     'nama'  => $val->kab_dom['nama'],
                 ],
                 'provinsi'  => [
-                    'id'   => $val->id_prov_domisili,
+                    'id'   => $val->id_prov_domisili == null ? null : (int) $val->id_prov_domisili,
                     'nama' => $val->prov_dom['nama'],
                 ],
-                'kode_pos' => $val->kel_dom['kode_pos']
+                'kode_pos' => $val->kel_dom['kode_pos'] == null ? null : (int) $val->kel_dom['kode_pos']
             ],
             "pekerjaan" => [
                 "nama_pekerjaan"        => $val->pekerjaan,
@@ -104,31 +104,31 @@ class DebiturController extends BaseController
                 "no_telp_tempat_kerja"  => $val->no_telp_tempat_kerja,
                 'alamat' => [
                     'alamat_singkat' => $val->alamat_tempat_kerja,
-                    'rt'             => $val->rt_tempat_kerja,
-                    'rw'             => $val->rw_tempat_kerja,
+                    'rt'             => $val->rt_tempat_kerja == null ? null : (int) $val->rt_tempat_kerja,
+                    'rw'             => $val->rw_tempat_kerja == null ? null : (int) $val->rw_tempat_kerja,
                     'kelurahan' => [
-                        'id'    => $val->kel_kel_tempat_kerja,
+                        'id'    => $val->id_kel_tempat_kerja == null ? null : (int) $val->id_kel_tempat_kerja,
                         'nama'  => $val->kel_kerja['nama']
                     ],
                     'kecamatan' => [
-                        'id'    => $val->id_kec_tempat_kerja,
+                        'id'    => $val->id_kec_tempat_kerja == null ? null : (int) $val->id_kec_tempat_kerja,
                         'nama'  => $val->kec_kerja['nama']
                     ],
                     'kabupaten' => [
-                        'id'    => $val->id_kab_tempat_kerja,
+                        'id'    => $val->id_kab_tempat_kerja == null ? null : (int) $val->id_kab_tempat_kerja,
                         'nama'  => $val->kab_kerja['nama'],
                     ],
                     'provinsi'  => [
-                        'id'   => $val->id_prov_tempat_kerja,
-                        'nama' => $val->prov_kerja['nama'],
+                        'id'    => $val->id_prov_tempat_kerja == null ? null : (int) $val->id_prov_tempat_kerja,
+                        'nama'  => $val->prov_kerja['nama'],
                     ],
-                    'kode_pos' => $val->kel_kerja['kode_pos']
+                    'kode_pos'  => $val->kel_kerja['kode_pos'] == null ? null : (int) $val->kel_kerja['kode_pos']
                 ]
             ],
             'pendidikan_terakhir'   => $val->pendidikan_terakhir,
             'jumlah_tanggungan'     => $val->jumlah_tanggungan,
-            'no_telp'               => $val->no_telp,
-            'no_hp'                 => $val->no_hp,
+            'no_telp'               => $val->no_telp == null ? null : (int) $val->no_telp,
+            'no_hp'                 => $val->no_hp   == null ? null : (int) $val->no_hp,
             'alamat_surat'          => $val->alamat_surat,
             'lampiran' => [
                 'lamp_ktp'              => $val->lamp_ktp,

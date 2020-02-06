@@ -35,21 +35,21 @@ class KapBulController extends BaseController
 
         $data = array(
             'pemasukan' => array(
-                'debitur' => $check->pemasukan_cadebt,
-                'pasangan'=> $check->pemasukan_pasangan,
-                'penjamin'=> $check->pemasukan_penjamin,
-                'total'   => $check->total_pemasukan
+                'debitur' => (int) $check->pemasukan_cadebt,
+                'pasangan'=> (int) $check->pemasukan_pasangan,
+                'penjamin'=> (int) $check->pemasukan_penjamin,
+                'total'   => (int) $check->total_pemasukan
             ),
             'pengeluaran' => array(
-                'rumah_tangga'  => $check->biaya_rumah_tangga,
-                'transport'     => $check->biaya_transport,
-                'pendidikan'    => $check->biaya_pendidikan,
-                'telp_list_air' => $check->biaya_telp_listr_air,
-                'angsuran'      => $check->angsuran,
-                'lain_lain'     => $check->biaya_lain,
-                'total'         => $check->total_pengeluaran
+                'rumah_tangga'  => (int) $check->biaya_rumah_tangga,
+                'transport'     => (int) $check->biaya_transport,
+                'pendidikan'    => (int) $check->biaya_pendidikan,
+                'telp_list_air' => (int) $check->biaya_telp_listr_air,
+                'angsuran'      => (int) $check->angsuran,
+                'lain_lain'     => (int) $check->biaya_lain,
+                'total'         => (int) $check->total_pengeluaran
             ),
-            'penghasilan_bersih' => $check->penghasilan_bersih
+            'penghasilan_bersih' => (int) $check->penghasilan_bersih
             // 'disposable_income'  => $check->disposable_income
         );
 

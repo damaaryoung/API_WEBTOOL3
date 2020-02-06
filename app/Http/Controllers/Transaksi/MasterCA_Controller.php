@@ -1039,4 +1039,134 @@ class MasterCA_Controller extends BaseController
         //     ], 501);
         // }
     }
+
+
+
+
+
+    // Sample
+    public function operator($id_trans_so, Request $req, Helper $help) {
+
+        // if (!empty($req->input('nama_bank_acc'))) {
+        //     for ($i = 0; $i < count($req->input('nama_bank_acc')); $i++) {
+        //         $dataACC[] = array(
+        //             'nama_bank' => empty($req->input('nama_bank_acc')[$i])   ? null : $req->nama_bank_acc[$i],
+        //             'plafon' => empty($req->input('plafon_acc')[$i])         ? null : $req->plafon_acc[$i],
+        //             'baki_debet' => empty($req->input('baki_debet_acc')[$i]) ? null : $req->baki_debet_acc[$i],
+        //             'angsuran' => empty($req->input('angsuran_acc')[$i])     ? null : $req->angsuran_acc[$i],
+        //             'collectabilitas' => empty($req->input('collectabilitas_acc')[$i]) ? null : $req->collectabilitas_acc[$i],
+        //             'jenis_kredit' => empty($req->input('jenis_kredit_acc')[$i]) ? null : $req->jenis_kredit_acc[$i]
+        //         );
+        //     }
+        // }
+
+        $check = TransSO::where('id',$id_trans_so)->first();
+
+        if (!$check) {
+            return response()->json([
+                'code'    => 404,
+                'status'  => 'not found',
+                'message' => 'Data kosong'
+            ], 404);
+        }
+
+        // Rekomendasi CA
+        $inputRecomCA = array(
+            'produk'                => $req->input('produk'),
+            'plafon_kredit'         => $req->input('plafon_kredit'), //45000000
+            'jangka_waktu'          => $req->input('jangka_waktu'), // 48
+            'suku_bunga'            => $req->input('suku_bunga'), // 1.70
+        );
+
+        // Analisa Kuantitatif dan Kualitatif
+        $staticMin    = 35;
+        $staticMax    = 80;
+        $staticPlafon = 70000000;
+        $ltvMax       = 70;
+        $percent      = 100;
+
+        // Rekomendasi Angsuran pada table recom_ca
+        $plaf  = $inputRecomCA['plafon_kredit'] == null ? 0 : $inputRecomCA['plafon_kredit'];
+        $ten   = $inputRecomCA['jangka_waktu']  == null ? 0 : $inputRecomCA['jangka_waktu'];
+        $bunga = $inputRecomCA['suku_bunga']    == null ? 0 : ($inputRecomCA['suku_bunga'] / $percent);
+
+        if ($plaf == 0 && $ten == 0 && $bunga == 0) {
+            $exec       = 0;
+            $recom_angs = 0;
+        }else{
+            $exec       = ($plaf + ($plaf * $ten * $bunga)) / $ten;
+            $recom_angs = $help->recom_angs($exec);
+        }
+
+
+        $recom_pendapatan  = $check->ao['kapbul']['total_pemasukan'];
+        $recom_pengeluaran = $check->ao['kapbul']['total_pengeluaran'];
+        $recom_angsuran    = $check->ao['kapbul']['angsuran'];
+        $recom_pend_bersih = $recom_pendapatan - $recom_pengeluaran;
+
+        $disposable_income = $recom_pendapatan - $recom_pengeluaran - $recom_angs;
+
+
+        $recom_ltv = ($plaf / $staticPlafon) * $percent;
+        $recom_idir = ($recom_angs / ($recom_pendapatan - $recom_pengeluaran)) * $percent;
+        $recom_dsr = ($recom_angs / ($recom_pendapatan - $recom_angsuran)) * $percent;
+
+
+        if ($recom_dsr <= $staticMin && $recom_ltv <= $ltvMax && $recom_idir > 0 && $recom_idir < $staticMax) {
+
+            $recom_hasil = 'LAYAK';
+
+        }elseif ($recom_dsr <= $staticMin && $recom_ltv > $ltvMax) {
+
+            $recom_hasil = 'DIPERTIMBANGKAN';
+
+        }elseif ($recom_dsr > $staticMin && $recom_ltv <= $ltvMax) {
+
+            $recom_hasil = 'DIPERTIMBANGKAN';
+
+        }elseif ($recom_dsr <= $staticMin && $recom_ltv <= $ltvMax) {
+            $recom_hasil = 'DIPERTIMBANGKAN';
+
+        }else{
+            $recom_hasil = 'RESIKO TINGGI';
+        }
+
+        // Data Ringkasan Analisa CA
+        $dataRingkasan = array(
+            'kuantitatif_ttl_pendapatan'    => $recom_pendapatan,
+            'kuantitatif_ttl_pengeluaran'   => $recom_pengeluaran,
+            'kuantitatif_pendapatan_bersih' => $recom_pend_bersih,
+            'kuantitatif_angsuran'          => $recom_angs,
+            'kuantitatif_ltv'               => round($recom_ltv, 2),
+            'kuantitatif_dsr'               => round($recom_dsr, 2),
+            'kuantitatif_idir'              => round($recom_idir, 2),
+            'kuantitatif_hasil'             => $recom_hasil,
+            'disposable_income'             => $disposable_income
+        );
+
+        $resultAll = array(
+            'rekomendasi_ca'       => $inputRecomCA,
+            'rekom_angsuran'       => $recom_angs,
+            'ringkasan_analisa_ca' => $dataRingkasan
+        );
+
+        try{
+            DB::connection('web')->beginTransaction();
+
+            DB::connection('web')->commit();
+
+            return response()->json([
+                'code'   => 200,
+                'status' => 'success',
+                'message'=> $resultAll
+            ], 200);
+        } catch (\Exception $e) {
+            $err = DB::connection('web')->rollback();
+            return response()->json([
+                'code'    => 501,
+                'status'  => 'error',
+                'message' => $err
+            ], 501);
+        }
+    }
 }

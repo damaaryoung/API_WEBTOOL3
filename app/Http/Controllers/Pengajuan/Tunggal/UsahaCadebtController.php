@@ -35,23 +35,23 @@ class UsahaCadebtController extends BaseController
 
         $data = array(
             'pendapatan' => array(
-                'tunai' => $check->pemasukan_tunai,
-                'kredit'=> $check->pemasukan_kredit,
-                'total' => $check->total_pemasukan
+                'tunai' => (int) $check->pemasukan_tunai,
+                'kredit'=> (int) $check->pemasukan_kredit,
+                'total' => (int) $check->total_pemasukan
             ),
             'pengeluaran' => array(
-                'biaya_sewa'           => $check->biaya_sewa,
-                'biaya_gaji_pegawai'   => $check->biaya_gaji_pegawai,
-                'biaya_belanja_brg'    => $check->biaya_belanja_brg,
-                'biaya_telp_listr_air' => $check->biaya_telp_listr_air,
-                'biaya_sampah_kemanan' => $check->biaya_sampah_kemanan,
-                'biaya_kirim_barang'   => $check->biaya_kirim_barang,
-                'biaya_hutang_dagang'  => $check->biaya_hutang_dagang,
-                'angsuran'             => $check->biaya_angsuran,
-                'lain_lain'            => $check->biaya_lain_lain,
-                'total'                => $check->total_pengeluaran
+                'biaya_sewa'           => (int) $check->biaya_sewa,
+                'biaya_gaji_pegawai'   => (int) $check->biaya_gaji_pegawai,
+                'biaya_belanja_brg'    => (int) $check->biaya_belanja_brg,
+                'biaya_telp_listr_air' => (int) $check->biaya_telp_listr_air,
+                'biaya_sampah_kemanan' => (int) $check->biaya_sampah_kemanan,
+                'biaya_kirim_barang'   => (int) $check->biaya_kirim_barang,
+                'biaya_hutang_dagang'  => (int) $check->biaya_hutang_dagang,
+                'angsuran'             => (int) $check->biaya_angsuran,
+                'lain_lain'            => (int) $check->biaya_lain_lain,
+                'total'                => (int) $check->total_pengeluaran
             ),
-            'penghasilan_bersih' => $check->laba_usaha
+            'penghasilan_bersih' => (int) $check->laba_usaha
         );
 
         try {

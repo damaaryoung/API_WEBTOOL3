@@ -35,17 +35,17 @@ class PasanganController extends BaseController
         }
 
         $data = array(
-            'id'               => $val->id,
+            'id'               => $val->id == null ? null : (int) $val->id,
             'nama_lengkap'     => $val->nama_lengkap,
             'nama_ibu_kandung' => $val->nama_ibu_kandung,
             'jenis_kelamin'    => $val->jenis_kelamin,
-            'no_ktp'           => $val->no_ktp,
-            'no_ktp_kk'        => $val->no_ktp_kk,
-            'no_npwp'          => $val->no_npwp,
+            'no_ktp'           => $val->no_ktp    == null ? null : (int) $val->no_ktp,
+            'no_ktp_kk'        => $val->no_ktp_kk == null ? null : (int) $val->no_ktp_kk,
+            'no_npwp'          => $val->no_npwp   == null ? null : (int) $val->no_npwp,
             'tempat_lahir'     => $val->tempat_lahir,
             'tgl_lahir'        => Carbon::parse($val->tgl_lahir)->format('d-m-Y'),
             'alamat_ktp'       => $val->alamat_ktp,
-            'no_telp'          => $val->no_telp,
+            'no_telp'          => $val->no_telp == null ? null : (int) $val->no_telp,
             'pekerjaan' => [
                 "nama_pekerjaan"        => $val->pekerjaan,
                 "posisi_pekerjaan"      => $val->posisi_pekerjaan,
@@ -55,25 +55,25 @@ class PasanganController extends BaseController
                 "no_telp_tempat_kerja"  => $val->no_telp_tempat_kerja,
                 'alamat' => [
                     'alamat_singkat' => $val->alamat_tempat_kerja,
-                    'rt'             => $val->rt_tempat_kerja,
-                    'rw'             => $val->rw_tempat_kerja,
+                    'rt'             => $val->rt_tempat_kerja == null ? null : (int) $val->rt_tempat_kerja,
+                    'rw'             => $val->rw_tempat_kerja == null ? null : (int) $val->rw_tempat_kerja,
                     'kelurahan' => [
-                        'id'    => $val->id_kel_tempat_kerja,
+                        'id'    => $val->id_kel_tempat_kerja == null ? null : (int) $val->id_kel_tempat_kerja,
                         'nama'  => $val->kel_kerja['nama']
                     ],
                     'kecamatan' => [
-                        'id'    => $val->id_kec_tempat_kerja,
+                        'id'    => $val->id_kec_tempat_kerja == null ? null : (int) $val->id_kec_tempat_kerja,
                         'nama'  => $val->kec_kerja['nama']
                     ],
                     'kabupaten' => [
-                        'id'    => $val->id_kab_tempat_kerja,
+                        'id'    => $val->id_kab_tempat_kerja == null ? null : (int) $val->id_kab_tempat_kerja,
                         'nama'  => $val->kab_kerja['nama'],
                     ],
                     'provinsi'  => [
-                        'id'   => $val->id_prov_tempat_kerja,
+                        'id'   => $val->id_prov_tempat_kerja == null ? null : (int) $val->id_prov_tempat_kerja,
                         'nama' => $val->prov_kerja['nama'],
                     ],
-                    'kode_pos' => $val->kel_kerja['kode_pos']
+                    'kode_pos' => $val->kel_kerja['kode_pos'] == null ? null : (int) $val->kel_kerja['kode_pos']
                 ]
             ],
             'lampiran' => [

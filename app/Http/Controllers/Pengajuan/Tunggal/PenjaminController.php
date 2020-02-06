@@ -35,16 +35,16 @@ class PenjaminController extends BaseController
         }
 
         $data = array(
-            "id"                    => $check->id,
+            "id"                    => $check->id == null ? null : (int) $check->id,
             "nama_ktp"              => $check->nama_ktp,
             "nama_ibu_kandung"      => $check->nama_ibu_kandung,
-            "no_ktp"                => $check->no_ktp,
-            "no_npwp"               => $check->no_npwp,
+            "no_ktp"                => $check->no_ktp == null ? null : (int) $check->no_ktp,
+            "no_npwp"               => $check->no_npwp == null ? null : (int) $check->no_npwp,
             "tempat_lahir"          => $check->tempat_lahir,
             "tgl_lahir"             => Carbon::parse($check->tgl_lahir)->format('d-m-Y'),
             "jenis_kelamin"         => $check->jenis_kelamin,
             "alamat_ktp"            => $check->alamat_ktp,
-            "no_telp"               => $check->no_telp,
+            "no_telp"               => $check->no_telp == null ? null : (int) $check->no_telp,
             "hubungan_debitur"      => $check->hubungan_debitur,
             "pekerjaan" => [
                 "nama_pekerjaan"        => $check->pekerjaan,
@@ -55,25 +55,25 @@ class PenjaminController extends BaseController
                 "no_telp_tempat_kerja"  => $check->no_telp_tempat_kerja,
                 'alamat' => [
                     'alamat_singkat' => $check->alamat_tempat_kerja,
-                    'rt'             => $check->rt_tempat_kerja,
-                    'rw'             => $check->rw_tempat_kerja,
+                    'rt'             => $check->rt_tempat_kerja == null ? null : (int) $check->rt_tempat_kerja,
+                    'rw'             => $check->rw_tempat_kerja == null ? null : (int) $check->rw_tempat_kerja,
                     'kelurahan' => [
-                        'id'    => $check->id_kel_tempat_kerja,
+                        'id'    => $check->id_kel_tempat_kerja == null ? null : (int) $check->id_kel_tempat_kerja,
                         'nama'  => $check->kel_kerja['nama']
                     ],
                     'kecamatan' => [
-                        'id'    => $check->id_kec_tempat_kerja,
+                        'id'    => $check->id_kec_tempat_kerja == null ? null : (int) $check->id_kec_tempat_kerja,
                         'nama'  => $check->kec_kerja['nama']
                     ],
                     'kabupaten' => [
-                        'id'    => $check->id_kab_tempat_kerja,
+                        'id'    => $check->id_kab_tempat_kerja == null ? null : (int) $check->id_kab_tempat_kerja,
                         'nama'  => $check->kab_kerja['nama'],
                     ],
                     'provinsi'  => [
-                        'id'   => $check->id_prov_tempat_kerja,
+                        'id'   => $check->id_prov_tempat_kerja == null ? null : (int) $check->id_prov_tempat_kerja,
                         'nama' => $check->prov_kerja['nama'],
                     ],
-                    'kode_pos' => $check->kel_kerja['kode_pos']
+                    'kode_pos' => $check->kel_kerja['kode_pos'] == null ? null : (int) $check->kel_kerja['kode_pos']
                 ]
             ],
             "lampiran" => [

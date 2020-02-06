@@ -34,11 +34,11 @@ class PemeriksaanKendaraanController extends BaseController
         }
 
         $data = array(
-            'id'                  => $check->id,
-            'id_agunan_kendaraan' => $check->id_agunan_kendaraan,
+            'id'                  => $check->id                  == null ? null : (int) $check->id,
+            'id_agunan_kendaraan' => $check->id_agunan_kendaraan == null ? null : (int) $check->id_agunan_kendaraan,
             'nama_pengguna'       => $check->nama_pengguna,
             'status_pengguna'     => $check->status_pengguna,
-            'jml_roda_kendaraan'  => $check->jml_roda_kendaraan,
+            'jml_roda_kendaraan'  => (int) $check->jml_roda_kendaraan,
             'kondisi_kendaraan'   => $check->kondisi_kendaraan,
             'keberadaan_kendaraan'=> $check->keberadaan_kendaraan,
             'body'                => $check->body,

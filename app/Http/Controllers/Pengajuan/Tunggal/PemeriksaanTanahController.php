@@ -34,18 +34,18 @@ class PemeriksaanTanahController extends BaseController
         }
 
         $data = array(
-            'id'                            => $check->id,
-            'id_agunan_tanah'               => $check->id_agunan_tanah,
+            'id'                            => $check->id == null ? null : (int) $check->id,
+            'id_agunan_tanah'               => $check->id_agunan_tanah == null ? null : (int) $check->id_agunan_tanah,
             'nama_penghuni'                 => $check->nama_penghuni,
             'status_penghuni'               => $check->status_penghuni,
             'bentuk_bangunan'               => $check->bentuk_bangunan,
             'kondisi_bangunan'              => $check->kondisi_bangunan,
             'fasilitas'                     => $check->fasilitas,
             'listrik'                       => $check->listrik,
-            'nilai_taksasi_agunan'          => $check->nilai_taksasi_agunan,
-            'nilai_taksasi_bangunan'        => $check->nilai_taksasi_bangunan,
+            'nilai_taksasi_agunan'          => (int) $check->nilai_taksasi_agunan,
+            'nilai_taksasi_bangunan'        => (int) $check->nilai_taksasi_bangunan,
             'tgl_taksasi'                   => $check->tgl_taksasi,
-            'nilai_likuidasi'               => $check->nilai_likuidasi,
+            'nilai_likuidasi'               => (int) $check->nilai_likuidasi,
             'nilai_agunan_independen'       => $check->nilai_agunan_independen,
             'perusahaan_penilai_independen' => $check->perusahaan_penilai_independen
         );

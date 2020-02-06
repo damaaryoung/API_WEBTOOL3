@@ -36,40 +36,40 @@ class TanahController extends BaseController
         }
 
         $data = array(
-            'id'          => $check->id,
+            'id'          => $check->id == null ? null : (int) $check->id,
             'tipe_lokasi' => $check->tipe_lokasi,
             'alamat' => [
                 'alamat_singkat' => $check->alamat,
-                'rt' => $check->rt,
-                'rw' => $check->rw,
+                'rt' => $check->rt == null ? null : (int) $check->rt,
+                'rw' => $check->rw == null ? null : (int) $check->rw,
                 'kelurahan' => [
-                    'id'    => $check->id_kelurahan,
+                    'id'    => $check->id_kelurahan == null ? null : (int) $check->id_kelurahan,
                     'nama'  => $check->kel['nama']
                 ],
                 'kecamatan' => [
-                    'id'    => $check->id_kecamatan,
+                    'id'    => $check->id_kecamatan == null ? null : (int) $check->id_kecamatan,
                     'nama'  => $check->kec['nama']
                 ],
                 'kabupaten' => [
-                    'id'    => $check->id_kabupaten,
+                    'id'    => $check->id_kabupaten == null ? null : (int) $check->id_kabupaten,
                     'nama'  => $check->kab['nama'],
                 ],
                 'provinsi' => [
-                    'id'    => $check->id_provinsi,
+                    'id'    => $check->id_provinsi == null ? null : (int) $check->id_provinsi,
                     'nama'  => $check->prov['nama']
                 ],
-                'kode_pos' => $check->kel['kode_pos']
+                'kode_pos' => $check->kel['kode_pos'] == null ? null : (int) $check->kel['kode_pos']
             ],
-            'luas_tanah'    => $check->luas_tanah,
-            'luas_bangunan' => $check->luas_bangunan,
+            'luas_tanah'    => (int) $check->luas_tanah,
+            'luas_bangunan' => (int) $check->luas_bangunan,
             'nama_pemilik_sertifikat' => $check->nama_pemilik_sertifikat,
             'jenis_sertifikat'        => $check->jenis_sertifikat,
             'no_sertifikat'           => $check->no_sertifikat,
             'tgl_ukur_sertifikat'     => $check->tgl_ukur_sertifikat,
             'tgl_berlaku_shgb'        => $check->tgl_berlaku_shgb,
-            'no_imb' => $check->no_imb,
-            'njop'   => $check->njop,
-            'nop'    => $check->nop,
+            'no_imb'                  => $check->no_imb,
+            'njop'                    => $check->njop,
+            'nop'                     => $check->nop,
             'lampiran' => [
                 'agunan_bag_depan'      => $check->agunan_bag_depan,
                 'agunan_bag_jalan'      => $check->agunan_bag_jalan,

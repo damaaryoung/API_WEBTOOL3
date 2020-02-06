@@ -35,7 +35,7 @@ class KendaraanController extends BaseController
         }
 
         $data = array(
-            'id'            => $check->id,
+            'id'            => $check->id == null ? null : (int) $check->id,
             'no_bpkb'       => $check->no_bpkb,
             'nama_pemilik'  => $check->nama_pemilik,
             'alamat_pemilik'=> $check->alamat_pemilik,
@@ -44,7 +44,7 @@ class KendaraanController extends BaseController
             'no_rangka'     => $check->no_rangka,
             'no_mesin'      => $check->no_mesin,
             'warna'         => $check->warna,
-            'tahun'         => $check->tahun,
+            'tahun'         => $check->id == null ? null : (int) $check->tahun,
             'no_polisi'     => $check->no_polisi,
             'no_stnk'       => $check->no_stnk,
             'tgl_kadaluarsa_pajak'=> $check->tgl_kadaluarsa_pajak,
