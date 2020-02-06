@@ -355,6 +355,95 @@ class DebiturController extends BaseController
             $foto_agunan_rumah = null;
         }
 
+        // New UIT 2
+        // Lampiran Untuk Debitur
+        if ($files = $req->file('lamp_buku_tabungan')) {
+            foreach($files as $file){
+                $path = $lamp_dir.'/lamp_buku_tabungan';
+                $name = 'lamp_buku_tabungan.' . $file->getClientOriginalName();
+
+                $file->move($path,$name);
+
+                $buku_tabungan[] = $path.'/'.$name;
+
+                $lamp_buku_tabungan = implode(";",$buku_tabungan);
+            }
+        }else{
+            $lamp_buku_tabungan = $check->debt['lamp_buku_tabungan'];
+        }
+
+        if($files = $req->file('lamp_skk')){
+            $path = $lamp_dir.'/debitur';
+            $name = 'lamp_skk.'.$file->getClientOriginalName();
+
+            $file->move($path,$name);
+
+            $lamp_skk = $path.'/'.$name;
+        }else{
+            $lamp_skk = $check->debt['lamp_skk'];
+        }
+
+        if($files = $req->file('lamp_sku')){
+            foreach ($files as $file) {
+                $path = $lamp_dir.'/debitur';
+                $name = 'lamp_sku.'.$file->getClientOriginalName();
+
+                $file->move($path,$name);
+
+                $sku[] = $path.'/'.$name;
+
+                $lamp_sku = implode(";",$sku);
+            }
+        }else{
+            $lamp_sku = $check->debt['lamp_sku'];
+        }
+
+        if($file = $req->file('lamp_slip_gaji')){
+            // foreach ($files as $file) {
+                $path = $lamp_dir.'/debitur';
+                $name = 'lamp_slip_gaji.'.$file->getClientOriginalName();
+
+                $file->move($path,$name);
+
+                $slip_gaji[] = $path.'/'.$name;
+
+                $lamp_slip_gaji = implode(";",$slip_gaji);
+            // }
+        }else{
+            $lamp_slip_gaji = $check->debt['lamp_slip_gaji'];
+        }
+
+
+        if($file = $req->file('foto_pembukuan_usaha')){
+            // foreach ($files as $file) {
+                $path = $lamp_dir.'/debitur';
+                $name = 'foto_pembukuan_usaha.'.$file->getClientOriginalName();
+
+                $file->move($path,$name);
+
+                $pembukuan_usaha[] = $path.'/'.$name;
+
+                $foto_pembukuan_usaha = implode(";",$pembukuan_usaha);
+            // }
+        }else{
+            $foto_pembukuan_usaha = $check->debt['foto_pembukuan_usaha'];
+        }
+
+        if($files = $req->file('lamp_foto_usaha')){
+            foreach ($files as $file) {
+                $path = $lamp_dir.'/debitur';
+                $name = 'lamp_foto_usaha.'.$file->getClientOriginalName();
+
+                $file->move($path,$name);
+
+                $foto_usaha = $path.'/'.$name;
+
+                $lamp_foto_usaha = implode(";",$foto_usaha);
+            }
+        }else{
+            $lamp_foto_usaha = $check->debt['lamp_foto_usaha'];
+        }
+
 
         // Data Debitur
         $dataDebitur = array(
@@ -422,7 +511,14 @@ class DebiturController extends BaseController
             'lamp_sku'              => $sku,
             'lamp_slip_gaji'        => $slipGaji,
             'lamp_foto_usaha'       => $fotoUsaha,
-            'foto_agunan_rumah'     => $foto_agunan_rumah
+
+            // New UIT 2
+            'lamp_buku_tabungan'    => $lamp_buku_tabungan,
+            'lamp_skk'              => $lamp_skk,
+            'lamp_sku'              => $lamp_sku,
+            'lamp_slip_gaji'        => $lamp_slip_gaji,
+            'foto_pembukuan_usaha'  => $foto_pembukuan_usaha,
+            'lamp_foto_usaha'       => $lamp_foto_usaha
         );
 
         DB::connection('web')->beginTransaction();
