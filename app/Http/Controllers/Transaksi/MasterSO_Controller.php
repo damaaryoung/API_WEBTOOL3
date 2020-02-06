@@ -612,8 +612,9 @@ class MasterSO_Controller extends BaseController
         }
 
         DB::connection('web')->beginTransaction();
-        // try {
+        try {
             $debt = Debitur::create($dataDebitur);
+
             $id_debt = $debt->id;
 
             $arrIdDebt = array('id_calon_debitur' => $id_debt);
@@ -662,14 +663,14 @@ class MasterSO_Controller extends BaseController
                 'status' => 'success',
                 'message'=> 'Data berhasil dibuat'
             ], 200);
-        // }catch (\Exception $e) {
-        //     $err = DB::connection('web')->rollback();
-        //     return response()->json([
-        //         'code'    => 501,
-        //         'status'  => 'error',
-        //         'message' => $err
-        //     ], 501);
-        // }
+        }catch (\Exception $e) {
+            $err = DB::connection('web')->rollback();
+            return response()->json([
+                'code'    => 501,
+                'status'  => 'error',
+                'message' => $err
+            ], 501);
+        }
     }
 
     public function update($id, Request $request, BlankRequest $req){
