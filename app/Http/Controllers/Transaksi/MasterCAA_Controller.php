@@ -79,7 +79,7 @@ class MasterCAA_Controller extends BaseController
             $Tan = array();
             foreach ($AguTa as $key => $value) {
                 $Tan[$key] = array(
-                    'id'    => $id_agu_ta[$key],
+                    'id'    => $id_agu_ta[$key] == null ? null : (int) $id_agu_ta[$key],
                     'jenis' => $value->jenis_sertifikat
                 );
             }
@@ -90,32 +90,32 @@ class MasterCAA_Controller extends BaseController
             $Ken = array();
             foreach ($AguKe as $key => $value) {
                 $Ken[$key] = array(
-                    'id'    => $id_agu_ke[$key],
+                    'id'    => $id_agu_ke[$key] == null ? null : (int) $id_agu_ke[$key],
                     'jenis' => $value->jenis
                 );
             }
 
             $rekomendasi_ao = array(
-                'id'               => $val->so['ao']['id_recom_ao'],
+                'id'               => $val->so['ao']['id_recom_ao'] == null ? null : (int) $val->so['ao']['id_recom_ao'],
                 'produk'           => $val->so['ao']['recom_ao']['produk'],
-                'plafon'           => $val->so['ao']['recom_ao']['plafon_kredit'],
-                'tenor'            => $val->so['ao']['recom_ao']['jangka_waktu'],
-                'suku_bunga'       => $val->so['ao']['recom_ao']['suku_bunga'],
-                'pembayaran_bunga' => $val->so['ao']['recom_ao']['pembayaran_bunga']
+                'plafon'           => (int) $val->so['ao']['recom_ao']['plafon_kredit'],
+                'tenor'            => (int) $val->so['ao']['recom_ao']['jangka_waktu'],
+                'suku_bunga'       => floatval($val->so['ao']['recom_ao']['suku_bunga']),
+                'pembayaran_bunga' => (int) $val->so['ao']['recom_ao']['pembayaran_bunga']
             );
 
             $rekomendasi_ca = array(
-                'id'               => $val->so['ca']['id_recom_ca'],
-                'produk'           => $val->so['ca']['recom_ca']['produk'],
-                'plafon'           => $val->so['ca']['recom_ca']['plafon_kredit'],
-                'tenor'            => $val->so['ca']['recom_ca']['jangka_waktu'],
-                'suku_bunga'       => $val->so['ca']['recom_ca']['suku_bunga'],
-                'pembayaran_bunga' => $val->so['ca']['recom_ca']['pembayaran_bunga'],
-                'rekomendasi_angsuran' => $val->so['ca']['recom_ca']['rekom_angsuran']
+                'id'                   => $val->so['ca']['id_recom_ca'] == null ? null : (int) $val->so['ca']['id_recom_ca'],
+                'produk'               => $val->so['ca']['recom_ca']['produk'],
+                'plafon'               => (int) $val->so['ca']['recom_ca']['plafon_kredit'],
+                'tenor'                => (int) $val->so['ca']['recom_ca']['jangka_waktu'],
+                'suku_bunga'           => floatval($val->so['ca']['recom_ca']['suku_bunga']),
+                'pembayaran_bunga'     => (int) $val->so['ca']['recom_ca']['pembayaran_bunga'],
+                'rekomendasi_angsuran' => (int) $val->so['ca']['recom_ca']['rekom_angsuran']
             );
 
             $data[] = [
-                'id_trans_so'    => $val->id_trans_so,
+                'id_trans_so'    => $val->id_trans_so == null ? null : (int) $val->id_trans_so,
                 'nomor_so'       => $val->so['nomor_so'],
 
                 'nomor_ao'       => $val->so['ao']['nomor_ao'],
@@ -128,8 +128,8 @@ class MasterCAA_Controller extends BaseController
                 'asal_data'      => $val->so['asaldata']['nama'],
                 'nama_marketing' => $val->so['nama_marketing'],
                 'pengajuan' => [
-                    'plafon' => $val->so['faspin']['plafon'],
-                    'tenor'  => $val->so['faspin']['tenor']
+                    'plafon' => (int) $val->so['faspin']['plafon'],
+                    'tenor'  => (int) $val->so['faspin']['tenor']
                 ],
                 'rekomendasi_ao' => $rekomendasi_ao,
                 'rekomendasi_ca' => $rekomendasi_ca,
@@ -491,7 +491,7 @@ class MasterCAA_Controller extends BaseController
 
         foreach ($AguTa as $key => $value) {
             $idTan[$key] = array(
-                'id' => $value->id,
+                'id'    => $value->id == null ? null : (int) $value->id,
                 'jenis' => $value->jenis_sertifikat,
                 'lampiran' => [
                     'agunan_depan'    => $value->lamp_agunan_depan,
@@ -509,7 +509,7 @@ class MasterCAA_Controller extends BaseController
 
         foreach ($AguKe as $key => $value) {
             $idKen[$key] = array(
-                'id' => $value->id,
+                'id' => (int) $value->id,
                 'jenis' => $value->jenis,
                 'lampiran' => [
                     'agunan_depan'    => $value->lamp_agunan_depan,
@@ -530,7 +530,7 @@ class MasterCAA_Controller extends BaseController
         }
 
         $data = array(
-            'id_trans_so'    => $val->id_trans_so,
+            'id_trans_so' => $val->id_trans_so == null ? null : (int) $val->id_trans_so,
             'transaksi'   => [
                 'so' => [
                     'nomor' => $val->so['nomor_so'],
@@ -551,27 +551,27 @@ class MasterCAA_Controller extends BaseController
             ],
             'nama_marketing' => $val->so['nama_marketing'],
             'pic'  => [
-                'id'   => $val->id_pic,
+                'id'   => $val->id_pic == null ? null : (int) $val->id_pic,
                 'nama' => $val->pic['nama'],
             ],
             'area' => [
-                'id'   => $val->id_area,
+                'id'   => $val->id_area == null ? null : (int) $val->id_area,
                 'nama' => $val->area['nama'],
             ],
             'cabang' => [
-                'id'   => $val->id_cabang,
+                'id'   => $val->id_cabang == null ? null : (int) $val->id_cabang,
                 'nama' => $val->cabang['nama'],
             ],
             'asaldata' => [
-                'id'   => $val->so['asaldata']['id'],
+                'id'   => $val->so['asaldata']['id'] == null ? null : (int) $val->so['asaldata']['id'],
                 'nama' => $val->so['asaldata']['nama'],
             ],
             'pengajuan' => [
-                'plafon' => $val->so['faspin']['plafon'],
-                'tenor'  => $val->so['faspin']['tenor']
+                'plafon' => (int) $val->so['faspin']['plafon'],
+                'tenor'  => (int) $val->so['faspin']['tenor']
             ],
             'data_debitur' => [
-                'id'           => $val->so['id_calon_debitur'],
+                'id'           => $val->so['id_calon_debitur'] == null ? null : (int) $val->so['id_calon_debitur'],
                 'nama_lengkap' => $val->so['debt']['nama_lengkap'],
                 'lamp_usaha'   => $val->so['debt']['lamp_foto_usaha']
             ],
@@ -579,16 +579,16 @@ class MasterCAA_Controller extends BaseController
                 'agunan_tanah'     => $idTan,
                 'agunan_kendaraan' => $idKen
             ],
-            'pendapatan_usaha' => ['id' => $val->so['ao']['id_pendapatan_usaha']],
+            'pendapatan_usaha' => ['id' => $val->so['ao']['id_pendapatan_usaha'] == null ? null : (int) $val->so['ao']['id_pendapatan_usaha']],
             'rekomendasi_ao'   => [
-                'id'     => $val->so['ao']['id_recom_ao'],
-                'plafon' => $val->so['ao']['recom_ao']['plafon_kredit'],
-                'tenor'  => $val->so['ao']['recom_ao']['jangka_waktu']
+                'id'     => $val->so['ao']['id_recom_ao'] == null ? null : (int) $val->so['ao']['id_recom_ao'],
+                'plafon' => (int) $val->so['ao']['recom_ao']['plafon_kredit'],
+                'tenor'  => (int) $val->so['ao']['recom_ao']['jangka_waktu']
             ],
             'rekomendasi_ca' => [
-                'id'     => $val->id_recom_ca,
-                'plafon' => $val->recom_ca['plafon_kredit'],
-                'tenor'  => $val->recom_ca['jangka_waktu']
+                'id'     => $val->id_recom_ca == null ? null : (int) $val->id_recom_ca,
+                'plafon' => (int) $val->recom_ca['plafon_kredit'],
+                'tenor'  => (int) $val->recom_ca['jangka_waktu']
             ],
             'status_ao' => $status_ca
         );
@@ -644,12 +644,12 @@ class MasterCAA_Controller extends BaseController
 
         foreach ($AguTa as $key => $value) {
             $idTan[$key] = array(
-                'id'             => $value->id,
+                'id'             => $value->id == null ? null : (int) $value->id,
                 'jenis'          => $value->jenis_sertifikat,
                 'tipe_lokasi'    => $value->tipe_lokasi,
                 'luas' => [
-                    'tanah'    => $value->luas_tanah,
-                    'bangunan' => $value->luas_bangunan
+                    'tanah'    => (int) $value->luas_tanah,
+                    'bangunan' => (int) $value->luas_bangunan
                 ],
                 'tgl_berlaku_shgb'        => Carbon::parse($value->tgl_berlaku_shgb)->format("d-m-Y"),
                 'nama_pemilik_sertifikat' => $value->nama_pemilik_sertifikat,
@@ -671,7 +671,7 @@ class MasterCAA_Controller extends BaseController
 
         foreach ($AguKe as $key => $value) {
             $idKen[$key] = array(
-                'id'                    => $value->id,
+                'id'                    => $value->id == null ? null : (int) $value->id,
                 'jenis'                 => 'BPKB',
                 'tipe_kendaraan'        => $value->jenis,
                 'merk'                  => $value->merk,
@@ -702,10 +702,10 @@ class MasterCAA_Controller extends BaseController
             $ptc = array();
             for ($i = 0; $i < count($get_pic); $i++) {
                 $ptc[] = [
-                    'id_pic'    => $get_pic[$i]['id'],
+                    'id_pic'    => $get_pic[$i]['id'] == null ? null : (int) $get_pic[$i]['id'],
                     'nama'      => $get_pic[$i]['nama'],
                     'jabatan'   => $get_pic[$i]['jpic']['nama_jenis'],
-                    'user_id'   => $get_pic[$i]['user_id']
+                    'user_id'   => $get_pic[$i]['user_id'] == null ? null : (int) $get_pic[$i]['user_id']
                 ];
             }
         }
@@ -720,7 +720,7 @@ class MasterCAA_Controller extends BaseController
         }
 
         $data = array(
-            'id_trans_so'    => $val->id_trans_so,
+            'id_trans_so' => $val->id_trans_so == null ? null : (int) $val->id_trans_so,
             'transaksi'   => [
                 'so' => [
                     'nomor' => $val->so['nomor_so'],
@@ -742,45 +742,45 @@ class MasterCAA_Controller extends BaseController
 
             'nama_marketing' => $val->so['nama_marketing'],
             'pic'  => [
-                'id'   => $val->id_pic,
+                'id'   => $val->id_pic == null ? null : (int) $val->id_pic,
                 'nama' => $val->pic['nama'],
             ],
             'area'   => [
-                'id'   => $val->id_area,
+                'id'   => $val->id_area == null ? null : (int) $val->id_area,
                 'nama' => $val->area['nama']
             ],
             'cabang' => [
-                'id'   => $val->id_cabang,
+                'id'   => $val->id_cabang == null ? null : (int) $val->id_cabang,
                 'nama' => $val->cabang['nama'],
             ],
             'asaldata' => [
-                'id'   => $val->so['asaldata']['id'],
+                'id'   => $val->so['asaldata']['id'] == null ? null : (int) $val->so['asaldata']['id'],
                 'nama' => $val->so['asaldata']['nama'],
             ],
             'data_debitur' => [
-                'id'           => $val->so['id_calon_debitur'],
+                'id'           => $val->so['id_calon_debitur'] == null ? null : (int) $val->so['id_calon_debitur'],
                 'nama_lengkap' => $val->so['debt']['nama_lengkap'],
                 'alamat_domisili' => [
                     'alamat_singkat' => $val->so['debt']['alamat_domisili'],
-                    'rt'             => $val->so['debt']['rt_domisili'],
-                    'rw'             => $val->so['debt']['rw_domisili'],
+                    'rt'             => $val->so['debt']['rt_domisili'] == null ? null : (int) $val->so['debt']['rt_domisili'],
+                    'rw'             => $val->so['debt']['rw_domisili'] == null ? null : (int) $val->so['debt']['rw_domisili'],
                     'kelurahan' => [
-                        'id'    => $val->so['debt']['id_kel_tempat_kerja'],
+                        'id'    => $val->so['debt']['id_kel_tempat_kerja'] == null ? null : (int) $val->so['debt']['id_kel_tempat_kerja'],
                         'nama'  => $val->so['debt']['kel_dom']['nama']
                     ],
                     'kecamatan' => [
-                        'id'    => $val->so['debt']['id_kec_domisili'],
+                        'id'    => $val->so['debt']['id_kec_domisili'] == null ? null : (int) $val->so['debt']['id_kec_domisili'],
                         'nama'  => $val->so['debt']['kec_dom']['nama']
                     ],
                     'kabupaten' => [
-                        'id'    => $val->so['debt']['id_kab_domisili'],
+                        'id'    => $val->so['debt']['id_kab_domisili'] == null ? null : (int) $val->so['debt']['id_kab_domisili'],
                         'nama'  => $val->so['debt']['kab_dom']['nama'],
                     ],
                     'provinsi'  => [
-                        'id'   => $val->so['debt']['id_prov_domisili'],
+                        'id'   => $val->so['debt']['id_prov_domisili'] == null ? null : (int) $val->so['debt']['id_prov_domisili'],
                         'nama' => $val->so['debt']['prov_dom']['nama'],
                     ],
-                    'kode_pos' => $val->so['debt']['kel_dom']['kode_pos']
+                    'kode_pos' => $val->so['debt']['kel_dom']['kode_pos'] == null ? null : (int) $val->so['debt']['kel_dom']['kode_pos']
                 ],
                 'lamp_usaha'   => $val->so['debt']['lamp_foto_usaha']
             ],
@@ -788,51 +788,51 @@ class MasterCAA_Controller extends BaseController
                 'agunan_tanah'     => $idTan,
                 'agunan_kendaraan' => $idKen
             ],
-            'pendapatan_usaha' => ['id' => $val->so['ao']['id_pendapatan_usaha']],
+            'pendapatan_usaha' => ['id' => $val->so['ao']['id_pendapatan_usaha'] == null ? null : (int) $val->so['ao']['id_pendapatan_usaha']],
             'penyimpangan' => $val->penyimpangan,
             'team_caa'  => $ptc,
             'pengajuan' => [
-                'plafon' => $val->so['faspin']['plafon'],
-                'tenor'  => $val->so['faspin']['tenor'],
+                'plafon' => (int) $val->so['faspin']['plafon'],
+                'tenor'  => (int) $val->so['faspin']['tenor'],
                 'jenis_pinjaman' => $val->so['faspin']['jenis_pinjaman']
             ],
             'rekomendasi_ao'   => [
-                'id'               => $val->so['ao']['id_recom_ao'],
+                'id'               => $val->so['ao']['id_recom_ao'] == null ? null : (int) $val->so['ao']['id_recom_ao'],
                 'produk'           => $val->so['ao']['recom_ao']['produk'],
-                'plafon'           => $val->so['ao']['recom_ao']['plafon_kredit'],
-                'tenor'            => $val->so['ao']['recom_ao']['jangka_waktu'],
-                'suku_bunga'       => $val->so['ao']['recom_ao']['suku_bunga'],
-                'pembayaran_bunga' => $val->so['ao']['recom_ao']['pembayaran_bunga']
+                'plafon'           => (int) $val->so['ao']['recom_ao']['plafon_kredit'],
+                'tenor'            => (int) $val->so['ao']['recom_ao']['jangka_waktu'],
+                'suku_bunga'       => floatval($val->so['ao']['recom_ao']['suku_bunga']),
+                'pembayaran_bunga' => (int) $val->so['ao']['recom_ao']['pembayaran_bunga']
             ],
             'rekomendasi_ca' => [
-                'id'               => $val->so['ca']['id_recom_ca'],
-                'produk'           => $val->so['ca']['recom_ca']['produk'],
-                'plafon'           => $val->so['ca']['recom_ca']['plafon_kredit'],
-                'tenor'            => $val->so['ca']['recom_ca']['jangka_waktu'],
-                'suku_bunga'       => $val->so['ca']['recom_ca']['suku_bunga'],
-                'pembayaran_bunga' => $val->so['ca']['recom_ca']['pembayaran_bunga'],
-                'rekomendasi_angsuran' => $val->so['ca']['recom_ca']['rekom_angsuran']
+                'id'                   => $val->so['ca']['id_recom_ca'] == null ? null : (int) $val->so['ca']['id_recom_ca'],
+                'produk'               => $val->so['ca']['recom_ca']['produk'],
+                'plafon'               => (int) $val->so['ca']['recom_ca']['plafon_kredit'],
+                'tenor'                => (int) $val->so['ca']['recom_ca']['jangka_waktu'],
+                'suku_bunga'           => floatval($val->so['ca']['recom_ca']['suku_bunga']),
+                'pembayaran_bunga'     => (int) $val->so['ca']['recom_ca']['pembayaran_bunga'],
+                'rekomendasi_angsuran' => (int) $val->so['ca']['recom_ca']['rekom_angsuran']
             ],
             'data_biaya' => [
                 'reguler' => $reguler = array(
-                    'biaya_provisi'         => $val->so['ca']['recom_ca']['biaya_provisi'],
-                    'biaya_administrasi'    => $val->so['ca']['recom_ca']['biaya_administrasi'],
-                    'biaya_credit_checking' => $val->so['ca']['recom_ca']['biaya_credit_checking'],
+                    'biaya_provisi'         => (int) $val->so['ca']['recom_ca']['biaya_provisi'],
+                    'biaya_administrasi'    => (int) $val->so['ca']['recom_ca']['biaya_administrasi'],
+                    'biaya_credit_checking' => (int) $val->so['ca']['recom_ca']['biaya_credit_checking'],
                     'biaya_premi' => [
-                        'asuransi_jiwa'     => $val->so['ca']['recom_ca']['biaya_asuransi_jiwa'],
-                        'asuransi_jaminan'  => $val->so['ca']['recom_ca']['biaya_asuransi_jaminan']
+                        'asuransi_jiwa'     => (int) $val->so['ca']['recom_ca']['biaya_asuransi_jiwa'],
+                        'asuransi_jaminan'  => (int) $val->so['ca']['recom_ca']['biaya_asuransi_jaminan']
                     ],
-                    'biaya_tabungan'                    => $val->so['ca']['recom_ca']['biaya_tabungan'],
-                    'biaya_notaris'                     => $val->so['ca']['recom_ca']['notaris'],
-                    'angsuran_pertama_bungan_berjalan'  => $val->so['ca']['recom_ca']['angs_pertama_bunga_berjalan'],
-                    'pelunasan_nasabah_ro'              => $val->so['ca']['recom_ca']['pelunasan_nasabah_ro']
+                    'biaya_tabungan'                    => (int) $val->so['ca']['recom_ca']['biaya_tabungan'],
+                    'biaya_notaris'                     => (int) $val->so['ca']['recom_ca']['notaris'],
+                    'angsuran_pertama_bungan_berjalan'  => (int) $val->so['ca']['recom_ca']['angs_pertama_bunga_berjalan'],
+                    'pelunasan_nasabah_ro'              => (int) $val->so['ca']['recom_ca']['pelunasan_nasabah_ro']
                 ),
 
                 'hold_dana' => $hold_dana = array(
-                    'pelunasan_tempat_lain'         => $val->so['ca']['recom_ca']['pelunasan_tempat_lain'],
+                    'pelunasan_tempat_lain'         => (int) $val->so['ca']['recom_ca']['pelunasan_tempat_lain'],
                     'blokir' => [
-                        'tempat_lain'               => $val->so['ca']['recom_ca']['blokir_dana'],
-                        'dua_kali_angsuran_kredit'  => $val->so['ca']['recom_ca']['blokir_angs_kredit']
+                        'tempat_lain'               => (int) $val->so['ca']['recom_ca']['blokir_dana'],
+                        'dua_kali_angsuran_kredit'  => (int) $val->so['ca']['recom_ca']['blokir_angs_kredit']
                     ]
                 ),
 
@@ -915,7 +915,7 @@ class MasterCAA_Controller extends BaseController
             }
 
             $data[$key] = [
-                'id_trans_so'    => $val->id_trans_so,
+                'id_trans_so'    => $val->id_trans_so == null ? null : (int) $val->id_trans_so,
                 'nomor_so'       => $val->so['nomor_so'],
 
                 'nomor_ao'       => $val->so['ao']['nomor_ao'],
@@ -928,8 +928,8 @@ class MasterCAA_Controller extends BaseController
                 'asal_data'      => $val->so['asaldata']['nama'],
                 'nama_marketing' => $val->so['nama_marketing'],
                 'pengajuan' => [
-                    'plafon' => $val->so['faspin']['plafon'],
-                    'tenor'  => $val->so['faspin']['tenor']
+                    'plafon' => (int) $val->so['faspin']['plafon'],
+                    'tenor'  => (int) $val->so['faspin']['tenor']
                 ],
                 'nama_debitur'   => $val->so['debt']['nama_lengkap'],
                 'status_ca'      => $status_ca

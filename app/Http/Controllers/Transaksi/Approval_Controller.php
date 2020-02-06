@@ -81,9 +81,9 @@ class Approval_Controller extends BaseController
         $data = array();
         foreach ($parQuery as $val) {
             $data[] = array(
-                "id"        => $val->id,
+                "id"        => $val->id == null ? null : (int) $val->id,
                 "user_id"   => $val->user_id,
-                "plafon_max"=> $val->plafon_caa,
+                "plafon_max"=> (int) $val->plafon_caa,
                 "nama_area" => $val->area['nama'],
                 "cabang"    => $val->cabang['nama'],
                 "jabatan"   => $val->jpic['nama_jenis'],
@@ -136,16 +136,16 @@ class Approval_Controller extends BaseController
 
 
          $data = array(
-            "id"        => $val->id,
-            "user_id"   => $val->user_id,
-            "id_area"   => $val->id_area,
+            "id"        => $val->id      == null ? null : (int) $val->id,
+            "user_id"   => $val->user_id == null ? null : (int) $val->user_id,
+            "id_area"   => $val->id_area == null ? null : (int) $val->id_area,
             "nama_area" => $val->area['nama'],
-            "id_cabang" => $val->id_cabang,
+            "id_cabang" => $val->id_cabang == null ? null : (int) $val->id_cabang,
             "cabang"    => $val->cabang['nama'],
             "jabatan"   => $val->jpic['nama_jenis'],
             "nama"      => $val->nama,
             "email"     => $val->email,
-            "plafon_max"=> $val->plafon_caa,
+            "plafon_max"=> (int) $val->plafon_caa,
             "flg_aktif" => $val->flg_aktif == 1 ? "true" : "false"
         );
 
@@ -204,21 +204,21 @@ class Approval_Controller extends BaseController
             }
 
             $data[] = [
-                'id_approval'    => $val->id,
-                'id_trans_so'    => $val->id_trans_so,
-                'user_id'        => $val->user_id,
+                'id_approval'    => $val->id          == null ? null : (int) $val->id,
+                'id_trans_so'    => $val->id_trans_so == null ? null : (int) $val->id_trans_so,
+                'user_id'        => $val->user_id     == null ? null : (int) $val->user_id,
                 'nomor_so'       => $val->so['nomor_so'],
                 'nomor_ao'       => $val->so['ao']['nomor_ao'],
                 'nomor_ca'       => $val->so['ca']['nomor_ca'],
                 'nomor_caa'      => $val->caa['nomor_caa'],
-                'id_pic'         => $val->id_pic,
-                'batas_plafon'   => $val->pic['plafon_caa'],
+                'id_pic'         => $val->id_pic == null ? null : (int) $val->id_pic,
+                'batas_plafon'   => (int) $val->pic['plafon_caa'],
                 'nama_pic'       => $val->pic['nama'],
                 // 'id_jenis_pic'   => $val->pic['id_mj_pic'],
                 'jabatan'        => $val->pic['jpic']['nama_jenis'],
                 // 'urutan_jabatan' => $val->pic['jpic']['urutan_jabatan'],
-                'plafon'         => $val->plafon,
-                'tenor'          => $val->tenor,
+                'plafon'         => (int) $val->plafon,
+                'tenor'          => (int) $val->tenor,
                 'rincian'        => $val->rincian,
                 'status_approval'=> $status,
                 'tanggal'        => empty($val->updated_at) ? null : Carbon::parse($val->updated_at)->format("d-m-Y H:i:s"),
@@ -274,21 +274,21 @@ class Approval_Controller extends BaseController
         }
 
         $data = [
-            'id_approval'    => $val->id,
-            'id_trans_so'    => $val->id_trans_so,
-            'user_id'        => $val->user_id,
+            'id_approval'    => $val->id          == null ? null : (int) $val->id,
+            'id_trans_so'    => $val->id_trans_so == null ? null : (int) $val->id_trans_so,
+            'user_id'        => $val->user_id     == null ? null : (int) $val->user_id,
             'nomor_so'       => $val->so['nomor_so'],
             'nomor_ao'       => $val->so['ao']['nomor_ao'],
             'nomor_ca'       => $val->so['ca']['nomor_ca'],
             'nomor_caa'      => $val->caa['nomor_caa'],
-            'id_pic'         => $val->id_pic,
-            'batas_plafon'   => $val->pic['plafon_caa'],
+            'id_pic'         => $val->id_pic == null ? null : (int) $val->id_pic,
+            'batas_plafon'   => (int) $val->pic['plafon_caa'],
             'nama_pic'       => $val->pic['nama'],
             // 'id_jenis_pic'   => $val->pic['id_mj_pic'],
             'jabatan'        => $val->pic['jpic']['nama_jenis'],
             // 'urutan_jabatan' => $val->pic['jpic']['urutan_jabatan'],
-            'plafon'         => $val->plafon,
-            'tenor'          => $val->tenor,
+            'plafon'         => (int) $val->plafon,
+            'tenor'          => (int) $val->tenor,
             'rincian'        => $val->rincian,
             'status_approval'=> $status,
             'tanggal'        => empty($val->updated_at) ? null : Carbon::parse($val->updated_at)->format("d-m-Y H:i:s"),
@@ -417,11 +417,11 @@ class Approval_Controller extends BaseController
         foreach ($check_team as $key => $val) {
             $data[] = [
                 'jabatan' => $val->pic['jpic']['nama_jenis'],
-                'id_pic'  => $val->id_pic,
-                'user_id' => $val->user_id,
+                'id_pic'  => $val->id_pic == null ? null : (int) $val->id_pic,
+                'user_id' => $val->user_id == null ? null : (int) $val->user_id,
                 'nama_pic'=> $val->pic['nama'],
-                'plafon'  => $val->plafon,
-                'tenor'   => $val->plafon,
+                'plafon'  => (int) $val->plafon,
+                'tenor'   => (int) $val->plafon,
                 'status'  => $val->status,
                 'rincian' => $val->rincian
             ];
@@ -459,17 +459,17 @@ class Approval_Controller extends BaseController
         }
 
         $result = array(
-            'id_transaksi' => $check_ca->id_trans_so,
+            'id_transaksi' => $check_ca->id_trans_so == null ? null : (int) $check_ca->id_trans_so,
             'debitur' => [
-                'id'   => $check_ca->so['id_calon_debitur'],
+                'id'   => $check_ca->so['id_calon_debitur'] == null ? null : (int) $check_ca->so['id_calon_debitur'],
                 'nama' => $check_ca->so['debt']['nama_lengkap']
             ],
             'approved' => [
-                'id_pic'  => $check_ca->id_pic,
-                'user_id' => $check_ca->user_id,
+                'id_pic'  => $check_ca->id_pic == null ? null : (int) $check_ca->id_pic,
+                'user_id' => $check_ca->user_id == null ? null : (int) $check_ca->user_id,
                 'nama_ca' => $check_ca->pic['nama'],
-                'tenor'   => $data[$num_sts]['tenor'],
-                'plafon'  => $data[$num_sts]['plafon'],
+                'tenor'   => (int) $tenor,
+                'plafon'  => (int) $plafon,
                 'jaminan' => $imTan
             ],
             'list_approver' => $data

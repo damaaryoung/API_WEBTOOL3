@@ -72,7 +72,7 @@ class MasterSO_Controller extends BaseController
             }
 
             $res[$key] = [
-                'id'              => $val->id,
+                'id'              => $val->id == null ? null : (int) $val->id,
                 'nomor_so'        => $val->nomor_so,
                 'nama_so'         => $val->nama_so,
                 'pic'             => $val->pic['nama'],
@@ -81,8 +81,8 @@ class MasterSO_Controller extends BaseController
                 'asal_data'       => $val->asaldata['nama'],
                 'nama_marketing'  => $val->nama_marketing,
                 'nama_calon_debt' => $val->debt['nama_lengkap'],
-                'plafon'          => $val->faspin['plafon'],
-                'tenor'           => $val->faspin['tenor'],
+                'plafon'          => (int) $val->faspin['plafon'],
+                'tenor'           => (int) $val->faspin['tenor'],
                 'das' => [
                     'status'  => $status_das,
                     'catatan' => $val->catatan_das
@@ -162,7 +162,7 @@ class MasterSO_Controller extends BaseController
         }else{
             foreach ($pen as $key => $value) {
                 $penjamin[$key] = [
-                    "id"    => $value->id,
+                    "id"    => $value->id == null ? null : (int) $value->id,
                     "nama"  => $value->nama_ktp,
                 ];
             }
@@ -212,16 +212,16 @@ class MasterSO_Controller extends BaseController
         }
 
         $res = [
-            'id'          => $val->id,
+            'id'          => $val->id == null ? null : (int) $val->id,
             'nomor_so'    => $val->nomor_so,
             'nama_so'     => $val->nama_so,
-            'id_pic'      => $val->id_pic,
+            'id_pic'      => $val->id_pic == null ? null : (int) $val->id_pic,
             'nama_pic'    => $val->pic['nama'],
             'area'   => [
-                'id'      => $val->id_area,
+                'id'      => $val->id_area == null ? null : (int) $val->id_area,
                 'nama'    => $val->area['nama']
             ],
-            'id_cabang'   => $val->id_cabang,
+            'id_cabang'   => $val->id_cabang == null ? null : (int) $val->id_cabang,
             'nama_cabang' => $val->cabang['nama'],
             'tracking'  => [
                 'das' => $status_das,
@@ -231,20 +231,20 @@ class MasterSO_Controller extends BaseController
                 'caa' => $status_caa,
             ],
             'asal_data' => [
-                'id'   => $val->id_asal_data,
+                'id'   => $val->id_asal_data == null ? null : (int) $val->id_asal_data,
                 'nama' => $val->asaldata['nama'],
             ],
             'nama_marketing'    => $val->nama_marketing,
             'fasilitas_pinjaman'  => [
-                'id'              => $val->id_fasilitas_pinjaman
+                'id'   => $val->id_fasilitas_pinjaman == null ? null : (int) $val->id_fasilitas_pinjaman
             ],
             'calon_debitur'     => [
-                'id'            => $val->id_calon_debitur,
+                'id'            => $val->id_calon_debitur == null ? null : (int) $val->id_calon_debitur,
                 'nama_lengkap'  => $val->debt['nama_lengkap']
             ],
 
             'pasangan'    => [
-                'id'      => $val->id_pasangan,
+                'id'      => $val->id_pasangan == null ? null : (int) $val->id_pasangan,
                 'nama'    => $val->pas['nama_lengkap'],
             ],
             'penjamin'  => $penjamin,
@@ -1079,7 +1079,7 @@ class MasterSO_Controller extends BaseController
         }else{
             foreach ($query as $key => $val) {
                 $res[$key] = [
-                    'id'              => $val->id,
+                    'id'              => $val->id == null ? null : (int) $val->id,
                     'nomor_so'        => $val->nomor_so,
                     'nama_so'         => $val->nama_so,
                     'pic'             => $val->pic['nama'],

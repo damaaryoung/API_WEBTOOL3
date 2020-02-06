@@ -89,8 +89,8 @@ class MasterAO_Controller extends BaseController
             }
 
             $data[$key] = [
-                'id'             => $val->id,
-                'id_trans_ao'    => $val->id_trans_ao,
+                'id'             => $val->id          == null ? null : (int) $val->id,
+                'id_trans_ao'    => $val->id_trans_ao == null ? null : (int) $val->id_trans_ao,
                 'nomor_so'       => $val->nomor_so,
                 // 'nomor_ao'       => $val->ao['nomor_ao'],
                 'pic'            => $val->pic['nama'],
@@ -99,8 +99,8 @@ class MasterAO_Controller extends BaseController
                 'asal_data'      => $val->asaldata['nama'],
                 'nama_marketing' => $val->nama_marketing,
                 'nama_debitur'   => $val->debt['nama_lengkap'],
-                'plafon'         => $val->faspin['plafon'],
-                'tenor'          => $val->faspin['tenor'],
+                'plafon'         => (int) $val->faspin['plafon'],
+                'tenor'          => (int) $val->faspin['tenor'],
                 'das'            => [
                     'status'  => $status_das,
                     'catatan' => $val->catatan_das
@@ -168,7 +168,7 @@ class MasterAO_Controller extends BaseController
         if ($penjamin != '[]') {
             foreach ($penjamin as $key => $value) {
                 $pen[$key] = [
-                    "id"        => $value->id,
+                    "id"        => $val->id == null ? null : (int) $value->id,
                     "nama_ktp"  => $value->nama_ktp,
                 ];
             }
@@ -201,38 +201,34 @@ class MasterAO_Controller extends BaseController
         }
 
         $data[] = [
-            'id'          => $val->id,
-            'id_trans_ao' => $val->id_trans_ao,
+            'id'          => $val->id          == null ? null : (int) $val->id,
+            'id_trans_ao' => $val->id_trans_ao == null ? null : (int) $val->id_trans_ao,
             'nomor_so'    => $val->nomor_so,
             // 'nomor_ao'    => $val->ao['nomor_ao'],
             'nama_so'     => $val->nama_so,
-            'id_pic'      => $val->id_pic,
+            'id_pic'      => $val->id_pic == null ? null : (int) $val->id_pic,
             'nama_pic'    => $val->pic['nama'],
             'area'   => [
-                'id'      => $val->id_area,
+                'id'      => $val->id_area == null ? null : (int) $val->id_area,
                 'nama'    => $val->area['nama']
             ],
-            'id_cabang'   => $val->id_cabang,
+            'id_cabang'   => $val->id_cabang == null ? null : (int) $val->id_cabang,
             'nama_cabang' => $val->cabang['nama'],
             'asaldata'  => [
-                'id'   => $val->asaldata['id'],
+                'id'   => $val->asaldata['id'] == null ? null : (int) $val->asaldata['id'],
                 'nama' => $val->asaldata['nama']
             ],
             'nama_marketing' => $val->nama_marketing,
             'fasilitas_pinjaman'  => [
-                'id'              => $val->id_fasilitas_pinjaman,
-                // 'jenis_pinjaman'  => $val->faspin->jenis_pinjaman,
-                // 'tujuan_pinjaman' => $val->faspin->tujuan_pinjaman,
-                // 'plafon'         => (int) $val->faspin->plafon,
-                // 'tenor'          => (int) $val->faspin->tenor,
+                'id'              => $val->id_fasilitas_pinjaman == null ? null : (int) $val->id_fasilitas_pinjaman
             ],
             'data_debitur' => [
-                'id'             => $val->id_calon_debitur,
+                'id'             => $val->id_calon_debitur == null ? null : (int) $val->id_calon_debitur,
                 'nama_lengkap'   => $val->debt['nama_lengkap'],
             ],
             'data_pasangan' => [
-                'id'               => $val->id_pasangan,
-                'nama_lengkap'     => $val->pas['nama_lengkap'],
+                'id'             => $val->id_pasangan == null ? null : (int) $val->id_pasangan,
+                'nama_lengkap'   => $val->pas['nama_lengkap'],
             ],
             'data_penjamin' => $pen,
             'das'=> [
@@ -1088,8 +1084,8 @@ class MasterAO_Controller extends BaseController
             }
 
             $data[$key] = [
-                'id'             => $val->id,
-                'id_trans_ao'    => $val->id_trans_ao,
+                'id'             => $val->id          == null ? null : (int) $val->id,
+                'id_trans_ao'    => $val->id_trans_ao == null ? null : (int) $val->id_trans_ao,
                 'nomor_so'       => $val->nomor_so,
                 // 'nomor_ao'       => $val->ao['nomor_ao'],
                 'pic'            => $val->pic['nama'],
@@ -1098,8 +1094,8 @@ class MasterAO_Controller extends BaseController
                 'asal_data'      => $val->asaldata['nama'],
                 'nama_marketing' => $val->nama_marketing,
                 'nama_debitur'   => $val->debt['nama_lengkap'],
-                'plafon'         => $val->faspin['plafon'],
-                'tenor'          => $val->faspin['tenor'],
+                'plafon'         => (int) $val->faspin['plafon'],
+                'tenor'          => (int) $val->faspin['tenor'],
                 'das'            => [
                     'status'  => $status_das,
                     'catatan' => $val->catatan_das

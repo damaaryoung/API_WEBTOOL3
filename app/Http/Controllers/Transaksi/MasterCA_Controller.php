@@ -79,8 +79,8 @@ class MasterCA_Controller extends BaseController
             }
 
             $data[$key] = [
-                'id_trans_so'    => $val->id_trans_so,
-                'id_trans_ca'    => $val->so['id_trans_ca'],
+                'id_trans_so'    => $val->id_trans_so == null ? null : (int) $val->id_trans_so,
+                'id_trans_ca'    => $val->so['id_trans_ca'] == null ? null : (int) $val->so['id_trans_ca'],
                 'nomor_so'       => $val->so['nomor_so'],
                 'nomor_ao'       => $val->nomor_ao,
                 // 'nomor_ca'       => $val->so['ca']['nomor_ca'],
@@ -90,8 +90,8 @@ class MasterCA_Controller extends BaseController
                 'asal_data'      => $val->so['asaldata']['nama'],
                 'nama_marketing' => $val->so['nama_marketing'],
                 'nama_debitur'   => $val->so['debt']['nama_lengkap'],
-                'plafon'         => $val->so['faspin']['plafon'],
-                'tenor'          => $val->so['faspin']['tenor'],
+                'plafon'         => (int) $val->so['faspin']['plafon'],
+                'tenor'          => (int) $val->so['faspin']['tenor'],
                 "ao" => [
                     'status_ao'     => $status_ao,
                     'catatan_ao'    => $val->catatan_ao
@@ -152,7 +152,7 @@ class MasterCA_Controller extends BaseController
 
         foreach ($id_penj as $key => $value) {
             $idPen[$key] = array(
-                'id' => $value
+                'id' => $value == null ? null : (int) $value
             );
         }
 
@@ -161,7 +161,7 @@ class MasterCA_Controller extends BaseController
 
         foreach ($id_agu_ta as $key => $value) {
             $idTan[$key] = array(
-                'id' => $value
+                'id' => $value == null ? null : (int) $value
             );
         }
 
@@ -170,7 +170,7 @@ class MasterCA_Controller extends BaseController
 
         foreach ($id_agu_ke as $key => $value) {
             $idKen[$key] = array(
-                'id' => $value
+                'id' => $value == null ? null : (int) $value
             );
         }
 
@@ -179,7 +179,7 @@ class MasterCA_Controller extends BaseController
 
         foreach ($id_pe_agu_ta as $key => $value) {
             $idPeTan[$key] = array(
-                'id' => $value
+                'id' => $value == null ? null : (int) $value
             );
         }
 
@@ -188,7 +188,7 @@ class MasterCA_Controller extends BaseController
 
         foreach ($id_pe_agu_ke as $key => $value) {
             $idPeKen[$key] = array(
-                'id' => $value
+                'id' => $value == null ? null : (int) $value
             );
         }
 
@@ -211,40 +211,40 @@ class MasterCA_Controller extends BaseController
 
 
         $data[] = [
-            'id_trans_so'    => $val->id_trans_so,
-            'id_trans_ca'    => $val->so['id_trans_ca'],
+            'id_trans_so'    => $val->id_trans_so == null ? null : (int) $val->id_trans_so,
+            'id_trans_ca'    => $val->so['id_trans_ca'] == null ? null : (int) $val->so['id_trans_ca'],
             'nomor_so'       => $val->so['nomor_so'],
             'nomor_ao'       => $val->nomor_ao,
             // 'nomor_ca'       => $val->so['ca']['nomor_ca'],
             'nama_so'        => $val->so['nama_so'],
             'nama_marketing' => $val->so['nama_marketing'],
             'pic'  => [
-                'id'         => $val->id_pic,
+                'id'         => $val->id_pic == null ? null : (int) $val->id_pic,
                 'nama'       => $val->pic['nama'],
             ],
             'area'   => [
-                'id'      => $val->id_area,
+                'id'      => $val->id_area == null ? null : (int) $val->id_area,
                 'nama'    => $val->area['nama']
             ],
             'cabang' => [
-                'id'      => $val->id_cabang,
+                'id'      => $val->id_cabang == null ? null : (int) $val->id_cabang,
                 'nama'    => $val->cabang['nama'],
             ],
 
             'asaldata'  => [
-                'id'   => $val->so['asaldata']['id'],
+                'id'   => $val->so['id_asal_data'] == null ? null : (int) $val->so['id_asal_data'],
                 'nama' => $val->so['asaldata']['nama']
             ],
             'fasilitas_pinjaman'  => [
-                'id'              => $val->so['id_fasilitas_pinjaman']
+                'id'   => $val->so['id_fasilitas_pinjaman'] == null ? null : (int) $val->so['id_fasilitas_pinjaman']
             ],
             'data_debitur' => [
-                'id'                    => $val->so['id_calon_debitur'],
-                'nama_lengkap'          => $val->so['debt']['nama_lengkap'],
+                'id'           => $val->so['id_calon_debitur'] == null ? null : (int) $val->so['id_calon_debitur'],
+                'nama_lengkap' => $val->so['debt']['nama_lengkap'],
             ],
             'data_pasangan' => [
-                'id'               => $val->so['id_pasangan'],
-                'nama_lengkap'     => $val->so['pas']['nama_lengkap']
+                'id'           => $val->so['id_pasangan'] == null ? null : (int) $val->so['id_pasangan'],
+                'nama_lengkap' => $val->so['pas']['nama_lengkap']
             ],
             'data_penjamin' => $idPen,
             'data_agunan' => [
@@ -255,9 +255,9 @@ class MasterCA_Controller extends BaseController
                 'agunan_tanah' => $idPeTan,
                 'agunan_kendaraan' => $idPeKen
             ],
-            'kapasitas_bulanan' => ['id' => $val->id_kapasitas_bulanan],
-            'pendapatan_usaha'  => ['id' => $val->id_pendapatan_usaha],
-            'rekomendasi_ao'    => ['id' => $val->id_recom_ao],
+            'kapasitas_bulanan' => ['id' => $val->id_kapasitas_bulanan == null ? null : (int) $val->id_kapasitas_bulanan],
+            'pendapatan_usaha'  => ['id' => $val->id_pendapatan_usaha  == null ? null : (int) $val->id_pendapatan_usaha],
+            'rekomendasi_ao'    => ['id' => $val->id_recom_ao          == null ? null : (int) $val->id_recom_ao],
             'status_ao'         => $status_ao,
             'status_ca'         => $status_ca
         ];
@@ -810,7 +810,7 @@ class MasterCA_Controller extends BaseController
             }
 
             $data[$key] = [
-                'id_trans_so'    => $val->id_trans_so,
+                'id_trans_so'    => $val->id_trans_so == null ? null : (int) $val->id_trans_so,
                 'nomor_so'       => $val->so['nomor_so'],
                 'nomor_ao'       => $val->nomor_ao,
                 // 'nomor_ca'       => $val->so['ca']['nomor_ca'],
@@ -820,8 +820,8 @@ class MasterCA_Controller extends BaseController
                 'asal_data'      => $val->so['asaldata']['nama'],
                 'nama_marketing' => $val->so['nama_marketing'],
                 'nama_debitur'   => $val->so['debt']['nama_lengkap'],
-                'plafon'         => $val->so['faspin']['plafon'],
-                'tenor'          => $val->so['faspin']['tenor'],
+                'plafon'         => (int) $val->so['faspin']['plafon'],
+                'tenor'          => (int) $val->so['faspin']['tenor'],
                 'status_ao'      => $status_ao
             ];
         }

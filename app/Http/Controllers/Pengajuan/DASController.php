@@ -43,7 +43,7 @@ class DASController extends BaseController
             }
 
             $data[$key] = [
-                'id'              => $val->id,
+                'id'              => $val->id == null ? null : (int) $val->id,
                 'nomor_so'        => $val->nomor_so,
                 'nama_so'         => $val->nama_so,
                 'pic'             => $val->pic['nama'],
@@ -52,8 +52,8 @@ class DASController extends BaseController
                 'asal_data'       => $val->asaldata['nama'],
                 'nama_marketing'  => $val->nama_marketing,
                 'nama_debitur'    => $val->debt['nama_lengkap'],
-                'plafon'          => $val->faspin['plafon'],
-                'tenor'           => $val->faspin['tenor'],
+                'plafon'          => (int) $val->faspin['plafon'],
+                'tenor'           => (int) $val->faspin['tenor'],
                 'status'          => $status,
                 'note'            => $val->catatan_das
             ];
@@ -91,16 +91,16 @@ class DASController extends BaseController
         if ($pen != '[]') {
             foreach ($pen as $key => $value) {
                 $penjamin[$key] = [
-                    "id"               => $value->id,
+                    "id"               => $value->id == null ? null : (int) $value->id,
                     "nama_ktp"         => $value->nama_ktp,
                     "nama_ibu_kandung" => $value->nama_ibu_kandung,
-                    "no_ktp"           => $value->no_ktp,
-                    "no_npwp"          => $value->no_npwp,
+                    "no_ktp"           => $value->no_ktp == null ? null : (int) $value->no_ktp,
+                    "no_npwp"          => $value->no_npwp == null ? null : (int) $value->no_npwp,
                     "tempat_lahir"     => $value->tempat_lahir,
                     "tgl_lahir"        => Carbon::parse($value->tgl_lahir)->format('d-m-Y'),
                     "jenis_kelamin"    => $value->jenis_kelamin,
                     "alamat_ktp"       => $value->alamat_ktp,
-                    "no_telp"          => $value->no_telp,
+                    "no_telp"          => $value->no_telp == null ? null : (int) $value->no_telp,
                     "hubungan_debitur" => $value->hubungan_debitur,
                     "lampiran" => [
                         "lamp_ktp"          => $value->lamp_ktp,
@@ -124,14 +124,14 @@ class DASController extends BaseController
         }
 
         $data = [
-            'id'             => $val->id,
+            'id'             => $val->id == null ? null : (int) $val->id,
             'nomor_so'       => $val->nomor_so,
             'nama_so'        => $val->nama_so,
             'area'   => [
-                'id'    => $val->id_area,
+                'id'    => $val->id_area == null ? null : (int) $val->id_area,
                 'nama'  => $val->area['nama']
             ],
-            'id_cabang'      => $val->pic['id_mk_cabang'],
+            'id_cabang'      => $val->pic['id_mk_cabang'] == null ? null : (int) $val->pic['id_mk_cabang'],
             'nama_cabang'    => $val->pic['cabang']['nama'],
             'asal_data'      => $val->asaldata['nama'],
             'nama_marketing' => $val->nama_marketing,
@@ -148,16 +148,16 @@ class DASController extends BaseController
                 'jenis_kelamin'         => $val->debt['jenis_kelamin'],
                 'status_nikah'          => $val->debt['status_nikah'],
                 'ibu_kandung'           => $val->debt['ibu_kandung'],
-                'no_ktp'                => $val->debt['no_ktp'],
-                'no_ktp_kk'             => $val->debt['no_ktp_kk'],
-                'no_kk'                 => $val->debt['no_ktp_kk'],
-                'no_npwp'               => $val->debt['no_npwp'],
+                'no_ktp'                => $val->debt['no_ktp'] == null ? null : (int) $val->debt['no_ktp'],
+                'no_ktp_kk'             => $val->debt['no_ktp_kk'] == null ? null : (int) $val->debt['no_ktp_kk'],
+                'no_kk'                 => $val->debt['no_kk'] == null ? null : (int) $val->debt['no_kk'],
+                'no_npwp'               => $val->debt['no_npwp'] == null ? null : (int) $val->debt['no_npwp'],
                 'tempat_lahir'          => $val->debt['tempat_lahir'],
                 'tgl_lahir'             => Carbon::parse($val->debt['tgl_lahir'])->format('d-m-Y'),
                 'agama'                 => $val->debt['agama'],
                 'alamat_ktp'            => $val->debt['alamat_ktp'],
-                'rt_ktp'                => $val->debt['rt_ktp'],
-                'rw_ktp'                => $val->debt['rw_ktp'],
+                'rt_ktp'                => $val->debt['rt_ktp'] == null ? null : (int) $val->debt['rt_ktp'],
+                'rw_ktp'                => $val->debt['rw_ktp'] == null ? null : (int) $val->debt['rw_ktp'],
                 'provinsi_ktp'          => $val->debt['prov_ktp']['id'],
                 'nama_provinsi_ktp'     => $val->debt['prov_ktp']['nama'],
                 'kabupaten_ktp'         => $val->debt['kab_ktp']['id'],
@@ -166,10 +166,10 @@ class DASController extends BaseController
                 'nama_kecamatan_ktp'    => $val->debt['kec_ktp']['nama'],
                 'kelurahan_ktp'         => $val->debt['kel_ktp']['id'],
                 'nama_kelurahan_ktp'    => $val->debt['kel_ktp']['nama'],
-                'kode_pos_ktp'          => $val->debt['kel_ktp']['kode_pos'],
+                'kode_pos_ktp'          => $val->debt['kel_ktp']['kode_pos'] == null ? null : (int) $val->debt['kel_ktp']['kode_pos'],
                 'alamat_domisili'       => $val->debt['alamat_domisili'],
-                'rt_domisili'           => $val->debt['rt_domisili'],
-                'rw_domisili'           => $val->debt['rw_domisili'],
+                'rt_domisili'           => $val->debt['rt_domisili'] == null ? null : (int) $val->debt['rt_domisili'],
+                'rw_domisili'           => $val->debt['rw_domisili'] == null ? null : (int) $val->debt['rw_domisili'],
                 'provinsi_domisili'     => $val->debt['prov_dom']['id'],
                 'nama_provinsi_domisili'=> $val->debt['prov_dom']['nama'],
                 'kabupaten_domisili'    => $val->debt['kab_dom']['id'],
@@ -178,11 +178,11 @@ class DASController extends BaseController
                 'nama_kecamatan_domisili'=> $val->debt['kec_dom']['nama'],
                 'kelurahan_domisili'    => $val->debt['kel_dom']['id'],
                 'nama_kelurahan_domisili' => $val->debt['kel_dom']['nama'],
-                'kode_pos_domisili'     => $val->debt['kel_dom']['kode_pos'],
+                'kode_pos_domisili'     => $val->debt['kel_dom']['kode_pos'] == null ? null : (int) $val->debt['kel_dom']['kode_pos'],
                 'pendidikan_terakhir'   => $val->debt['pendidikan_terakhir'],
-                'jumlah_tanggungan'     => $val->debt['jumlah_tanggungan'],
-                'no_telp'               => $val->debt['no_telp'],
-                'no_hp'                 => $val->debt['no_hp'],
+                'jumlah_tanggungan'     => $val->debt['jumlah_tanggungan'] == null ? null : (int) $val->debt['jumlah_tanggungan'],
+                'no_telp'               => $val->debt['no_telp'] == null ? null : (int) $val->debt['no_telp'],
+                'no_hp'                 => $val->debt['no_hp'] == null ? null : (int) $val->debt['no_hp'],
                 'alamat_surat'          => $val->debt['alamat_surat'],
                 'lamp_ktp'              => $val->debt['lamp_ktp'],
                 'lamp_kk'               => $val->debt['lamp_kk'],
@@ -194,13 +194,13 @@ class DASController extends BaseController
                 'nama_lengkap'     => $val->pas['nama_lengkap'],
                 'nama_ibu_kandung' => $val->pas['nama_ibu_kandung'],
                 'jenis_kelamin'    => $val->pas['jenis_kelamin'],
-                'no_ktp'           => $val->pas['no_ktp'],
-                'no_ktp_kk'        => $val->pas['no_ktp_kk'],
-                'no_npwp'          => $val->pas['no_npwp'],
+                'no_ktp'           => $val->pas['no_ktp'] == null ? null : (int) $val->pas['no_ktp'],
+                'no_ktp_kk'        => $val->pas['no_ktp_kk'] == null ? null : (int) $val->pas['no_ktp_kk'],
+                'no_npwp'          => $val->pas['no_npwp'] == null ? null : (int) $val->pas['no_npwp'],
                 'tempat_lahir'     => $val->pas['tempat_lahir'],
                 'tgl_lahir'        => Carbon::parse($val->pas['tgl_lahir'])->format('d-m-Y'),
                 'alamat_ktp'       => $val->pas['alamat_ktp'],
-                'no_telp'          => $val->pas['no_telp'],
+                'no_telp'          => $val->pas['no_telp'] == null ? null : (int) $val->pas['no_telp'],
                 'lamp_ktp'         => $val->pas['lamp_ktp'],
                 'lamp_buku_nikah'  => $val->pas['lamp_buku_nikah']
             ],
@@ -374,7 +374,7 @@ class DASController extends BaseController
             }
 
             $data[$key] = [
-                'id'              => $val->id,
+                'id'              => $val->id == null ? null : (int) $val->id,
                 'nomor_so'        => $val->nomor_so,
                 'nama_so'         => $val->nama_so,
                 'pic'             => $val->pic['nama'],
@@ -383,8 +383,8 @@ class DASController extends BaseController
                 'asal_data'       => $val->asaldata['nama'],
                 'nama_marketing'  => $val->nama_marketing,
                 'nama_debitur'    => $val->debt['nama_lengkap'],
-                'plafon'          => $val->faspin['plafon'],
-                'tenor'           => $val->faspin['tenor'],
+                'plafon'          => (int) $val->faspin['plafon'],
+                'tenor'           => (int) $val->faspin['tenor'],
                 'status'          => $status,
                 'note'            => $val->catatan_das
             ];
