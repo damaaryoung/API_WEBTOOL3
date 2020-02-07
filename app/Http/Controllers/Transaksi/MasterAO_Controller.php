@@ -671,7 +671,7 @@ class MasterAO_Controller extends BaseController
             $lamp_buku_tabungan = $check->debt['lamp_buku_tabungan'];
         }
 
-        if($files = $req->file('lamp_skk')){
+        if($file = $req->file('lamp_skk')){
             $path = $lamp_dir.'/debitur';
             $name = 'lamp_skk.'.$file->getClientOriginalName();
 
