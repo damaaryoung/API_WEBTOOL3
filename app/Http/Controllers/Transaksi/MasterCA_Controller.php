@@ -241,7 +241,7 @@ class MasterCA_Controller extends BaseController
             'data_debitur' => [
                 'id'                 => $val->so['id_calon_debitur'] == null ? null : (int) $val->so['id_calon_debitur'],
                 'nama_lengkap'       => $val->so['debt']['nama_lengkap'],
-                'foto_aguanan_rumah' => $val->so['debt']['foto_agunan_rumah']
+                'foto_agunan_rumah'  => $val->so['debt']['foto_agunan_rumah']
             ],
             'data_pasangan' => [
                 'id'           => $val->so['id_pasangan'] == null ? null : (int) $val->so['id_pasangan'],

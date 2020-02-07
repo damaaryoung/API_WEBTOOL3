@@ -382,14 +382,53 @@ class MasterAO_Controller extends BaseController
             'catatan'             => $req->input('catatan_validasi')
         );
 
-
-        if($files = $req->file('lamp_agunan_depan')){
+        if($files = $req->file('agunan_bag_depan')){
             foreach($files as $file){
                 $path = $lamp_dir.'/agunan_tanah';
-                $name = 'agunan_depan.' . $file->getClientOriginalName();
+                $name = 'agunan_bag_depan.' . $file->getClientOriginalName();
                 $file->move($path,$name);
 
-                $agunanDepan[] = $path.'/'.$name;
+                $agunan_bag_depan[] = $path.'/'.$name;
+            }
+        }
+
+        if($files = $req->file('agunan_bag_jalan')){
+            foreach($files as $file){
+                $path = $lamp_dir.'/agunan_tanah';
+                $name = 'agunan_bag_jalan.' . $file->getClientOriginalName();
+                $file->move($path,$name);
+
+                $agunan_bag_jalan[] = $path.'/'.$name;
+            }
+        }
+
+        if($files = $req->file('agunan_bag_ruangtamu')){
+            foreach($files as $file){
+                $path = $lamp_dir.'/agunan_tanah';
+                $name = 'agunan_bag_ruangtamu.' . $file->getClientOriginalName();
+                $file->move($path,$name);
+
+                $agunan_bag_ruangtamu[] = $path.'/'.$name;
+            }
+        }
+
+        if($files = $req->file('agunan_bag_kamarmandi')){
+            foreach($files as $file){
+                $path = $lamp_dir.'/agunan_tanah';
+                $name = 'agunan_bag_kamarmandi.' . $file->getClientOriginalName();
+                $file->move($path,$name);
+
+                $agunan_bag_kamarmandi[] = $path.'/'.$name;
+            }
+        }
+
+        if($files = $req->file('agunan_bag_dapur')){
+            foreach($files as $file){
+                $path = $lamp_dir.'/agunan_tanah';
+                $name = 'agunan_bag_dapur.' . $file->getClientOriginalName();
+                $file->move($path,$name);
+
+                $agunan_bag_dapur[] = $path.'/'.$name;
             }
         }
 
@@ -403,15 +442,6 @@ class MasterAO_Controller extends BaseController
             }
         }
 
-        if($files = $req->file('lamp_agunan_kanan')){
-            foreach($files as $file){
-                $path = $lamp_dir.'/agunan_tanah';
-                $name = 'agunan_kanan.' . $file->getClientOriginalName();
-                $file->move($path,$name);
-
-                $agunanKanan[] = $path.'/'.$name;
-            }
-        }
 
         if ($files = $req->file('lamp_agunan_kanan_ken')) {
             foreach($files as $file){
@@ -423,15 +453,6 @@ class MasterAO_Controller extends BaseController
             }
         }
 
-        if($files = $req->file('lamp_agunan_kiri')){
-            foreach($files as $file){
-                $path = $lamp_dir.'/agunan_tanah';
-                $name = 'agunan_kiri.' . $file->getClientOriginalName();
-                $file->move($path,$name);
-
-                $agunanKiri[] = $path.'/'.$name;
-            }
-        }
 
         if ($files = $req->file('lamp_agunan_kiri_ken')) {
             foreach($files as $file){
@@ -444,16 +465,6 @@ class MasterAO_Controller extends BaseController
         }
 
 
-        if($files = $req->file('lamp_agunan_belakang')){
-            foreach($files as $file){
-                $path = $lamp_dir.'/agunan_tanah';
-                $name = 'agunan_belakang.' . $file->getClientOriginalName();
-                $file->move($path,$name);
-
-                $agunanBelakang[] = $path.'/'.$name;
-            }
-        }
-
         if ($files = $req->file('lamp_agunan_belakang_ken')) {
             foreach($files as $file){
                 $path = $lamp_dir.'/agunan_kendaraan';
@@ -462,17 +473,6 @@ class MasterAO_Controller extends BaseController
                 $a++;
 
                 $agunanBelakangKen[] = $path.'/'.$name;
-            }
-        }
-
-
-        if($files = $req->file('lamp_agunan_dalam')){
-            foreach($files as $file){
-                $path = $lamp_dir.'/agunan_tanah';
-                $name = 'agunan_dalam.' . $file->getClientOriginalName();
-                $file->move($path,$name);
-
-                $agunanDalam[] = $path.'/'.$name;
             }
         }
 
@@ -539,11 +539,11 @@ class MasterAO_Controller extends BaseController
                     'njop'                    => empty($req->njop[$i]) ? null : $req->njop[$i],
                     'nop'                     => empty($req->nop[$i]) ? null : $req->nop[$i],
                     // 'lam_imb'                 => empty($req->file('lam_imb')[$i]) ? null : Helper::img64enc($req->file('lam_imb')[$i]),
-                    'lamp_agunan_depan'       => empty($agunanDepan[$i]) ? null : $agunanDepan[$i],
-                    'lamp_agunan_kanan'       => empty($agunanKanan[$i]) ? null : $agunanKanan[$i],
-                    'lamp_agunan_kiri'        => empty($agunanKiri[$i]) ? null : $agunanKiri[$i],
-                    'lamp_agunan_belakang'    => empty($agunanBelakang[$i]) ? null : $agunanBelakang[$i],
-                    'lamp_agunan_dalam'       => empty($agunanDalam[$i]) ? null : $agunanDalam[$i],
+                    'agunan_bag_depan'       => empty($agunan_bag_depan[$i]) ? null : $agunan_bag_depan[$i],
+                    'agunan_bag_jalan'       => empty($agunan_bag_jalan[$i]) ? null : $agunan_bag_jalan[$i],
+                    'agunan_bag_ruangtamu'   => empty($agunan_bag_ruangtamu[$i]) ? null : $agunan_bag_ruangtamu[$i],
+                    'agunan_bag_kamarmandi'  => empty($agunan_bag_kamarmandi[$i]) ? null : $agunan_bag_kamarmandi[$i],
+                    'agunan_bag_dapur'       => empty($agunan_bag_dapur[$i]) ? null : $agunan_bag_dapur[$i],
 
                     'lamp_imb'                => empty($lamp_imb[$i]) ? null : $lamp_imb[$i],
                     'lamp_pbb'                => empty($lamp_pbb[$i]) ? null : $lamp_pbb[$i],

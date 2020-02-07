@@ -53,6 +53,8 @@ class MasterCAA_Controller extends BaseController
             ], 404);
         }
 
+        // dd($query->toArray());
+
         foreach ($query as $key => $val) {
 
             if ($val->status_ca == 1) {
@@ -97,21 +99,22 @@ class MasterCAA_Controller extends BaseController
 
             // Check Approval
             $id_komisi = explode(",", $val->so['caa']['pic_team_caa']);
+
             $check_approval = Approval::whereIn("id_pic", $id_komisi)
                     ->select("id_pic","id","plafon","tenor","rincian", "status", "updated_at as tgl_approve")
                     ->get();
 
             $approvalCompare = array();
-            foreach ($check_approval as $key => $val) {
+            foreach ($check_approval as $key => $cap) {
                 $Appro[$key] = array(
-                    "id_pic"      => $val->id_pic,
-                    "jabatan"     => $val->pic['jpic']['nama_jenis'],
-                    "id_approval" => $val->id,
-                    "plafon"      => $val->plafon,
-                    "tenor"       => $val->tenor,
-                    "rincian"     => $val->rincian,
-                    "status"      => $val->status,
-                    "tgl_approve" => $val->updated_at
+                    "id_pic"      => $cap->id_pic,
+                    "jabatan"     => $cap->pic['jpic']['nama_jenis'],
+                    "id_approval" => $cap->id,
+                    "plafon"      => $cap->plafon,
+                    "tenor"       => $cap->tenor,
+                    "rincian"     => $cap->rincian,
+                    "status"      => $cap->status,
+                    "tgl_approve" => $cap->updated_at
                 );
             }
 
@@ -127,11 +130,11 @@ class MasterCAA_Controller extends BaseController
             $rekomendasi_ca = array(
                 'id'                   => $val->so['ca']['id_recom_ca'] == null ? null : (int) $val->so['ca']['id_recom_ca'],
                 'produk'               => $val->so['ca']['recom_ca']['produk'],
-                'plafon'               => (int) $val->so['ca']['recom_ca']['plafon_kredit'],
-                'tenor'                => (int) $val->so['ca']['recom_ca']['jangka_waktu'],
-                'suku_bunga'           => floatval($val->so['ca']['recom_ca']['suku_bunga']),
-                'pembayaran_bunga'     => (int) $val->so['ca']['recom_ca']['pembayaran_bunga'],
-                'rekomendasi_angsuran' => (int) $val->so['ca']['recom_ca']['rekom_angsuran']
+                'plafon'               => (int) $val->recom_ca['plafon_kredit'],
+                'tenor'                => (int) $val->recom_ca['jangka_waktu'],
+                'suku_bunga'           => floatval($val->recom_ca['suku_bunga']),
+                'pembayaran_bunga'     => (int) $val->recom_ca['pembayaran_bunga'],
+                'rekomendasi_angsuran' => (int) $val->recom_ca['rekom_angsuran']
             );
 
             $data[] = [
@@ -516,7 +519,7 @@ class MasterCAA_Controller extends BaseController
                 'jenis' => $value->jenis_sertifikat,
                 'lampiran' => [
                     'agunan_bag_depan'      => $value->agunan_bag_depan,
-                    'aguanan_bag_jalan'     => $value->aguanan_bag_jalan,
+                    'agunan_bag_jalan'      => $value->agunan_bag_jalan,
                     'agunan_bag_ruangtamu'  => $value->agunan_bag_ruangtamu,
                     'agunan_bag_kamarmandi' => $value->agunan_bag_kamarmandi,
                     'agunan_bag_dapur'      => $value->agunan_bag_dapur
@@ -703,7 +706,7 @@ class MasterCAA_Controller extends BaseController
                 'tgl_atau_no_ukur'        => $value->tgl_ukur_sertifikat,
                 'lampiran' => [
                     'agunan_bag_depan'      => $value->agunan_bag_depan,
-                    'aguanan_bag_jalan'     => $value->aguanan_bag_jalan,
+                    'agunan_bag_jalan'     => $value->agunan_bag_jalan,
                     'agunan_bag_ruangtamu'  => $value->agunan_bag_ruangtamu,
                     'agunan_bag_kamarmandi' => $value->agunan_bag_kamarmandi,
                     'agunan_bag_dapur'      => $value->agunan_bag_dapur
@@ -916,10 +919,10 @@ class MasterCAA_Controller extends BaseController
             'lampiran' => [
                 'file_report_mao'     => $val->file_report_mao,
                 'file_report_mca'     => $val->file_report_mca,
-                'file_agunan'         => explode(";", $val->file_agunan),
-                'file_usaha'          => explode(";", $val->file_usaha),
+                'file_agunan'         => empty($val->file_agunan) ? null : explode(";", $val->file_agunan),
+                'file_usaha'          => empty($val->file_usaha) ? null : explode(";", $val->file_usaha),
                 'file_tempat_tinggal' => $val->file_tempat_tinggal,
-                'file_lain'           => explode(";", $val->file_lain)
+                'file_lain'           => empty($val->file_lain) ? null : explode(";", $val->file_lain)
             ],
             'rincian'    => $val->rincian,
             'status_caa' => $status_caa
