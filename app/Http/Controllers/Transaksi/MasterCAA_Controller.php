@@ -98,9 +98,22 @@ class MasterCAA_Controller extends BaseController
             // Check Approval
             $id_komisi = explode(",", $val->so['caa']['pic_team_caa']);
             $check_approval = Approval::whereIn("id_pic", $id_komisi)
-                    ->select("id_pic", "id","plafon","tenor","rincian", "status", "updated_at as tgl_approve")
-                    ->get()
-                    ->toArray();
+                    ->select("id_pic","id","plafon","tenor","rincian", "status", "updated_at as tgl_approve")
+                    ->get();
+
+            $approvalCompare = array();
+            foreach ($check_approval as $key => $val) {
+                $Appro[$key] = array(
+                    "id_pic"      => $val->id_pic,
+                    "jabatan"     => $val->pic['jpic']['nama_jenis'],
+                    "id_approval" => $val->id,
+                    "plafon"      => $val->plafon,
+                    "tenor"       => $val->tenor,
+                    "rincian"     => $val->rincian,
+                    "status"      => $val->status,
+                    "tgl_approve" => $val->updated_at
+                );
+            }
 
             $rekomendasi_ao = array(
                 'id'               => $val->so['ao']['id_recom_ao'] == null ? null : (int) $val->so['ao']['id_recom_ao'],
@@ -148,7 +161,7 @@ class MasterCAA_Controller extends BaseController
                 'status_ca'     => $status_ca,
                 'status_caa'    => $status_caa,
                 'tgl_transaksi' => Carbon::parse($val->created_at)->format("d-m-Y H:i:s"),
-                'approval'      => $check_approval
+                'approval'      => $Appro
             ];
         }
 
@@ -822,7 +835,29 @@ class MasterCAA_Controller extends BaseController
                 'agunan_tanah'     => $idTan,
                 'agunan_kendaraan' => $idKen
             ],
-            'pendapatan_usaha' => ['id' => $val->so['ao']['id_pendapatan_usaha'] == null ? null : (int) $val->so['ao']['id_pendapatan_usaha']],
+
+            'pendapatan_usaha' => [
+                'id' => $val->so['ao']['id_pendapatan_usaha'] == null ? null : (int) $val->so['ao']['id_pendapatan_usaha'],
+                'pemasukan' => array(
+                    'tunai' => (int) $val->so['ao']['usaha']['pemasukan_tunai'],
+                    'kredit'=> (int) $val->so['ao']['usaha']['pemasukan_kredit'],
+                    'total' => (int) $val->so['ao']['usaha']['total_pemasukan']
+                ),
+                'pengeluaran' => array(
+                    'biaya_sewa'           => (int) $val->so['ao']['usaha']['biaya_sewa'],
+                    'biaya_gaji_pegawai'   => (int) $val->so['ao']['usaha']['biaya_gaji_pegawai'],
+                    'biaya_belanja_brg'    => (int) $val->so['ao']['usaha']['biaya_belanja_brg'],
+                    'biaya_telp_listr_air' => (int) $val->so['ao']['usaha']['biaya_telp_listr_air'],
+                    'biaya_sampah_kemanan' => (int) $val->so['ao']['usaha']['biaya_sampah_kemanan'],
+                    'biaya_kirim_barang'   => (int) $val->so['ao']['usaha']['biaya_kirim_barang'],
+                    'biaya_hutang_dagang'  => (int) $val->so['ao']['usaha']['biaya_hutang_dagang'],
+                    'angsuran'             => (int) $val->so['ao']['usaha']['biaya_angsuran'],
+                    'lain_lain'            => (int) $val->so['ao']['usaha']['biaya_lain_lain'],
+                    'total'                => (int) $val->so['ao']['usaha']['total_pengeluaran']
+                ),
+                'penghasilan_bersih' => (int) $val->so['ao']['usaha']['laba_usaha']
+            ],
+
             'penyimpangan' => $val->penyimpangan,
             'team_caa'  => $ptc,
             'pengajuan' => [
@@ -836,7 +871,8 @@ class MasterCAA_Controller extends BaseController
                 'plafon'           => (int) $val->so['ao']['recom_ao']['plafon_kredit'],
                 'tenor'            => (int) $val->so['ao']['recom_ao']['jangka_waktu'],
                 'suku_bunga'       => floatval($val->so['ao']['recom_ao']['suku_bunga']),
-                'pembayaran_bunga' => (int) $val->so['ao']['recom_ao']['pembayaran_bunga']
+                'pembayaran_bunga' => (int) $val->so['ao']['recom_ao']['pembayaran_bunga'],
+                'catatan'          => $val->so['ao']['catatan_ao']
             ],
             'rekomendasi_ca' => [
                 'id'                   => $val->so['ca']['id_recom_ca'] == null ? null : (int) $val->so['ca']['id_recom_ca'],
@@ -845,7 +881,8 @@ class MasterCAA_Controller extends BaseController
                 'tenor'                => (int) $val->so['ca']['recom_ca']['jangka_waktu'],
                 'suku_bunga'           => floatval($val->so['ca']['recom_ca']['suku_bunga']),
                 'pembayaran_bunga'     => (int) $val->so['ca']['recom_ca']['pembayaran_bunga'],
-                'rekomendasi_angsuran' => (int) $val->so['ca']['recom_ca']['rekom_angsuran']
+                'rekomendasi_angsuran' => (int) $val->so['ca']['recom_ca']['rekom_angsuran'],
+                'catatan'              => $val->so['ca']['catatan_ca']
             ],
             'data_biaya' => [
                 'reguler' => $reguler = array(
