@@ -366,8 +366,10 @@ class DebiturController extends BaseController
 
                 $buku_tabungan[] = $path.'/'.$name;
 
-                $lamp_buku_tabungan = implode(";",$buku_tabungan);
             }
+
+            $lamp_buku_tabungan = implode(";",$buku_tabungan);
+
         }else{
             $lamp_buku_tabungan = $check->debt['lamp_buku_tabungan'];
         }
@@ -392,8 +394,10 @@ class DebiturController extends BaseController
 
                 $sku[] = $path.'/'.$name;
 
-                $lamp_sku = implode(";",$sku);
             }
+
+            $lamp_sku = implode(";",$sku);
+
         }else{
             $lamp_sku = $check->debt['lamp_sku'];
         }
@@ -414,17 +418,18 @@ class DebiturController extends BaseController
         }
 
 
-        if($file = $req->file('foto_pembukuan_usaha')){
-            // foreach ($files as $file) {
+        if($files = $req->file('foto_pembukuan_usaha')){
+            foreach ($files as $file) {
                 $path = $lamp_dir.'/debitur';
                 $name = 'foto_pembukuan_usaha.'.$file->getClientOriginalName();
 
                 $file->move($path,$name);
 
                 $pembukuan_usaha[] = $path.'/'.$name;
+            }
 
-                $foto_pembukuan_usaha = implode(";",$pembukuan_usaha);
-            // }
+            $foto_pembukuan_usaha = implode(";",$pembukuan_usaha);
+
         }else{
             $foto_pembukuan_usaha = $check->debt['foto_pembukuan_usaha'];
         }
@@ -438,8 +443,10 @@ class DebiturController extends BaseController
 
                 $foto_usaha = $path.'/'.$name;
 
-                $lamp_foto_usaha = implode(";",$foto_usaha);
             }
+
+            $lamp_foto_usaha = implode(";",$foto_usaha);
+
         }else{
             $lamp_foto_usaha = $check->debt['lamp_foto_usaha'];
         }

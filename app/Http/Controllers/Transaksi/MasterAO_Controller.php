@@ -660,13 +660,14 @@ class MasterAO_Controller extends BaseController
             foreach($files as $file){
                 $path = $lamp_dir.'/lamp_buku_tabungan';
                 $name = 'lamp_buku_tabungan.' . $file->getClientOriginalName();
-
                 $file->move($path,$name);
 
                 $buku_tabungan[] = $path.'/'.$name;
 
-                $lamp_buku_tabungan = implode(";",$buku_tabungan);
             }
+
+            $lamp_buku_tabungan = implode(";",$buku_tabungan);
+
         }else{
             $lamp_buku_tabungan = $check->debt['lamp_buku_tabungan'];
         }
@@ -691,8 +692,10 @@ class MasterAO_Controller extends BaseController
 
                 $sku[] = $path.'/'.$name;
 
-                $lamp_sku = implode(";",$sku);
             }
+
+            $lamp_sku = implode(";",$sku);
+
         }else{
             $lamp_sku = $check->debt['lamp_sku'];
         }
@@ -713,8 +716,8 @@ class MasterAO_Controller extends BaseController
         }
 
 
-        if($file = $req->file('foto_pembukuan_usaha')){
-            // foreach ($files as $file) {
+        if($files = $req->file('foto_pembukuan_usaha')){
+            foreach ($files as $file) {
                 $path = $lamp_dir.'/debitur';
                 $name = 'foto_pembukuan_usaha.'.$file->getClientOriginalName();
 
@@ -722,8 +725,10 @@ class MasterAO_Controller extends BaseController
 
                 $pembukuan_usaha[] = $path.'/'.$name;
 
-                $foto_pembukuan_usaha = implode(";",$pembukuan_usaha);
-            // }
+            }
+
+            $foto_pembukuan_usaha = implode(";",$pembukuan_usaha);
+
         }else{
             $foto_pembukuan_usaha = $check->debt['foto_pembukuan_usaha'];
         }
@@ -735,10 +740,11 @@ class MasterAO_Controller extends BaseController
 
                 $file->move($path,$name);
 
-                $foto_usaha = $path.'/'.$name;
-
-                $lamp_foto_usaha = implode(";",$foto_usaha);
+                $foto_usaha[] = $path.'/'.$name;
             }
+
+            $lamp_foto_usaha = implode(";",$foto_usaha);
+
         }else{
             $lamp_foto_usaha = $check->debt['lamp_foto_usaha'];
         }
