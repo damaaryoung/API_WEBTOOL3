@@ -28,6 +28,11 @@ class PemeriksaanAgunKen extends Model implements AuthenticatableContract, Autho
         'id_agunan_kendaraan', 'nama_pengguna', 'status_pengguna', 'jml_roda_kendaraan', 'kondisi_kendaraan', 'keberadaan_kendaraan', 'body', 'interior', 'km', 'modifikasi', 'aksesoris'
     ];
 
+    protected $casts = [
+        'jml_roda_kendaraan' => 'integer',
+        'km'                 => 'integer'
+    ];
+
     public $timestamps = false;
 
     public function kendaraan(){

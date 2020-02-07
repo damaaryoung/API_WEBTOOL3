@@ -26,5 +26,11 @@ class RekomendasiPinjaman extends Model implements AuthenticatableContract, Auth
        'penyimpangan_struktur', 'penyimpangan_dokumen', 'recom_nilai_pinjaman', 'recom_tenor', 'recom_angsuran', 'recom_produk_kredit', 'note_recom'
     ];
 
+    protected $casts = [
+        'recom_nilai_pinjaman' => 'integer',
+        'recom_tenor'          => 'integer',
+        'recom_angsuran'       => 'integer'
+    ];
+
     public $timestamps = false;
 }

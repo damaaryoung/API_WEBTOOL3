@@ -31,6 +31,11 @@ class AgunanTanah extends Model implements AuthenticatableContract, Authorizable
         'tipe_lokasi', 'alamat', 'id_provinsi', 'id_kabupaten', 'id_kecamatan', 'id_kelurahan', 'rt', 'rw', 'luas_tanah', 'luas_bangunan', 'nama_pemilik_sertifikat', 'jenis_sertifikat', 'no_sertifikat', 'tgl_ukur_sertifikat', 'tgl_berlaku_shgb', 'no_imb', 'njop', 'nop', 'agunan_bag_depan', 'aguanan_bag_jalan', 'agunan_bag_ruangtamu', 'agunan_bag_kamarmandi', 'agunan_bag_dapur', 'lamp_sertifikat', 'lamp_imb', 'lamp_pbb'
     ];
 
+    protected $casts = [
+        'luas_tanah'    => 'integer',
+        'luas_bangunan' => 'integer'
+    ];
+
     public $timestamps = false;
 
     public function prov(){

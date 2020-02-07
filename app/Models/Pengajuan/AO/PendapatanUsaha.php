@@ -26,5 +26,22 @@ class PendapatanUsaha extends Model implements AuthenticatableContract, Authoriz
        'pemasukan_tunai', 'pemasukan_kredit', 'biaya_sewa', 'biaya_gaji_pegawai', 'biaya_belanja_brg', 'biaya_telp_listr_air', 'biaya_sampah_kemanan', 'biaya_kirim_barang', 'biaya_hutang_dagang', 'biaya_angsuran', 'biaya_lain_lain', 'total_pemasukan', 'total_pengeluaran', 'laba_usaha'
     ];
 
+    protected $casts = [
+        'pemasukan_tunai'      => 'integer',
+        'pemasukan_kredit'     => 'integer',
+        'biaya_sewa'           => 'integer',
+        'biaya_gaji_pegawai'   => 'integer',
+        'biaya_belanja_brg'    => 'integer',
+        'biaya_telp_listr_air' => 'integer',
+        'biaya_sampah_kemanan' => 'integer',
+        'biaya_kirim_barang'   => 'integer',
+        'biaya_hutang_dagang'  => 'integer',
+        'biaya_angsuran'       => 'integer',
+        'biaya_lain_lain'      => 'integer',
+        'total_pemasukan'      => 'integer',
+        'total_pengeluaran'    => 'integer',
+        'laba_usaha'           => 'integer'
+    ];
+
     public $timestamps = false;
 }

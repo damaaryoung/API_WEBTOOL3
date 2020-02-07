@@ -26,5 +26,12 @@ class RingkasanAnalisa extends Model implements AuthenticatableContract, Authori
         'kuantitatif_ttl_pendapatan', 'kuantitatif_ttl_pengeluaran', 'kuantitatif_pendapatan_bersih', 'kuantitatif_angsuran', 'kuantitatif_ltv', 'kuantitatif_dsr', 'kuantitatif_idir', 'kuantitatif_hasil', 'kualitatif_analisa', 'kualitatif_strenght', 'kualitatif_weakness', 'kualitatif_opportunity', 'kualitatif_threatness', 'disposable_income'
     ];
 
+    protected $casts = [
+        'recom_nilai_pinjaman'          => 'integer',
+        'kuantitatif_ttl_pengeluaran'   => 'integer',
+        'kuantitatif_pendapatan_bersih' => 'integer',
+        'disposable_income'             => 'integer'
+    ];
+
     public $timestamps = false;
 }

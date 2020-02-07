@@ -26,5 +26,9 @@ class AgunanKendaraan extends Model implements AuthenticatableContract, Authoriz
         'no_bpkb', 'nama_pemilik', 'alamat_pemilik', 'merk', 'jenis', 'no_rangka', 'no_mesin', 'warna', 'tahun', 'no_polisi', 'no_stnk', 'tgl_kadaluarsa_pajak', 'tgl_kadaluarsa_stnk', 'no_faktur', 'lamp_agunan_depan', 'lamp_agunan_kanan', 'lamp_agunan_kiri', 'lamp_agunan_belakang', 'lamp_agunan_dalam'
     ];
 
+    protected $casts = [
+        'tahun' => 'integer'
+    ];
+
     public $timestamps = false;
 }

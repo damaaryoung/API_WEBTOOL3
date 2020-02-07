@@ -607,8 +607,6 @@ class MasterCAA_Controller extends BaseController
                     'total'                => (int) $val->so['ao']['usaha']['total_pengeluaran']
                 ),
                 'penghasilan_bersih' => (int) $val->so['ao']['usaha']['laba_usaha']
-
-
             ],
             'rekomendasi_ao'   => [
                 'id'               => $val->so['ao']['id_recom_ao'] == null ? null : (int) $val->so['ao']['id_recom_ao'],

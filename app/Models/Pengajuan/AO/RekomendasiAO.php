@@ -26,5 +26,14 @@ class RekomendasiAO extends Model implements AuthenticatableContract, Authorizab
        'produk', 'plafon_kredit', 'jangka_waktu', 'suku_bunga', 'pembayaran_bunga', 'akad_kredit', 'ikatan_agunan', 'analisa_ao', 'biaya_provisi', 'biaya_administrasi', 'biaya_credit_checking', 'biaya_tabungan'
     ];
 
+    protected $casts = [
+        'plafon_kredit'         => 'integer',
+        'jangka_waktu'          => 'integer',
+        'biaya_provisi'         => 'integer',
+        'biaya_administrasi'    => 'integer',
+        'biaya_credit_checking' => 'integer',
+        'biaya_tabungan'        => 'integer'
+    ];
+
     public $timestamps = false;
 }

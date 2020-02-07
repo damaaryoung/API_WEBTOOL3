@@ -28,6 +28,11 @@ class PemeriksaanAgunTan extends Model implements AuthenticatableContract, Autho
         'id_agunan_tanah', 'nama_penghuni', 'status_penghuni', 'bentuk_bangunan', 'kondisi_bangunan', 'fasilitas', 'listrik', 'nilai_taksasi_agunan', 'nilai_taksasi_bangunan', 'tgl_taksasi', 'nilai_likuidasi', 'nilai_agunan_independen', 'perusahaan_penilai_independen'
     ];
 
+    protected $casts = [
+        'nilai_taksasi_agunan'   => 'integer',
+        'nilai_taksasi_bangunan' => 'integer'
+    ];
+
     public $timestamps = false;
 
     public function tanah(){

@@ -26,5 +26,11 @@ class AsuransiJiwa extends Model implements AuthenticatableContract, Authorizabl
        'nama_asuransi', 'jangka_waktu', 'nilai_pertanggungan', 'jatuh_tempo', 'berat_badan', 'tinggi_badan', 'umur_nasabah'
     ];
 
+    protected $casts = [
+        'jangka_waktu' => 'integer',
+        'berat_badan'  => 'integer',
+        'tinggi_badan' => 'integer'
+    ];
+
     public $timestamps = false;
 }

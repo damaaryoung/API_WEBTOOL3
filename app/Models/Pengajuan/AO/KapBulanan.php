@@ -26,5 +26,21 @@ class KapBulanan extends Model implements AuthenticatableContract, AuthorizableC
        'pemasukan_cadebt', 'pemasukan_pasangan', 'pemasukan_penjamin', 'biaya_rumah_tangga', 'biaya_transport', 'biaya_pendidikan', 'biaya_telp_listr_air', 'angsuran', 'biaya_lain', 'total_pemasukan', 'total_pengeluaran', 'penghasilan_bersih', 'disposable_income'
     ];
 
+    protected $casts = [
+        'pemasukan_cadebt'      => 'integer',
+        'pemasukan_pasangan'    => 'integer',
+        'pemasukan_penjamin'    => 'integer',
+        'biaya_rumah_tangga'    => 'integer',
+        'biaya_transport'       => 'integer',
+        'biaya_pendidikan'      => 'integer',
+        'biaya_telp_listr_air'  => 'integer',
+        'angsuran'              => 'integer',
+        'biaya_lain'            => 'integer',
+        'total_pemasukan'       => 'integer',
+        'total_pengeluaran'     => 'integer',
+        'penghasilan_bersih'    => 'integer',
+        'disposable_income'     => 'integer'
+    ];
+
     public $timestamps = false;
 }

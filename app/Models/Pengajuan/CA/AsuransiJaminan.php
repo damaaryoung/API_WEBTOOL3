@@ -26,5 +26,9 @@ class AsuransiJaminan extends Model implements AuthenticatableContract, Authoriz
        'nama_asuransi', 'jangka_waktu', 'nilai_pertanggungan', 'jatuh_tempo'
     ];
 
+    protected $casts = [
+        'jangka_waktu' => 'integer'
+    ];
+
     public $timestamps = false;
 }
