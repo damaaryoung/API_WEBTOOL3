@@ -365,7 +365,6 @@ class MasterSO_Controller extends BaseController
             }
         }
 
-
         $lamp_dir = 'public/'.$ktp;
 
         if($file = $req->file('lamp_ktp')){

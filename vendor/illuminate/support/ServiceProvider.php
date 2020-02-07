@@ -86,6 +86,22 @@ abstract class ServiceProvider
      * @param  string  $namespace
      * @return void
      */
+
+    // For PHP <= 7.3
+    // protected function loadViewsFrom($path, $namespace)
+    // {
+    //     if (is_array($this->app->config['view']['paths'])) {
+    //         foreach ($this->app->config['view']['paths'] as $viewPath) {
+    //             if (is_dir($appPath = $viewPath.'/vendor/'.$namespace)) {
+    //                 $this->app['view']->addNamespace($namespace, $appPath);
+    //             }
+    //         }
+    //     }
+
+    //     $this->app['view']->addNamespace($namespace, $path);
+    // }
+
+    // For PHP >= 7.4
     protected function loadViewsFrom($path, $namespace)
     {
         $this->callAfterResolving('view', function ($view) use ($path, $namespace) {
