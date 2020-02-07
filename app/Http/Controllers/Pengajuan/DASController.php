@@ -282,11 +282,13 @@ class DASController extends BaseController
                 $path = $lamp_dir.'/ideb';
                 $exIdeb = $file->getClientOriginalExtension();
 
-                if ($exIdeb != 'ideb' || $exIdeb != 'pdf') {
+                // $exIdeb = $file->getClientMimeType();
+
+                if ($exIdeb != 'ideb' && $exIdeb != 'pdf') {
                     return response()->json([
                         "code"    => 422,
                         "status"  => "not valid request",
-                        "message" => "file ideb harus berupa format ideb"
+                        "message" => "file ideb harus berupa format ideb / pdf"
                     ], 422);
                 }
 
