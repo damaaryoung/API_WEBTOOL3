@@ -95,6 +95,13 @@ class MasterCAA_Controller extends BaseController
                 );
             }
 
+            // Check Approval
+            $id_komisi = explode(",", $val->so['caa']['pic_team_caa']);
+            $check_approval = Approval::whereIn("id_pic", $id_komisi)
+                    ->select("id_pic", "id","plafon","tenor","rincian", "status", "updated_at as tgl_approve")
+                    ->get()
+                    ->toArray();
+
             $rekomendasi_ao = array(
                 'id'               => $val->so['ao']['id_recom_ao'] == null ? null : (int) $val->so['ao']['id_recom_ao'],
                 'produk'           => $val->so['ao']['recom_ao']['produk'],
@@ -140,7 +147,8 @@ class MasterCAA_Controller extends BaseController
                 ],
                 'status_ca'     => $status_ca,
                 'status_caa'    => $status_caa,
-                'tgl_transaksi' => Carbon::parse($val->created_at)->format("d-m-Y H:i:s")
+                'tgl_transaksi' => Carbon::parse($val->created_at)->format("d-m-Y H:i:s"),
+                'approval'      => $check_approval
             ];
         }
 

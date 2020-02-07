@@ -35,6 +35,18 @@ class Approval extends Model implements AuthenticatableContract, AuthorizableCon
         'user_id', 'id_trans_so', 'id_trans_caa', 'id_pic', 'id_area', 'id_cabang', 'plafon', 'tenor', 'rincian', 'status', 'tujuan_forward', 'flg_aktif'
     ];
 
+    protected $casts = [
+        'id'            => 'integer',
+        'user_id'       => 'integer',
+        'id_trans_so'   => 'integer',
+        'id_trans_caa'  => 'integer',
+        'id_pic'        => 'integer',
+        'id_area'       => 'integer',
+        'id_cabang'     => 'integer',
+        'plafon'        => 'integer',
+        'tenor'         => 'integer'
+    ];
+
     // public $timestamps = false;
 
     public function user(){
