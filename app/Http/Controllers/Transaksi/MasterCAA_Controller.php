@@ -104,7 +104,7 @@ class MasterCAA_Controller extends BaseController
                     ->select("id_pic","id","plafon","tenor","rincian", "status", "updated_at as tgl_approve")
                     ->get();
 
-            $approvalCompare = array();
+            $Appro = array();
             foreach ($check_approval as $key => $cap) {
                 $Appro[$key] = array(
                     "id_pic"      => $cap->id_pic,
