@@ -170,7 +170,8 @@ class PasanganController extends BaseController
             'lamp_buku_nikah'  => $bukuNikahPass,
 
             // Pasangan Baru
-            'nama_tempat_kerja'     => $req->input('nama_tempat_kerja_pas'),
+            'nama_tempat_kerja'     => $req->input('pekerjaan_pas'),
+            'posisi_pekerjaan'      => $req->input('posisi_pekerjaan_pas'),
             'jenis_pekerjaan'       => $req->input('jenis_pekerjaan_pas'),
             'alamat_tempat_kerja'   => $req->input('alamat_tempat_kerja_pas'),
             'id_prov_tempat_kerja'  => $req->input('id_prov_tempat_kerja_pas'),

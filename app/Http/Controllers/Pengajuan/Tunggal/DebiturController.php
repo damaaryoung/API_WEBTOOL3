@@ -329,7 +329,7 @@ class DebiturController extends BaseController
             $nama_anak = $check->nama_anak;
             $tgl_lhr_anak = $check->tgl_lhr_anak;
         }else{
-            for ($i = 0; $i < count($req->nama_anak); $i++){
+            for ($i = 0; $i < count($req->input('nama_anak')); $i++){
                 $namaAnak[] = empty($req->nama_anak[$i]) ? $check->nama_anak[$i] : $req->nama_anak[$i];
 
                 $tglLahirAnak[] = empty($req->tgl_lahir_anak[$i]) ? $check->tgl_lahir_anak[$i] : Carbon::parse($req->tgl_lahir_anak[$i])->format('Y-m-d');

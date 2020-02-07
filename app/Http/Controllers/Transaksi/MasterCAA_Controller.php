@@ -515,11 +515,11 @@ class MasterCAA_Controller extends BaseController
                 'id'    => $value->id == null ? null : (int) $value->id,
                 'jenis' => $value->jenis_sertifikat,
                 'lampiran' => [
-                    'agunan_depan'    => $value->lamp_agunan_depan,
-                    'agunan_kanan'    => $value->lamp_agunan_kanan,
-                    'agunan_kiri'     => $value->lamp_agunan_kiri,
-                    'agunan_belakang' => $value->lamp_agunan_belakang,
-                    'agunan_dalam'    => $value->lamp_agunan_dalam
+                    'agunan_bag_depan'      => $value->agunan_bag_depan,
+                    'aguanan_bag_jalan'     => $value->aguanan_bag_jalan,
+                    'agunan_bag_ruangtamu'  => $value->agunan_bag_ruangtamu,
+                    'agunan_bag_kamarmandi' => $value->agunan_bag_kamarmandi,
+                    'agunan_bag_dapur'      => $value->agunan_bag_dapur
                 ]
             );
         }
@@ -702,11 +702,11 @@ class MasterCAA_Controller extends BaseController
                 'nama_pemilik_sertifikat' => $value->nama_pemilik_sertifikat,
                 'tgl_atau_no_ukur'        => $value->tgl_ukur_sertifikat,
                 'lampiran' => [
-                    'agunan_depan'    => $value->lamp_agunan_depan,
-                    'agunan_kanan'    => $value->lamp_agunan_kanan,
-                    'agunan_kiri'     => $value->lamp_agunan_kiri,
-                    'agunan_belakang' => $value->lamp_agunan_belakang,
-                    'agunan_dalam'    => $value->lamp_agunan_dalam
+                    'agunan_bag_depan'      => $value->agunan_bag_depan,
+                    'aguanan_bag_jalan'     => $value->aguanan_bag_jalan,
+                    'agunan_bag_ruangtamu'  => $value->agunan_bag_ruangtamu,
+                    'agunan_bag_kamarmandi' => $value->agunan_bag_kamarmandi,
+                    'agunan_bag_dapur'      => $value->agunan_bag_dapur
                 ]
             );
         }

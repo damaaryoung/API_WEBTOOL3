@@ -131,8 +131,8 @@ class TanahController extends BaseController
 
         if (!empty($check->agunan_bag_depan)) {
             $lamp_path = $check->agunan_bag_depan;
-        }elseif (!empty($check->aguanan_bag_jalan)) {
-            $lamp_path = $check->aguanan_bag_jalan;
+        }elseif (!empty($check->agunan_bag_jalan)) {
+            $lamp_path = $check->agunan_bag_jalan;
         }elseif (!empty($check->agunan_bag_ruangtamu)) {
             $lamp_path = $check->agunan_bag_ruangtamu;
         }elseif (!empty($check->agunan_bag_kamarmandi)) {
@@ -299,11 +299,11 @@ class TanahController extends BaseController
             'no_imb'                  => empty($req->input('no_imb')) ? $check->no_imb : $req->input('no_imb'),
             'njop'                    => empty($req->input('njop')) ? $check->njop : $req->input('njop'),
             'nop'                     => empty($req->input('nop')) ? $check->nop : $req->input('nop'),
-            'agunan_bag_depan'       => empty($agunanDepan) ? $check->lamp_agunan_depan : $agunanDepan,
-            'agunan_bag_jalan'       => empty($agunanKanan) ? $check->lamp_agunan_kanan : $agunanKanan,
-            'agunan_bag_ruangtamu'    => empty($agunanKiri) ? $check->lamp_agunan_kiri : $agunanKiri,
-            'agunan_bag_kamarmandi'   => empty($agunanBelakang) ? $check->lamp_agunan_belakang : $agunanBelakang,
-            'agunan_bag_dapur'        => empty($agunanDalam) ? $check->lamp_agunan_dalam : $agunanDalam,
+            'agunan_bag_depan'        => empty($agunan_bag_depan) ? $check->agunan_bag_depan : $agunan_bag_depan,
+            'agunan_bag_jalan'        => empty($agunan_bag_jalan) ? $check->agunan_bag_jalan : $agunan_bag_jalan,
+            'agunan_bag_ruangtamu'    => empty($agunan_bag_ruangtamu) ? $check->agunan_bag_ruangtamu : $agunan_bag_ruangtamu,
+            'agunan_bag_kamarmandi'   => empty($agunan_bag_kamarmandi) ? $check->agunan_bag_kamarmandi : $agunan_bag_kamarmandi,
+            'agunan_bag_dapur'        => empty($agunan_bag_dapur) ? $check->agunan_bag_dapur : $agunan_bag_dapur,
             'lamp_imb'                => empty($lamp_imb) ? $check->lamp_imb : $lamp_imb,
             'lamp_pbb'                => empty($lamp_pbb) ? $check->lamp_pbb : $lamp_pbb,
             'lamp_sertifikat'         => empty($lamp_sertifikat) ? $check->lamp_sertifikat : $lamp_sertifikat,
