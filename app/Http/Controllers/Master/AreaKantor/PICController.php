@@ -14,7 +14,7 @@ use DB;
 class PICController extends BaseController
 {
     public function all() {
-        $query = PIC::with('jpic','area','cabang')->get();
+        $query = PIC::with('jpic','area','cabang')->orderBy('nama', 'asc')->get();
 
         if ($query == '[]') {
             return response()->json([
@@ -56,16 +56,15 @@ class PICController extends BaseController
 
     public function index() {
 
-        $value = 'Team CAA';
-        $value_dir = 'Team CAA DIR';
-
         $query = PIC::with('jpic','area','cabang')
-                ->whereHas('jpic', function($q) use($value, $value_dir) {
+                ->whereHas('jpic', function($q) {
                     // Query the name field in status table
-                    $q->where('keterangan', '!=', $value); // '=' is optional
-                    $q->where('keterangan', '!=', $value_dir);
+                    $q->where('nama_jenis', 'SO'); // '=' is optional
+                    $q->orWhere('nama_jenis', 'AO');
+                    $q->orWhere('nama_jenis', 'CA');
                 })
                 ->where('flg_aktif', 1)
+                ->orderBy('nama', 'asc')
                 ->get();
 
         if ($query == '[]') {
@@ -226,7 +225,7 @@ class PICController extends BaseController
             ], 404);
         }
 
-        PIC::where('id', $id)->delete();
+        PIC::where('id', $id)->update(['flg_aktif' => 0]);
 
         try {
             return response()->json([
@@ -244,7 +243,7 @@ class PICController extends BaseController
     }
 
     public function search($search) {
-        $query = PIC::with('jpic','area','cabang')->where('flg_aktif', 1)->where('nama', 'like', '%'.$search.'%')->get();
+        $query = PIC::with('jpic','area','cabang')->where('flg_aktif', 1)->where('nama', 'like', '%'.$search.'%')->orderBy('nama', 'asc')->get();
 
         if ($query == '[]') {
             return response()->json([

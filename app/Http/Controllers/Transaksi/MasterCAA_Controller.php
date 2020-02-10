@@ -40,7 +40,7 @@ class MasterCAA_Controller extends BaseController
         $id_cabang = $pic->id_cabang;
         $scope     = $pic->jpic['cakupan'];
 
-        $query_dir = TransCA::with('so', 'pic', 'cabang')->where('status_ca', 1);
+        $query_dir = TransCA::with('so', 'pic', 'cabang')->where('status_ca', 1)->orderBy('created_at', 'desc');
         $method = 'get';
 
         $query = Helper::checkDir($user_id, $scope, $query_dir, $id_area, $id_cabang, $method);
@@ -52,8 +52,6 @@ class MasterCAA_Controller extends BaseController
                 'message' => 'Data kosong'
             ], 404);
         }
-
-        // dd($query->toArray());
 
         foreach ($query as $key => $val) {
 
@@ -962,7 +960,7 @@ class MasterCAA_Controller extends BaseController
 
         $query_dir = TransCA::with('pic', 'cabang')
                 ->where('status_ca', 1)
-                ->where('nomor_ca', 'like', '%'.$search.'%');
+                ->where('nomor_ca', 'like', '%'.$search.'%')->orderBy('created_at', 'desc');
 
         $method = 'get';
 

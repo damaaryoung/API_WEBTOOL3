@@ -15,7 +15,7 @@ class MenuMasterController extends BaseController
 {
     public function all() {
         try {
-            $query = MenuMaster::get();
+            $query = MenuMaster::orderBy('nama', 'asc')->get();
 
             if ($query == '[]') {
                 return response()->json([
@@ -50,7 +50,7 @@ class MenuMasterController extends BaseController
 
     public function index() {
         try {
-            $query = MenuMaster::select('id','nama','url')->where('flg_aktif', 1)->get();
+            $query = MenuMaster::select('id','nama','url')->where('flg_aktif', 1)->orderBy('nama', 'asc')->get();
 
             if ($query == '[]') {
                 return response()->json([
@@ -208,7 +208,7 @@ class MenuMasterController extends BaseController
             ], 404);
         }
 
-        MenuMaster::where('id', $IdOrSlug)->orWhere('url', $IdOrSlug)->delete();
+        MenuMaster::where('id', $IdOrSlug)->orWhere('url', $IdOrSlug)->update(['flg_aktif' => 0]);
 
         try {
             return response()->json([
@@ -227,7 +227,7 @@ class MenuMasterController extends BaseController
 
     public function search($search) {
         try {
-            $query = MenuMaster::select('id','nama','url')->where('flg_aktif', 1)->where('nama', 'like', '%'.$search.'%')->get();
+            $query = MenuMaster::select('id','nama','url')->where('flg_aktif', 1)->where('nama', 'like', '%'.$search.'%')->orderBy('nama', 'asc')->get();
 
             if ($query == '[]') {
                 return response()->json([

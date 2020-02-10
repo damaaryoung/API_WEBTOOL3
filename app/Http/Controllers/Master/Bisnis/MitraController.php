@@ -13,7 +13,7 @@ class MitraController extends BaseController
 {
     public function index() {
         try {
-            $query = DB::connection('dpm')->table('kre_kode_group5')->select('kode_group5 as kode_mitra','deskripsi_group5 as nama_mitra', 'jenis_mitra')->where('jenis_mitra', 'MB')->get();
+            $query = DB::connection('dpm')->table('kre_kode_group5')->select('kode_group5 as kode_mitra','deskripsi_group5 as nama_mitra', 'jenis_mitra')->where('jenis_mitra', 'MB')->orderBy('deskripsi_group5', 'asc')->get();
 
             if ($query == '[]') {
                 return response()->json([
@@ -44,6 +44,7 @@ class MitraController extends BaseController
                 ->where('jenis_mitra', 'MB')
                 ->where('kode_group5', 'like', "%{$search}%")
                 ->orWhere('deskripsi_group5', 'like', "%{$search}%")
+                ->orderBy('deskripsi_group5', 'asc')
                 ->get();
 
         if ($query == '[]') {

@@ -48,7 +48,7 @@ class MasterAO_Controller extends BaseController
         $id_cabang = $pic->id_cabang;
         $scope     = $pic->jpic['cakupan'];
 
-        $query_dir = TransSO::with('pic', 'cabang', 'asaldata', 'debt', 'pas', 'faspin', 'ao', 'ca');
+        $query_dir = TransSO::with('pic', 'cabang', 'asaldata', 'debt', 'pas', 'faspin', 'ao', 'ca')->orderBy('created_at', 'desc');
         $method = 'get';
 
         $query = Helper::checkDir($user_id, $scope, $query_dir, $id_area, $id_cabang, $method);
@@ -1049,7 +1049,7 @@ class MasterAO_Controller extends BaseController
         $scope     = $pic->jpic['cakupan'];
 
         $query_dir = TransSO::with('pic', 'cabang', 'asaldata', 'debt', 'pas', 'faspin', 'ao', 'ca')
-                ->where('nomor_so', 'like', '%'.$search.'%');
+                ->where('nomor_so', 'like', '%'.$search.'%')->orderBy('created_at', 'desc');
         $method = 'get';
 
         $query = Helper::checkDir($user_id, $scope, $query_dir, $id_area, $id_cabang, $method);

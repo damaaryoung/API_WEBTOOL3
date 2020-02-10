@@ -39,7 +39,7 @@ class MasterSO_Controller extends BaseController
         $id_cabang = $pic->id_cabang;
         $scope     = $pic->jpic['cakupan'];
 
-        $query_dir = TransSO::with('pic', 'cabang', 'asaldata','debt', 'faspin');
+        $query_dir = TransSO::with('pic', 'cabang', 'asaldata','debt', 'faspin')->orderBy('created_at', 'desc');
 
         $method = 'get';
 
@@ -1064,7 +1064,7 @@ class MasterSO_Controller extends BaseController
         $id_cabang = $pic->id_cabang;
         $scope     = $pic->jpic['cakupan'];
 
-        $query_dir = TransSO::with('pic', 'cabang', 'asaldata','debt', 'faspin')->where('nomor_so', 'like', '%'.$search.'%');
+        $query_dir = TransSO::with('pic', 'cabang', 'asaldata','debt', 'faspin')->where('nomor_so', 'like', '%'.$search.'%')->orderBy('created_at', 'desc');
         $method = 'get';
 
         $query = Helper::checkDir($user_id, $scope, $query_dir, $id_area, $id_cabang, $method);

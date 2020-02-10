@@ -14,7 +14,7 @@ use DB;
 class AreaController extends BaseController
 {
     public function all() {
-        $query = Area::get();
+        $query = Area::orderBy('nama', 'asc')->get();
 
         if ($query == '[]') {
             return response()->json([
@@ -53,7 +53,7 @@ class AreaController extends BaseController
     }
 
     public function index() {
-        $query = Area::where('flg_aktif', 1)->get();
+        $query = Area::where('flg_aktif', 1)->orderBy('nama', 'asc')->get();
 
         if ($query == '[]') {
             return response()->json([
@@ -195,7 +195,7 @@ class AreaController extends BaseController
             ], 404);
         }
 
-        Area::where('id', $id)->delete();
+        Area::where('id', $id)->update(['flg_aktif' => 0]);
 
         try {
             return response()->json([
@@ -213,7 +213,7 @@ class AreaController extends BaseController
     }
 
     public function search($search) {
-        $query = Area::where('flg_aktif', 1)->where('nama', 'like', '%'.$search.'%')->get();
+        $query = Area::where('flg_aktif', 1)->where('nama', 'like', '%'.$search.'%')->orderBy('nama', 'asc')->get();
 
         if ($query == '[]') {
             return response()->json([

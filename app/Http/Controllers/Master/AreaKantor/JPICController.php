@@ -13,7 +13,7 @@ use Carbon\Carbon;
 class JPICController extends BaseController
 {
     public function index() {
-        $query = JPIC::select('id', 'nama_jenis','keterangan')->get();
+        $query = JPIC::select('id', 'nama_jenis','keterangan')->orderBy('nama_jenis', 'asc')->get();
 
         if ($query == '[]') {
             return response()->json([
@@ -157,7 +157,7 @@ class JPICController extends BaseController
     }
 
     public function search($search) {
-        $query = JPIC::select('id', 'nama_jenis','keterangan')->where('nama_jenis', 'like', '%'.$search.'%')->get();
+        $query = JPIC::select('id', 'nama_jenis','keterangan')->where('nama_jenis', 'like', '%'.$search.'%')->orderBy('nama_jenis', 'asc')->get();
 
         if ($query == '[]') {
             return response()->json([

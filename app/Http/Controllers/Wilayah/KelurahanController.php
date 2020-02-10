@@ -12,7 +12,7 @@ class KelurahanController extends BaseController
 {
     public function all() {
         try {
-            $query = Kelurahan::with('kec')->get();
+            $query = Kelurahan::with('kec')->orderBy('nama', 'asc')->get();
 
             if ($query == '[]') {
                 return response()->json([
@@ -49,7 +49,7 @@ class KelurahanController extends BaseController
 
     public function index() {
         try {
-            $query = Kelurahan::with('kec')->select('id', 'nama', 'id_kecamatan','kode_pos')->where('flg_aktif', 1)->get();
+            $query = Kelurahan::with('kec')->select('id', 'nama', 'id_kecamatan','kode_pos')->where('flg_aktif', 1)->orderBy('nama', 'asc')->get();
 
             if ($query == '[]') {
                 return response()->json([
@@ -295,7 +295,7 @@ class KelurahanController extends BaseController
         }
 
         try {
-            Kelurahan::where('id', $id)->delete();
+            Kelurahan::where('id', $id)->update(['flg_aktif' => 0]);
 
             return response()->json([
                 'code'    => 200,
@@ -313,7 +313,7 @@ class KelurahanController extends BaseController
 
     public function sector($id_kec) {
         try {
-            $query = Kelurahan::where('id_kecamatan', $id_kec)->get();
+            $query = Kelurahan::where('id_kecamatan', $id_kec)->orderBy('nama', 'asc')->get();
 
             if ($query == '[]') {
                 return response()->json([
@@ -339,7 +339,7 @@ class KelurahanController extends BaseController
 
     public function search($search) {
         try {
-            $query = Kelurahan::with('kec')->select('id', 'nama', 'id_kecamatan','kode_pos')->where('flg_aktif', 1)->where('nama', 'like', '%'.$search.'%')->get();
+            $query = Kelurahan::with('kec')->select('id', 'nama', 'id_kecamatan','kode_pos')->where('flg_aktif', 1)->where('nama', 'like', '%'.$search.'%')->orderBy('nama', 'asc')->get();
 
             if ($query == '[]') {
                 return response()->json([

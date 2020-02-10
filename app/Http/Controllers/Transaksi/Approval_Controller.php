@@ -31,7 +31,7 @@ class Approval_Controller extends BaseController
             return response()->json([
                 "code"    => 404,
                 "status"  => "not found",
-                "message" => "User_ID anda adalah '".$user_id."' dengan username '".$req->auth->user."' . Namun anda belum terdaftar pada PIC (Karyawan) di Sevin System. Harap daftarkan diri sebagai PIC pada form PIC atau hubungi bagian IT"
+                "message" => "User_ID anda adalah '".$user_id."' dengan username '".$req->auth->user."' . Namun anda belum terdaftar pada PIC (Karyawan) di Sefin System. Harap daftarkan diri sebagai PIC pada form PIC atau hubungi bagian IT"
             ], 404);
         }
 
@@ -117,7 +117,7 @@ class Approval_Controller extends BaseController
             return response()->json([
                 "code"    => 404,
                 "status"  => "not found",
-                "message" => "User_ID anda adalah '".$user_id."' dengan username '".$req->auth->user."' . Namun anda belum terdaftar pada PIC (Karyawan) di Sevin System. Harap daftarkan diri sebagai PIC pada form PIC atau hubungi bagian IT"
+                "message" => "User_ID anda adalah '".$user_id."' dengan username '".$req->auth->user."' . Namun anda belum terdaftar pada PIC (Karyawan) di Sefin System. Harap daftarkan diri sebagai PIC pada form PIC atau hubungi bagian IT"
             ], 404);
         }
 
@@ -216,7 +216,10 @@ class Approval_Controller extends BaseController
                 'nama_pic'       => $val->pic['nama'],
                 // 'id_jenis_pic'   => $val->pic['id_mj_pic'],
                 'jabatan'        => $val->pic['jpic']['nama_jenis'],
-                // 'urutan_jabatan' => $val->pic['jpic']['urutan_jabatan'],
+                'pengajuan_so'   => [
+                    'plafon'  => (int) $val->so['faspin']['plafon'],
+                    'tenor'   => (int) $val->so['faspin']['tenor']
+                ],
                 'plafon'         => (int) $val->plafon,
                 'tenor'          => (int) $val->tenor,
                 'rincian'        => $val->rincian,
@@ -267,10 +270,20 @@ class Approval_Controller extends BaseController
             $status = 'waiting';
         }
 
-        if($val->pic['jpic'] == 'DIR UT') {
-            $list_status = array('accept', 'reject', 'return');
-        }else{
+        // if($val->pic['jpic'] == 'DIR UT') {
+        //     $list_status = array('accept', 'reject', 'return');
+        // }else{
+        //     $list_status = array('accept', 'forward', 'reject', 'return');
+        // }
+
+        if($val->so['faspin']['plafon'] <= $val->pic['plafon_caa']) {
+
             $list_status = array('accept', 'forward', 'reject', 'return');
+
+        }else{
+
+            $list_status = array('accept', 'reject', 'return');
+
         }
 
         $data = [
@@ -284,9 +297,11 @@ class Approval_Controller extends BaseController
             'id_pic'         => $val->id_pic == null ? null : (int) $val->id_pic,
             'batas_plafon'   => (int) $val->pic['plafon_caa'],
             'nama_pic'       => $val->pic['nama'],
-            // 'id_jenis_pic'   => $val->pic['id_mj_pic'],
             'jabatan'        => $val->pic['jpic']['nama_jenis'],
-            // 'urutan_jabatan' => $val->pic['jpic']['urutan_jabatan'],
+            'pengajuan_so'   => [
+                'plafon'  => (int) $val->so['faspin']['plafon'],
+                'tenor'   => (int) $val->so['faspin']['tenor']
+            ],
             'plafon'         => (int) $val->plafon,
             'tenor'          => (int) $val->tenor,
             'rincian'        => $val->rincian,

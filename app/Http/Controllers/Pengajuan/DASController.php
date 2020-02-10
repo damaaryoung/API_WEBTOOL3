@@ -21,7 +21,7 @@ class DASController extends BaseController
 {
     public function index(Request $req){
         $user_id = $req->auth->user_id;
-        $query = TransSO::with('pic', 'cabang', 'asaldata','debt', 'faspin')->get();
+        $query = TransSO::with('pic', 'cabang', 'asaldata','debt', 'faspin')->orderBy('created_at', 'desc')->get();
 
         if ($query == '[]') {
             return response()->json([
@@ -354,6 +354,7 @@ class DASController extends BaseController
         $user_id = $req->auth->user_id;
         $query = TransSO::with('pic', 'cabang', 'asaldata','debt', 'faspin')
                 ->where('nomor_so', 'like', '%'.$search.'%')
+                ->orderBy('created_at', 'desc')
                 ->get();
 
         if ($query == '[]') {

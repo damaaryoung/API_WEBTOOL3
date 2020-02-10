@@ -12,7 +12,7 @@ class KecamatanController extends BaseController
 {
     public function all() {
         try {
-            $query = Kecamatan::with('kab')->get();
+            $query = Kecamatan::with('kab')->orderBy('nama', 'asc')->get();
 
             if ($query == '[]') {
                 return response()->json([
@@ -47,7 +47,7 @@ class KecamatanController extends BaseController
 
     public function index() {
         try {
-            $query = Kecamatan::with('kab')->select('id', 'nama', 'id_kabupaten')->where('flg_aktif', 1)->get();
+            $query = Kecamatan::with('kab')->select('id', 'nama', 'id_kabupaten')->where('flg_aktif', 1)->orderBy('nama', 'asc')->get();
 
             if ($query == '[]') {
                 return response()->json([
@@ -248,7 +248,7 @@ class KecamatanController extends BaseController
         }
 
         try {
-            Kecamatan::where('id', $id)->delete();
+            Kecamatan::where('id', $id)->update(['flg_aktif' => 0]);
 
             return response()->json([
                 'code'    => 200,
@@ -266,7 +266,7 @@ class KecamatanController extends BaseController
 
     public function sector($id_kab) {
         try {
-            $query = Kecamatan::where('id_kabupaten', $id_kab)->get();
+            $query = Kecamatan::where('id_kabupaten', $id_kab)->orderBy('nama', 'asc')->get();
 
             if ($query == '[]') {
                 return response()->json([
@@ -292,7 +292,7 @@ class KecamatanController extends BaseController
 
     public function search($search) {
         try {
-            $query = Kecamatan::with('kab')->select('id', 'nama', 'id_kabupaten')->where('flg_aktif', 1)->where('nama', 'like', '%'.$search.'%')->get();
+            $query = Kecamatan::with('kab')->select('id', 'nama', 'id_kabupaten')->where('flg_aktif', 1)->where('nama', 'like', '%'.$search.'%')->orderBy('nama', 'asc')->get();
 
             if ($query == '[]') {
                 return response()->json([

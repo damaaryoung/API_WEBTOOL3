@@ -19,7 +19,7 @@ use Carbon\Carbon;
 class HMController extends BaseController
 {
     public function index(Request $req){
-        $query = TransSO::with('asaldata','debt', 'pic')->get();
+        $query = TransSO::with('asaldata','debt', 'pic')->orderBy('created_at', 'desc')->get();
 
         if ($query == '[]') {
             return response()->json([
@@ -331,6 +331,7 @@ class HMController extends BaseController
     public function search($search, Request $req){
         $query = TransSO::with('asaldata','debt', 'pic')
                 ->where('nomor_so', 'like', '%'.$search.'%')
+                ->orderBy('created_at', 'desc')
                 ->get();
 
         if ($query == '[]') {

@@ -12,7 +12,7 @@ class LogsController extends BaseController
 {
     public function index(Request $req) {
         $user_id = $req->auth->user_id;
-        $query = LogActivity::where('user_id', $user_id)->get();
+        $query = LogActivity::where('user_id', $user_id)->orderBy('time', 'desc')->get();
 
         try {
             return response()->json([
@@ -50,7 +50,7 @@ class LogsController extends BaseController
 
     public function limit($limit, Request $req) {
         $user_id = $req->auth->user_id;
-        $query = LogActivity::where('user_id', $user_id)->limit($limit)->get();
+        $query = LogActivity::where('user_id', $user_id)->orderBy('time', 'desc')->limit($limit)->get();
 
         try {
             return response()->json([
@@ -69,7 +69,7 @@ class LogsController extends BaseController
 
     public function search($search, Request $req) {
         $user_id = $req->auth->user_id;
-        $query = LogActivity::where('user_id', $user_id)->where('subject', 'like', '%'.$search.'%')->get();
+        $query = LogActivity::where('user_id', $user_id)->where('subject', 'like', '%'.$search.'%')->orderBy('time', 'desc')->get();
 
         try {
             return response()->json([

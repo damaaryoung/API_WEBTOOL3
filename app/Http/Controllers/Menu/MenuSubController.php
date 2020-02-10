@@ -14,7 +14,7 @@ class MenuSubController extends BaseController
 {
     public function all() {
         try {
-            $query = MenuSub::with('menu_master')->get();
+            $query = MenuSub::with('menu_master')->orderBy('nama', 'asc')->get();
 
             if ($query == '[]') {
                 return response()->json([
@@ -50,7 +50,7 @@ class MenuSubController extends BaseController
 
     public function index() {
         try {
-            $query = MenuSub::with('menu_master')->select('id','nama','url', 'id_menu_master')->where('flg_aktif', 1)->get();
+            $query = MenuSub::with('menu_master')->select('id','nama','url', 'id_menu_master')->where('flg_aktif', 1)->orderBy('nama', 'asc')->get();
 
             if ($query == '[]') {
                 return response()->json([
@@ -217,7 +217,7 @@ class MenuSubController extends BaseController
             ], 404);
         }
 
-        MenuSub::where('id', $IdOrSlug)->orWhere('url', $IdOrSlug)->delete();
+        MenuSub::where('id', $IdOrSlug)->orWhere('url', $IdOrSlug)->update(['flg_aktif' => 0]);
 
         try {
             return response()->json([
@@ -236,7 +236,7 @@ class MenuSubController extends BaseController
 
     public function search($search) {
         try {
-            $query = MenuSub::with('menu_master')->select('id','nama','url', 'id_menu_master')->where('flg_aktif', 1)->where('nama', 'like', '%'.$search.'%')->get();
+            $query = MenuSub::with('menu_master')->select('id','nama','url', 'id_menu_master')->where('flg_aktif', 1)->where('nama', 'like', '%'.$search.'%')->orderBy('nama', 'asc')->get();
 
             if ($query == '[]') {
                 return response()->json([

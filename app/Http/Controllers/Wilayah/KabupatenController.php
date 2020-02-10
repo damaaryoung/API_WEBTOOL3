@@ -12,7 +12,7 @@ class KabupatenController extends BaseController
 {
     public function all(){
         try {
-            $query = Kabupaten::with('prov')->get();
+            $query = Kabupaten::with('prov')->orderBy('nama', 'asc')->get();
 
             if ($query == '[]') {
                 return response()->json([
@@ -47,7 +47,7 @@ class KabupatenController extends BaseController
 
     public function index() {
         try {
-            $query = Kabupaten::with('prov')->select('id', 'nama', 'id_provinsi')->where('flg_aktif', 1)->get();
+            $query = Kabupaten::with('prov')->select('id', 'nama', 'id_provinsi')->where('flg_aktif', 1)->orderBy('nama', 'asc')->get();
 
             if ($query == '[]') {
                 return response()->json([
@@ -247,7 +247,7 @@ class KabupatenController extends BaseController
         }
 
         try {
-            $query = Kabupaten::where('id', $id)->delete();
+            $query = Kabupaten::where('id', $id)->update(['flg_aktif' => 0]);
 
             return response()->json([
                 'code'    => 200,
@@ -265,7 +265,7 @@ class KabupatenController extends BaseController
 
     public function sector($id_prov) {
         try {
-            $query = Kabupaten::where('id_provinsi', $id_prov)->get();
+            $query = Kabupaten::where('id_provinsi', $id_prov)->orderBy('nama', 'asc')->get();
 
             if ($query == '[]') {
                 return response()->json([
@@ -291,7 +291,7 @@ class KabupatenController extends BaseController
 
     public function search($search) {
         try {
-            $query = Kabupaten::with('prov')->select('id', 'nama', 'id_provinsi')->where('flg_aktif', 1)->where('nama', 'like', '%'.$search.'%')->get();
+            $query = Kabupaten::with('prov')->select('id', 'nama', 'id_provinsi')->where('flg_aktif', 1)->where('nama', 'like', '%'.$search.'%')->orderBy('nama', 'asc')->get();
 
             if ($query == '[]') {
                 return response()->json([

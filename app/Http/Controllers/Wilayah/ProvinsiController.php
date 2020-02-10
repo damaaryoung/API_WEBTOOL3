@@ -12,7 +12,7 @@ class ProvinsiController extends BaseController
 {
     public function all() {
         try {
-            $query = Provinsi::get();
+            $query = Provinsi::orderBy('nama', 'asc')->get();
 
             if ($query == '[]') {
                 return response()->json([
@@ -46,7 +46,7 @@ class ProvinsiController extends BaseController
 
     public function index() {
         try {
-            $query = Provinsi::select('id', 'nama')->where('flg_aktif', 1)->get();
+            $query = Provinsi::select('id', 'nama')->where('flg_aktif', 1)->orderBy('nama', 'asc')->get();
 
             if ($query == '[]') {
                 return response()->json([
@@ -214,7 +214,7 @@ class ProvinsiController extends BaseController
         }
 
         try {
-            Provinsi::where('id', $id)->delete();
+            Provinsi::where('id', $id)->update(['flg_aktif' => 0]);
 
             return response()->json([
                 'code'    => 200,
@@ -232,7 +232,7 @@ class ProvinsiController extends BaseController
 
     public function search($search) {
         try {
-            $query = Provinsi::select('id', 'nama')->where('flg_aktif', 1)->where('nama', 'like', '%'.$search.'%')->get();
+            $query = Provinsi::select('id', 'nama')->where('flg_aktif', 1)->where('nama', 'like', '%'.$search.'%')->orderBy('nama', 'asc')->get();
 
             if ($query == '[]') {
                 return response()->json([

@@ -14,7 +14,7 @@ class MenuAccessController extends BaseController
 {
     public function all() {
         try {
-            $query = MenuAccess::with('menu_master','menu_sub')->get();
+            $query = MenuAccess::with('menu_master','menu_sub')->orderBy('id_menu_master', 'asc')->get();
 
             if ($query == '[]') {
                 return response()->json([
@@ -50,7 +50,7 @@ class MenuAccessController extends BaseController
 
     public function index() {
         try {
-            $query = MenuAccess::with('menu_master','menu_sub')->select('id','id_user', 'id_menu_master', 'id_menu_sub')->where('flg_aktif', 1)->get();
+            $query = MenuAccess::with('menu_master','menu_sub')->select('id','id_user', 'id_menu_master', 'id_menu_sub')->where('flg_aktif', 1)->orderBy('id_menu_master', 'asc')->get();
 
             if ($query == '[]') {
                 return response()->json([
@@ -269,8 +269,7 @@ class MenuAccessController extends BaseController
         }
 
         try {
-            $query = MenuAccess::where('id_user', $id_user);
-            $query->delete();
+            $query = MenuAccess::where('id_user', $id_user)->update(['flg_aktif' => 0]);
 
             return response()->json([
                 'code'   => 200,

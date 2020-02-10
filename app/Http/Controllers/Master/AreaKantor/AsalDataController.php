@@ -13,7 +13,7 @@ class AsalDataController extends BaseController
 {
     public function all() {
         try {
-            $query = AsalData::get();
+            $query = AsalData::orderBy('nama', 'asc')->get();
 
             if ($query == '[]') {
                 return response()->json([
@@ -47,7 +47,7 @@ class AsalDataController extends BaseController
 
     public function index() {
         try {
-            $query = AsalData::select('id', 'nama', 'info')->where('flg_aktif', 1)->get();
+            $query = AsalData::select('id', 'nama', 'info')->where('flg_aktif', 1)->orderBy('nama', 'asc')->get();
 
             if ($query == '[]') {
                 return response()->json([
@@ -174,7 +174,7 @@ class AsalDataController extends BaseController
                 ], 404);
             }
 
-            AsalData::where('id', $id)->delete();
+            AsalData::where('id', $id)->update(['flg_aktif' => 0]);
 
             return response()->json([
                 'code'    => 200,
@@ -192,7 +192,7 @@ class AsalDataController extends BaseController
 
     public function search($search) {
         try {
-            $query = AsalData::select('nama', 'info')->where('flg_aktif', 1)->where('nama', 'like', '%'.$search.'%')->get();
+            $query = AsalData::select('nama', 'info')->where('flg_aktif', 1)->where('nama', 'like', '%'.$search.'%')->orderBy('nama', 'asc')->get();
 
             if ($query == '[]') {
                 return response()->json([

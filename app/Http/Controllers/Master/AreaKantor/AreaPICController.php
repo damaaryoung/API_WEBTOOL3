@@ -14,7 +14,7 @@ use DB;
 class AreaPICController extends BaseController
 {
     public function all() {
-        $query = AreaPIC::get();
+        $query = AreaPIC::orderBy('nama_area_pic', 'asc')->get();
 
         $res = array();
         foreach ($query as $key => $val) {
@@ -47,7 +47,7 @@ class AreaPICController extends BaseController
     }
 
     public function index() {
-        $query = AreaPIC::with('area', 'cabang', 'kel')->where('flg_aktif', 1)->get();
+        $query = AreaPIC::with('area', 'cabang', 'kel')->where('flg_aktif', 1)->orderBy('nama_area_pic', 'asc')->get();
 
         if ($query == '[]') {
             return response()->json([
@@ -201,7 +201,7 @@ class AreaPICController extends BaseController
             ], 404);
         }
 
-        AreaPIC::where('id', $id)->delete();
+        AreaPIC::where('id', $id)->update(['flg_aktif' => 0]);
 
         try {
             return response()->json([
@@ -219,7 +219,7 @@ class AreaPICController extends BaseController
     }
 
     public function search($search) {
-        $query = AreaPIC::where('flg_aktif', 1)->where('nama_area_pic', 'like', '%'.$search.'%')->get();
+        $query = AreaPIC::where('flg_aktif', 1)->where('nama_area_pic', 'like', '%'.$search.'%')->orderBy('nama_area_pic', 'asc')->get();
 
         $res = array();
         foreach ($query as $key => $val) {

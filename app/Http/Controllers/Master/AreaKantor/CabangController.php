@@ -16,7 +16,7 @@ use DB;
 class CabangController extends BaseController
 {
     public function all() {
-        $query = Cabang::get();
+        $query = Cabang::orderBy('nama', 'asc')->get();
 
         if ($query == '[]') {
             return response()->json([
@@ -59,7 +59,7 @@ class CabangController extends BaseController
     }
 
     public function index() {
-        $query = Cabang::where('flg_aktif', 1)->get();
+        $query = Cabang::where('flg_aktif', 1)->orderBy('nama', 'asc')->get();
 
         if ($query == '[]') {
             return response()->json([
@@ -221,7 +221,7 @@ class CabangController extends BaseController
             ], 404);
         }
 
-        $delCab = Cabang::where('id', $id)->delete();
+        $delCab = Cabang::where('id', $id)->update(['flg_aktif' => 0]);
 
         try {
             return response()->json([
@@ -241,6 +241,7 @@ class CabangController extends BaseController
     public function search($search) {
         $query = Cabang::where('flg_aktif', 1)
                 ->where('nama', 'like', '%'.$search.'%')
+                ->orderBy('nama', 'asc')
                 ->get();
 
         if ($query == '[]') {
