@@ -13,56 +13,23 @@ use DB;
 
 class MenuMasterController extends BaseController
 {
-    public function all() {
-        try {
-            $query = MenuMaster::orderBy('nama', 'asc')->get();
-
-            if ($query == '[]') {
-                return response()->json([
-                    "code"    => 404,
-                    "status"  => "not found",
-                    "message" => "Data kosong"
-                ], 404);
-            }
-
-            foreach ($query as $value) {
-                $data[] = [
-                    'nama'      => $value->nama,
-                    'url'       => $value->url,
-                    'icon'      => $value->icon,
-                    'flg_aktif' => $value->flg_aktif == 1 ? 'true' : 'false'
-                ];
-            }
-
-            return response()->json([
-                'code'   => 200,
-                'status' => 'success',
-                'data'   => $data
-            ], 200);
-        } catch (Exception $e) {
-            return response()->json([
-                'code'   => 501,
-                'status' => 'error',
-                'message'=> $e
-            ], 501);
-        }
-    }
-
     public function index() {
-        try {
-            $query = MenuMaster::select('id','nama','url')->where('flg_aktif', 1)->orderBy('nama', 'asc')->get();
 
-            if ($query == '[]') {
-                return response()->json([
-                    "code"    => 404,
-                    "status"  => "not found",
-                    "message" => "Data kosong"
-                ], 404);
-            }
+        $query = MenuMaster::select('id','nama','url')->where('flg_aktif', 1)->orderBy('nama', 'asc')->get();
 
+        if ($query == '[]') {
+            return response()->json([
+                "code"    => 404,
+                "status"  => "not found",
+                "message" => "Data kosong"
+            ], 404);
+        }
+
+        try{
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
+                'count'  => $query->count(),
                 'data'   => $query
             ], 200);
         } catch (Exception $e) {
@@ -162,7 +129,7 @@ class MenuMasterController extends BaseController
         }
     }
 
-    public function edit($IdOrSlug, Request $req) {
+    public function update($IdOrSlug, Request $req) {
         $query = MenuMaster::where('id', $IdOrSlug)->orWhere('url', $IdOrSlug)->first();
 
         if (!$query) {
@@ -221,6 +188,52 @@ class MenuMasterController extends BaseController
                 'code'    => 501,
                 'status'  => 'error',
                 'message' => $e
+            ], 501);
+        }
+    }
+
+    public function trash() {
+
+        $query = MenuMaster::select('id','nama','url')->where('flg_aktif', 0)->orderBy('nama', 'asc')->get();
+
+        if ($query == '[]') {
+            return response()->json([
+                "code"    => 404,
+                "status"  => "not found",
+                "message" => "Data kosong"
+            ], 404);
+        }
+
+        try{
+            return response()->json([
+                'code'   => 200,
+                'status' => 'success',
+                'count'  => $query->count(),
+                'data'   => $query
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                'code'   => 501,
+                'status' => 'error',
+                'message'=> $e
+            ], 501);
+        }
+    }
+
+    public function restore($id) {
+        $query = MenuMaster::where('id', $id)->update(['flg_aktif' => 1]);
+
+        try {
+            return response()->json([
+                'code'    => 200,
+                'status'  => 'success',
+                'message' => 'data berhasil dikembalikan'
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                "code"    => 501,
+                "status"  => "error",
+                "message" => $e
             ], 501);
         }
     }

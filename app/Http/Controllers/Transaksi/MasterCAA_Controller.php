@@ -99,6 +99,7 @@ class MasterCAA_Controller extends BaseController
             $id_komisi = explode(",", $val->so['caa']['pic_team_caa']);
 
             $check_approval = Approval::whereIn("id_pic", $id_komisi)
+                    ->where('id_trans_so', $val->id_trans_so)
                     ->select("id_pic","id","plafon","tenor","rincian", "status", "updated_at as tgl_approve")
                     ->get();
 
@@ -170,6 +171,7 @@ class MasterCAA_Controller extends BaseController
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
+                'count'  => $query->count(),
                 'data'   => $data
             ], 200);
         } catch (Exception $e) {

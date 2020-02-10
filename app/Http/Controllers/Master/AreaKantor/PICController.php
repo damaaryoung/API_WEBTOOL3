@@ -13,47 +13,6 @@ use DB;
 
 class PICController extends BaseController
 {
-    public function all() {
-        $query = PIC::with('jpic','area','cabang')->orderBy('nama', 'asc')->get();
-
-        if ($query == '[]') {
-            return response()->json([
-                'code'    => 404,
-                'status'  => 'not found',
-                'message' => 'Data kosong'
-            ], 404);
-        }
-
-        foreach ($query as $key => $val) {
-            $res[$key]= [
-                "id"          => $val->id,
-                "nama"        => $val->nama,
-                "email"       => $val->email,
-                "jenis_pic"   => $val->jpic['nama_jenis'],
-                "nama_area"   => $val->area['nama'],
-                "nama_cabang" => $val->cabang['nama'],
-                "plafon_max"  => $val->plafon_caa,
-                "flg_aktif"   => $val->flg_aktif == 1 ? "true" : "false",
-                "created_at"  => Carbon::parse($val->created_at)->format('d-m-Y H:i:s'),
-                "updated_at"  => Carbon::parse($val->updated_at)->format('d-m-Y H:i:s')
-            ];
-        }
-
-        try {
-            return response()->json([
-                'code'   => 200,
-                'status' => 'success',
-                'data'   => $res
-            ], 200);
-        } catch (Exception $e) {
-            return response()->json([
-                "code"    => 501,
-                "status"  => "error",
-                "message" => $e
-            ], 501);
-        }
-    }
-
     public function index() {
 
         $query = PIC::with('jpic','area','cabang')
@@ -93,6 +52,7 @@ class PICController extends BaseController
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
+                'count'  => $query->count(),
                 'data'   => $res
             ], 200);
         } catch (Exception $e) {
@@ -238,6 +198,74 @@ class PICController extends BaseController
                 'code'   => 501,
                 'status' => 'error',
                 'data'   => $e
+            ], 501);
+        }
+    }
+
+    public function trash() {
+        $query = PIC::with('jpic','area','cabang')
+                ->whereHas('jpic', function($q) {
+                    // Query the name field in status table
+                    $q->where('nama_jenis', 'SO'); // '=' is optional
+                    $q->orWhere('nama_jenis', 'AO');
+                    $q->orWhere('nama_jenis', 'CA');
+                })
+                ->where('flg_aktif', 0)
+                ->orderBy('nama', 'asc')
+                ->get();
+
+        if ($query == '[]'){
+            return response()->json([
+                'code'    => 404,
+                'status'  => 'not found',
+                'message' => 'Data kosong'
+            ], 404);
+        }
+
+        foreach ($query as $key => $val) {
+            $res[$key]= [
+                "id"          => $val->id,
+                "nama"        => $val->nama,
+                "email"       => $val->email,
+                "jenis_pic"   => $val->jpic['nama_jenis'],
+                "id_area"     => $val->id_area,
+                "nama_area"   => $val->area['nama'],
+                "id_cabang"   => $val->id_cabang,
+                "nama_cabang" => $val->cabang['nama'],
+                "plafon_max"  => $val->plafon_caa
+            ];
+        }
+
+        try {
+            return response()->json([
+                'code'   => 200,
+                'status' => 'success',
+                'count'  => $query->count(),
+                'data'   => $res
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                "code"    => 501,
+                "status"  => "error",
+                "message" => $e
+            ], 501);
+        }
+    }
+
+    public function restore($id) {
+        $query = PIC::where('id', $id)->update(['flg_aktif' => 1]);
+
+        try {
+            return response()->json([
+                'code'    => 200,
+                'status'  => 'success',
+                'message' => 'data berhasil dikembalikan'
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                "code"    => 501,
+                "status"  => "error",
+                "message" => $e
             ], 501);
         }
     }

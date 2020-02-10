@@ -13,45 +13,6 @@ use DB;
 
 class AreaController extends BaseController
 {
-    public function all() {
-        $query = Area::orderBy('nama', 'asc')->get();
-
-        if ($query == '[]') {
-            return response()->json([
-                'code'    => 404,
-                'status'  => 'not found',
-                'message' => 'Data kosong'
-            ], 404);
-        }
-
-        $res = array();
-        foreach ($query as $key => $val) {
-            $res[$key] = [
-                "id"             => $val->id,
-                "nama_area"      => $val->nama,
-                "nama_provinsi"  => $val->prov['nama'],
-                "nama_kabupaten" => $val->kab['nama'],
-                "flg_aktif"      => $val->flg_aktif == 1 ? "true" : "false",
-                "created_at"     => Carbon::parse($val->created_at)->format('d-m-Y H:i:s'),
-                "updated_at"     => Carbon::parse($val->updated_at)->format('d-m-Y H:i:s')
-            ];
-        }
-
-        try {
-            return response()->json([
-                'code'   => 200,
-                'status' => 'success',
-                'data'   => $res
-            ], 200);
-        } catch (Exception $e) {
-            return response()->json([
-                "code"    => 501,
-                "status"  => "error",
-                "message" => $e
-            ], 501);
-        }
-    }
-
     public function index() {
         $query = Area::where('flg_aktif', 1)->orderBy('nama', 'asc')->get();
 
@@ -77,6 +38,7 @@ class AreaController extends BaseController
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
+                'count'  => $query->count(),
                 'data'   => $res
             ], 200);
         } catch (Exception $e) {
@@ -202,6 +164,62 @@ class AreaController extends BaseController
                 'code'    => 200,
                 'status'  => 'success',
                 'message' => 'Data dengan id '.$id.' berhasil dihapus'
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                'code'   => 501,
+                'status' => 'error',
+                'data'   => $e
+            ], 501);
+        }
+    }
+
+    public function trash() {
+        $query = Area::where('flg_aktif', 0)->orderBy('nama', 'asc')->get();
+
+        if ($query == '[]') {
+            return response()->json([
+                'code'    => 404,
+                'status'  => 'not found',
+                'message' => 'Data kosong'
+            ], 404);
+        }
+
+        $res = array();
+        foreach ($query as $key => $val) {
+            $res[$key] = [
+                "id"             => $val->id,
+                "nama_area"      => $val->nama,
+                "nama_provinsi"  => $val->prov['nama'],
+                "nama_kabupaten" => $val->kab['nama'],
+                "flg_aktif"      => $val->flg_aktif == 1 ? "true" : "false"
+            ];
+        }
+
+        try {
+            return response()->json([
+                'code'    => 200,
+                'status'  => 'success',
+                'count'   => $query->count(),
+                'data'    => $res
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                'code'   => 501,
+                'status' => 'error',
+                'data'   => $e
+            ], 501);
+        }
+    }
+
+    public function restore($id) {
+        $query = Area::where('id', $id)->update(['flg_aktif' => 1]);
+
+        try {
+            return response()->json([
+                'code'    => 200,
+                'status'  => 'success',
+                'message' => 'Data berhasil dikembalikan'
             ], 200);
         } catch (Exception $e) {
             return response()->json([

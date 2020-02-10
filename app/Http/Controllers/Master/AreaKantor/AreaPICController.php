@@ -13,39 +13,6 @@ use DB;
 
 class AreaPICController extends BaseController
 {
-    public function all() {
-        $query = AreaPIC::orderBy('nama_area_pic', 'asc')->get();
-
-        $res = array();
-        foreach ($query as $key => $val) {
-            $res[$key] = [
-                'id'                => $val->id,
-                "nama_area_pic"     => $val->nama_area_pic,
-                "nama_area_kerja"   => $val->area['nama'],
-                "nama_kantor_cabang"=> $val->cabang['nama'],
-                "nama_kelurahan"    => $val->kel['nama'],
-                "kode_pos"          => $val->kel['kode_pos'],
-                "flg_aktif"         => $val->flg_aktif == 1 ? "true" : "false",
-                "created_at"        => Carbon::parse($val->created_at)->format('d-m-Y H:i:s'),
-                "updated_at"        => Carbon::parse($val->updated_at)->format('d-m-Y H:i:s')
-            ];
-        }
-
-        try {
-            return response()->json([
-                'code'   => 200,
-                'status' => 'success',
-                'data'   => $res
-            ], 200);
-        } catch (Exception $e) {
-            return response()->json([
-                "code"    => 501,
-                "status"  => "error",
-                "message" => $e
-            ], 501);
-        }
-    }
-
     public function index() {
         $query = AreaPIC::with('area', 'cabang', 'kel')->where('flg_aktif', 1)->orderBy('nama_area_pic', 'asc')->get();
 
@@ -73,6 +40,7 @@ class AreaPICController extends BaseController
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
+                'count'  => $query->count(),
                 'data'   => $res
             ], 200);
         } catch (Exception $e) {
@@ -214,6 +182,63 @@ class AreaPICController extends BaseController
                 'code'   => 501,
                 'status' => 'error',
                 'data'   => $e
+            ], 501);
+        }
+    }
+
+    public function trash() {
+        $query = AreaPIC::where('flg_aktif', 0)->orderBy('nama_area_pic', 'asc')->get();
+
+        if ($query == '[]') {
+            return response()->json([
+                'code'    => 404,
+                'status'  => 'not found',
+                'message' => 'Data kosong'
+            ], 404);
+        }
+
+        $res = array();
+        foreach ($query as $key => $val) {
+            $res[$key] = [
+                'id'                => $val->id,
+                "nama_area_pic"     => $val->nama_area_pic,
+                "nama_area_kerja"   => $val->area['nama'],
+                "nama_kantor_cabang"=> $val->cabang['nama'],
+                "nama_kelurahan"    => $val->kel['nama'],
+                "kode_pos"          => $val->kel['kode_pos']
+            ];
+        }
+
+        try {
+            return response()->json([
+                'code'   => 200,
+                'status' => 'success',
+                'count'  => $query->count(),
+                'data'   => $res
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                "code"    => 501,
+                "status"  => "error",
+                "message" => $e
+            ], 501);
+        }
+    }
+
+    public function restore($id) {
+        $query = AreaPIC::where('id', $id)->update(['flg_aktif' => 1]);
+
+        try {
+            return response()->json([
+                'code'    => 200,
+                'status'  => 'success',
+                'message' => 'data berhasil dikembalikan'
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                "code"    => 501,
+                "status"  => "error",
+                "message" => $e
             ], 501);
         }
     }

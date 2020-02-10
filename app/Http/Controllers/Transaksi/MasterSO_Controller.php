@@ -352,18 +352,25 @@ class MasterSO_Controller extends BaseController
                     "endpoint"=> "/api/master/mcc/".$check_ktp_web->id
                 ], 200);
             }
-        }else{
+        }
+        // else{
 
             $check_ktp_dpm = DB::connection("web")->table("view_nasabah")->where("NO_ID", $ktp)->first();
 
-            if ($check_ktp_dpm != null) {
-                return response()->json([
-                    "code"    => 404,
-                    "status"  => "not found",
-                    "message" => "Akun berdasarkan no ktp sudah pernah melakukan pengajuan sebelumnya"
-                ], 404);
+            // if ($check_ktp_dpm != null) {
+            //     return response()->json([
+            //         "code"    => 404,
+            //         "status"  => "not found",
+            //         "message" => "Akun berdasarkan no ktp sudah pernah melakukan pengajuan sebelumnya"
+            //     ], 404);
+            // }
+
+            if ($check_ktp_dpm == null) {
+                $NASABAH_ID = null;
+            }else{
+                $NASABAH_ID = $check_ktp_dpm->NASABAH_ID;
             }
-        }
+        // }
 
         $lamp_dir = 'public/'.$ktp;
 
@@ -466,7 +473,8 @@ class MasterSO_Controller extends BaseController
             'lamp_sertifikat'       => $sertifikatDebt,
             'lamp_sttp_pbb'         => $pbbDebt,
             'lamp_imb'              => $imbDebt,
-            'foto_agunan_rumah'     => $foto_agunan_rumah
+            'foto_agunan_rumah'     => $foto_agunan_rumah,
+            'NASABAH_ID'            => $NASABAH_ID
         );
 
         if($file = $req->file('lamp_ktp_pas')){

@@ -703,6 +703,19 @@ class MasterAO_Controller extends BaseController
         if($file = $req->file('lamp_slip_gaji')){
             // foreach ($files as $file) {
                 $path = $lamp_dir.'/debitur';
+
+                $extention = $file->getClientOriginalExtension();
+
+                // $exIdeb = $file->getClientMimeType();
+
+                if ($extention != 'jpg' && $extention != 'jpeg' && $extention != 'png' && $extention != 'pdf') {
+                    return response()->json([
+                        "code"    => 422,
+                        "status"  => "not valid request",
+                        "message" => "file harus berupa format berikut: jpg, jpeg, png, pdf"
+                    ], 422);
+                }
+
                 $name = 'lamp_slip_gaji.'.$file->getClientOriginalName();
 
                 $file->move($path,$name);

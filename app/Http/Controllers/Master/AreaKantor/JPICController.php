@@ -27,6 +27,7 @@ class JPICController extends BaseController
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
+                'count'  => $query->count(),
                 'data'   => $query
             ], 200);
         } catch (Exception $e) {
@@ -41,7 +42,9 @@ class JPICController extends BaseController
     public function store(JenisPICReq $req) {
         $data = array(
             'nama_jenis' => $req->input('nama_jenis'),
-            'keterangan' => $req->input('keterangan')
+            'cakupan'    => $req->input('cakupan'), // Schope
+            'keterangan' => $req->input('keterangan'),
+            'bagian'     => $req->input('bagian')
         );
 
         JPIC::create($data);
@@ -108,7 +111,9 @@ class JPICController extends BaseController
 
         $data = array(
             'nama_jenis' => empty($req->input('nama_jenis')) ? $check->nama_jenis : $req->input('nama_jenis'),
-            'keterangan' => empty($req->input('keterangan')) ? $check->keterangan : $req->input('keterangan')
+            'cakupan'    => empty($req->input('cakupan')) ? $check->cakupan : $req->input('cakupan'), // Schope
+            'keterangan' => empty($req->input('keterangan')) ? $check->keterangan : $req->input('keterangan'),
+            'bagian'     => empty($req->input('bagian')) ? $check->bagian : $req->input('bagian')
         );
 
         JPIC::where('id', $id)->update($data);
@@ -152,6 +157,51 @@ class JPICController extends BaseController
                 'code'   => 501,
                 'status' => 'error',
                 'data'   => $e
+            ], 501);
+        }
+    }
+
+    public function trash(){
+        $query = JPIC::select('id', 'nama_jenis','keterangan')->orderBy('nama_jenis', 'asc')->onlyTrashed()->get();
+
+        if ($query == '[]') {
+            return response()->json([
+                'code'    => 404,
+                'status'  => 'not found',
+                'message' => 'Data kosong'
+            ], 404);
+        }
+
+        try {
+            return response()->json([
+                'code'   => 200,
+                'status' => 'success',
+                'count'  => $query->count(),
+                'data'   => $query
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                "code"    => 501,
+                "status"  => "error",
+                "message" => $e
+            ], 501);
+        }
+    }
+
+    public function restore($id){
+        $query = JPIC::onlyTrashed()->where('id',$id)->restore();
+
+        try {
+            return response()->json([
+                'code'   => 200,
+                'status' => 'success',
+                'data'   => 'Data berhasil dikembalikan ke daftar'
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                "code"    => 501,
+                "status"  => "error",
+                "message" => $e
             ], 501);
         }
     }

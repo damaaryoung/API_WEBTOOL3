@@ -105,7 +105,7 @@ class BlankRequest extends FormRequest
                 'lamp_ktp'              => 'mimes:jpg,jpeg,png,pdf|max:2048',
                 'lamp_kk'               => 'mimes:jpg,jpeg,png,pdf|max:2048',
                 'lamp_sku.*'            => 'mimes:jpg,jpeg,png,pdf|max:2048',
-                'lamp_slip_gaji'        => 'mimes:jpg,jpeg,png,pdf|max:2048',
+                // 'lamp_slip_gaji'        => 'mimes:jpg,jpeg,png,pdf|max:2048',
                 'lamp_foto_usaha.*'     => 'mimes:jpg,jpeg,png,pdf|max:2048',
 
                 // Pasangan
@@ -466,14 +466,14 @@ class BlankRequest extends FormRequest
             'lamp_ktp.mimes'                 => $mimes,
             'lamp_kk.mimes'                  => $mimes,
             'lamp_sku.mimes'                 => $mimes,
-            'lamp_slip_gaji.mimes'           => $mimes,
+            // 'lamp_slip_gaji.mimes'           => $mimes,
             'lamp_foto_usaha.mimes'          => $mimes,
             'lamp_surat_cerai.max'           => $max,
             'lamp_buku_tabungan.*.max'       => $max,
             'lamp_ktp.max'                   => $max,
             'lamp_kk.max'                    => $max,
             'lamp_sku.max.*'                 => $max,
-            'lamp_slip_gaji.max'             => $max,
+            // 'lamp_slip_gaji.max'             => $max,
             'lamp_foto_usaha.*.max'          => $max,
 
             // Pasangan
