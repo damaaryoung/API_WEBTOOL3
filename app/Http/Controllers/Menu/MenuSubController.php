@@ -37,6 +37,7 @@ class MenuSubController extends BaseController
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
+                'count'  => $query->count(),
                 'data'   => $res
             ], 200);
         } catch (Exception $e) {
@@ -131,6 +132,34 @@ class MenuSubController extends BaseController
         }
     }
 
+    public function delete($IdOrSlug) {
+        $check = MenuSub::where('id', $IdOrSlug)->orWhere('url', $IdOrSlug)->first();
+
+        if (!$check) {
+            return response()->json([
+                'code'    => 404,
+                'status'  => 'Not Found',
+                'message' => 'Data tidak ada'
+            ], 404);
+        }
+
+        MenuSub::where('id', $IdOrSlug)->orWhere('url', $IdOrSlug)->update(['flg_aktif' => 0]);
+
+        try {
+            return response()->json([
+                'code'   => 200,
+                'status' => 'success',
+                'message'=> 'Data dengan URL(IdOrSlug) '.$IdOrSlug.', berhasil dihapus'
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                'code'    => 501,
+                'status'  => 'error',
+                'message' => $e
+            ], 501);
+        }
+    }
+
     public function trash() {
 
         $query = MenuSub::with('menu_master')->select('id','nama','url', 'id_menu_master')->where('flg_aktif', 0)->orderBy('nama', 'asc')->get();
@@ -152,12 +181,13 @@ class MenuSubController extends BaseController
             ];
         }
 
-        try{
+        try {
+
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
                 'count'  => $query->count(),
-                'data'   => $query
+                'data'   => $res
             ], 200);
         } catch (Exception $e) {
             return response()->json([

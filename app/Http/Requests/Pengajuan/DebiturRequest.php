@@ -23,94 +23,65 @@ class DebiturRequest extends FormRequest
     {
         $single = $request->segment(3);
 
-        if (!empty($single)) {
-            $check = Debitur::where('id', $single)->first();
 
-            if ($check != null) {
-                if ($check->id_calon_debt != null) {
-                    $rules['no_ktp']    = 'digits:16|unique:web.calon_debitur,no_ktp,'.$check->id_calon_debt;
-                    $rules['no_ktp_kk'] = 'digits:16|unique:web.calon_debitur,no_ktp_kk,'.$check->id_calon_debt;
-                    $rules['no_kk']     = 'digits:16|unique:web.calon_debitur,no_kk,'.$check->id_calon_debt;
-                    $rules['no_npwp']   = 'digits:15|unique:web.calon_debitur,no_npwp,'.$check->id_calon_debt;
-                    $rules['no_telp']   = 'between:11,13|unique:web.calon_debitur,no_telp,'.$check->id_calon_debt;
-                    $rules['no_hp']     = 'between:11,13|unique:web.calon_debitur,no_hp,'.$check->id_calon_debt;
-                }
+        $check = Debitur::where('id', $single)->first();
+
+        if ($check != null) {
+            if ($check->id_calon_debt != null) {
+                $rules['no_ktp']    = 'digits:16|unique:web.calon_debitur,no_ktp,'.$check->id_calon_debt;
+                $rules['no_ktp_kk'] = 'digits:16|unique:web.calon_debitur,no_ktp_kk,'.$check->id_calon_debt;
+                $rules['no_kk']     = 'digits:16|unique:web.calon_debitur,no_kk,'.$check->id_calon_debt;
+                $rules['no_npwp']   = 'digits:15|unique:web.calon_debitur,no_npwp,'.$check->id_calon_debt;
+                $rules['no_telp']   = 'between:11,13|unique:web.calon_debitur,no_telp,'.$check->id_calon_debt;
+                $rules['no_hp']     = 'between:11,13|unique:web.calon_debitur,no_hp,'.$check->id_calon_debt;
             }
-
-            $rules = [
-                // Debitur
-                'jenis_kelamin'         => 'in:L,P',
-                'status_nikah'          => 'in:SINGLE,NIKAH,CERAI',
-                'tgl_lahir'             => 'date_format:d-m-Y',
-                'agama'                 => 'in:ISLAM,KRISTEN,KHATOLIK,HINDU,BUDHA',
-                'rt_ktp'                => 'numeric',
-                'rw_ktp'                => 'numeric',
-                'id_provinsi_ktp'       => 'numeric',
-                'id_kabupaten_ktp'      => 'numeric',
-                'id_kecamatan_ktp'      => 'numeric',
-                'id_kelurahan_ktp'      => 'numeric',
-                'rt_domisili'           => 'numeric',
-                'rw_domisili'           => 'numeric',
-                'id_provinsi_domisili'  => 'numeric',
-                'id_kabupaten_domisili' => 'numeric',
-                'id_kecamatan_domisili' => 'numeric',
-                'id_kelurahan_domisili' => 'numeric',
-                'jumlah_tanggungan'     => 'numeric',
-                'tgl_lahir_anak.*'      => 'date_format:d-m-Y',
-                'tinggi_badan'          => 'numeric',
-                'berat_badan'           => 'numeric',
-                'pekerjaan'             => 'in:KARYAWAN,PNS,WIRASWASTA,PENGURUS_RT',
-                'id_prov_tempat_kerja'  => 'numeric',
-                'id_kab_tempat_kerja'   => 'numeric',
-                'id_kec_tempat_kerja'   => 'numeric',
-                'id_kel_tempat_kerja'   => 'numeric',
-                'rt_tempat_kerja'       => 'numeric',
-                'rw_tempat_kerja'       => 'numeric',
-                // 'tgl_mulai_kerja'       => 'date_format:d-m-Y',
-                'no_telp_tempat_kerja'  => 'numeric',
-                'lamp_surat_cerai'      => 'mimes:jpg,jpeg,png,pdf|max:2048',
-                'lamp_buku_tabungan'    => 'mimes:jpg,jpeg,png,pdf|max:2048',
-                'lamp_ktp'              => 'mimes:jpg,jpeg,png,pdf|max:2048',
-                'lamp_kk'               => 'mimes:jpg,jpeg,png,pdf|max:2048',
-                'lamp_sku'              => 'mimes:jpg,jpeg,png,pdf|max:2048',
-                'lamp_slip_gaji'        => 'mimes:jpg,jpeg,png,pdf|max:2048',
-                'lamp_foto_usaha'       => 'mimes:jpg,jpeg,png,pdf|max:2048'
-            ];
-        }else{
-            $rules = [
-                // Debitur
-                'jenis_kelamin'         => 'required|in:L,P',
-                'status_nikah'          => 'required|in:SINGLE,NIKAH,CERAI',
-                'no_ktp'                => 'required|digits:16|unique:web.calon_debitur,no_ktp',
-                'no_ktp_kk'             => 'required|digits:16|unique:web.calon_debitur,no_ktp_kk',
-                'no_kk'                 => 'required|digits:16|unique:web.calon_debitur,no_kk',
-                'no_npwp'               => 'required|digits:15|unique:web.calon_debitur,no_npwp',
-                'tgl_lahir'             => 'required|date_format:d-m-Y',
-                'agama'                 => 'required|in:ISLAM,KRISTEN,KHATOLIK,HINDU,BUDHA',
-                'rt_ktp'                => 'required|numeric',
-                'rw_ktp'                => 'required|numeric',
-                'id_provinsi_ktp'       => 'required|numeric',
-                'id_kabupaten_ktp'      => 'required|numeric',
-                'id_kecamatan_ktp'      => 'required|numeric',
-                'id_kelurahan_ktp'      => 'required|numeric',
-                'rt_domisili'           => 'required|numeric',
-                'rw_domisili'           => 'required|numeric',
-                'id_provinsi_domisili'  => 'required|numeric',
-                'id_kabupaten_domisili' => 'required|numeric',
-                'id_kecamatan_domisili' => 'required|numeric',
-                'id_kelurahan_domisili' => 'required|numeric',
-                'jumlah_tanggungan'     => 'numeric',
-                'no_telp'               => 'between:11,13|unique:web.calon_debitur,no_telp',
-                'no_hp'                 => 'between:11,13|unique:web.calon_debitur,no_hp',
-                'lamp_ktp'              => 'mimes:jpg,jpeg,png,pdf|max:2048',
-                'lamp_kk'               => 'mimes:jpg,jpeg,png,pdf|max:2048',
-                'lamp_surat_cerai'      => 'mimes:jpg,jpeg,png,pdf|max:2048',
-                'lamp_buku_tabungan'    => 'mimes:jpg,jpeg,png,pdf|max:2048',
-                'lamp_sertifikat'       => 'mimes:jpg,jpeg,png,pdf|max:2048',
-                'lamp_sttp_pbb'         => 'mimes:jpg,jpeg,png,pdf|max:2048',
-                'lamp_imb'              => 'mimes:jpg,jpeg,png,pdf|max:2048'
-            ];
         }
+
+        $rules = [
+            // Debitur
+            'jenis_kelamin'         => 'in:L,P',
+            'status_nikah'          => 'in:SINGLE,NIKAH,CERAI',
+            'tgl_lahir'             => 'date_format:d-m-Y',
+            // 'agama'                 => 'in:ISLAM,KRISTEN,KHATOLIK,HINDU,BUDHA',
+            'rt_ktp'                => 'numeric',
+            'rw_ktp'                => 'numeric',
+            'id_provinsi_ktp'       => 'numeric',
+            'id_kabupaten_ktp'      => 'numeric',
+            'id_kecamatan_ktp'      => 'numeric',
+            'id_kelurahan_ktp'      => 'numeric',
+            'rt_domisili'           => 'numeric',
+            'rw_domisili'           => 'numeric',
+            'id_provinsi_domisili'  => 'numeric',
+            'id_kabupaten_domisili' => 'numeric',
+            'id_kecamatan_domisili' => 'numeric',
+            'id_kelurahan_domisili' => 'numeric',
+            'jumlah_tanggungan'     => 'numeric',
+            'tgl_lahir_anak.*'      => 'date_format:d-m-Y',
+            'tinggi_badan'          => 'numeric',
+            'berat_badan'           => 'numeric',
+            'pekerjaan'             => 'in:KARYAWAN,PNS,WIRASWASTA,PENGURUS_RT',
+            'id_prov_tempat_kerja'  => 'numeric',
+            'id_kab_tempat_kerja'   => 'numeric',
+            'id_kec_tempat_kerja'   => 'numeric',
+            'id_kel_tempat_kerja'   => 'numeric',
+            'rt_tempat_kerja'       => 'numeric',
+            'rw_tempat_kerja'       => 'numeric',
+            // 'tgl_mulai_kerja'       => 'date_format:d-m-Y',
+            'no_telp_tempat_kerja'  => 'numeric',
+
+            'lamp_ktp'              => 'mimes:jpg,jpeg,png,pdf|max:2048',
+            'lamp_kk'               => 'mimes:jpg,jpeg,png,pdf|max:2048',
+            'lamp_surat_cerai'      => 'mimes:jpg,jpeg,png,pdf|max:2048',
+            'lamp_sttp_pbb'         => 'mimes:jpg,jpeg,png,pdf|max:2048',
+            'lamp_sertifikat'       => 'mimes:jpg,jpeg,png,pdf|max:2048',
+            'lamp_imb'              => 'mimes:jpg,jpeg,png,pdf|max:2048',
+            'lamp_buku_tabungan.*'  => 'mimes:jpg,jpeg,png,pdf|max:2048',
+            'lamp_sku.*'            => 'mimes:jpg,jpeg,png,pdf|max:2048',
+            'lamp_slip_gaji'        => 'mimes:jpg,jpeg,png,pdf|max:2048',
+            'lamp_foto_usaha.*'     => 'mimes:jpg,jpeg,png,pdf|max:2048',
+            'lamp_skk'              => 'mimes:jpg,jpeg,png,pdf|max:2048',
+            'foto_pembukuan_usaha.*'=> 'mimes:jpg,jpeg,png,pdf|max:2048',
+        ];
 
         return $rules;
     }
@@ -154,7 +125,7 @@ class DebiturRequest extends FormRequest
             'no_npwp.digits'                 => ':attribute harus berupa angka dan berjumlah :digits digit',
             'no_npwp.unique'                 => ':attribute telah ada yang menggunakan',
             'tgl_lahir.date_format'          => ':attribute harus berupa angka dengan format :format',
-            'agama.in'                       => ':attribute harus salah satu dari jenis berikut :values',
+            // 'agama.in'                       => ':attribute harus salah satu dari jenis berikut :values',
             'rt_ktp.numeric'                 => ':attribute harus berupa angka',
             'rw_ktp.numeric'                 => ':attribute harus berupa angka',
             'id_provinsi_ktp.numeric'        => ':attribute harus berupa angka',

@@ -232,6 +232,7 @@ class Approval_Controller extends BaseController
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
+                'count'  => $query->count(),
                 'data'   => $data
             ], 200);
         } catch (Exception $e) {
@@ -436,7 +437,7 @@ class Approval_Controller extends BaseController
                 'user_id' => $val->user_id == null ? null : (int) $val->user_id,
                 'nama_pic'=> $val->pic['nama'],
                 'plafon'  => (int) $val->plafon,
-                'tenor'   => (int) $val->plafon,
+                'tenor'   => (int) $val->tenor,
                 'status'  => $val->status,
                 'rincian' => $val->rincian
             ];
@@ -483,8 +484,8 @@ class Approval_Controller extends BaseController
                 'id_pic'  => $check_ca->id_pic == null ? null : (int) $check_ca->id_pic,
                 'user_id' => $check_ca->user_id == null ? null : (int) $check_ca->user_id,
                 'nama_ca' => $check_ca->pic['nama'],
-                'tenor'   => (int) $tenor,
                 'plafon'  => (int) $plafon,
+                'tenor'   => (int) $tenor,
                 'jaminan' => $imTan
             ],
             'list_approver' => $data

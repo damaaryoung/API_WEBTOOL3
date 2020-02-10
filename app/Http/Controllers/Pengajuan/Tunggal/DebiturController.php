@@ -44,10 +44,10 @@ class DebiturController extends BaseController
             'ibu_kandung'           => $val->ibu_kandung,
             'tinggi_badan'          => $val->tinggi_badan,
             'berat_badan'           => $val->berat_badan,
-            'no_ktp'                => $val->no_ktp    == null ? null : (int) $val->no_ktp,
-            'no_ktp_kk'             => $val->no_ktp_kk == null ? null : (int) $val->no_ktp_kk,
-            'no_kk'                 => $val->no_kk     == null ? null : (int) $val->no_kk,
-            'no_npwp'               => $val->no_npwp   == null ? null : (int) $val->no_npwp,
+            'no_ktp'                => $val->no_ktp,
+            'no_ktp_kk'             => $val->no_ktp_kk,
+            'no_kk'                 => $val->no_kk,
+            'no_npwp'               => $val->no_npwp,
             'tempat_lahir'          => $val->tempat_lahir,
             'tgl_lahir'             => Carbon::parse($val->tgl_lahir)->format('d-m-Y'),
             'agama'                 => $val->agama,
@@ -127,8 +127,8 @@ class DebiturController extends BaseController
             ],
             'pendidikan_terakhir'   => $val->pendidikan_terakhir,
             'jumlah_tanggungan'     => $val->jumlah_tanggungan,
-            'no_telp'               => $val->no_telp == null ? null : (int) $val->no_telp,
-            'no_hp'                 => $val->no_hp   == null ? null : (int) $val->no_hp,
+            'no_telp'               => $val->no_telp,
+            'no_hp'                 => $val->no_hp,
             'alamat_surat'          => $val->alamat_surat,
             'lampiran' => [
                 'lamp_ktp'              => $val->lamp_ktp,
@@ -180,7 +180,9 @@ class DebiturController extends BaseController
         $lamp_dir = 'public/' . $so->debt['no_ktp'];
 
         // Lampiran Debitur
-        if($file = $req->file('lamp_ktp')){
+        if($req->file('lamp_ktp') != null){
+            $file = $req->file('lamp_ktp');
+
             $path = $lamp_dir.'/debitur';
             $name = 'ktp.'.$file->getClientOriginalName();
 
@@ -197,7 +199,9 @@ class DebiturController extends BaseController
         }
 
 
-        if($file = $req->file('lamp_kk')){
+        if($req->file('lamp_kk') != null){
+            $file = $req->file('lamp_kk');
+
             $path = $lamp_dir.'/debitur';
             $name = 'kk.'.$file->getClientOriginalName();
 
@@ -213,7 +217,9 @@ class DebiturController extends BaseController
             $kkDebt = $check->lamp_kk;
         }
 
-        if($file = $req->file('lamp_sertifikat')){
+        if($req->file('lamp_sertifikat') != null){
+            $file = $req->file('lamp_sertifikat');
+
             $path = $lamp_dir.'/debitur';
             $name = 'sertifikat.'.$file->getClientOriginalName();
 
@@ -229,7 +235,9 @@ class DebiturController extends BaseController
             $sertifikatDebt = $check->lamp_sertifikat;
         }
 
-        if($file = $req->file('lamp_pbb')){
+        if($req->file('lamp_pbb') != null){
+            $file = $req->file('lamp_pbb');
+
             $path = $lamp_dir.'/debitur';
             $name = 'pbb.'.$file->getClientOriginalName();
 
@@ -245,7 +253,9 @@ class DebiturController extends BaseController
             $pbbDebt = $check->lamp_pbb;
         }
 
-        if($file = $req->file('lamp_imb')){
+        if($req->file('lamp_imb') != null){
+            $file = $req->file('lamp_imb');
+
             $path = $lamp_dir.'/debitur';
             $name = 'imb.'.$file->getClientOriginalName();
 
@@ -259,70 +269,6 @@ class DebiturController extends BaseController
             $imbDebt = $path.'/'.$name;
         }else{
             $imbDebt = $check->lamp_imb;
-        }
-
-        if($file = $req->file('lamp_buku_tabungan')){
-            $path = $lamp_dir.'/debitur';
-            $name = 'buku_tabungan.'.$file->getClientOriginalName();
-
-            if(!empty($check->lamp_buku_tabungan))
-            {
-                File::delete($check->lamp_buku_tabungan);
-            }
-
-            $file->move($path,$name);
-
-            $tabungan = $path.'/'.$name;
-        }else{
-            $tabungan = $check->lamp_buku_tabungan;
-        }
-
-        if($file = $req->file('lamp_sku')){
-            $path = $lamp_dir.'/debitur';
-            $name = 'sku.'.$file->getClientOriginalName();
-
-            if(!empty($check->lamp_sku))
-            {
-                File::delete($check->lamp_sku);
-            }
-
-            $file->move($path,$name);
-
-            $sku = $path.'/'.$name;
-        }else{
-            $sku = $check->lamp_sku;
-        }
-
-        if($file = $req->file('lamp_slip_gaji')){
-            $path = $lamp_dir.'/debitur';
-            $name = 'slip_gaji.'.$file->getClientOriginalName();
-
-            if(!empty($check->lamp_slip_gaji))
-            {
-                File::delete($check->lamp_slip_gaji);
-            }
-
-            $file->move($path,$name);
-
-            $slipGaji = $path.'/'.$name;
-        }else{
-            $slipGaji = $check->lamp_slip_gaji;
-        }
-
-        if($file = $req->file('lamp_foto_usaha')){
-            $path = $lamp_dir.'/debitur';
-            $name = 'tempat_usaha.'.$file->getClientOriginalName();
-
-            if(!empty($check->lamp_foto_usaha))
-            {
-                File::delete($check->lamp_foto_usaha);
-            }
-
-            $file->move($path,$name);
-
-            $fotoUsaha = $path.'/'.$name;
-        }else{
-            $fotoUsaha = $check->lamp_foto_usaha;
         }
 
         if(empty($req->input('nama_anak'))){
@@ -339,13 +285,15 @@ class DebiturController extends BaseController
             $tgl_lhr_anak = implode(",", $tglLahirAnak);
         }
 
-        if($file = $req->file('foto_agunan_rumah')){
+        if($req->file('foto_agunan_rumah') != null){
+            $file = $req->file('foto_agunan_rumah');
+
             $path = $lamp_dir.'/debitur';
             $name = 'foto_agunan_rumah.'.$file->getClientOriginalName();
 
-            if(!empty($check->lamp_foto_usaha))
+            if(!empty($check->foto_agunan_rumah))
             {
-                File::delete($check->lamp_foto_usaha);
+                File::delete($check->foto_agunan_rumah);
             }
 
             $file->move($path,$name);
@@ -357,7 +305,11 @@ class DebiturController extends BaseController
 
         // New UIT 2
         // Lampiran Untuk Debitur
-        if ($files = $req->file('lamp_buku_tabungan')) {
+        if ($req->file('lamp_buku_tabungan') != null) {
+
+            $files = $req->file('lamp_buku_tabungan');
+
+            $buku_tabungan = array();
             foreach($files as $file){
                 $path = $lamp_dir.'/lamp_buku_tabungan';
                 $name = 'lamp_buku_tabungan.' . $file->getClientOriginalName();
@@ -371,10 +323,12 @@ class DebiturController extends BaseController
             $lamp_buku_tabungan = implode(";",$buku_tabungan);
 
         }else{
-            $lamp_buku_tabungan = $check->debt['lamp_buku_tabungan'];
+            $lamp_buku_tabungan = $check->lamp_buku_tabungan;
         }
 
-        if($files = $req->file('lamp_skk')){
+        if($req->file('lamp_skk') != null){
+            $file = $req->file('lamp_skk');
+
             $path = $lamp_dir.'/debitur';
             $name = 'lamp_skk.'.$file->getClientOriginalName();
 
@@ -382,10 +336,13 @@ class DebiturController extends BaseController
 
             $lamp_skk = $path.'/'.$name;
         }else{
-            $lamp_skk = $check->debt['lamp_skk'];
+            $lamp_skk = $check->lamp_skk;
         }
 
-        if($files = $req->file('lamp_sku')){
+        if($req->file('lamp_sku') != null){
+            $files = $req->file('lamp_sku');
+
+            $sku = array();
             foreach ($files as $file) {
                 $path = $lamp_dir.'/debitur';
                 $name = 'lamp_sku.'.$file->getClientOriginalName();
@@ -399,26 +356,28 @@ class DebiturController extends BaseController
             $lamp_sku = implode(";",$sku);
 
         }else{
-            $lamp_sku = $check->debt['lamp_sku'];
+            $lamp_sku = $check->lamp_sku;
         }
 
-        if($file = $req->file('lamp_slip_gaji')){
-            // foreach ($files as $file) {
-                $path = $lamp_dir.'/debitur';
-                $name = 'lamp_slip_gaji.'.$file->getClientOriginalName();
+        if($req->file('lamp_slip_gaji') != null){
+            $file = $req->file('lamp_slip_gaji');
 
-                $file->move($path,$name);
+            $path = $lamp_dir.'/debitur';
+            $name = 'lamp_slip_gaji.'.$file->getClientOriginalName(); //->getClientOriginalExtension();
 
-                $slip_gaji[] = $path.'/'.$name;
+            $file->move($path, $name);
 
-                $lamp_slip_gaji = implode(";",$slip_gaji);
-            // }
+            $lamp_slip_gaji = $path.'/'.$name;
+
         }else{
-            $lamp_slip_gaji = $check->debt['lamp_slip_gaji'];
+            $lamp_slip_gaji = $check->lamp_slip_gaji;
         }
 
 
-        if($files = $req->file('foto_pembukuan_usaha')){
+        if($req->file('foto_pembukuan_usaha') != null){
+            $files = $req->file('foto_pembukuan_usaha');
+
+            $pembukuan_usaha = array();
             foreach ($files as $file) {
                 $path = $lamp_dir.'/debitur';
                 $name = 'foto_pembukuan_usaha.'.$file->getClientOriginalName();
@@ -431,24 +390,26 @@ class DebiturController extends BaseController
             $foto_pembukuan_usaha = implode(";",$pembukuan_usaha);
 
         }else{
-            $foto_pembukuan_usaha = $check->debt['foto_pembukuan_usaha'];
+            $foto_pembukuan_usaha = $check->foto_pembukuan_usaha;
         }
 
-        if($files = $req->file('lamp_foto_usaha')){
+        if($req->file('lamp_foto_usaha') != null){
+            $files = $req->file('lamp_foto_usaha');
+
+            $foto_usaha = array();
             foreach ($files as $file) {
                 $path = $lamp_dir.'/debitur';
                 $name = 'lamp_foto_usaha.'.$file->getClientOriginalName();
 
                 $file->move($path,$name);
 
-                $foto_usaha = $path.'/'.$name;
-
+                $foto_usaha[] = $path.'/'.$name;
             }
 
             $lamp_foto_usaha = implode(";",$foto_usaha);
 
         }else{
-            $lamp_foto_usaha = $check->debt['lamp_foto_usaha'];
+            $lamp_foto_usaha = $check->lamp_foto_usaha;
         }
 
 
@@ -513,11 +474,6 @@ class DebiturController extends BaseController
             'lamp_sertifikat'       => $sertifikatDebt,
             'lamp_sttp_pbb'         => $pbbDebt,
             'lamp_imb'              => $imbDebt,
-
-            'lamp_buku_tabungan'    => $tabungan,
-            'lamp_sku'              => $sku,
-            'lamp_slip_gaji'        => $slipGaji,
-            'lamp_foto_usaha'       => $fotoUsaha,
 
             // New UIT 2
             'lamp_buku_tabungan'    => $lamp_buku_tabungan,

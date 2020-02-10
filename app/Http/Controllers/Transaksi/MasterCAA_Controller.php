@@ -1024,4 +1024,175 @@ class MasterCAA_Controller extends BaseController
             ], 501);
         }
     }
+
+    public function filter($year, $month, Request $req){
+        $user_id  = $req->auth->user_id;
+
+        $pic = PIC::where('user_id', $user_id)->first();
+
+        if ($pic == null) {
+            return response()->json([
+                "code"    => 404,
+                "status"  => "not found",
+                "message" => "User_ID anda adalah '".$user_id."' dengan username '".$req->auth->user."' . Namun anda belum terdaftar sebagai PIC(CAA). Harap daftarkan diri sebagai PIC(CAA) pada form PIC atau hubungi bagian IT"
+            ], 404);
+        }
+
+        $id_area   = $pic->id_area;
+        $id_cabang = $pic->id_cabang;
+        $scope     = $pic->jpic['cakupan'];
+
+        if ($month == null) {
+            $query_dir = TransCA::with('so', 'pic', 'cabang')->where('status_ca', 1)
+                    ->orderBy('created_at', 'desc')
+                    ->whereYear('created_at', '=', $year);
+        }else{
+
+            $query_dir = TransCA::with('so', 'pic', 'cabang')->where('status_ca', 1)
+                    ->orderBy('created_at', 'desc')
+                    ->whereYear('created_at', '=', $year)
+                    ->whereMonth('created_at', '=', $month);
+        }
+
+        $method = 'get';
+
+        $query = Helper::checkDir($user_id, $scope, $query_dir, $id_area, $id_cabang, $method);
+
+        if ($query == '[]') {
+            return response()->json([
+                'code'    => 404,
+                'status'  => 'not found',
+                'message' => 'Data kosong'
+            ], 404);
+        }
+
+        foreach ($query as $key => $val) {
+
+            if ($val->status_ca == 1) {
+                $status_ca = 'recommend';
+            }elseif($val->status_ca == 2){
+                $status_ca = 'not recommend';
+            }else{
+                $status_ca = 'waiting';
+            }
+
+            if($val->so['caa']['status_caa'] == 0){
+                $status_caa = 'waiting';
+            }elseif ($val->so['caa']['status_caa'] == 1) {
+                $status_caa = 'recommend';
+            }elseif($val->so['caa']['status_caa'] == 2){
+                $status_caa = 'not recommend';
+            }elseif ($val->so['caa']['status_caa'] == null || $val->so['caa']['status_caa'] == "") {
+                $status_caa = 'null';
+            }
+
+            $id_agu_ta = explode (",",$val->so['ao']['id_agunan_tanah']);
+            $AguTa = AgunanTanah::whereIn('id', $id_agu_ta)->get();
+
+            $Tan = array();
+            foreach ($AguTa as $key => $value) {
+                $Tan[$key] = array(
+                    'id'    => $id_agu_ta[$key] == null ? null : (int) $id_agu_ta[$key],
+                    'jenis' => $value->jenis_sertifikat
+                );
+            }
+
+            $id_agu_ke = explode (",",$val->so['ao']['id_agunan_kendaraan']);
+            $AguKe = AgunanKendaraan::whereIn('id', $id_agu_ke)->get();
+
+            $Ken = array();
+            foreach ($AguKe as $key => $value) {
+                $Ken[$key] = array(
+                    'id'    => $id_agu_ke[$key] == null ? null : (int) $id_agu_ke[$key],
+                    'jenis' => $value->jenis
+                );
+            }
+
+            // Check Approval
+            $id_komisi = explode(",", $val->so['caa']['pic_team_caa']);
+
+            $check_approval = Approval::whereIn("id_pic", $id_komisi)
+                    ->where('id_trans_so', $val->id_trans_so)
+                    ->select("id_pic","id","plafon","tenor","rincian", "status", "updated_at as tgl_approve")
+                    ->get();
+
+            $Appro = array();
+            foreach ($check_approval as $key => $cap) {
+                $Appro[$key] = array(
+                    "id_pic"      => $cap->id_pic,
+                    "jabatan"     => $cap->pic['jpic']['nama_jenis'],
+                    "id_approval" => $cap->id,
+                    "plafon"      => $cap->plafon,
+                    "tenor"       => $cap->tenor,
+                    "rincian"     => $cap->rincian,
+                    "status"      => $cap->status,
+                    "tgl_approve" => $cap->updated_at
+                );
+            }
+
+            $rekomendasi_ao = array(
+                'id'               => $val->so['ao']['id_recom_ao'] == null ? null : (int) $val->so['ao']['id_recom_ao'],
+                'produk'           => $val->so['ao']['recom_ao']['produk'],
+                'plafon'           => (int) $val->so['ao']['recom_ao']['plafon_kredit'],
+                'tenor'            => (int) $val->so['ao']['recom_ao']['jangka_waktu'],
+                'suku_bunga'       => floatval($val->so['ao']['recom_ao']['suku_bunga']),
+                'pembayaran_bunga' => (int) $val->so['ao']['recom_ao']['pembayaran_bunga']
+            );
+
+            $rekomendasi_ca = array(
+                'id'                   => $val->so['ca']['id_recom_ca'] == null ? null : (int) $val->so['ca']['id_recom_ca'],
+                'produk'               => $val->so['ca']['recom_ca']['produk'],
+                'plafon'               => (int) $val->recom_ca['plafon_kredit'],
+                'tenor'                => (int) $val->recom_ca['jangka_waktu'],
+                'suku_bunga'           => floatval($val->recom_ca['suku_bunga']),
+                'pembayaran_bunga'     => (int) $val->recom_ca['pembayaran_bunga'],
+                'rekomendasi_angsuran' => (int) $val->recom_ca['rekom_angsuran']
+            );
+
+            $data[] = [
+                'id_trans_so'    => $val->id_trans_so == null ? null : (int) $val->id_trans_so,
+                'nomor_so'       => $val->so['nomor_so'],
+
+                'nomor_ao'       => $val->so['ao']['nomor_ao'],
+                'nomor_ca'       => $val->nomor_ca,
+                'nomor_caa'      => $val->so['caa']['nomor_caa'],
+
+                'pic'            => $val->pic['nama'],
+                'area'           => $val->area['nama'],
+                'cabang'         => $val->cabang['nama'],
+                'asal_data'      => $val->so['asaldata']['nama'],
+                'nama_marketing' => $val->so['nama_marketing'],
+                'pengajuan' => [
+                    'plafon' => (int) $val->so['faspin']['plafon'],
+                    'tenor'  => (int) $val->so['faspin']['tenor']
+                ],
+                'rekomendasi_ao' => $rekomendasi_ao,
+                'rekomendasi_ca' => $rekomendasi_ca,
+                'nama_debitur'   => $val->so['debt']['nama_lengkap'],
+                'agunan' => [
+                    'tanah'     => $Tan,
+                    'kendaraan' => $Ken
+                ],
+                'status_ca'     => $status_ca,
+                'status_caa'    => $status_caa,
+                'tgl_transaksi' => Carbon::parse($val->created_at)->format("d-m-Y H:i:s"),
+                'approval'      => $Appro
+            ];
+        }
+
+        try {
+            return response()->json([
+                'code'   => 200,
+                'status' => 'success',
+                'count'  => $query->count(),
+                'data'   => $data
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                "code"    => 501,
+                "status"  => "error",
+                "message" => $e
+            ], 501);
+        }
+    }
 }

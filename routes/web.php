@@ -31,16 +31,13 @@ $router->group(['prefix' => '/wilayah'], function () use ($router) {
             $router->post('/', 'ProvinsiController@store');
             $router->get('/', 'ProvinsiController@index');
             // $router->get('/search/{search}', 'ProvinsiController@search'); // search Provinsi to Mitra
-            $router->get('/{IdOrName}', 'ProvinsiController@show');
+            $router->get('/{IdOrName}', 'ProvinsiController@show'); // Detail Dan Search
             $router->put('/{id}', 'ProvinsiController@update');
             $router->delete('/{id}', 'ProvinsiController@delete');
 
             // Trash
             $router->get('/trash/check', 'ProvinsiController@trash');
             $router->get('/trash/restore/{id}', 'ProvinsiController@restore');
-
-            // Search
-            $router->get('/{search}/search', 'ProvinsiController@search');
         });
 
         // Kabupaten
@@ -48,16 +45,13 @@ $router->group(['prefix' => '/wilayah'], function () use ($router) {
         $router->group(['prefix' => '/kabupaten'], function () use ($router){
             $router->post('/', 'KabupatenController@store');
             $router->get('/', 'KabupatenController@index');
-            $router->get('/{IdOrName}', 'KabupatenController@show');
+            $router->get('/{IdOrName}', 'KabupatenController@show'); // Detail Dan Search
             $router->put('/{id}', 'KabupatenController@update');
             $router->delete('/{id}', 'KabupatenController@delete');
 
             //Trash
             $router->get('/trash/check', 'KabupatenController@trash');
             $router->get('/trash/restore/{id}', 'KabupatenController@restore');
-
-            // search
-            $router->get('/{search}/search', 'KabupatenController@search');
         });
 
         // Kecamatan
@@ -65,16 +59,13 @@ $router->group(['prefix' => '/wilayah'], function () use ($router) {
         $router->group(['prefix' => '/kecamatan'], function () use ($router){
             $router->post('/', 'KecamatanController@store');
             $router->get('/', 'KecamatanController@index');
-            $router->get('/{IdOrName}', 'KecamatanController@show');
+            $router->get('/{IdOrName}', 'KecamatanController@show'); // Detail Dan Search
             $router->put('/{id}', 'KecamatanController@update');
             $router->delete('/{id}', 'KecamatanController@delete');
 
             // Trash
             $router->get('/trash/check', 'KecamatanController@trash');
             $router->get('/trash/restore/{id}', 'KecamatanController@restore');
-
-            // Search
-            $router->get('/{search}/search', 'KecamatanController@search');
         });
 
         // Kelurahan
@@ -82,16 +73,13 @@ $router->group(['prefix' => '/wilayah'], function () use ($router) {
         $router->group(['prefix' => '/kelurahan'], function () use ($router){
             $router->post('/', 'KelurahanController@store');
             $router->get('/', 'KelurahanController@index');
-            $router->get('/{IdOrName}', 'KelurahanController@show');
+            $router->get('/{IdOrName}', 'KelurahanController@show'); // Detail Dan Search
             $router->put('/{id}', 'KelurahanController@update');
             $router->delete('/{id}', 'KelurahanController@delete');
 
             // Trash
             $router->get('/trash/check', 'KelurahanController@trash');
             $router->get('/trash/restore/{id}', 'KelurahanController@restore');
-
-            // Search
-            $router->get('/{search}/search', 'KelurahanController@search');
         });
     });
 });
@@ -294,6 +282,9 @@ $router->group(['middleware' => ['jwt.auth'], 'prefix' => 'api'], function () us
 
                 // Search
                 $router->get('/{search}/search', ['subject' => 'Search Trans_SO', 'uses' => 'MasterSO_Controller@search']);
+
+                // Filter
+                $router->get('/filter/{year}/{month}', ['subject' => 'Filter Trans_SO', 'uses' => 'MasterSO_Controller@filter']);
             });
 
             // Trans AO
@@ -304,6 +295,9 @@ $router->group(['middleware' => ['jwt.auth'], 'prefix' => 'api'], function () us
 
                 // Search
                 $router->get('/{search}/search', ['subject' => 'Search Trans_SO', 'uses' => 'MasterAO_Controller@search']);
+
+                // Filter
+                $router->get('/filter/{year}/{month}', ['subject' => 'Filter Trans_SO', 'uses' => 'MasterAO_Controller@filter']);
             });
 
             // Trans CA
@@ -314,6 +308,9 @@ $router->group(['middleware' => ['jwt.auth'], 'prefix' => 'api'], function () us
 
                 //Search
                 $router->get('/{search}/search', ['subject' => 'Search Trans_AO', 'uses' => 'MasterCA_Controller@search']);
+
+                // Filter
+                $router->get('/filter/{year}/{month}', ['subject' => 'Filter Trans_AO', 'uses' => 'MasterCA_Controller@filter']);
 
                 // Revisi
                 $router->post('/{id_trans_so}/revisi/{id_trans_ca}', ['subject' => 'Revisi Trans_CA', 'uses' => 'MasterCA_Controller@revisi']); //Update CA BY ID
@@ -328,10 +325,13 @@ $router->group(['middleware' => ['jwt.auth'], 'prefix' => 'api'], function () us
                 $router->get('/{id}',  ['subject' => 'Detail Trans_CAA', 'uses' => 'MasterCAA_Controller@show']);
 
                 // Tahap 2 - Team CAA
-                $router->get('/{id}/detail', ['subject' => 'Detail Trans_CAA', 'uses' => 'MasterCAA_Controller@detail']); //GEt CA BY ID after caa
+                $router->get('/{id}/detail', ['subject' => 'Detail Trans_CAA', 'uses' => 'MasterCAA_Controller@detail']);
 
                 // Search
                 $router->get('/{search}/search', ['subject' => 'Search Trans_CA', 'uses' => 'MasterCAA_Controller@search']);
+
+                // Filter
+                $router->get('/filter/{year}/{month}', ['subject' => 'Filter Trans_CAA', 'uses' => 'MasterCAA_Controller@filter']);
 
                 // Approval By Team CAA
                 $router->get('/{id}/approval',               ['subject' => 'Get Approval List', 'uses' => 'Approval_Controller@index']);
@@ -352,11 +352,15 @@ $router->group(['middleware' => ['jwt.auth'], 'prefix' => 'api'], function () us
         $router->get('/', function () use ($router) {return redirect('/api/menu/master');});
 
         $router->group(['prefix' => '/master'], function() use ($router){
-            $router->post('/',          ['subject' => 'Create Master Menu', 'uses' => 'MenuMasterController@store']);
-            $router->get('/',           ['subject' => 'Read Master Menu with active status', 'uses' => 'MenuMasterController@index']);
-            $router->put('/{IdOrSlug}',   ['subject' => 'Update Master Menu', 'uses' => 'MenuMasterController@update']);
-            $router->delete('{IdOrSlug}', ['subject' => 'Delete Master Menu', 'uses' => 'MenuMasterController@delete']);
-            $router->get('/{IdOrSlug}',   ['subject' => 'Detail Master Menu', 'uses' => 'MenuMasterController@show']);
+            $router->post('/',           ['subject' => 'Create Master Menu', 'uses' => 'MenuMasterController@store']);
+            $router->get('/',            ['subject' => 'Read Master Menu',   'uses' => 'MenuMasterController@index']);
+            $router->put('/{IdOrSlug}',  ['subject' => 'Update Master Menu', 'uses' => 'MenuMasterController@update']);
+            $router->delete('{IdOrSlug}',['subject' => 'Delete Master Menu', 'uses' => 'MenuMasterController@delete']);
+            $router->get('/{IdOrSlug}',  ['subject' => 'Detail Master Menu', 'uses' => 'MenuMasterController@show']);
+
+            // Trash
+            $router->get('/trash/check',        ['subject' => 'Trash of Master Menu', 'uses' => 'MenuMasterController@trash']);
+            $router->get('/trash/restore/{id}', ['subject' => 'Restore Master Menu',  'uses' => 'MenuMasterController@restore']);
 
             // Search
             $router->get('/{search}/search', ['subject' => 'Search Master Menu', 'uses' => 'MenuMasterController@search']);

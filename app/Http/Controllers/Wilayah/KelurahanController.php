@@ -10,68 +10,32 @@ use DB;
 
 class KelurahanController extends BaseController
 {
-    public function all() {
-        try {
-            $query = Kelurahan::with('kec')->orderBy('nama', 'asc')->get();
-
-            if ($query == '[]') {
-                return response()->json([
-                    "code"    => 404,
-                    "status"  => "not found",
-                    "message" => "Data kosong!!"
-                ], 404);
-            }
-
-            $res = array();
-            foreach ($query as $key => $val) {
-                $res[$key] = [
-                    "id"             => $val->id,
-                    "nama"           => $val->nama,
-                    "nama_kecamatan" => $val->kec['nama'],
-                    'kode_pos'       => $val->kode_pos,
-                    "flg_aktif"      => $val->flg_aktif == 1 ? "true" : "false"
-                ];
-            }
-
-            return response()->json([
-                'code'   => 200,
-                'status' => 'success',
-                'data'   => $res
-            ], 200);
-        } catch (Exception $e) {
-            return response()->json([
-                "code"    => 501,
-                "status"  => "error",
-                "message" => $e
-            ], 501);
-        }
-    }
-
     public function index() {
+        $query = Kelurahan::with('kec')->select('id', 'nama', 'id_kecamatan','kode_pos')->where('flg_aktif', 1)->orderBy('nama', 'asc')->get();
+
+        if ($query == '[]') {
+            return response()->json([
+                "code"    => 404,
+                "status"  => "not found",
+                "message" => "Data kosong!!"
+            ], 404);
+        }
+
+        $res = array();
+        foreach ($query as $key => $val) {
+            $res[$key] = [
+                "id"             => $val->id,
+                "nama"           => $val->nama,
+                "nama_kecamatan" => $val->kec['nama'],
+                'kode_pos'       => (string) $val->kode_pos
+            ];
+        }
+
         try {
-            $query = Kelurahan::with('kec')->select('id', 'nama', 'id_kecamatan','kode_pos')->where('flg_aktif', 1)->orderBy('nama', 'asc')->get();
-
-            if ($query == '[]') {
-                return response()->json([
-                    "code"    => 404,
-                    "status"  => "not found",
-                    "message" => "Data kosong!!"
-                ], 404);
-            }
-
-            $res = array();
-            foreach ($query as $key => $val) {
-                $res[$key] = [
-                    "id"             => $val->id,
-                    "nama"           => $val->nama,
-                    "nama_kecamatan" => $val->kec['nama'],
-                    'kode_pos'       => (string) $val->kode_pos
-                ];
-            }
-
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
+                'count'  => $query->count(),
                 'data'   => $res
             ], 200);
         } catch (Exception $e) {
@@ -311,23 +275,34 @@ class KelurahanController extends BaseController
         }
     }
 
-    public function sector($id_kec) {
-        try {
-            $query = Kelurahan::where('id_kecamatan', $id_kec)->orderBy('nama', 'asc')->get();
+    public function trash(){
+        $query = Kelurahan::with('kec')->select('id', 'nama', 'id_kecamatan','kode_pos')->where('flg_aktif', 0)->orderBy('nama', 'asc')->get();
 
-            if ($query == '[]') {
-                return response()->json([
-                    'code'    => 404,
-                    'status'  => 'not found',
-                    'message' => 'Data kosong!!'
-                ], 404);
-            }else{
-                return response()->json([
-                    'code'    => 200,
-                    'status'  => 'success',
-                    'data'    => $query
-                ], 200);
-            }
+        if ($query == '[]') {
+            return response()->json([
+                "code"    => 404,
+                "status"  => "not found",
+                "message" => "Data kosong!!"
+            ], 404);
+        }
+
+        $res = array();
+        foreach ($query as $key => $val) {
+            $res[$key] = [
+                "id"             => $val->id,
+                "nama"           => $val->nama,
+                "nama_kecamatan" => $val->kec['nama'],
+                'kode_pos'       => (string) $val->kode_pos
+            ];
+        }
+
+        try {
+            return response()->json([
+                'code'   => 200,
+                'status' => 'success',
+                'count'  => $query->count(),
+                'data'   => $res
+            ], 200);
         } catch (Exception $e) {
             return response()->json([
                 "code"    => 501,
@@ -337,32 +312,42 @@ class KelurahanController extends BaseController
         }
     }
 
-    public function search($search) {
+    public function restore($id){
+        Kelurahan::where('id', $id)->update(['flg_aktif' => 1]);
+
         try {
-            $query = Kelurahan::with('kec')->select('id', 'nama', 'id_kecamatan','kode_pos')->where('flg_aktif', 1)->where('nama', 'like', '%'.$search.'%')->orderBy('nama', 'asc')->get();
-
-            if ($query == '[]') {
-                return response()->json([
-                    "code"    => 404,
-                    "status"  => "not found",
-                    "message" => "Data kosong!!"
-                ], 404);
-            }
-
-            $res = array();
-            foreach ($query as $key => $val) {
-                $res[$key] = [
-                    "id"             => $val->id,
-                    "nama"           => $val->nama,
-                    "nama_kecamatan" => $val->kec['nama'],
-                    'kode_pos'       => (string) $val->kode_pos
-                ];
-            }
 
             return response()->json([
-                'code'   => 200,
-                'status' => 'success',
-                'data'   => $res
+                'code'    => 200,
+                'status'  => 'success',
+                'message' => 'data berhasil dikembalikan'
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                "code"    => 501,
+                "status"  => "error",
+                "message" => $e
+            ], 501);
+        }
+    }
+
+    public function sector($id_kec) {
+        $query = Kelurahan::select('id', 'nama', 'kode_pos', 'id_kecamatan')->where('id_kecamatan', $id_kec)->orderBy('nama', 'asc')->get();
+
+        if ($query == '[]') {
+            return response()->json([
+                'code'    => 404,
+                'status'  => 'not found',
+                'message' => 'Data kosong!!'
+            ], 404);
+        }
+
+        try {
+            return response()->json([
+                'code'    => 200,
+                'status'  => 'success',
+                'count'   => $query->count(),
+                'data'    => $query
             ], 200);
         } catch (Exception $e) {
             return response()->json([
