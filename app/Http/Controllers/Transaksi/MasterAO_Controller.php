@@ -158,7 +158,7 @@ class MasterAO_Controller extends BaseController
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
-                'message' => 'Data kosong'
+                'message' => 'Transaksi dengan id '.$id.' belum ada di SO'
             ], 404);
         }
 
@@ -308,7 +308,7 @@ class MasterAO_Controller extends BaseController
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
-                'message' => 'Data kosong'
+                'message' => 'Transaksi dengan id '.$id.' belum ada di SO'
             ], 404);
         }
 
@@ -1034,257 +1034,106 @@ class MasterAO_Controller extends BaseController
 
         $check_ao = TransAO::where('id_trans_so', $id)->first();
 
+        if ($check_ao != null) {
+            return response()->json([
+                'code'    => 404,
+                'status'  => 'not found',
+                'message' => 'Transaksi dengan id '.$id.' sudah ada di AO'
+            ], 404);
+        }
+
         DB::connection('web')->beginTransaction();
-        // try{
+        try{
 
-            if ($check_ao == null) {
+            if (!empty($daAguTa)) {
+                for ($i = 0; $i < count($daAguTa); $i++) {
 
-                if (!empty($daAguTa)) {
-                    for ($i = 0; $i < count($daAguTa); $i++) {
+                    $tanah = AgunanTanah::create($daAguTa[$i]);
 
-                        $tanah = AgunanTanah::create($daAguTa[$i]);
-
-                        $id_tanah['id'][$i] = $tanah->id;
-                    }
-
-                    for ($i = 0; $i < count($pemAguTa); $i++) {
-                        $pemAguTa_N[$i] = array_merge(array('id_agunan_tanah' => $id_tanah['id'][$i]), $pemAguTa[$i]);
-
-                        $pemTanah = PemeriksaanAgunTan::create($pemAguTa_N[$i]);
-
-                        $id_pem_tan['id'][$i] = $pemTanah->id;
-                    }
-
-                    $tanID   = implode(",", $id_tanah['id']);
-                    $p_tanID = implode(",", $id_pem_tan['id']);
-                }else{
-                    $tanID   = null;
-                    $p_tanID = null;
+                    $id_tanah['id'][$i] = $tanah->id;
                 }
 
+                for ($i = 0; $i < count($pemAguTa); $i++) {
+                    $pemAguTa_N[$i] = array_merge(array('id_agunan_tanah' => $id_tanah['id'][$i]), $pemAguTa[$i]);
 
-                if (!empty($daAguKe)) {
-                    for ($i = 0; $i < count($daAguKe); $i++) {
-                        $kendaraan = AgunanKendaraan::create($daAguKe[$i]);
+                    $pemTanah = PemeriksaanAgunTan::create($pemAguTa_N[$i]);
 
-                        $id_kendaraan['id'][$i] = $kendaraan->id;
-                    }
-
-                    for ($i = 0; $i < count($pemAguKe); $i++) {
-                        $pemAguKe_N[$i] = array_merge(array('id_agunan_kendaraan' => $id_kendaraan['id'][$i]), $pemAguKe[$i]);
-
-                        $pemKendaraan = PemeriksaanAgunKen::create($pemAguKe_N[$i]);
-
-                        $id_pem_ken['id'][$i] = $pemKendaraan->id;
-                    }
-
-                    $kenID   = implode(",", $id_kendaraan['id']);
-                    $p_kenID = implode(",", $id_pem_ken['id']);
-                }else{
-                    $kenID   = null;
-                    $p_kenID = null;
+                    $id_pem_tan['id'][$i] = $pemTanah->id;
                 }
 
-                $valid = ValidModel::create($dataValidasi);
-                $id_valid = $valid->id;
-
-                $verif = VerifModel::create($dataVerifikasi);
-                $id_verif = $verif->id;
-
-
-                $kap = KapBulanan::create($kapBul);
-                $id_kapbul = $kap->id;
-
-                if (!empty($dataKeUsaha)) {
-                    $keuangan = PendapatanUsaha::create($dataKeUsaha);
-                    $id_usaha = $keuangan->id;
-                }else{
-                    $id_usaha = null;
-                }
-
-                if (!empty($recom_AO)) {
-                    $recom = RekomendasiAO::create($recom_AO);
-                    $id_recom = $recom->id;
-                }else{
-                    $id_recom = null;
-                }
-
-                $dataAO = array(
-                    'id_validasi'                 => $id_valid,
-                    'id_verifikasi'               => $id_verif,
-                    'id_agunan_tanah'             => $tanID,
-                    'id_agunan_kendaraan'         => $kenID,
-                    'id_periksa_agunan_tanah'     => $p_tanID,
-                    'id_periksa_agunan_kendaraan' => $p_kenID,
-                    'id_kapasitas_bulanan'        => $id_kapbul,
-                    'id_pendapatan_usaha'         => $id_usaha,
-                    'id_recom_ao'                 => $id_recom
-                );
-
-                $arrAO = array_merge($TransAO, $dataAO);
-
-                $new_TransAO = TransAO::create($arrAO);
-
-                TransSO::where('id', $id)->update(['id_trans_ao' => $new_TransAO->id]);
-
-                Debitur::where('id', $check->id_calon_debitur)->update($cadebt);
+                $tanID   = implode(",", $id_tanah['id']);
+                $p_tanID = implode(",", $id_pem_tan['id']);
             }else{
-                if (!empty($daAguTa)) {
-
-                    if (!empty($check_ao->id_agunan_tanah)) {
-                        $id_aguta = explode(",", $check_ao->id_agunan_tanah);
-
-                        AgunanTanah::whereIn('id', $id_aguta)->delete();
-                    }
-
-
-                    for ($i = 0; $i < count($daAguTa); $i++) {
-                        // $x[] = $id_aguta[$i];
-                        $tanah = AgunanTanah::create($daAguTa[$i]);
-
-                        $id_tanah['id'][$i] = $tanah->id;
-                    }
-
-
-                    if (!empty($check_ao->id_periksa_agunan_tanah)) {
-                        $id_pe_aguta = explode(",", $check_ao->id_periksa_agunan_tanah);
-
-                        PemeriksaanAgunTan::whereIn('id', $id_pe_aguta)->delete();
-                    }
-
-                    for ($i = 0; $i < count($pemAguTa); $i++) {
-
-                        $pemAguTa_N[$i] = array_merge(array('id_agunan_tanah' => $id_tanah['id'][$i]), $pemAguTa[$i]);
-
-                        $pemTanah = PemeriksaanAgunTan::create($pemAguTa_N[$i]);
-
-                        $id_pem_tan['id'][$i] = $pemTanah->id;
-                    }
-
-
-                    $tanID   = implode(",", $id_tanah['id']);
-                    $p_tanID = implode(",", $id_pem_tan['id']);
-                }else{
-                    $tanID   = $check_ao->id_agunan_tanah;
-                    $p_tanID = $check_ao->id_periksa_agunan_tanah;
-                }
-
-
-                if (!empty($daAguKe)) {
-
-                    if (!empty($check_ao->id_agunan_kendaraan)) {
-                        $id_aguke = explode(",", $check_ao->id_agunan_kendaraan);
-
-                        AgunanKendaraan::whereIn('id', $id_aguke)->delete();
-                    }
-
-                    for ($i = 0; $i < count($daAguKe); $i++) {
-
-                        $kendaraan = AgunanKendaraan::create($daAguKe[$i]);
-
-                        $id_kendaraan['id'][$i] = $kendaraan->id;
-                    }
-
-
-                    if (!empty($check_ao->id_periksa_agunan_kendaraan)) {
-                        $id_pe_aguke = explode(",", $check_ao->id_periksa_agunan_kendaraan);
-
-                        PemeriksaanAgunKen::where('id', $id_pe_aguke)->delete();
-                    }
-
-                    for ($i = 0; $i < count($pemAguKe); $i++) {
-
-                        $pemAguKe_N[$i] = array_merge(array('id_agunan_kendaraan' => $id_kendaraan['id'][$i]), $pemAguKe[$i]);
-
-                        $pemKendaraan = PemeriksaanAgunKen::create($pemAguKe_N[$i]);
-
-                        $id_pem_ken['id'][$i] = $pemKendaraan->id;
-                    }
-
-
-                    $kenID   = implode(",", $id_kendaraan['id']);
-                    $p_kenID = implode(",", $id_pem_ken['id']);
-                }else{
-                    $kenID   = $check_ao->id_agunan_kendaraan;
-                    $p_kenID = $check_ao->id_periksa_agunan_kendaraan;
-                }
-
-                if (!empty($check_ao->id_validasi)) {
-                    $valid = ValidModel::where('id', $check_ao->id_validasi)->update($dataValidasi);
-                    $id_valid = $check_ao->id_validasi;
-                }else{
-                    $valid = ValidModel::create($dataValidasi);
-                    $id_valid = $valid->id;
-                }
-
-                if (!empty($check_ao->id_verifikasi)) {
-                    $verif = VerifModel::where('id', $check_ao->id_verifikasi)->update($dataVerifikasi);
-                    $id_verif = $check_ao->id_verifikasi;
-                }else{
-                    $verif = VerifModel::create($dataVerifikasi);
-                    $id_verif = $verif->id;
-                }
-
-                if (!empty($check_ao->id_kapasitas_bulanan)) {
-                    $kap = KapBulanan::where('id', $check_ao->id_kapasitas_bulanan)->update($kapBul);
-                    $id_kapbul = $check_ao->id_kapasitas_bulanan;
-                }else{
-                    $kap = KapBulanan::create($kapBul);
-                    $id_kapbul = $kap->id;
-                }
-
-                if (!empty($check_ao->id_pendapatan_usaha)) {
-                    if (!empty($dataKeUsaha)) {
-                        $keuangan = PendapatanUsaha::where('id', $check_ao->id_pendapatan_usaha)->update($dataKeUsaha);
-                        $id_usaha = $check_ao->id_pendapatan_usaha;
-                    }else{
-                        $id_usaha = $check_ao->id_pendapatan_usaha;
-                    }
-                }else{
-                    if (!empty($dataKeUsaha)){
-                        $keuangan = PendapatanUsaha::create($dataKeUsaha);
-                        $id_usaha = $keuangan->id;
-                    }else{
-                        $id_usaha = null;
-                    }
-                }
-
-                if (!empty($check_ao->id_recom_ao)){
-                    if (!empty($recom_AO)) {
-                        $recom = RekomendasiAO::where('id', $check_ao->id_recom_ao)->update($recom_AO);
-                        $id_recom = $check_ao->id_recom_ao;
-                    }else{
-                        $id_recom = $check_ao->id_recom_ao;
-                    }
-                }else{
-                    if (!empty($recom_AO)) {
-                        $recom = RekomendasiAO::create($recom_AO);
-                        $id_recom = $recom->id;
-                    }else{
-                        $id_recom = null;
-                    }
-                }
-
-                $dataAO = array(
-                    'id_validasi'                 => $id_valid,
-                    'id_verifikasi'               => $id_verif,
-                    'id_agunan_tanah'             => $tanID,
-                    'id_agunan_kendaraan'         => $kenID,
-                    'id_periksa_agunan_tanah'     => $p_tanID,
-                    'id_periksa_agunan_kendaraan' => $p_kenID,
-                    'id_kapasitas_bulanan'        => $id_kapbul,
-                    'id_pendapatan_usaha'         => $id_usaha,
-                    'id_recom_ao'                 => $id_recom
-                );
-
-                $arrAO = array_merge($TransAO, $dataAO);
-
-                $new_TransAO = TransAO::where('id', $check_ao->id)->update($arrAO);
-
-                TransSO::where('id', $id)->update(['id_trans_ao' => $check_ao->id]);
-
-                Debitur::where('id', $check->id_calon_debitur)->update($cadebt);
+                $tanID   = null;
+                $p_tanID = null;
             }
+
+
+            if (!empty($daAguKe)) {
+                for ($i = 0; $i < count($daAguKe); $i++) {
+                    $kendaraan = AgunanKendaraan::create($daAguKe[$i]);
+
+                    $id_kendaraan['id'][$i] = $kendaraan->id;
+                }
+
+                for ($i = 0; $i < count($pemAguKe); $i++) {
+                    $pemAguKe_N[$i] = array_merge(array('id_agunan_kendaraan' => $id_kendaraan['id'][$i]), $pemAguKe[$i]);
+
+                    $pemKendaraan = PemeriksaanAgunKen::create($pemAguKe_N[$i]);
+
+                    $id_pem_ken['id'][$i] = $pemKendaraan->id;
+                }
+
+                $kenID   = implode(",", $id_kendaraan['id']);
+                $p_kenID = implode(",", $id_pem_ken['id']);
+            }else{
+                $kenID   = null;
+                $p_kenID = null;
+            }
+
+            $valid = ValidModel::create($dataValidasi);
+            $id_valid = $valid->id;
+
+            $verif = VerifModel::create($dataVerifikasi);
+            $id_verif = $verif->id;
+
+
+            $kap = KapBulanan::create($kapBul);
+            $id_kapbul = $kap->id;
+
+            if (!empty($dataKeUsaha)) {
+                $keuangan = PendapatanUsaha::create($dataKeUsaha);
+                $id_usaha = $keuangan->id;
+            }else{
+                $id_usaha = null;
+            }
+
+            if (!empty($recom_AO)) {
+                $recom = RekomendasiAO::create($recom_AO);
+                $id_recom = $recom->id;
+            }else{
+                $id_recom = null;
+            }
+
+            $dataAO = array(
+                'id_validasi'                 => $id_valid,
+                'id_verifikasi'               => $id_verif,
+                'id_agunan_tanah'             => $tanID,
+                'id_agunan_kendaraan'         => $kenID,
+                'id_periksa_agunan_tanah'     => $p_tanID,
+                'id_periksa_agunan_kendaraan' => $p_kenID,
+                'id_kapasitas_bulanan'        => $id_kapbul,
+                'id_pendapatan_usaha'         => $id_usaha,
+                'id_recom_ao'                 => $id_recom
+            );
+
+            $arrAO = array_merge($TransAO, $dataAO);
+
+            $new_TransAO = TransAO::create($arrAO);
+
+            TransSO::where('id', $id)->update(['id_trans_ao' => $new_TransAO->id]);
+
+            Debitur::where('id', $check->id_calon_debitur)->update($cadebt);
 
             DB::connection('web')->commit();
 
@@ -1294,14 +1143,14 @@ class MasterAO_Controller extends BaseController
                 'message'=> 'Data untuk AO berhasil dikirim'
                 // 'message'=> $msg
             ], 200);
-        // } catch (\Exception $e) {
-        //     $err = DB::connection('web')->rollback();
-        //     return response()->json([
-        //         'code'    => 501,
-        //         'status'  => 'error',
-        //         'message' => $err
-        //     ], 501);
-        // }
+        } catch (\Exception $e) {
+            $err = DB::connection('web')->rollback();
+            return response()->json([
+                'code'    => 501,
+                'status'  => 'error',
+                'message' => $err
+            ], 501);
+        }
     }
 
     public function search($search, Request $req){

@@ -219,17 +219,45 @@ class MasterCAA_Controller extends BaseController
         //  ID-Cabang - AO / CA / SO - Bulan - Tahun - NO. Urut
         $nomor_caa = $PIC->id_cabang.'-'.$JPIC->nama_jenis.'-'.$month.'-'.$year.'-'.$lastNumb;
 
+        $check_ca = TransCA::where('id_trans_so', $id)->first();
+
+        if (!$check_ca) {
+            return response()->json([
+                'code'    => 404,
+                'status'  => 'not found',
+                'message' => 'Transaksi dengan id '.$id.' belum sampai ke CA'
+            ], 404);
+        }
+
+        $check_ao = TransAO::where('id_trans_so', $id)->first();
+
+        if (!$check_ao) {
+            return response()->json([
+                'code'    => 404,
+                'status'  => 'not found',
+                'message' => 'Transaksi dengan id '.$id.' belum sampai ke AO'
+            ], 404);
+        }
+
         $check = TransSO::where('id',$id)->first();
 
         if (!$check) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
-                'message' => 'Data kosong'
+                'message' => 'Transaksi dengan id '.$id.' belum ada di SO'
             ], 404);
         }
 
         $check_caa = TransCAA::where('id_trans_so', $id)->first();
+
+        if ($check_caa != null) {
+            return response()->json([
+                'code'    => 404,
+                'status'  => 'not found',
+                'message' => 'Transaksi dengan id '.$id.' sudah ada di CAA'
+            ], 404);
+        }
 
         $lamp_dir = 'public/'.$check->debt['no_ktp'];
 
@@ -438,38 +466,19 @@ class MasterCAA_Controller extends BaseController
 
         DB::connection('web')->beginTransaction();
 
-        // dd(explode(",", $data['pic_team_caa']));
-
         try {
-            if ($check_caa == null) {
 
-                $CAA = TransCAA::create($data);
+            $CAA = TransCAA::create($data);
 
-                TransSO::where('id', $id)->update(['id_trans_caa' => $CAA->id]);
+            TransSO::where('id', $id)->update(['id_trans_caa' => $CAA->id]);
 
-                for ($i=0; $i < count($teamS); $i++){
-                    Approval::create([
-                        'id_trans_so'  => $id,
-                        'id_trans_caa' => $CAA->id,
-                        'id_pic'       => $teamS[$i],
-                        'status'       => 'waiting'
-                    ]);
-                }
-
-            }else{
-
-                TransSO::where('id', $id)->update(['id_trans_caa' => $check_caa->id]);
-
-                TransCAA::where('id', $check_caa->id)->update($data);
-
-                for ($i=0; $i < count($teamS); $i++){
-                    Approval::create([
-                        'id_trans_so'  => $id,
-                        'id_trans_caa' => $check_caa->id,
-                        'id_pic'       => $teamS[$i],
-                        'status'       => 'waiting'
-                    ]);
-                }
+            for ($i=0; $i < count($teamS); $i++){
+                Approval::create([
+                    'id_trans_so'  => $id,
+                    'id_trans_caa' => $CAA->id,
+                    'id_pic'       => $teamS[$i],
+                    'status'       => 'waiting'
+                ]);
             }
 
             DB::connection('web')->commit();
