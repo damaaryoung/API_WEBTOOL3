@@ -519,112 +519,339 @@ class MasterAO_Controller extends BaseController
 
 
         if (!empty($req->input('tipe_lokasi_agunan'))) {
-            for ($i = 0; $i < count($req->input('tipe_lokasi_agunan')); $i++){
-                $daAguTa[] = [
-                    'tipe_lokasi'             => empty($req->tipe_lokasi_agunan[$i]) ? null : strtoupper($req->tipe_lokasi_agunan[$i]),
-                    'alamat'                  => empty($req->alamat_agunan[$i]) ? null : $req->alamat_agunan[$i],
-                    'id_provinsi'             => empty($req->id_prov_agunan[$i]) ? null : $req->id_prov_agunan[$i],
-                    'id_kabupaten'            => empty($req->id_kab_agunan[$i]) ? null : $req->id_kab_agunan[$i],
-                    'id_kecamatan'            => empty($req->id_kec_agunan[$i]) ? null : $req->id_kec_agunan[$i],
-                    'id_kelurahan'            => empty($req->id_kel_agunan[$i]) ? null : $req->id_kel_agunan[$i],
-                    'rt'                      => empty($req->rt_agunan[$i]) ? null : $req->rt_agunan[$i],
-                    'rw'                      => empty($req->rw_agunan[$i]) ? null : $req->rw_agunan[$i],
-                    'luas_tanah'              => empty($req->luas_tanah[$i]) ? null : $req->luas_tanah[$i],
-                    'luas_bangunan'           => empty($req->luas_bangunan[$i]) ? null : $req->luas_bangunan[$i],
-                    'nama_pemilik_sertifikat' => empty($req->nama_pemilik_sertifikat[$i]) ? null : $req->nama_pemilik_sertifikat[$i],
-                    'jenis_sertifikat'        => empty($req->jenis_sertifikat[$i]) ? null : strtoupper($req->jenis_sertifikat[$i]),
-                    'no_sertifikat'           => empty($req->no_sertifikat[$i]) ? null : $req->no_sertifikat[$i],
-                    'tgl_ukur_sertifikat'     => empty($req->tgl_ukur_sertifikat[$i]) ? null : $req->tgl_ukur_sertifikat[$i],
-                    'tgl_berlaku_shgb'        => empty($req->tgl_berlaku_shgb[$i]) ? null : Carbon::parse($req->tgl_berlaku_shgb[$i])->format('Y-m-d'),
-                    'no_imb'                  => empty($req->no_imb[$i]) ? null : $req->no_imb[$i],
-                    'njop'                    => empty($req->njop[$i]) ? null : $req->njop[$i],
-                    'nop'                     => empty($req->nop[$i]) ? null : $req->nop[$i],
-                    // 'lam_imb'                 => empty($req->file('lam_imb')[$i]) ? null : Helper::img64enc($req->file('lam_imb')[$i]),
-                    'agunan_bag_depan'       => empty($agunan_bag_depan[$i]) ? null : $agunan_bag_depan[$i],
-                    'agunan_bag_jalan'       => empty($agunan_bag_jalan[$i]) ? null : $agunan_bag_jalan[$i],
-                    'agunan_bag_ruangtamu'   => empty($agunan_bag_ruangtamu[$i]) ? null : $agunan_bag_ruangtamu[$i],
-                    'agunan_bag_kamarmandi'  => empty($agunan_bag_kamarmandi[$i]) ? null : $agunan_bag_kamarmandi[$i],
-                    'agunan_bag_dapur'       => empty($agunan_bag_dapur[$i]) ? null : $agunan_bag_dapur[$i],
 
-                    'lamp_imb'                => empty($lamp_imb[$i]) ? null : $lamp_imb[$i],
-                    'lamp_pbb'                => empty($lamp_pbb[$i]) ? null : $lamp_pbb[$i],
-                    'lamp_sertifikat'         => empty($lamp_sertifikat[$i]) ? null : $lamp_sertifikat[$i]
+            for ($i = 0; $i < count($req->input('tipe_lokasi_agunan')); $i++){
+
+                $daAguTa[] = [
+                    'tipe_lokasi'
+                        => empty($req->tipe_lokasi_agunan[$i])
+                        ? null : strtoupper($req->tipe_lokasi_agunan[$i]),
+
+                    'alamat'
+                        => empty($req->alamat_agunan[$i])
+                        ? null : $req->alamat_agunan[$i],
+
+                    'id_provinsi'
+                        => empty($req->id_prov_agunan[$i])
+                        ? null : $req->id_prov_agunan[$i],
+
+                    'id_kabupaten'
+                        => empty($req->id_kab_agunan[$i])
+                        ? null : $req->id_kab_agunan[$i],
+
+                    'id_kecamatan'
+                        => empty($req->id_kec_agunan[$i])
+                        ? null : $req->id_kec_agunan[$i],
+
+                    'id_kelurahan'
+                        => empty($req->id_kel_agunan[$i])
+                        ? null : $req->id_kel_agunan[$i],
+
+                    'rt'
+                        => empty($req->rt_agunan[$i])
+                        ? null : $req->rt_agunan[$i],
+
+                    'rw'
+                        => empty($req->rw_agunan[$i])
+                        ? null : $req->rw_agunan[$i],
+
+                    'luas_tanah'
+                        => empty($req->luas_tanah[$i])
+                        ? null : $req->luas_tanah[$i],
+
+                    'luas_bangunan'
+                        => empty($req->luas_bangunan[$i])
+                        ? null : $req->luas_bangunan[$i],
+
+                    'nama_pemilik_sertifikat'
+                        => empty($req->nama_pemilik_sertifikat[$i])
+                        ? null : $req->nama_pemilik_sertifikat[$i],
+
+                    'jenis_sertifikat'
+                        => empty($req->jenis_sertifikat[$i])
+                        ? null : strtoupper($req->jenis_sertifikat[$i]),
+
+                    'no_sertifikat'
+                        => empty($req->no_sertifikat[$i])
+                        ? null : $req->no_sertifikat[$i],
+
+                    'tgl_ukur_sertifikat'
+                        => empty($req->tgl_ukur_sertifikat[$i])
+                        ? null : $req->tgl_ukur_sertifikat[$i],
+
+                    'tgl_berlaku_shgb'
+                        => empty($req->tgl_berlaku_shgb[$i])
+                        ? null : Carbon::parse($req->tgl_berlaku_shgb[$i])->format('Y-m-d'),
+
+                    'no_imb'
+                        => empty($req->no_imb[$i])
+                        ? null : $req->no_imb[$i],
+
+                    'njop'
+                        => empty($req->njop[$i])
+                        ? null : $req->njop[$i],
+
+                    'nop'
+                        => empty($req->nop[$i])
+                        ? null : $req->nop[$i],
+                    // 'lam_imb'                 => empty($req->file('lam_imb')[$i]) ? null : Helper::img64enc($req->file('lam_imb')[$i]),
+                    'agunan_bag_depan'
+                        => empty($agunan_bag_depan[$i])
+                        ? null : $agunan_bag_depan[$i],
+
+                    'agunan_bag_jalan'
+                        => empty($agunan_bag_jalan[$i])
+                        ? null : $agunan_bag_jalan[$i],
+
+                    'agunan_bag_ruangtamu'
+                        => empty($agunan_bag_ruangtamu[$i])
+                        ? null : $agunan_bag_ruangtamu[$i],
+
+                    'agunan_bag_kamarmandi'
+                        => empty($agunan_bag_kamarmandi[$i])
+                        ? null : $agunan_bag_kamarmandi[$i],
+
+                    'agunan_bag_dapur'
+                        => empty($agunan_bag_dapur[$i])
+                        ? null : $agunan_bag_dapur[$i],
+
+                    'lamp_imb'
+                        => empty($lamp_imb[$i])
+                        ? null : $lamp_imb[$i],
+
+                    'lamp_pbb'
+                        => empty($lamp_pbb[$i])
+                        ? null : $lamp_pbb[$i],
+
+                    'lamp_sertifikat'
+                        => empty($lamp_sertifikat[$i])
+                        ? null : $lamp_sertifikat[$i]
                 ];
 
                 $pemAguTa[] = [
-                    'nama_penghuni'     => empty($req->nama_penghuni_agunan[$i]) ? null : $req->nama_penghuni_agunan[$i],
-                    'status_penghuni'   => empty($req->status_penghuni_agunan[$i]) ? null : strtoupper($req->status_penghuni_agunan[$i]),
-                    'bentuk_bangunan'   => empty($req->bentuk_bangunan_agunan[$i]) ? null : $req->bentuk_bangunan_agunan[$i],
-                    'kondisi_bangunan'  => empty($req->kondisi_bangunan_agunan[$i]) ? null : $req->kondisi_bangunan_agunan[$i],
-                    'fasilitas'         => empty($req->fasilitas_agunan[$i]) ? null : $req->fasilitas_agunan[$i],
-                    'listrik'           => empty($req->listrik_agunan[$i]) ? null : $req->listrik_agunan[$i],
-                    'nilai_taksasi_agunan'   => empty($req->nilai_taksasi_agunan[$i]) ? null : $req->nilai_taksasi_agunan[$i],
-                    'nilai_taksasi_bangunan' => empty($req->nilai_taksasi_bangunan[$i]) ? null : $req->nilai_taksasi_bangunan[$i],
-                    'tgl_taksasi'       => empty($req->tgl_taksasi_agunan[$i]) ? null : Carbon::parse($req->tgl_taksasi_agunan[$i])->format('Y-m-d'),
-                    'nilai_likuidasi'   => empty($req->nilai_likuidasi_agunan[$i]) ? null : $req->nilai_likuidasi_agunan[$i],
-                    'nilai_agunan_independen'       => empty($req->nilai_agunan_independen[$i]) ? null : $req->nilai_agunan_independen[$i],
-                    'perusahaan_penilai_independen' => empty($req->perusahaan_penilai_independen[$i]) ? null : $req->perusahaan_penilai_independen[$i]
+                    'nama_penghuni'
+                        => empty($req->nama_penghuni_agunan[$i])
+                        ? null : $req->nama_penghuni_agunan[$i],
+
+                    'status_penghuni'
+                        => empty($req->status_penghuni_agunan[$i])
+                        ? null : strtoupper($req->status_penghuni_agunan[$i]),
+
+                    'bentuk_bangunan'
+                        => empty($req->bentuk_bangunan_agunan[$i])
+                        ? null : $req->bentuk_bangunan_agunan[$i],
+
+                    'kondisi_bangunan'
+                        => empty($req->kondisi_bangunan_agunan[$i])
+                        ? null : $req->kondisi_bangunan_agunan[$i],
+
+                    'fasilitas'
+                        => empty($req->fasilitas_agunan[$i])
+                        ? null : $req->fasilitas_agunan[$i],
+
+                    'listrik'
+                        => empty($req->listrik_agunan[$i])
+                        ? null : $req->listrik_agunan[$i],
+
+                    'nilai_taksasi_agunan'
+                        => empty($req->nilai_taksasi_agunan[$i])
+                        ? null : $req->nilai_taksasi_agunan[$i],
+
+                    'nilai_taksasi_bangunan'
+                        => empty($req->nilai_taksasi_bangunan[$i])
+                        ? null : $req->nilai_taksasi_bangunan[$i],
+
+                    'tgl_taksasi'
+                        => empty($req->tgl_taksasi_agunan[$i])
+                        ? null : Carbon::parse($req->tgl_taksasi_agunan[$i])->format('Y-m-d'),
+
+                    'nilai_likuidasi'
+                        => empty($req->nilai_likuidasi_agunan[$i])
+                        ? null : $req->nilai_likuidasi_agunan[$i],
+
+                    'nilai_agunan_independen'
+                        => empty($req->nilai_agunan_independen[$i])
+                        ? null : $req->nilai_agunan_independen[$i],
+
+                    'perusahaan_penilai_independen'
+                        => empty($req->perusahaan_penilai_independen[$i])
+                        ? null : $req->perusahaan_penilai_independen[$i]
                 ];
             }
 
         }
 
+
         if (!empty($req->input('no_bpkb_ken'))) {
+
             for ($i = 0; $i < count($req->input('no_bpkb_ken')); $i++) {
+
                 $daAguKe[] = [
-                    'no_bpkb'               => empty($req->no_bpkb_ken[$i]) ? null : $req->no_bpkb_ken[$i],
-                    'nama_pemilik'          => empty($req->nama_pemilik_ken[$i]) ? null : $req->nama_pemilik_ken[$i],
-                    'alamat_pemilik'        => empty($req->alamat_pemilik_ken[$i]) ? null : $req->alamat_pemilik_ken[$i],
-                    'merk'                  => empty($req->merk_ken[$i]) ? null : $req->merk_ken[$i],
-                    'jenis'                 => empty($req->jenis_ken[$i]) ? null : $req->jenis_ken[$i],
-                    'no_rangka'             => empty($req->no_rangka_ken[$i]) ? null : $req->no_rangka_ken[$i],
-                    'no_mesin'              => empty($req->no_mesin_ken[$i]) ? null : $req->no_mesin_ken[$i],
-                    'warna'                 => empty($req->warna_ken[$i]) ? null : $req->warna_ken[$i],
-                    'tahun'                 => empty($req->tahun_ken[$i]) ? null : $req->tahun_ken[$i],
-                    'no_polisi'             => empty($req->no_polisi_ken[$i]) ? null : strtoupper($req->no_polisi_ken[$i]),
-                    'no_stnk'               => empty($req->no_stnk_ken[$i]) ? null : $req->no_stnk_ken[$i],
-                    'tgl_kadaluarsa_pajak'  => empty($req->tgl_exp_pajak_ken[$i]) ? null : Carbon::parse($req->tgl_exp_pajak_ken[$i])->format('Y-m-d'),
-                    'tgl_kadaluarsa_stnk'   => empty($req->tgl_exp_stnk_ken[$i]) ? null : Carbon::parse($req->tgl_exp_stnk_ken[$i])->format('Y-m-d'),
-                    'no_faktur'             => empty($req->no_faktur_ken[$i]) ? null : $req->no_faktur_ken[$i],
-                    'lamp_agunan_depan'     => empty($agunanDepanKen[$i]) ? null : $agunanDepanKen[$i],
-                    'lamp_agunan_kanan'     => empty($agunanKananKen[$i]) ? null : $agunanKananKen[$i],
-                    'lamp_agunan_kiri'      => empty($agunanKiriKen[$i]) ? null : $agunanKiriKen[$i],
-                    'lamp_agunan_belakang'  => empty($agunanBelakangKen[$i]) ? null : $agunanBelakangKen[$i],
-                    'lamp_agunan_dalam'     => empty($agunanDalamKen[$i]) ? null : $agunanDalamKen[$i]
+                    'no_bpkb'
+                        => empty($req->no_bpkb_ken[$i])
+                        ? null : $req->no_bpkb_ken[$i],
+
+                    'nama_pemilik'
+                        => empty($req->nama_pemilik_ken[$i])
+                        ? null : $req->nama_pemilik_ken[$i],
+
+                    'alamat_pemilik'
+                        => empty($req->alamat_pemilik_ken[$i])
+                        ? null : $req->alamat_pemilik_ken[$i],
+
+                    'merk'
+                        => empty($req->merk_ken[$i])
+                        ? null : $req->merk_ken[$i],
+
+                    'jenis'
+                        => empty($req->jenis_ken[$i])
+                        ? null : $req->jenis_ken[$i],
+
+                    'no_rangka'
+                        => empty($req->no_rangka_ken[$i])
+                        ? null : $req->no_rangka_ken[$i],
+
+                    'no_mesin'
+                        => empty($req->no_mesin_ken[$i])
+                        ? null : $req->no_mesin_ken[$i],
+
+                    'warna'
+                        => empty($req->warna_ken[$i])
+                        ? null : $req->warna_ken[$i],
+
+                    'tahun'
+                        => empty($req->tahun_ken[$i])
+                        ? null : $req->tahun_ken[$i],
+
+                    'no_polisi'
+                        => empty($req->no_polisi_ken[$i])
+                        ? null : strtoupper($req->no_polisi_ken[$i]),
+
+                    'no_stnk'
+                        => empty($req->no_stnk_ken[$i])
+                        ? null : $req->no_stnk_ken[$i],
+
+                    'tgl_kadaluarsa_pajak'
+                        => empty($req->tgl_exp_pajak_ken[$i])
+                        ? null : Carbon::parse($req->tgl_exp_pajak_ken[$i])->format('Y-m-d'),
+
+                    'tgl_kadaluarsa_stnk'
+                        => empty($req->tgl_exp_stnk_ken[$i])
+                        ? null : Carbon::parse($req->tgl_exp_stnk_ken[$i])->format('Y-m-d'),
+
+                    'no_faktur'
+                        => empty($req->no_faktur_ken[$i])
+                        ? null : $req->no_faktur_ken[$i],
+
+                    'lamp_agunan_depan'
+                        => empty($agunanDepanKen[$i])
+                        ? null : $agunanDepanKen[$i],
+
+                    'lamp_agunan_kanan'
+                        => empty($agunanKananKen[$i])
+                        ? null : $agunanKananKen[$i],
+
+                    'lamp_agunan_kiri'
+                        => empty($agunanKiriKen[$i])
+                        ? null : $agunanKiriKen[$i],
+
+                    'lamp_agunan_belakang'
+                        => empty($agunanBelakangKen[$i])
+                        ? null : $agunanBelakangKen[$i],
+
+                    'lamp_agunan_dalam'
+                        => empty($agunanDalamKen[$i])
+                        ? null : $agunanDalamKen[$i]
                 ];
 
                 $pemAguKe[] = [
-                    'nama_pengguna'         => empty($req->nama_pengguna_ken[$i]) ? null : $req->nama_pengguna_ken[$i],
-                    'status_pengguna'       => empty($req->status_pengguna_ken[$i]) ? null : strtoupper($req->status_pengguna_ken[$i]),
-                    'jml_roda_kendaraan'    => empty($req->jml_roda_ken[$i]) ? null : $req->jml_roda_ken[$i],
-                    'kondisi_kendaraan'     => empty($req->kondisi_ken[$i]) ? null : $req->kondisi_ken[$i],
-                    'keberadaan_kendaraan'  => empty($req->keberadaan_ken[$i]) ? null : $req->keberadaan_ken[$i],
-                    'body'                  => empty($req->body_ken[$i]) ? null : $req->body_ken[$i],
-                    'interior'              => empty($req->interior_ken[$i]) ? null : $req->interior_ken[$i],
-                    'km'                    => empty($req->km_ken[$i]) ? null : $req->km_ken[$i],
-                    'modifikasi'            => empty($req->modifikasi_ken[$i]) ? null : $req->modifikasi_ken[$i],
-                    'aksesoris'             => empty($req->aksesoris_ken[$i]) ? null : $req->aksesoris_ken[$i]
+                    'nama_pengguna'
+                        => empty($req->nama_pengguna_ken[$i])
+                        ? null : $req->nama_pengguna_ken[$i],
+
+                    'status_pengguna'
+                        => empty($req->status_pengguna_ken[$i])
+                        ? null : strtoupper($req->status_pengguna_ken[$i]),
+
+                    'jml_roda_kendaraan'
+                        => empty($req->jml_roda_ken[$i])
+                        ? null : $req->jml_roda_ken[$i],
+
+                    'kondisi_kendaraan'
+                        => empty($req->kondisi_ken[$i])
+                        ? null : $req->kondisi_ken[$i],
+
+                    'keberadaan_kendaraan'
+                        => empty($req->keberadaan_ken[$i])
+                        ? null : $req->keberadaan_ken[$i],
+
+                    'body'
+                        => empty($req->body_ken[$i])
+                        ? null : $req->body_ken[$i],
+
+                    'interior'
+                        => empty($req->interior_ken[$i])
+                        ? null : $req->interior_ken[$i],
+
+                    'km'
+                        => empty($req->km_ken[$i])
+                        ? null : $req->km_ken[$i],
+
+                    'modifikasi'
+                        => empty($req->modifikasi_ken[$i])
+                        ? null : $req->modifikasi_ken[$i],
+
+                    'aksesoris'
+                        => empty($req->aksesoris_ken[$i])
+                        ? null : $req->aksesoris_ken[$i]
                 ];
             }
         }
 
         // Start Kapasitas Bulanan
         $inputKapBul = array(
-            'pemasukan_cadebt'      => empty($req->input('pemasukan_debitur')) ? null : (int) $req->input('pemasukan_debitur'),
-            'pemasukan_pasangan'    => empty($req->input('pemasukan_pasangan')) ? null : (int) $req->input('pemasukan_pasangan'),
-            'pemasukan_penjamin'    => empty($req->input('pemasukan_penjamin')) ? null : (int) $req->input('pemasukan_penjamin'),
-            'biaya_rumah_tangga'    => empty($req->input('biaya_rumah_tangga')) ? null : (int) $req->input('biaya_rumah_tangga'),
-            'biaya_transport'       => empty($req->input('biaya_transport')) ? null : (int) $req->input('biaya_transport'),
-            'biaya_pendidikan'      => empty($req->input('biaya_pendidikan')) ? null : (int) $req->input('biaya_pendidikan'),
-            'biaya_telp_listr_air'  => empty($req->input('biaya_telp_listr_air')) ? null : (int) $req->input('biaya_telp_listr_air'),
-            'angsuran'              => empty($req->input('angsuran')) ? null : $req->input('angsuran'),
-            'biaya_lain'            => empty($req->input('biaya_lain')) ? null : (int) $req->input('biaya_lain'),
+
+            'pemasukan_cadebt'
+                => empty($req->input('pemasukan_debitur')) ? null
+                : (int) $req->input('pemasukan_debitur'),
+
+            'pemasukan_pasangan'
+                => empty($req->input('pemasukan_pasangan')) ? null
+                : (int) $req->input('pemasukan_pasangan'),
+
+            'pemasukan_penjamin'
+                => empty($req->input('pemasukan_penjamin')) ? null
+                : (int) $req->input('pemasukan_penjamin'),
+
+            'biaya_rumah_tangga'
+                => empty($req->input('biaya_rumah_tangga')) ? null
+                : (int) $req->input('biaya_rumah_tangga'),
+
+            'biaya_transport'
+                => empty($req->input('biaya_transport')) ? null
+                : (int) $req->input('biaya_transport'),
+
+            'biaya_pendidikan'
+                => empty($req->input('biaya_pendidikan')) ? null
+                : (int) $req->input('biaya_pendidikan'),
+
+            'biaya_telp_listr_air'
+                => empty($req->input('biaya_telp_listr_air')) ? null
+                : (int) $req->input('biaya_telp_listr_air'),
+
+            'angsuran'
+                => empty($req->input('angsuran')) ? null
+                : (int) $req->input('angsuran'),
+
+            'biaya_lain'
+                => empty($req->input('biaya_lain')) ? null
+                : (int) $req->input('biaya_lain'),
         );
 
         $total_KapBul = array(
-            'total_pemasukan'       => $ttl1 = array_sum(array_slice($inputKapBul, 0, 2)),
-            'total_pengeluaran'     => $ttl2 = array_sum(array_slice($inputKapBul, 2)),
-            'penghasilan_bersih'    => $ttl1 - $ttl2
+            'total_pemasukan'    => $ttl1 = array_sum(array_slice($inputKapBul, 0, 2)),
+            'total_pengeluaran'  => $ttl2 = array_sum(array_slice($inputKapBul, 2)),
+            'penghasilan_bersih' => $ttl1 - $ttl2
         );
 
         $kapBul = array_merge($inputKapBul, $total_KapBul);
@@ -634,17 +861,49 @@ class MasterAO_Controller extends BaseController
         if (!empty($req->input('pemasukan_tunai'))) {
             // $dataKeUsaha = array(
             $inputKeUsaha = array(
-                'pemasukan_tunai'      => empty($req->input('pemasukan_tunai')) ? null : (int) $req->input('pemasukan_tunai'),
-                'pemasukan_kredit'     => empty($req->input('pemasukan_kredit')) ? null : (int) $req->input('pemasukan_kredit'),
-                'biaya_sewa'           => empty($req->input('biaya_sewa')) ? null : (int) $req->input('biaya_sewa'),
-                'biaya_gaji_pegawai'   => empty($req->input('biaya_gaji_pegawai')) ? null : (int) $req->input('biaya_gaji_pegawai'),
-                'biaya_belanja_brg'    => empty($req->input('biaya_belanja_brg')) ? null : (int) $req->input('biaya_belanja_brg'),
-                'biaya_telp_listr_air' => empty($req->input('biaya_telp_listr_air')) ? null : (int) $req->input('biaya_telp_listr_air'),
-                'biaya_sampah_kemanan' => empty($req->input('biaya_sampah_kemanan')) ? null : (int) $req->input('biaya_sampah_kemanan'),
-                'biaya_kirim_barang'   => empty($req->input('biaya_kirim_barang')) ? null : (int) $req->input('biaya_kirim_barang'),
-                'biaya_hutang_dagang'  => empty($req->input('biaya_hutang_dagang')) ? null : (int) $req->input('biaya_hutang_dagang'),
-                'biaya_angsuran'       => empty($req->input('biaya_angsuran')) ? null : (int) $req->input('biaya_angsuran'),
-                'biaya_lain_lain'      => empty($req->input('biaya_lain_lain')) ? null : (int) $req->input('biaya_lain_lain')
+                'pemasukan_tunai'
+                    => empty($req->input('pemasukan_tunai')) ? null
+                    : (int) $req->input('pemasukan_tunai'),
+
+                'pemasukan_kredit'
+                    => empty($req->input('pemasukan_kredit')) ? null
+                    : (int) $req->input('pemasukan_kredit'),
+
+                'biaya_sewa'
+                    => empty($req->input('biaya_sewa')) ? null
+                    : (int) $req->input('biaya_sewa'),
+
+                'biaya_gaji_pegawai'
+                    => empty($req->input('biaya_gaji_pegawai')) ? null
+                    : (int) $req->input('biaya_gaji_pegawai'),
+
+                'biaya_belanja_brg'
+                    => empty($req->input('biaya_belanja_brg')) ? null
+                    : (int) $req->input('biaya_belanja_brg'),
+
+                'biaya_telp_listr_air'
+                    => empty($req->input('biaya_telp_listr_air')) ? null
+                    : (int) $req->input('biaya_telp_listr_air'),
+
+                'biaya_sampah_kemanan'
+                    => empty($req->input('biaya_sampah_kemanan')) ? null
+                    : (int) $req->input('biaya_sampah_kemanan'),
+
+                'biaya_kirim_barang'
+                    => empty($req->input('biaya_kirim_barang')) ? null
+                    : (int) $req->input('biaya_kirim_barang'),
+
+                'biaya_hutang_dagang'
+                    => empty($req->input('biaya_hutang_dagang')) ? null
+                    : (int) $req->input('biaya_hutang_dagang'),
+
+                'biaya_angsuran'
+                    => empty($req->input('biaya_angsuran')) ? null
+                    : (int) $req->input('biaya_angsuran'),
+
+                'biaya_lain_lain'
+                    => empty($req->input('biaya_lain_lain')) ? null
+                    : (int) $req->input('biaya_lain_lain')
             );
 
             $total_KeUsaha = array(
@@ -851,15 +1110,15 @@ class MasterAO_Controller extends BaseController
                 }
 
                 $dataAO = array(
-                    'id_validasi'          => $id_valid,
-                    'id_verifikasi'        => $id_verif,
-                    'id_agunan_tanah'      => $tanID,
-                    'id_agunan_kendaraan'  => $kenID,
+                    'id_validasi'                 => $id_valid,
+                    'id_verifikasi'               => $id_verif,
+                    'id_agunan_tanah'             => $tanID,
+                    'id_agunan_kendaraan'         => $kenID,
                     'id_periksa_agunan_tanah'     => $p_tanID,
                     'id_periksa_agunan_kendaraan' => $p_kenID,
-                    'id_kapasitas_bulanan' => $id_kapbul,
-                    'id_pendapatan_usaha'  => $id_usaha,
-                    'id_recom_ao'          => $id_recom
+                    'id_kapasitas_bulanan'        => $id_kapbul,
+                    'id_pendapatan_usaha'         => $id_usaha,
+                    'id_recom_ao'                 => $id_recom
                 );
 
                 $arrAO = array_merge($TransAO, $dataAO);
@@ -1007,15 +1266,15 @@ class MasterAO_Controller extends BaseController
                 }
 
                 $dataAO = array(
-                    'id_validasi'          => $id_valid,
-                    'id_verifikasi'        => $id_verif,
-                    'id_agunan_tanah'      => $tanID,
-                    'id_agunan_kendaraan'  => $kenID,
+                    'id_validasi'                 => $id_valid,
+                    'id_verifikasi'               => $id_verif,
+                    'id_agunan_tanah'             => $tanID,
+                    'id_agunan_kendaraan'         => $kenID,
                     'id_periksa_agunan_tanah'     => $p_tanID,
                     'id_periksa_agunan_kendaraan' => $p_kenID,
-                    'id_kapasitas_bulanan' => $id_kapbul,
-                    'id_pendapatan_usaha'  => $id_usaha,
-                    'id_recom_ao'          => $id_recom
+                    'id_kapasitas_bulanan'        => $id_kapbul,
+                    'id_pendapatan_usaha'         => $id_usaha,
+                    'id_recom_ao'                 => $id_recom
                 );
 
                 $arrAO = array_merge($TransAO, $dataAO);

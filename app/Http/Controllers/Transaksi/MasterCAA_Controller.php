@@ -288,8 +288,13 @@ class MasterCAA_Controller extends BaseController
                 $i = 0;
                 foreach($files as $file){
 
-                    if ($file->getClientOriginalExtension() != 'pdf' && $file->getClientOriginalExtension() != 'jpg' && $file->getClientOriginalExtension() != 'jpeg' && $file->getClientOriginalExtension() != 'png' && $file->getClientOriginalExtension() != 'gif') {
-
+                    if (
+                        $file->getClientOriginalExtension() != 'pdf'  &&
+                        $file->getClientOriginalExtension() != 'jpg'  &&
+                        $file->getClientOriginalExtension() != 'jpeg' &&
+                        $file->getClientOriginalExtension() != 'png'  &&
+                        $file->getClientOriginalExtension() != 'gif'
+                    ){
                         return response()->json([
                             "code"    => 422,
                             "status"  => "not valid request",
@@ -324,8 +329,13 @@ class MasterCAA_Controller extends BaseController
                 $i = 0;
                 foreach($files as $file){
 
-                    if ($file->getClientOriginalExtension() != 'pdf' && $file->getClientOriginalExtension() != 'jpg' && $file->getClientOriginalExtension() != 'jpeg' && $file->getClientOriginalExtension() != 'png' && $file->getClientOriginalExtension() != 'gif') {
-
+                    if (
+                        $file->getClientOriginalExtension() != 'pdf'  &&
+                        $file->getClientOriginalExtension() != 'jpg'  &&
+                        $file->getClientOriginalExtension() != 'jpeg' &&
+                        $file->getClientOriginalExtension() != 'png'  &&
+                        $file->getClientOriginalExtension() != 'gif'
+                    ){
                         return response()->json([
                             "code"    => 422,
                             "status"  => "not valid request",
@@ -706,7 +716,7 @@ class MasterCAA_Controller extends BaseController
                 'tgl_atau_no_ukur'        => $value->tgl_ukur_sertifikat,
                 'lampiran' => [
                     'agunan_bag_depan'      => $value->agunan_bag_depan,
-                    'agunan_bag_jalan'     => $value->agunan_bag_jalan,
+                    'agunan_bag_jalan'      => $value->agunan_bag_jalan,
                     'agunan_bag_ruangtamu'  => $value->agunan_bag_ruangtamu,
                     'agunan_bag_kamarmandi' => $value->agunan_bag_kamarmandi,
                     'agunan_bag_dapur'      => $value->agunan_bag_dapur
@@ -1078,10 +1088,13 @@ class MasterCAA_Controller extends BaseController
 
             if($val->so['caa']['status_caa'] == 0){
                 $status_caa = 'waiting';
+
             }elseif ($val->so['caa']['status_caa'] == 1) {
                 $status_caa = 'recommend';
+
             }elseif($val->so['caa']['status_caa'] == 2){
                 $status_caa = 'not recommend';
+
             }elseif ($val->so['caa']['status_caa'] == null || $val->so['caa']['status_caa'] == "") {
                 $status_caa = 'null';
             }

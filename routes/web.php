@@ -29,56 +29,56 @@ $router->group(['prefix' => '/wilayah'], function () use ($router) {
         // Provinsi
         $router->group(['prefix' => '/provinsi'], function () use ($router){
             $router->post('/', 'ProvinsiController@store');
-            $router->get('/', 'ProvinsiController@index');
+            $router->get('/',  'ProvinsiController@index');
             // $router->get('/search/{search}', 'ProvinsiController@search'); // search Provinsi to Mitra
             $router->get('/{IdOrName}', 'ProvinsiController@show'); // Detail Dan Search
-            $router->put('/{id}', 'ProvinsiController@update');
+            $router->put('/{id}',    'ProvinsiController@update');
             $router->delete('/{id}', 'ProvinsiController@delete');
 
             // Trash
-            $router->get('/trash/check', 'ProvinsiController@trash');
+            $router->get('/trash/check',        'ProvinsiController@trash');
             $router->get('/trash/restore/{id}', 'ProvinsiController@restore');
         });
 
         // Kabupaten
         $router->get('/provinsi/{id}/kabupaten', 'KabupatenController@sector'); // Get Data Kabupaten By Id Provinsi
         $router->group(['prefix' => '/kabupaten'], function () use ($router){
-            $router->post('/', 'KabupatenController@store');
-            $router->get('/', 'KabupatenController@index');
+            $router->post('/',          'KabupatenController@store');
+            $router->get('/',           'KabupatenController@index');
             $router->get('/{IdOrName}', 'KabupatenController@show'); // Detail Dan Search
-            $router->put('/{id}', 'KabupatenController@update');
-            $router->delete('/{id}', 'KabupatenController@delete');
+            $router->put('/{id}',       'KabupatenController@update');
+            $router->delete('/{id}',    'KabupatenController@delete');
 
             //Trash
-            $router->get('/trash/check', 'KabupatenController@trash');
+            $router->get('/trash/check',        'KabupatenController@trash');
             $router->get('/trash/restore/{id}', 'KabupatenController@restore');
         });
 
         // Kecamatan
         $router->get('/kabupaten/{id}/kecamatan', 'KecamatanController@sector'); // Get Data Kecamatan By Id Kabupaten
         $router->group(['prefix' => '/kecamatan'], function () use ($router){
-            $router->post('/', 'KecamatanController@store');
-            $router->get('/', 'KecamatanController@index');
+            $router->post('/',          'KecamatanController@store');
+            $router->get('/',           'KecamatanController@index');
             $router->get('/{IdOrName}', 'KecamatanController@show'); // Detail Dan Search
-            $router->put('/{id}', 'KecamatanController@update');
-            $router->delete('/{id}', 'KecamatanController@delete');
+            $router->put('/{id}',       'KecamatanController@update');
+            $router->delete('/{id}',    'KecamatanController@delete');
 
             // Trash
-            $router->get('/trash/check', 'KecamatanController@trash');
+            $router->get('/trash/check',        'KecamatanController@trash');
             $router->get('/trash/restore/{id}', 'KecamatanController@restore');
         });
 
         // Kelurahan
         $router->get('/kecamatan/{id}/kelurahan', 'KelurahanController@sector'); // Get Data Kelurahan By Id Kecamatan
         $router->group(['prefix' => '/kelurahan'], function () use ($router){
-            $router->post('/', 'KelurahanController@store');
-            $router->get('/', 'KelurahanController@index');
+            $router->post('/',          'KelurahanController@store');
+            $router->get('/',           'KelurahanController@index');
             $router->get('/{IdOrName}', 'KelurahanController@show'); // Detail Dan Search
-            $router->put('/{id}', 'KelurahanController@update');
-            $router->delete('/{id}', 'KelurahanController@delete');
+            $router->put('/{id}',       'KelurahanController@update');
+            $router->delete('/{id}',    'KelurahanController@delete');
 
             // Trash
-            $router->get('/trash/check', 'KelurahanController@trash');
+            $router->get('/trash/check',        'KelurahanController@trash');
             $router->get('/trash/restore/{id}', 'KelurahanController@restore');
         });
     });
@@ -86,7 +86,7 @@ $router->group(['prefix' => '/wilayah'], function () use ($router) {
 
 $router->post('/login', 'AuthController@login'); // Login All Level
 
-$router->put('/api/user/reset_password', 'UserController@resetPassword'); //Reset Password
+$router->put('/api/user/reset_password',     'UserController@resetPassword'); //Reset Password
 $router->post('/api/operator/{id_trans_so}', 'Transaksi\MasterCA_Controller@operator');
 
 // $router->group(['middleware' => ['jwt.auth', 'log'], 'prefix' => 'api'], function () use ($router) {
@@ -101,9 +101,9 @@ $router->group(['middleware' => ['jwt.auth'], 'prefix' => 'api'], function () us
     // });
 
     // Users And User
-    $router->get('/users', ['subject' => 'Get All Users' ,'uses' => 'UserController@getUsers']);
-    $router->get('/users/{IdOrSearch}', ['subject' => 'Deail Or Search User', 'uses' => 'UserController@IdOrSearch']);
-    $router->get('/user', ['subject' => 'Detail User Login', 'uses' => 'UserController@index']);
+    $router->get('/users',                ['subject' => 'Get All Users' ,        'uses' => 'UserController@getUsers']);
+    $router->get('/users/{IdOrSearch}',   ['subject' => 'Deail Or Search User',  'uses' => 'UserController@IdOrSearch']);
+    $router->get('/user',                 ['subject' => 'Detail User Login',     'uses' => 'UserController@index']);
     $router->put('/user/change_password', ['subject' => 'Change Password Login', 'uses' => 'UserController@changePassword']);
 
     // Otorisasi

@@ -123,10 +123,17 @@ class AreaController extends BaseController
         }
 
         $data = array(
-            'nama'         => empty($req->input('nama')) ? $check->nama : $req->input('nama'),
-            'id_provinsi'  => empty($req->input('id_provinsi')) ? $check->id_provinsi : $req->input('id_provinsi'),
-            'id_kabupaten' => empty($req->input('id_kabupaten')) ? $check->id_kabupaten : $req->input('id_kabupaten'),
-            'flg_aktif'    => empty($req->input('flg_aktif')) ? $check->flg_aktif : ($req->input('flg_aktif') == 'false' ? 0 : 1)
+            'nama'         => empty($req->input('nama'))
+                ? $check->nama : $req->input('nama'),
+
+            'id_provinsi'  => empty($req->input('id_provinsi'))
+                ? $check->id_provinsi : $req->input('id_provinsi'),
+
+            'id_kabupaten' => empty($req->input('id_kabupaten'))
+                ? $check->id_kabupaten : $req->input('id_kabupaten'),
+
+            'flg_aktif'    => empty($req->input('flg_aktif'))
+                ? $check->flg_aktif : ($req->input('flg_aktif') == 'false' ? 0 : 1)
         );
 
         Area::where('id', $id)->update($data);

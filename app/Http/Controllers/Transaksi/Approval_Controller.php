@@ -230,6 +230,7 @@ class Approval_Controller extends BaseController
                 'nama_pic'       => $val->pic['nama'],
                 // 'id_jenis_pic'   => $val->pic['id_mj_pic'],
                 'jabatan'        => $val->pic['jpic']['nama_jenis'],
+
                 'pengajuan_so'   => [
                     'plafon'  => (int) $val->so['faspin']['plafon'],
                     'tenor'   => (int) $val->so['faspin']['tenor']
@@ -313,6 +314,7 @@ class Approval_Controller extends BaseController
             'batas_plafon'   => (int) $val->pic['plafon_caa'],
             'nama_pic'       => $val->pic['nama'],
             'jabatan'        => $val->pic['jpic']['nama_jenis'],
+
             'pengajuan_so'   => [
                 'plafon'  => (int) $val->so['faspin']['plafon'],
                 'tenor'   => (int) $val->so['faspin']['tenor']
@@ -495,7 +497,7 @@ class Approval_Controller extends BaseController
                 'nama' => $check_ca->so['debt']['nama_lengkap']
             ],
             'approved' => [
-                'id_pic'  => $check_ca->id_pic == null ? null : (int) $check_ca->id_pic,
+                'id_pic'  => $check_ca->id_pic  == null ? null : (int) $check_ca->id_pic,
                 'user_id' => $check_ca->user_id == null ? null : (int) $check_ca->user_id,
                 'nama_ca' => $check_ca->pic['nama'],
                 'plafon'  => (int) $plafon,

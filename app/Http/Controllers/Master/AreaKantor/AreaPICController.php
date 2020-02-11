@@ -131,9 +131,9 @@ class AreaPICController extends BaseController
         $check = AreaPIC::where('id', $id)->first();
 
         $data = array(
-            'id_area'       => empty($req->input('id_area_kerja')) ? $check->id_area : $req->input('id_area_kerja'),
+            'id_area'       => empty($req->input('id_area_kerja'))  ? $check->id_area : $req->input('id_area_kerja'),
             'id_cabang'     => empty($req->input('id_area_cabang')) ? $check->id_area : $req->input('id_area_cabang'),
-            'nama_area_pic' => empty($req->input('nama_area_pic')) ? $check->nama_area_pic : $req->input('nama_area_pic'),
+            'nama_area_pic' => empty($req->input('nama_area_pic'))  ? $check->nama_area_pic : $req->input('nama_area_pic'),
             'id_provinsi'   => empty($req->input('id_prov')) ? $check->id_prov : $req->input('id_prov'),
             'id_kabupaten'  => empty($req->input('id_kab')) ? $check->id_kab : $req->input('id_kab'),
             'id_kecamatan'  => empty($req->input('id_kec')) ? $check->id_kec : $req->input('id_kec'),

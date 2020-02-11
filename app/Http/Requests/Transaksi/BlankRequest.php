@@ -267,12 +267,12 @@ class BlankRequest extends FormRequest
                 'kuantitatif_hasil'           => 'integer',
 
                 // Rekomendasi Pinjaman pada CA
-                'penyimpangan_struktur' => 'in:ADA,TIDAK',
-                'penyimpangan_dokumen'  => 'in:ADA,TIDAK',
+                // 'penyimpangan_struktur' => 'in:ADA,TIDAK',
+                // 'penyimpangan_dokumen'  => 'in:ADA,TIDAK',
                 'recom_nilai_pinjaman'  => 'integer',
                 'recom_tenor'           => 'integer',
                 'recom_angsuran'        => 'integer',
-                'recom_produk_kredit'   => 'integer',
+                // 'recom_produk_kredit'   => 'integer',
 
                 // Rekomendasi CA
                 'plafon_kredit' => 'integer',
@@ -674,12 +674,12 @@ class BlankRequest extends FormRequest
             'kuantitatif_hasil.integer'           => $integer,
 
             // Rekomendasi Pinjaman pada CA
-            'penyimpangan_struktur.in'     => $in,
-            'penyimpangan_dokumen.in'      => $in,
+            // 'penyimpangan_struktur.in'     => $in,
+            // 'penyimpangan_dokumen.in'      => $in,
             'recom_nilai_pinjaman.integer' => $integer,
             'recom_tenor.integer'          => $integer,
             'recom_angsuran.integer'       => $integer,
-            'recom_produk_kredit.integer'  => $integer,
+            // 'recom_produk_kredit.integer'  => $integer,
 
             // Rekomendasi CA
             'plafon_kredit' => $integer,
