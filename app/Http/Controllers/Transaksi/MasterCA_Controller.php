@@ -4,6 +4,10 @@ namespace App\Http\Controllers\Transaksi;
 
 use Laravel\Lumen\Routing\Controller as BaseController;
 use App\Models\Pengajuan\CA\RekomendasiPinjaman;
+
+use App\Models\Pengajuan\AO\PemeriksaanAgunTan;
+use App\Models\Pengajuan\AO\PemeriksaanAgunKen;
+
 use App\Models\Pengajuan\CA\AsuransiJaminan;
 use App\Http\Controllers\Controller as Helper;
 use App\Http\Requests\Transaksi\BlankRequest;
@@ -401,10 +405,42 @@ class MasterCA_Controller extends BaseController
             'biaya_tabungan'        => $req->input('biaya_tabungan')
         );
 
+        $id_pe_ta = $check->ao['id_periksa_agunan_tanah'];
+
+        if ($id_pe_ta == null) {
+            $PeriksaTanah = null;
+        }
+
+        $id_pe_ke = $check->ao['id_periksa_agunan_kendaraan'];
+
+        if ($id_pe_ke == null) {
+            $PeriksaKenda = null;
+        }
+
+        $PeriksaTanah = PemeriksaanAgunTan::select('nilai_taksasi_agunan')->whereIn('id', explode(",", $id_pe_ta))->get()->toArray();
+
+        if ($PeriksaTanah == null) {
+            $sumTaksasiTan = 0;
+        }else{
+            $sumTaksasiTan = array_sum(array_column($PeriksaTanah,'nilai_taksasi_agunan')); //array_sum($PeriksaTanah);
+        }
+
+        $PeriksaKenda = PemeriksaanAgunTan::select('nilai_taksasi_agunan')->whereIn('id', explode(",", $id_pe_ta))->get()->toArray();
+
+        if ($PeriksaKenda == null) {
+            $sumTaksasiKen = 0;
+        }else{
+            $sumTaksasiKen = array_sum(array_column($PeriksaTanah,'nilai_taksasi_agunan')); //array_sum($PeriksaTanah);
+        }
+
+        $sumAllTaksasi = $sumTaksasiTan + $sumTaksasiKen; // Semua Nilai Taksasi dari semua agunan
+
         // Analisa Kuantitatif dan Kualitatif
         $staticMin    = 35;
         $staticMax    = 80;
-        $staticPlafon = 70000000;
+
+        $staticPlafon = $sumAllTaksasi; // 70000000;
+
         $ltvMax       = 70;
         $percent      = 100;
 
@@ -1197,7 +1233,7 @@ class MasterCA_Controller extends BaseController
         }else{
 
             $query_dir = TransAO::with('so', 'pic', 'cabang')->where('status_ao', 1)
-                    ->orderBy('created_at', 'desc');
+                    ->orderBy('created_at', 'desc')
                     ->whereYear('created_at', '=', $year)
                     ->whereMonth('created_at', '=', $month);
         }

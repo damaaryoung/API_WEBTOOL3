@@ -78,8 +78,20 @@ class Approval_Controller extends BaseController
             ], 404);
         }
 
+        // $arr = $parQuery->toArray();
+
+        // $pop = reset($arr); //array_pop(array_reverse($arr));
+        // dd($pop);
+
         $data = array();
-        foreach ($parQuery as $val) {
+        foreach ($parQuery as $key => $val) {
+
+            if ($key == 0) {
+                $checked = true;
+            }else{
+                $checked = false;
+            }
+
             $data[] = array(
                 "id"        => $val->id == null ? null : (int) $val->id,
                 "user_id"   => $val->user_id,
@@ -89,8 +101,10 @@ class Approval_Controller extends BaseController
                 "jabatan"   => $val->jpic['nama_jenis'],
                 "nama"      => $val->nama,
                 "email"     => $val->email,
-                "flg_aktif" => $val->flg_aktif == 1 ? "true" : "false"
+                // "flg_aktif" => $val->flg_aktif == 1 ? "true" : "false",
+                "checked"   => $checked
             );
+
         }
 
         try {
@@ -279,11 +293,11 @@ class Approval_Controller extends BaseController
 
         if($val->so['faspin']['plafon'] <= $val->pic['plafon_caa']) {
 
-            $list_status = array('accept', 'forward', 'reject', 'return');
+            $list_status = array('accept' => true, 'forward' => false, 'reject' => true, 'return' => true);
 
         }else{
 
-            $list_status = array('accept', 'reject', 'return');
+            $list_status = array('accept' => false, 'forward' => true, 'reject' => true, 'return' => true);
 
         }
 
