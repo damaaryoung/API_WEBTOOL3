@@ -241,16 +241,16 @@ class DebiturController extends BaseController
             $path = $lamp_dir.'/debitur';
             $name = 'pbb.'.$file->getClientOriginalName();
 
-            if(!empty($check->lamp_pbb))
+            if(!empty($check->lamp_sttp_pbb))
             {
-                File::delete($check->lamp_pbb);
+                File::delete($check->lamp_sttp_pbb);
             }
 
             $file->move($path,$name);
 
             $pbbDebt = $path.'/'.$name;
         }else{
-            $pbbDebt = $check->lamp_pbb;
+            $pbbDebt = $check->lamp_sttp_pbb;
         }
 
         if($req->file('lamp_imb') != null){
