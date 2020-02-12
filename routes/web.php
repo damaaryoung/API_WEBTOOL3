@@ -456,15 +456,14 @@ $router->group(['middleware' => ['jwt.auth'], 'prefix' => 'api'], function () us
 
         // Kapasitas Bulanan
         $router->group(['prefix' => '/kap_bul'], function() use ($router) {
-            $router->get('/{id}',  ['subject' => 'Get kapasitas_bulanan', 'uses' => 'KapBulController@show']);
+            $router->get('/{id}',  ['subject' => 'Read kapasitas_bulanan',   'uses' => 'KapBulController@show']);
             $router->post('/{id}', ['subject' => 'Update kapasitas_bulanan', 'uses' => 'KapBulController@update']);
         });
 
         // PENDAPATAN USAHA CADEBT
         $router->group(['prefix' => '/usaha_cadebt'], function() use ($router) {
-            $router->get('/{id}',  ['subject' => 'Get pendapatan_calon_debitur ', 'uses' => 'UsahaCadebtController@show']);
+            $router->get('/{id}',  ['subject' => 'Read pendapatan_calon_debitur',   'uses' => 'UsahaCadebtController@show']);
             $router->post('/{id}', ['subject' => 'Update pendapatan_calon_debitur', 'uses' => 'UsahaCadebtController@update']);
         });
-
     });
 });

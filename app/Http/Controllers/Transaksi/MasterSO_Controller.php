@@ -685,9 +685,9 @@ class MasterSO_Controller extends BaseController
         $user_id     = $request->auth->user_id;
         $username    = $request->auth->user;
 
-        $trans = TransSO::where('id', $id)->first();
+        $check = TransSO::where('id', $id)->first();
 
-        if (!$trans) {
+        if (!$check) {
             return response()->json([
                 "code"    => 404,
                 "status"  => "not found",
@@ -718,327 +718,12 @@ class MasterSO_Controller extends BaseController
             'tenor'           => empty($req->input('tenor_pinjaman')) ? $trans->faspin['tenor_pinjaman'] : $req->input('tenor_pinjaman')
         );
 
-        $lamp_dir = 'public/lamp_trans.'.$trans->nomor_so;
-
-        if($file = $req->file('lamp_ktp')){
-            $path = $lamp_dir.'/debitur';
-            $name = 'ktp.' . $file->getClientOriginalName();
-
-            if(!empty($trans->debt['lamp_ktp']))
-            {
-                File::delete($trans->debt['lamp_ktp']);
-            }
-
-            $file->move($path,$name);
-
-            $ktpDebt = $path.'/'.$name;
-        }else{
-            $ktpDebt = $trans->debt['lamp_ktp'];
-        }
-
-        if($file = $req->file('lamp_kk')){
-            $path = $lamp_dir.'/debitur';
-            $name = 'kk.' . $file->getClientOriginalName();
-
-            if(!empty($trans->debt['lamp_kk']))
-            {
-                File::delete($trans->debt['lamp_kk']);
-            }
-
-            $file->move($path,$name);
-
-            $kkDebt = $path.'/'.$name;
-        }else{
-            $kkDebt = $trans->debt['lamp_kk'];
-        }
-
-        if($file = $req->file('lamp_sertifikat')){
-            $path = $lamp_dir.'/debitur';
-            $name = 'sertifikat.' . $file->getClientOriginalName();
-
-            if(!empty($trans->debt['lamp_sertifikat']))
-            {
-                File::delete($trans->debt['lamp_sertifikat']);
-            }
-
-            $file->move($path,$name);
-
-            $sertifikatDebt = $path.'/'.$name;
-        }else{
-            $sertifikatDebt = $trans->debt['lamp_sertifikat'];
-        }
-
-        if($file = $req->file('lamp_pbb')){
-            $path = $lamp_dir.'/debitur';
-            $name = 'pbb.' . $file->getClientOriginalName();
-
-            if(!empty($trans->debt['lamp_pbb']))
-            {
-                File::delete($trans->debt['lamp_pbb']);
-            }
-
-            $file->move($path,$name);
-
-            $pbbDebt = $path.'/'.$name;
-        }else{
-            $pbbDebt = $trans->debt['lamp_pbb'];
-        }
-
-        if($file = $req->file('lamp_imb')){
-            $path = $lamp_dir.'/debitur';
-            $name = 'imb.' . $file->getClientOriginalName();
-
-            if(!empty($trans->debt['lamp_imb']))
-            {
-                File::delete($trans->debt['lamp_imb']);
-            }
-
-            $file->move($path,$name);
-
-            $imbDebt = $path.'/'.$name;
-        }else{
-            $imbDebt = $trans->debt['lamp_imb'];
-        }
-
-        // Data Calon Debitur
-        $dataDebitur = array(
-            'nama_lengkap'          => empty($req->input('nama_lengkap')) ? $trans->debt['nama_lengkap'] : $req->input('nama_lengkap'),
-            'gelar_keagamaan'       => empty($req->input('gelar_keagamaan')) ? $trans->debt['gelar_keagamaan'] : $req->input('gelar_keagamaan'),
-            'gelar_pendidikan'      => empty($req->input('gelar_pendidikan')) ? $trans->debt['gelar_pendidikan'] : $req->input('gelar_pendidikan'),
-            'jenis_kelamin'         => empty($req->input('jenis_kelamin')) ? $trans->debt['jenis_kelamin'] : strtoupper($req->input('jenis_kelamin')),
-            'status_nikah'          => empty($req->input('status_nikah')) ? $trans->debt['status_nikah'] : strtoupper($req->input('status_nikah')),
-            'ibu_kandung'           => empty($req->input('ibu_kandung')) ? $trans->debt['ibu_kandung']: $req->input('ibu_kandung'),
-            'no_ktp'                => empty($req->input('no_ktp')) ? $trans->debt['no_ktp'] : $req->input('no_ktp'),
-            'no_ktp_kk'             => empty($req->input('no_ktp_kk')) ? $trans->debt['no_ktp_kk'] : $req->input('no_ktp_kk'),
-            'no_kk'                 => empty($req->input('no_kk')) ? $trans->debt['no_kk'] : $req->input('no_kk'),
-            'no_npwp'               => empty($req->input('no_npwp')) ? $trans->debt['no_npwp'] : $req->input('no_npwp'),
-            'tempat_lahir'          => empty($req->input('tempat_lahir')) ? $trans->debt['tempat_lahir']: $req->input('tempat_lahir'),
-            'tgl_lahir'             => empty($req->input('tgl_lahir')) ? $trans->debt['tgl_lahir'] : Carbon::parse($req->input('tgl_lahir'))->format('Y-m-d'),
-            'agama'                 => empty($req->input('agama')) ? $trans->debt['agama'] : strtoupper($req->input('agama')),
-            'alamat_ktp'            => empty($req->input('alamat_ktp')) ? $trans->debt['alamat_ktp'] : $req->input('alamat_ktp'),
-            'rt_ktp'                => empty($req->input('rt_ktp')) ? $trans->debt['rt_ktp'] : $req->input('rt_ktp'),
-            'rw_ktp'                => empty($req->input('rw_ktp')) ? $trans->debt['rw_ktp'] : $req->input('rw_ktp'),
-            'id_prov_ktp'           => empty($req->input('id_provinsi_ktp')) ? $trans->debt['id_prov_ktp'] : $req->input('id_provinsi_ktp'),
-            'id_kab_ktp'            => empty($req->input('id_kabupaten_ktp')) ? $trans->debt['id_kab_ktp'] : $req->input('id_kabupaten_ktp'),
-            'id_kec_ktp'            => empty($req->input('id_kecamatan_ktp')) ? $trans->debt['id_kec_ktp'] : $req->input('id_kecamatan_ktp'),
-            'id_kel_ktp'            => empty($req->input('id_kelurahan_ktp')) ? $trans->debt['id_kel_ktp'] : $req->input('id_kelurahan_ktp'),
-            'alamat_domisili'       => empty($req->input('alamat_domisili')) ? $trans->debt['alamat_domisili'] : $req->input('alamat_domisili'),
-            'rt_domisili'           => empty($req->input('rt_domisili')) ? $trans->debt['rt_domisili'] : $req->input('rt_domisili'),
-            'rw_domisili'           => empty($req->input('rw_domisili')) ? $trans->debt['rw_domisili'] : $req->input('rw_domisili'),
-            'id_prov_domisili'      => empty($req->input('id_provinsi_domisili')) ? $trans->debt['id_prov_domisili'] : $req->input('id_provinsi_domisili'),
-            'id_kab_domisili'       => empty($req->input('id_kabupaten_domisili')) ? $trans->debt['id_kab_domisili'] : $req->input('id_kabupaten_domisili'),
-            'id_kec_domisili'       => empty($req->input('id_kecamatan_domisili')) ? $trans->debt['id_kec_domisili'] : $req->input('id_kecamatan_domisili'),
-            'id_kel_domisili'       => empty($req->input('id_kelurahan_domisili')) ? $trans->debt['id_kel_domisili'] : $req->input('id_kelurahan_domisili'),
-            'pendidikan_terakhir'   => empty($req->input('pendidikan_terakhir')) ? $trans->debt['pendidikan_terakhir'] : $req->input('pendidikan_terakhir'),
-            'jumlah_tanggungan'     => empty($req->input('jumlah_tanggungan')) ? $trans->debt['jumlah_tanggungan'] : $req->input('jumlah_tanggungan'),
-            'no_telp'               => empty($req->input('no_telp')) ? $trans->debt['no_telp'] : $req->input('no_telp'),
-            'no_hp'                 => empty($req->input('no_hp')) ? $trans->debt['no_hp'] : $req->input('no_hp'),
-            'alamat_surat'          => empty($req->input('alamat_surat')) ? $trans->debt['alamat_surat'] : $req->input('alamat_surat'),
-            'lamp_ktp'              => $ktpDebt,
-            'lamp_kk'               => $kkDebt,
-            'lamp_sertifikat'       => $sertifikatDebt,
-            'lamp_sttp_pbb'         => $pbbDebt,
-            'lamp_imb'              => $imbDebt
-        );
-
-        if($file = $req->file('lamp_ktp_pas')){
-            $path = $lamp_dir.'/pasangan';
-            $name = 'ktp.' . $file->getClientOriginalName();
-
-            if(!empty($trans->pas['lamp_ktp']))
-            {
-                File::delete($trans->pas['lamp_ktp']);
-            }
-
-            $file->move($path,$name);
-
-            $ktpPass = $path.'/'.$name;
-        }else{
-            $ktpPass = $trans->pas['lamp_ktp'];
-        }
-
-        if($file = $req->file('lamp_buku_nikah_pas')){
-            $path = $lamp_dir.'/pasangan';
-            $name = 'buku_nikah.' . $file->getClientOriginalName();
-
-            if(!empty($trans->pas['lamp_buku_nikah']))
-            {
-                File::delete($trans->pas['lamp_buku_nikah']);
-            }
-
-            $file->move($path,$name);
-
-            $bukuNikahPass = $path.'/'.$name;
-        }else{
-            $bukuNikahPass = $trans->pas['lamp_buku_nikah'];
-        }
-
-        // Data Pasangan Calon Debitur
-        $dataPasangan = array(
-            'nama_lengkap'     => empty($req->input('nama_lengkap_pas')) ? $trans->nama_lengkap : $req->input('nama_lengkap_pas'),
-            'nama_ibu_kandung' => empty($req->input('nama_ibu_kandung_pas')) ? $trans->nama_ibu_kandung : $req->input('nama_ibu_kandung_pas'),
-            'jenis_kelamin'    => strtoupper($req->input('jenis_kelamin_pas')),
-            'no_ktp'           => empty($req->input('no_ktp_pas')) ? $trans->no_ktp : $req->input('no_ktp_pas'),
-            'no_ktp_kk'        => $req->input('no_ktp_kk_pas'),
-            'no_npwp'          => $req->input('no_npwp_pas'),
-            'tempat_lahir'     => $req->input('tempat_lahir_pas'),
-            'tgl_lahir'        => Carbon::parse($req->input('tgl_lahir_pas'))->format('Y-m-d'),
-            'alamat_ktp'       => $req->input('alamat_ktp_pas'),
-            'no_telp'          => $req->input('no_telp_pas'),
-            'lamp_ktp'         => $ktpPass,
-            'lamp_buku_nikah'  => $bukuNikahPass
-        );
-
-        // Data Penjamin
-        if (!$trans->id_penjamin) {
-            $id_penjamin = null;
-        }else{
-            $id_penj = explode (",",$trans->id_penjamin);
-
-            $penjamin = Penjamin::whereIn('id', $id_penj)->get();
-
-            if ($penjamin != '[]') {
-
-                // $a = 1; $b = 1; $c = 1; $d = 1;
-
-                if($files = $req->file('lamp_ktp_pen')){
-                    foreach($files as $file){
-
-                        $name = 'ktp_penjamin.' . $file->getClientOriginalName();
-
-                        foreach ($penjamin as $key => $val) {
-
-                            if ($val->lamp_ktp != null) {
-                                $no_so = $val->lamp_ktp;
-                            }else{
-                                $no_so = $val->lamp_ktp;
-                            }
-
-                            $arrPath = explode("/", $no_so, 4);
-
-                            $path = $arrPath[0].'/'.$arrPath[1].'/'.$arrPath[2];
-
-                            if(!empty($val->lamp_ktp))
-                            {
-                                File::delete($val->lamp_ktp);
-                            }
-                        }
-
-                        $file->move($path,$name);
-
-                        $ktpPen[] = $path.'/'.$name;
-                    }
-                }
-
-                if($files = $req->file('lamp_ktp_pasangan_pen')){
-                    foreach($files as $file){
-
-                        $name = 'ktp_pasangan.' . $file->getClientOriginalName();
-
-                        foreach ($penjamin as $key => $val) {
-                            $no_so = $val->lamp_ktp_pasangan;
-
-                            $arrPath = explode("/", $no_so, 4);
-
-                            $path = $arrPath[0].'/'.$arrPath[1].'/'.$arrPath[2];
-
-                            if(!empty($val->lamp_ktp_pasangan))
-                            {
-                                File::delete($val->lamp_ktp_pasangan);
-                            }
-                        }
-
-                        $file->move($path,$name);
-
-                        $ktpPenPAS[] = $path.'/'.$name;
-                    }
-                }
-
-                if($files = $req->file('lamp_kk_pen')){
-                    foreach($files as $file){
-
-                        $name = 'kk_penjamin.' . $file->getClientOriginalName();
-
-                        foreach ($penjamin as $key => $val) {
-                            $no_so = $val->lamp_kk;
-
-                            $arrPath = explode("/", $no_so, 4);
-
-                            $path = $arrPath[0].'/'.$arrPath[1].'/'.$arrPath[2];
-
-                            if(!empty($val->lamp_kk))
-                            {
-                                File::delete($val->lamp_kk);
-                            }
-                        }
-
-                        $file->move($path,$name);
-
-                        $kkPen[] = $path.'/'.$name;
-                    }
-                }
-
-                if($files = $req->file('lamp_buku_nikah_pen')){
-                    foreach($files as $file){
-
-                        $name = 'buku_nikah_penjamin.' . $file->getClientOriginalName();
-
-                        foreach ($penjamin as $key => $val) {
-                            $no_so = $val->lamp_buku_nikah;
-
-                            $arrPath = explode("/", $no_so, 4);
-
-                            $path = $arrPath[0].'/'.$arrPath[1].'/'.$arrPath[2];
-
-                            if(!empty($val->lamp_buku_nikah))
-                            {
-                                File::delete($val->lamp_buku_nikah);
-                            }
-                        }
-
-                        $file->move($path,$name);
-
-                        $bukuNikahPen[] = $path.'/'.$name;
-                    }
-                }
-
-                $i = 0;
-                foreach ($penjamin as $key => $value) {
-                    $DP[$key] = [
-                        'nama_ktp'         => empty($req->input('nama_ktp_pen')[$i]) ? $value->nama_ktp : $req->input('nama_ktp_pen')[$i],
-                        'nama_ibu_kandung' => empty($req->input('nama_ibu_kandung_pen')[$i]) ? $value->nama_ibu_kandung : $req->input('nama_ibu_kandung_pen')[$i],
-                        'no_ktp'           => empty($req->input('no_ktp_pen')[$i]) ? $value->no_ktp : $req->input('no_ktp_pen')[$i],
-                        'no_npwp'          => empty($req->input('no_npwp_pen')[$i]) ? $value->no_npwp : $req->input('no_npwp_pen')[$i],
-                        'tempat_lahir'     => empty($req->input('tempat_lahir_pen')[$i]) ? $value->tempat_lahir : $req->input('tempat_lahir_pen')[$i],
-                        'tgl_lahir'        => empty($req->input('tgl_lahir_pen')[$i]) ? $value->tgl_lahir : Carbon::parse($req->input('tgl_lahir_pen')[$i])->format('Y-m-d'),
-                        'jenis_kelamin'    => empty($req->input('jenis_kelamin_pen')[$i]) ? $value->jenis_kelamin : strtoupper($req->input('jenis_kelamin_pen')[$i]),
-                        'alamat_ktp'       => empty($req->input('alamat_ktp_pen')[$i]) ? $value->alamat_ktp : $req->input('alamat_ktp_pen')[$i],
-                        'no_telp'          => empty($req->input('no_telp_pen')[$i]) ? $value->no_telp : $req->input('no_telp_pen')[$i],
-                        'hubungan_debitur' => empty($req->input('hubungan_debitur_pen')[$i]) ? $value->hubungan_debitur : $req->input('hubungan_debitur_pen')[$i],
-                        'lamp_ktp'         => empty($ktpPen[$i]) ? $value->lamp_ktp : $ktpPen[$i],
-                        'lamp_ktp_pasangan'=> empty($ktpPenPAS[$i]) ? $value->lamp_ktp_pasangan : $ktpPenPAS[$i],
-                        'lamp_kk'          => empty($kkPen[$i]) ? $value->lamp_kk : $kkPen[$i],
-                        'lamp_buku_nikah'  => empty($bukuNikahPen[$i]) ? $value->lamp_buku_nikah : $bukuNikahPen[$i],
-                        'updated_at'       => Carbon::now()->toDateTimeString()
-                    ];
-                    $i++;
-                }
-            }
-        }
-
 
         DB::connection('web')->beginTransaction();
-        // try{
+        try{
             TransSO::where('id', $id)->update($trans_so);
-            FasilitasPinjaman::where('id', $trans->id_fasilitas_pinjaman)->update($dataFasPin);
-            Debitur::where('id', $trans->id_calon_debt)->update($dataDebitur);
-            Pasangan::where('id', $trans->id_pasangan)->update($dataPasangan);
 
-            if ($trans->id_penjamin != null) {
-                for($i=0; $i < count($id_penj); $i++){
-                    Penjamin::where('id', $id_penj[$i])->update($DP[$i]);
-                }
-            }
+            FasilitasPinjaman::where('id', $check->id_fasilitas_pinjaman)->update($dataFasPin);
 
             DB::connection('web')->commit();
 
@@ -1047,14 +732,14 @@ class MasterSO_Controller extends BaseController
                 'status' => 'success',
                 'message'=> 'Data berhasil diupdate'
             ], 200);
-        // }catch (\Exception $e) {
-        //     $err = DB::connection('web')->rollback();
-        //     return response()->json([
-        //         'code'    => 501,
-        //         'status'  => 'error',
-        //         'message' => 'terjadi kesalahan, mohon beri laporan kepada backend'
-        //     ], 501);
-        // }
+        }catch (\Exception $e) {
+            $err = DB::connection('web')->rollback();
+            return response()->json([
+                'code'    => 501,
+                'status'  => 'error',
+                'message' => 'terjadi kesalahan, mohon beri laporan kepada backend'
+            ], 501);
+        }
     }
 
     public function search($search, Request $req){
