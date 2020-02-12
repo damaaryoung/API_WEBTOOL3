@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\File;
 use App\Models\Transaksi\Approval;
 use App\Models\Transaksi\TransCAA;
 use App\Models\Transaksi\TransCA;
+use App\Models\Transaksi\TransAO;
 use App\Models\Transaksi\TransSO;
 use App\Models\Karyawan\TeamCAA;
 use App\Models\AreaKantor\PIC;
@@ -356,8 +357,6 @@ class Approval_Controller extends BaseController
             ], 404);
         }
 
-        // $check = TransCAA::where('status_caa', 1)->where('id_trans_so', $id)->where('pic_team_caa', 'like', "%{$pic->id}%")->first();
-
         $check = Approval::where('id', $id_approval)->first();
 
         if ($check == null) {
@@ -424,6 +423,17 @@ class Approval_Controller extends BaseController
 
         // $check_caa = TransCAA::where('status_caa', 1)->where('id_trans_so', $id)->first();
 
+        $check_caa = TransCAA::where('status_caa', 1)->where('id_trans_so', $id)->first();
+        // dd($check_ca);
+
+        if ($check_caa == null) {
+            return response()->json([
+                "code"    => 404,
+                "status"  => "not found",
+                "message" => "Data Belum sampai ke CAA"
+            ], 404);
+        }
+
         $check_ca = TransCA::where('status_ca', 1)->where('id_trans_so', $id)->latest()->first();
         // dd($check_ca);
 
@@ -431,11 +441,33 @@ class Approval_Controller extends BaseController
             return response()->json([
                 "code"    => 404,
                 "status"  => "not found",
-                "message" => "Data yang akan anda eksekusi tidak ada, mohon cek URL anda"
+                "message" => "Data Belum sampai ke CA"
             ], 404);
         }
 
-        $check_team = Approval::where('id_trans_so', $id)->whereIn('id_pic', explode(",", $check_ca->so['caa']['pic_team_caa']))->get();
+        $check_ao = TransAO::where('status_ao', 1)->where('id_trans_so', $id)->first();
+        // dd($check_ca);
+
+        if ($check_ao == null) {
+            return response()->json([
+                "code"    => 404,
+                "status"  => "not found",
+                "message" => "Data Belum sampai ke AO"
+            ], 404);
+        }
+
+        $check_so = TransSO::where('id', $id)->first();
+        // dd($check_ca);
+
+        if ($check_so == null) {
+            return response()->json([
+                "code"    => 404,
+                "status"  => "not found",
+                "message" => "Data Belum sampai ada di SO"
+            ], 404);
+        }
+
+        $check_team = Approval::where('id_trans_so', $id)->whereIn('id_pic', explode(",", $check_caa->pic_team_caa))->get();
 
         if ($check_team == null) {
             return response()->json([
@@ -461,7 +493,7 @@ class Approval_Controller extends BaseController
             // $approved_user = array_search('accept', $data[$key], true);
         }
 
-        $id_agu_ta = explode (",",$val->so['ao']['id_agunan_tanah']);
+        $id_agu_ta = explode (",",$check_ao->id_agunan_tanah);
 
         $AguTa = AgunanTanah::whereIn('id', $id_agu_ta)->get();
 
@@ -491,15 +523,15 @@ class Approval_Controller extends BaseController
         }
 
         $result = array(
-            'id_transaksi' => $check_ca->id_trans_so == null ? null : (int) $check_ca->id_trans_so,
+            'id_transaksi' => $check_caa->id_trans_so == null ? null : (int) $check_caa->id_trans_so,
             'debitur' => [
-                'id'   => $check_ca->so['id_calon_debitur'] == null ? null : (int) $check_ca->so['id_calon_debitur'],
-                'nama' => $check_ca->so['debt']['nama_lengkap']
+                'id'   => $check_so->id_calon_debitur == null ? null : (int) $check_so->id_calon_debitur,
+                'nama' => $check_so->debt['nama_lengkap']
             ],
             'approved' => [
-                'id_pic'  => $check_ca->id_pic  == null ? null : (int) $check_ca->id_pic,
-                'user_id' => $check_ca->user_id == null ? null : (int) $check_ca->user_id,
-                'nama_ca' => $check_ca->pic['nama'],
+                'id_pic'  => $check_caa->id_pic  == null ? null : (int) $check_caa->id_pic,
+                'user_id' => $check_caa->user_id == null ? null : (int) $check_caa->user_id,
+                'nama_ca' => $check_caa->pic['nama'],
                 'plafon'  => (int) $plafon,
                 'tenor'   => (int) $tenor,
                 'jaminan' => $imTan
