@@ -1220,19 +1220,6 @@ class MasterCA_Controller extends BaseController
     // Sample
     public function operator($id_trans_so, Request $req, Helper $help) {
 
-        // if (!empty($req->input('nama_bank_acc'))) {
-        //     for ($i = 0; $i < count($req->input('nama_bank_acc')); $i++) {
-        //         $dataACC[] = array(
-        //             'nama_bank' => empty($req->input('nama_bank_acc')[$i])   ? null : $req->nama_bank_acc[$i],
-        //             'plafon' => empty($req->input('plafon_acc')[$i])         ? null : $req->plafon_acc[$i],
-        //             'baki_debet' => empty($req->input('baki_debet_acc')[$i]) ? null : $req->baki_debet_acc[$i],
-        //             'angsuran' => empty($req->input('angsuran_acc')[$i])     ? null : $req->angsuran_acc[$i],
-        //             'collectabilitas' => empty($req->input('collectabilitas_acc')[$i]) ? null : $req->collectabilitas_acc[$i],
-        //             'jenis_kredit' => empty($req->input('jenis_kredit_acc')[$i]) ? null : $req->jenis_kredit_acc[$i]
-        //         );
-        //     }
-        // }
-
         $check = TransSO::where('id',$id_trans_so)->first();
 
         if (!$check) {
@@ -1303,21 +1290,18 @@ class MasterCA_Controller extends BaseController
             $recom_angs = $help->recom_angs($exec);
         }
 
+        // $recom_pendapatan  = $check->ao['kapbul']['total_pemasukan'];
+        $recom_pendapatan  = $check->ao['kapbul']['total_pemasukan'];
+        $recom_pengeluaran = $check->ao['kapbul']['total_pengeluaran'];
+        $recom_angsuran    = $check->ao['kapbul']['angsuran'];
 
-        $ttl_pendapatan  = $check->ao['kapbul']['total_pemasukan'];
-        $ttl_pengeluaran = $check->ao['kapbul']['total_pengeluaran'];
-        $ttl_angsuran    = $check->ao['kapbul']['angsuran'];
+        $recom_pend_bersih = $recom_pendapatan - $recom_pengeluaran;
 
-        $recom_pend_bersih = $ttl_pendapatan - $ttl_pengeluaran;
+        $disposable_income = $recom_pendapatan - $recom_pengeluaran - $recom_angs;
 
-        $disposable_income = $ttl_pendapatan - $ttl_pengeluaran - $recom_angs;
-
-
-        $recom_ltv = ($plaf / $staticPlafon) * $percent;
-
-        $recom_idir = ($recom_angs / ($ttl_pendapatan - $ttl_pengeluaran)) * $percent;
-
-        $recom_dsr = ($recom_angs / ($ttl_pendapatan - $ttl_angsuran)) * $percent;
+        $recom_ltv  = ($plaf / $staticPlafon) * $percent;
+        $recom_idir = ($recom_angs / ($recom_pendapatan - $recom_pengeluaran)) * $percent;
+        $recom_dsr  = ($recom_angs / ($recom_pendapatan - $recom_angsuran)) * $percent;
 
 
         if ($recom_dsr <= $staticMin && $recom_ltv <= $ltvMax && $recom_idir > 0 && $recom_idir < $staticMax) {
