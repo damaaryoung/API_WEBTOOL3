@@ -750,7 +750,7 @@ class MasterCAA_Controller extends BaseController
                 'ttl_plafon'               => array_sum(array_column($infoCC, 'plafon')),
                 'ttl_debet'                => array_sum(array_column($infoCC, 'baki_debet')),
                 'ttl_angsuran'             => array_sum(array_column($infoCC, 'angsuran')),
-                // 'collectabilitas_terendah' => array_sum(array_column($infoCC, 'plafon')),
+                'collectabilitas_terendah' => min(array_column($infoCC, 'collectabilitas')),
                 'table'                    => $infoCC
             ],
             'status_ca'  => $status_ca

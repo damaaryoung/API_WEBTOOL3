@@ -27,9 +27,10 @@ class InfoACC extends Model implements AuthenticatableContract, AuthorizableCont
     ];
 
     protected $casts = [
-        'plafon'     => 'integer',
-        'baki_debet' => 'integer',
-        'angsuran'   => 'integer'
+        'plafon'          => 'integer',
+        'baki_debet'      => 'integer',
+        'angsuran'        => 'integer',
+        'collectabilitas' => 'integer'
     ];
 
     public $timestamps = false;
