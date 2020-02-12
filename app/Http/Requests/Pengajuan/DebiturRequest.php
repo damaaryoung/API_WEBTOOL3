@@ -100,7 +100,7 @@ class DebiturRequest extends FormRequest
             'no_npwp.required'                => ':attribute wajib diisi',
             'no_npwp.required'                => ':attribute wajib diisi',
             'tgl_lahir.required'              => ':attribute wajib diisi',
-            'agama.required'                  => ':attribute wajib diisi',
+            // 'agama.required'                  => ':attribute wajib diisi',
             'rt_ktp.required'                 => ':attribute wajib diisi',
             'rw_ktp.required'                 => ':attribute wajib diisi',
             'id_provinsi_ktp.required'        => ':attribute wajib diisi',
