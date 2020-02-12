@@ -569,20 +569,20 @@ class MasterSO_Controller extends BaseController
             for ($i = 0; $i < count($req->input('nama_ktp_pen')); $i++) {
 
                 $DP[] = [
-                    'nama_ktp'         => empty($req->nama_ktp_pen[$i]) ? null : $req->nama_ktp_pen[$i],
+                    'nama_ktp'         => empty($req->nama_ktp_pen[$i])         ? null : $req->nama_ktp_pen[$i],
                     'nama_ibu_kandung' => empty($req->nama_ibu_kandung_pen[$i]) ? null : $req->nama_ibu_kandung_pen[$i],
-                    'no_ktp'           => empty($req->no_ktp_pen[$i]) ? null : $req->no_ktp_pen[$i],
-                    'no_npwp'          => empty($req->no_npwp_pen[$i]) ? null : $req->no_npwp_pen[$i],
-                    'tempat_lahir'     => empty($req->tempat_lahir_pen[$i]) ? null : $req->tempat_lahir_pen[$i],
-                    'tgl_lahir'        => empty($req->tgl_lahir_pen[$i]) ? null : Carbon::parse($req->tgl_lahir_pen[$i])->format('Y-m-d'),
-                    'jenis_kelamin'    => empty($req->jenis_kelamin_pen[$i]) ? null : strtoupper($req->jenis_kelamin_pen[$i]),
-                    'alamat_ktp'       => empty($req->alamat_ktp_pen[$i]) ? null : $req->alamat_ktp_pen[$i],
-                    'no_telp'          => empty($req->no_telp_pen[$i]) ? null : $req->no_telp_pen[$i],
+                    'no_ktp'           => empty($req->no_ktp_pen[$i])           ? null : $req->no_ktp_pen[$i],
+                    'no_npwp'          => empty($req->no_npwp_pen[$i])          ? null : $req->no_npwp_pen[$i],
+                    'tempat_lahir'     => empty($req->tempat_lahir_pen[$i])     ? null : $req->tempat_lahir_pen[$i],
+                    'tgl_lahir'        => empty($req->tgl_lahir_pen[$i])        ? null : Carbon::parse($req->tgl_lahir_pen[$i])->format('Y-m-d'),
+                    'jenis_kelamin'    => empty($req->jenis_kelamin_pen[$i])    ? null : strtoupper($req->jenis_kelamin_pen[$i]),
+                    'alamat_ktp'       => empty($req->alamat_ktp_pen[$i])       ? null : $req->alamat_ktp_pen[$i],
+                    'no_telp'          => empty($req->no_telp_pen[$i])          ? null : $req->no_telp_pen[$i],
                     'hubungan_debitur' => empty($req->hubungan_debitur_pen[$i]) ? null : $req->hubungan_debitur_pen[$i],
-                    'lamp_ktp'         => empty($ktpPen[$i]) ? null : $ktpPen[$i],
-                    'lamp_ktp_pasangan'=> empty($ktpPenPAS[$i]) ? null : $ktpPenPAS[$i],
-                    'lamp_kk'          => empty($kkPen[$i]) ? null : $kkPen[$i],
-                    'lamp_buku_nikah'  => empty($bukuNikahPen[$i]) ? null : $bukuNikahPen[$i]
+                    'lamp_ktp'         => empty($ktpPen[$i])                    ? null : $ktpPen[$i],
+                    'lamp_ktp_pasangan'=> empty($ktpPenPAS[$i])                 ? null : $ktpPenPAS[$i],
+                    'lamp_kk'          => empty($kkPen[$i])                     ? null : $kkPen[$i],
+                    'lamp_buku_nikah'  => empty($bukuNikahPen[$i])              ? null : $bukuNikahPen[$i]
                 ];
 
                 /*if ($DP[$i]['lamp_ktp'] == null) {
@@ -706,16 +706,31 @@ class MasterSO_Controller extends BaseController
         }
 
         $trans_so = array(
-            'id_asal_data'   => empty($req->input('id_asal_data')) ? $trans->id_asal_data : $req->input('id_asal_data'),
+            'id_asal_data'   => empty($req->input('id_asal_data'))   ? $trans->id_asal_data   : $req->input('id_asal_data'),
             'nama_marketing' => empty($req->input('nama_marketing')) ? $trans->nama_marketing : $req->input('nama_marketing')
         );
 
         // Data Fasilitas Pinjaman
         $dataFasPin = array(
-            'jenis_pinjaman'  => empty($req->input('jenis_pinjaman')) ? $trans->faspin['jenis_pinjaman'] : $req->input('jenis_pinjaman'),
-            'tujuan_pinjaman' => empty($req->input('tujuan_pinjaman')) ? $trans->faspin['tujuan_pinjaman'] : $req->input('tujuan_pinjaman'),
-            'plafon'          => empty($req->input('plafon_pinjaman')) ? $trans->faspin['plafon_pinjaman'] : $req->input('plafon_pinjaman'),
-            'tenor'           => empty($req->input('tenor_pinjaman')) ? $trans->faspin['tenor_pinjaman'] : $req->input('tenor_pinjaman')
+            'jenis_pinjaman'
+                => empty($req->input('jenis_pinjaman'))
+                ? $trans->faspin['jenis_pinjaman']
+                : $req->input('jenis_pinjaman'),
+
+            'tujuan_pinjaman'
+                => empty($req->input('tujuan_pinjaman'))
+                ? $trans->faspin['tujuan_pinjaman']
+                : $req->input('tujuan_pinjaman'),
+
+            'plafon'
+                => empty($req->input('plafon_pinjaman'))
+                ? $trans->faspin['plafon_pinjaman']
+                : $req->input('plafon_pinjaman'),
+
+            'tenor'
+                => empty($req->input('tenor_pinjaman'))
+                ? $trans->faspin['tenor_pinjaman']
+                : $req->input('tenor_pinjaman')
         );
 
 
