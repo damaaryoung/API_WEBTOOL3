@@ -51,7 +51,7 @@ class MasterCAA_Controller extends BaseController
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
-                'message' => 'Data kosong'
+                'message' => 'Transaksi dengan di CA masih kosong'
             ], 404);
         }
 
@@ -221,15 +221,16 @@ class MasterCAA_Controller extends BaseController
         //  ID-Cabang - AO / CA / SO - Bulan - Tahun - NO. Urut
         $nomor_caa = $PIC->id_cabang.'-'.$JPIC->nama_jenis.'-'.$month.'-'.$year.'-'.$lastNumb;
 
-        $check_ca = TransCA::where('id_trans_so', $id)->first();
+        $check = TransSO::where('id',$id)->first();
 
-        if (!$check_ca) {
+        if (!$check) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
-                'message' => 'Transaksi dengan id '.$id.' belum sampai ke CA'
+                'message' => 'Transaksi dengan id '.$id.' belum ada di SO'
             ], 404);
         }
+
 
         $check_ao = TransAO::where('id_trans_so', $id)->first();
 
@@ -241,13 +242,13 @@ class MasterCAA_Controller extends BaseController
             ], 404);
         }
 
-        $check = TransSO::where('id',$id)->first();
+        $check_ca = TransCA::where('id_trans_so', $id)->first();
 
-        if (!$check) {
+        if (!$check_ca) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
-                'message' => 'Transaksi dengan id '.$id.' belum ada di SO'
+                'message' => 'Transaksi dengan id '.$id.' belum sampai ke CA'
             ], 404);
         }
 
@@ -534,16 +535,13 @@ class MasterCAA_Controller extends BaseController
         $id_cabang = $pic->id_cabang;
         $scope     = $pic->jpic['cakupan'];
 
-        $query_dir = TransCA::with('pic', 'cabang')->where('id_trans_so', $id)->where('status_ca', 1);
-        $method = 'first';
+        $check_so = TransSO::with('pic', 'cabang')->where('id', $id)->first();
 
-        $check_ca = Helper::checkDir($user_id, $scope, $query_dir, $id_area, $id_cabang, $method);
-
-        if ($check_ca == null) {
+        if ($check_so == null) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
-                'message' => 'Data belum sampai ke CA'
+                'message' => 'Transaksi dengan id '.$id.' belum ada di SO'
             ], 404);
         }
 
@@ -553,19 +551,23 @@ class MasterCAA_Controller extends BaseController
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
-                'message' => 'Data belum sampai ke AO'
+                'message' => 'Transaksi dengan id '.$id.' belum sampai ke AO'
             ], 404);
         }
 
-        $check_so = TransSO::with('pic', 'cabang')->where('id', $id)->first();
+        $query_dir = TransCA::with('pic', 'cabang')->where('id_trans_so', $id)->where('status_ca', 1);
+        $method = 'first';
 
-        if ($check_so == null) {
+        $check_ca = Helper::checkDir($user_id, $scope, $query_dir, $id_area, $id_cabang, $method);
+
+        if ($check_ca == null) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
-                'message' => 'Data belum sampai ada di SO'
+                'message' => 'Transaksi dengan id '.$id.' belum sampai ke CA'
             ], 404);
         }
+
 
         $id_agu_ta = explode (",",$check_ao->id_agunan_tanah);
 
@@ -788,6 +790,36 @@ class MasterCAA_Controller extends BaseController
         $id_cabang = $pic->id_cabang;
         $scope     = $pic->jpic['cakupan'];
 
+        $check_so = TransSO::where('id', $id)->first();
+
+        if (!$check_so) {
+            return response()->json([
+                'code'    => 404,
+                'status'  => 'not found',
+                'message' => 'Transaksi dengan id '.$id.' belum ada di SO'
+            ], 404);
+        }
+
+        $check_ao = TransAO::where('id_trans_so', $id)->where('status_ao', 1)->first();
+
+        if (!$check_ao) {
+            return response()->json([
+                'code'    => 404,
+                'status'  => 'not found',
+                'message' => 'Transaksi dengan id '.$id.' belum sampai ke AO'
+            ], 404);
+        }
+
+        $check_ca = TransCA::where('id_trans_so', $id)->where('status_ca', 1)->first();
+
+        if (!$check_ca) {
+            return response()->json([
+                'code'    => 404,
+                'status'  => 'not found',
+                'message' => 'Transaksi dengan id '.$id.' belum sampai ke CA'
+            ], 404);
+        }
+
         $query_dir = TransCAA::with('so', 'pic', 'cabang')->where('id_trans_so', $id);
         $method = 'first';
 
@@ -797,7 +829,7 @@ class MasterCAA_Controller extends BaseController
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
-                'message' => 'Data kosong'
+                'message' => 'Transaksi dengan id '.$id.' belum sampai ke CAA'
             ], 404);
         }
 
@@ -1086,7 +1118,7 @@ class MasterCAA_Controller extends BaseController
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
-                'message' => 'Data kosong'
+                'message' => 'Data tidak ditemukan'
             ], 404);
         }
 

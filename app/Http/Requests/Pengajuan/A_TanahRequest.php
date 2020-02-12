@@ -26,36 +26,36 @@ class A_TanahRequest extends FormRequest
 
             $rules = [
                 // Agunan Tanah
-                'tipe_lokasi_agunan.*'  => 'in:PERUM,BIASA',
-                'rt_agunan.*'           => 'numeric',
-                'rw_agunan.*'           => 'numeric',
-                'luas_tanah.*'          => 'numeric',
-                'luas_bangunan.*'       => 'numeric',
-                'jenis_sertifikat.*'    => 'in:SHM,SHGB',
+                'tipe_lokasi_agunan.*'   => 'in:PERUM,BIASA',
+                'rt_agunan.*'            => 'numeric',
+                'rw_agunan.*'            => 'numeric',
+                'luas_tanah.*'           => 'numeric',
+                'luas_bangunan.*'        => 'numeric',
+                'jenis_sertifikat.*'     => 'in:SHM,SHGB',
                 // 'tgl_ukur_sertifikat.*' => 'date_format:d-m-Y',
-                'tgl_berlaku_shgb.*'    => 'date_format:d-m-Y',
-                'lamp_agunan_depan.*'   => 'mimes:jpg,jpeg,png,pdf|max:2048',
-                'lamp_agunan_kanan.*'   => 'mimes:jpg,jpeg,png,pdf|max:2048',
-                'lamp_agunan_kiri.*'    => 'mimes:jpg,jpeg,png,pdf|max:2048',
-                'lamp_agunan_belakang.*'=> 'mimes:jpg,jpeg,png,pdf|max:2048',
-                'lamp_agunan_dalam.*'   => 'mimes:jpg,jpeg,png,pdf|max:2048'
+                'tgl_berlaku_shgb.*'     => 'date_format:d-m-Y',
+                'agunan_bag_depan.*'     => 'mimes:jpg,jpeg,png,pdf|max:2048',
+                'agunan_bag_jalan.*'     => 'mimes:jpg,jpeg,png,pdf|max:2048',
+                'agunan_bag_ruangtamu.*' => 'mimes:jpg,jpeg,png,pdf|max:2048',
+                'agunan_bag_kamarmandi.*'=> 'mimes:jpg,jpeg,png,pdf|max:2048',
+                'agunan_bag_dapur.  *'   => 'mimes:jpg,jpeg,png,pdf|max:2048'
             ];
         }else{
             $rules = [
                // Agunan Tanah
-                'tipe_lokasi_agunan'  => 'in:PERUM,BIASA',
-                'rt_agunan'           => 'numeric',
-                'rw_agunan'           => 'numeric',
-                'luas_tanah'          => 'numeric',
-                'luas_bangunan'       => 'numeric',
-                'jenis_sertifikat'    => 'in:SHM,SHGB',
+                'tipe_lokasi_agunan'   => 'in:PERUM,BIASA',
+                'rt_agunan'            => 'numeric',
+                'rw_agunan'            => 'numeric',
+                'luas_tanah'           => 'numeric',
+                'luas_bangunan'        => 'numeric',
+                'jenis_sertifikat'     => 'in:SHM,SHGB',
                 // 'tgl_ukur_sertifikat' => 'date_format:d-m-Y',
-                'tgl_berlaku_shgb'    => 'date_format:d-m-Y',
-                'lamp_agunan_depan'   => 'mimes:jpg,jpeg,png,pdf|max:2048',
-                'lamp_agunan_kanan'   => 'mimes:jpg,jpeg,png,pdf|max:2048',
-                'lamp_agunan_kiri'    => 'mimes:jpg,jpeg,png,pdf|max:2048',
-                'lamp_agunan_belakang'=> 'mimes:jpg,jpeg,png,pdf|max:2048',
-                'lamp_agunan_dalam'   => 'mimes:jpg,jpeg,png,pdf|max:2048'
+                'tgl_berlaku_shgb'     => 'date_format:d-m-Y',
+                'agunan_bag_depan'     => 'mimes:jpg,jpeg,png,pdf|max:2048',
+                'agunan_bag_jalan'     => 'mimes:jpg,jpeg,png,pdf|max:2048',
+                'agunan_bag_ruangtamu' => 'mimes:jpg,jpeg,png,pdf|max:2048',
+                'agunan_bag_kamarmandi'=> 'mimes:jpg,jpeg,png,pdf|max:2048',
+                'agunan_bag_dapur'     => 'mimes:jpg,jpeg,png,pdf|max:2048'
             ];
         }
 

@@ -267,7 +267,7 @@ class Approval_Controller extends BaseController
             return response()->json([
                 "code"    => 404,
                 "status"  => "not found",
-                "message" => "Data yang akan anda eksekusi tidak ada, mohon cek URL anda"
+                "message" => 'Transaksi dengan id '.$id.' belum sampai ke CAA'
             ], 404);
         }
 
@@ -277,7 +277,7 @@ class Approval_Controller extends BaseController
             return response()->json([
                 "code"    => 404,
                 "status"  => "not found",
-                "message" => "Data Approval masih kosong, mohon cek URL anda"
+                "message" => 'Transaksi dengan id '.$id.' belum sampai ke Approval'
             ], 404);
         }
 
@@ -357,13 +357,53 @@ class Approval_Controller extends BaseController
             ], 404);
         }
 
+        $check_so = TransSO::where('id', $id)->first();
+
+        if ($check_so == null) {
+            return response()->json([
+                "code"    => 404,
+                "status"  => "not found",
+                "message" => "Transaksi dengan id ".$id." belum ada di SO"
+            ], 404);
+        }
+
+        $check_ao = TransAO::where('id_trans_so', $id)->where('status_ao', 1)->first();
+
+        if ($check_ao == null) {
+            return response()->json([
+                "code"    => 404,
+                "status"  => "not found",
+                "message" => "Transaksi dengan id ".$id." belum sampai ke AO"
+            ], 404);
+        }
+
+        $check_ca = TransCA::where('id_trans_so', $id)->where('status_ca', 1)->first();
+
+        if ($check_ca == null) {
+            return response()->json([
+                "code"    => 404,
+                "status"  => "not found",
+                "message" => "Transaksi dengan id ".$id." belum sampai ke ca"
+            ], 404);
+        }
+
+        $check_caa = TransCAA::where('id_trans_so', $id)->where('status_caa', 1)->first();
+
+        if ($check_caa == null) {
+            return response()->json([
+                "code"    => 404,
+                "status"  => "not found",
+                "message" => "Transaksi dengan id ".$id." belum sampai ke caa"
+            ], 404);
+        }
+
         $check = Approval::where('id', $id_approval)->first();
 
         if ($check == null) {
             return response()->json([
                 "code"    => 404,
                 "status"  => "not found",
-                "message" => "Data yang akan anda eksekusi tidak ada, mohon cek URL anda"
+                "message" => "Transaksi dengan id ".$id." belum sampai ke daftar antrian Approval"
             ], 404);
         }
 
@@ -421,51 +461,46 @@ class Approval_Controller extends BaseController
     // Team Caa
     public function report_approval($id){
 
-        // $check_caa = TransCAA::where('status_caa', 1)->where('id_trans_so', $id)->first();
-
-        $check_caa = TransCAA::where('status_caa', 1)->where('id_trans_so', $id)->first();
-        // dd($check_ca);
-
-        if ($check_caa == null) {
-            return response()->json([
-                "code"    => 404,
-                "status"  => "not found",
-                "message" => "Data Belum sampai ke CAA"
-            ], 404);
-        }
-
-        $check_ca = TransCA::where('status_ca', 1)->where('id_trans_so', $id)->latest()->first();
-        // dd($check_ca);
-
-        if ($check_ca == null) {
-            return response()->json([
-                "code"    => 404,
-                "status"  => "not found",
-                "message" => "Data Belum sampai ke CA"
-            ], 404);
-        }
-
-        $check_ao = TransAO::where('status_ao', 1)->where('id_trans_so', $id)->first();
-        // dd($check_ca);
-
-        if ($check_ao == null) {
-            return response()->json([
-                "code"    => 404,
-                "status"  => "not found",
-                "message" => "Data Belum sampai ke AO"
-            ], 404);
-        }
-
         $check_so = TransSO::where('id', $id)->first();
-        // dd($check_ca);
 
         if ($check_so == null) {
             return response()->json([
                 "code"    => 404,
                 "status"  => "not found",
-                "message" => "Data Belum sampai ada di SO"
+                "message" => "Transaksi dengan id ".$id." belum ada di SO"
             ], 404);
         }
+
+        $check_ao = TransAO::where('status_ao', 1)->where('id_trans_so', $id)->first();
+
+        if ($check_ao == null) {
+            return response()->json([
+                "code"    => 404,
+                "status"  => "not found",
+                "message" => "Transaksi dengan id ".$id." belum sampai ke AO"
+            ], 404);
+        }
+
+        $check_ca = TransCA::where('status_ca', 1)->where('id_trans_so', $id)->latest()->first();
+
+        if ($check_ca == null) {
+            return response()->json([
+                "code"    => 404,
+                "status"  => "not found",
+                "message" => "Transaksi dengan id ".$id." belum sampai ke CA"
+            ], 404);
+        }
+
+        $check_caa = TransCAA::where('status_caa', 1)->where('id_trans_so', $id)->first();
+
+        if ($check_caa == null) {
+            return response()->json([
+                "code"    => 404,
+                "status"  => "not found",
+                "message" => "Transaksi dengan id ".$id." belum sampai ke CAA"
+            ], 404);
+        }
+
 
         $check_team = Approval::where('id_trans_so', $id)->whereIn('id_pic', explode(",", $check_caa->pic_team_caa))->get();
 
@@ -473,7 +508,7 @@ class Approval_Controller extends BaseController
             return response()->json([
                 "code"    => 404,
                 "status"  => "not found",
-                "message" => "Data Approval masih kosong, mohon cek URL anda"
+                "message" => "Transaksi dengan id ".$id." belum sampai ke Approval"
             ], 404);
         }
 

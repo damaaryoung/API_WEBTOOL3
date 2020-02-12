@@ -58,7 +58,7 @@ class MasterAO_Controller extends BaseController
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
-                'message' => 'Data kosong'
+                'message' => 'Data di SO cabang anda masih kosong'
             ], 404);
         }
 
@@ -309,6 +309,16 @@ class MasterAO_Controller extends BaseController
                 'code'    => 404,
                 'status'  => 'not found',
                 'message' => 'Transaksi dengan id '.$id.' belum ada di SO'
+            ], 404);
+        }
+
+        $check_ao = TransAO::where('id_trans_so', $id)->first();
+
+        if ($check_ao != null) {
+            return response()->json([
+                'code'    => 404,
+                'status'  => 'not found',
+                'message' => 'Transaksi dengan id '.$id.' sudah ada di AO'
             ], 404);
         }
 
@@ -1031,17 +1041,6 @@ class MasterAO_Controller extends BaseController
             'lamp_foto_usaha'       => $lamp_foto_usaha
         );
 
-
-        $check_ao = TransAO::where('id_trans_so', $id)->first();
-
-        if ($check_ao != null) {
-            return response()->json([
-                'code'    => 404,
-                'status'  => 'not found',
-                'message' => 'Transaksi dengan id '.$id.' sudah ada di AO'
-            ], 404);
-        }
-
         DB::connection('web')->beginTransaction();
         try{
 
@@ -1181,7 +1180,7 @@ class MasterAO_Controller extends BaseController
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
-                'message' => 'Data kosong'
+                'message' => 'Data tidak ditemukan'
             ], 404);
         }
 

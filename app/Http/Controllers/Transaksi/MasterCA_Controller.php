@@ -59,7 +59,7 @@ class MasterCA_Controller extends BaseController
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
-                'message' => 'Data kosong'
+                'message' => 'Data di AO masih kosong'
             ], 404);
         }
 
@@ -138,6 +138,16 @@ class MasterCA_Controller extends BaseController
         $id_area   = $pic->id_area;
         $id_cabang = $pic->id_cabang;
         $scope     = $pic->jpic['cakupan'];
+
+        $check_so = TransSO::where('id', $id)->first();
+
+        if (!$check_so) {
+            return response()->json([
+                'code'    => 404,
+                'status'  => 'not found',
+                'message' => 'Transaksi dengan id '.$id.' belum ada di SO'
+            ], 404);
+        }
 
         $query_dir = TransAO::with('so', 'pic', 'cabang')->where('id_trans_so', $id);
         $method = 'first';
@@ -319,6 +329,16 @@ class MasterCA_Controller extends BaseController
         //  ID-Cabang - AO / CA / SO - Bulan - Tahun - NO. Urut
         $nomor_ca = $PIC->id_cabang.'-'.$JPIC->nama_jenis.'-'.$month.'-'.$year.'-'.$lastNumb;
 
+        $check_so = TransSO::where('id',$id)->first();
+
+        if (!$check_so) {
+            return response()->json([
+                'code'    => 404,
+                'status'  => 'not found',
+                'message' => 'Transaksi dengan id '.$id.' belum ada di SO'
+            ], 404);
+        }
+
         $check_ao = TransAO::where('id_trans_so',$id)->first();
 
         if (!$check_ao) {
@@ -329,15 +349,16 @@ class MasterCA_Controller extends BaseController
             ], 404);
         }
 
-        $check_so = TransSO::where('id',$id)->first();
+        $check_ca = TransCA::where('id_trans_so', $id)->first();
 
-        if (!$check_so) {
+        if ($check_ca != null) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
-                'message' => 'Transaksi dengan id '.$id.' belum ada di SO'
+                'message' => 'Transaksi dengan id '.$id.' sudah ada di CA'
             ], 404);
         }
+
 
         $transCA = array(
             'nomor_ca'    => $nomor_ca,
@@ -718,16 +739,6 @@ class MasterCA_Controller extends BaseController
             );
         }
 
-        $check_ao = TransCA::where('id_trans_so',$id)->first();
-
-        if ($check_ao != null) {
-            return response()->json([
-                'code'    => 404,
-                'status'  => 'not found',
-                'message' => 'Transaksi dengan id '.$id.' sudah ada di CA'
-            ], 404);
-        }
-
         try{
             DB::connection('web')->beginTransaction();
 
@@ -864,7 +875,7 @@ class MasterCA_Controller extends BaseController
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
-                'message' => 'Data kosong'
+                'message' => 'Data tidak ditemukan'
             ], 404);
         }
 
@@ -925,23 +936,33 @@ class MasterCA_Controller extends BaseController
             ], 404);
         }
 
-        $check_ca = TransCA::where('id_trans_so', $id_trans_so)->first();
+        $check_so = TransSO::where('id', $id_trans_so)->first();
 
-        if (!$check_ca) {
+        if (!$check_so) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
-                'message' => 'Transaksi dengan id '.$id.' belum sampai ke CA'
+                'message' => 'Transaksi dengan id '.$id.' belum ada di SO'
             ], 404);
         }
 
-        $check_ao = TransAO::where('id_trans_so', $id_trans_so)->first();
+        $check_ao = TransAO::where('id_trans_so', $id_trans_so)->where('status_ao', 1)->first();
 
         if (!$check_ao) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
-                'message' => 'Transaksi dengan id '.$id.' belum sampai ke AO'
+                'message' => 'Transaksi dengan id '.$id_trans_so.' belum sampai ke AO'
+            ], 404);
+        }
+
+        $check_ca = TransCA::where('id_trans_so', $id_trans_so)->where('status_ca', 1)->first();
+
+        if (!$check_ca) {
+            return response()->json([
+                'code'    => 404,
+                'status'  => 'not found',
+                'message' => 'Transaksi dengan id '.$id_trans_so.' belum sampai ke CA'
             ], 404);
         }
 
@@ -1017,9 +1038,9 @@ class MasterCA_Controller extends BaseController
         $percent      = 100;
 
         // Rekomendasi Angsuran pada table recom_ca
-        $plaf  = $check->recom_ca['plafon_kredit'] == null ? 0 : $check->recom_ca['plafon_kredit'];
-        $ten   = $check->recom_ca['jangka_waktu']  == null ? 0 : $check->recom_ca['jangka_waktu'];
-        $bunga = $check->recom_ca['suku_bunga']    == null ? 0 : ($check->recom_ca['suku_bunga'] / $percent);
+        $plaf  = $inputRecomCA['plafon_kredit'] == null ? 0 : $inputRecomCA['plafon_kredit'];
+        $ten   = $inputRecomCA['jangka_waktu']  == null ? 0 : $inputRecomCA['jangka_waktu'];
+        $bunga = $inputRecomCA['suku_bunga']    == null ? 0 : ($inputRecomCA['suku_bunga'] / $percent);
 
         if ($plaf == 0 && $ten == 0 && $bunga == 0) {
             $exec       = 0;
@@ -1034,27 +1055,27 @@ class MasterCA_Controller extends BaseController
 
             'angs_pertama_bunga_berjalan'
                 => empty($req->input('angs_pertama_bunga_berjalan'))
-                ? $check->recom_ca['angs_pertama_bunga_berjalan']
+                ? $check_ca->recom_ca['angs_pertama_bunga_berjalan']
                 : $req->input('angs_pertama_bunga_berjalan'),
 
             'pelunasan_nasabah_ro'
                 => empty($req->input('pelunasan_nasabah_ro'))
-                ? $check->recom_ca['pelunasan_nasabah_ro']
+                ? $check_ca->recom_ca['pelunasan_nasabah_ro']
                 : $req->input('pelunasan_nasabah_ro'),
 
             'blokir_dana'
                 => empty($req->input('blokir_dana'))
-                ? $check->recom_ca['blokir_dana']
+                ? $check_ca->recom_ca['blokir_dana']
                 : $req->input('blokir_dana'),
 
             'pelunasan_tempat_lain'
                 => empty($req->input('pelunasan_tempat_lain'))
-                ? $check->recom_ca['pelunasan_tempat_lain']
+                ? $check_ca->recom_ca['pelunasan_tempat_lain']
                 : $req->input('pelunasan_tempat_lain'),
 
             'blokir_angs_kredit'
                 => empty($req->input('blokir_angs_kredit'))
-                ? $check->recom_ca['blokir_angs_kredit']
+                ? $check_ca->recom_ca['blokir_angs_kredit']
                 : $req->input('blokir_angs_kredit')
         );
 
@@ -1064,35 +1085,35 @@ class MasterCA_Controller extends BaseController
         $recomCaOL = array(
             'angs_pertama_bunga_berjalan'
                 => empty($req->input('angs_pertama_bunga_berjalan'))
-                ? $check->recom_ca['angs_pertama_bunga_berjalan']
+                ? $check_ca->recom_ca['angs_pertama_bunga_berjalan']
                 : $req->input('angs_pertama_bunga_berjalan'),
 
             'pelunasan_nasabah_ro'
                 => empty($req->input('pelunasan_nasabah_ro'))
-                ? $check->recom_ca['pelunasan_nasabah_ro']
+                ? $check_ca->recom_ca['pelunasan_nasabah_ro']
                 : $req->input('pelunasan_nasabah_ro'),
 
             'blokir_dana'
                 => empty($req->input('blokir_dana'))
-                ? $check->recom_ca['blokir_dana']
+                ? $check_ca->recom_ca['blokir_dana']
                 : $req->input('blokir_dana'),
 
             'pelunasan_tempat_lain'
                 => empty($req->input('pelunasan_tempat_lain'))
-                ? $check->recom_ca['pelunasan_tempat_lain']
+                ? $check_ca->recom_ca['pelunasan_tempat_lain']
                 : $req->input('pelunasan_tempat_lain'),
 
             'blokir_angs_kredit'
                 => empty($req->input('blokir_angs_kredit'))
-                ? $check->recom_ca['blokir_angs_kredit']
+                ? $check_ca->recom_ca['blokir_angs_kredit']
                 : $req->input('blokir_angs_kredit')
         );
 
 
         // $recom_pendapatan  = $check->ao['kapbul']['total_pemasukan'];
-        $recom_pendapatan  = $check->so['ao']['kapbul']['total_pemasukan'];
-        $recom_pengeluaran = $check->so['ao']['kapbul']['total_pengeluaran'];
-        $recom_angsuran    = $check->so['ao']['kapbul']['angsuran'];
+        $recom_pendapatan  = $check_ao->kapbul['total_pemasukan'];
+        $recom_pengeluaran = $check_ao->kapbul['total_pengeluaran'];
+        $recom_angsuran    = $check_ao->kapbul['angsuran'];
 
         $recom_pend_bersih = $recom_pendapatan - $recom_pengeluaran;
 
@@ -1135,27 +1156,27 @@ class MasterCA_Controller extends BaseController
 
             'kualitatif_analisa'
                 => empty($req->input('kualitatif_analisa'))
-                ? $check->recom_ca['kualitatif_analisa']
+                ? $check_ca->recom_ca['kualitatif_analisa']
                 : $req->input('kualitatif_analisa'),
 
             'kualitatif_strenght'
                 => empty($req->input('kualitatif_strenght'))
-                ? $check->recom_ca['kualitatif_strenght']
+                ? $check_ca->recom_ca['kualitatif_strenght']
                 : $req->input('kualitatif_strenght'),
 
             'kualitatif_weakness'
                 => empty($req->input('kualitatif_weakness'))
-                ? $check->recom_ca['kualitatif_weakness']
+                ? $check_ca->recom_ca['kualitatif_weakness']
                 : $req->input('kualitatif_weakness'),
 
             'kualitatif_opportunity'
                 => empty($req->input('kualitatif_opportunity'))
-                ? $check->recom_ca['kualitatif_opportunity']
+                ? $check_ca->recom_ca['kualitatif_opportunity']
                 : $req->input('kualitatif_opportunity'),
 
             'kualitatif_threatness'
                 => empty($req->input('kualitatif_threatness'))
-                ? $check->recom_ca['kualitatif_threatness']
+                ? $check_ca->recom_ca['kualitatif_threatness']
                 : $req->input('kualitatif_threatness'),
 
             'disposable_income' => $disposable_income
@@ -1182,14 +1203,14 @@ class MasterCA_Controller extends BaseController
             }
 
             $dataID = array(
-                'id_mutasi_bank'          => $check->id_mutasi_bank,
-                'id_log_tabungan'         => $check->id_log_tabungan,
-                'id_info_analisa_cc'      => $check->id_info_analisa_cc,
+                'id_mutasi_bank'          => $check_ca->id_mutasi_bank,
+                'id_log_tabungan'         => $check_ca->id_log_tabungan,
+                'id_info_analisa_cc'      => $check_ca->id_info_analisa_cc,
                 'id_ringkasan_analisa'    => $idAnalisa,
                 'id_recom_ca'             => $idReCA,
-                'id_rekomendasi_pinjaman' => $check->id_rekomendasi_pinjaman,
-                'id_asuransi_jiwa'        => $check->id_asuransi_jiwa,
-                'id_asuransi_jaminan'     => $check->id_asuransi_jaminan
+                'id_rekomendasi_pinjaman' => $check_ca->id_rekomendasi_pinjaman,
+                'id_asuransi_jiwa'        => $check_ca->id_asuransi_jiwa,
+                'id_asuransi_jaminan'     => $check_ca->id_asuransi_jaminan
             );
 
             $newTransCA = array_merge($transCA, $dataID);
@@ -1226,7 +1247,27 @@ class MasterCA_Controller extends BaseController
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
-                'message' => 'Data kosong'
+                'message' => 'Transaksi dengan id '.$id.' belum ada di SO'
+            ], 404);
+        }
+
+        $check_ao = TransAO::where('id_trans_so', $id)->where('status_ao', 1)->first();
+
+        if (!$check_ao) {
+            return response()->json([
+                'code'    => 404,
+                'status'  => 'not found',
+                'message' => 'Transaksi dengan id '.$id.' belum sampai ke AO'
+            ], 404);
+        }
+
+        $check_ca = TransCA::where('id_trans_so', $id)->where('status_ca', 1)->first();
+
+        if (!$check_ca) {
+            return response()->json([
+                'code'    => 404,
+                'status'  => 'not found',
+                'message' => 'Transaksi dengan id '.$id.' belum sampai ke CA'
             ], 404);
         }
 
@@ -1239,13 +1280,13 @@ class MasterCA_Controller extends BaseController
         );
 
         // Analisa Kuantitatif dan Kualitatif
-        $id_pe_ta = $check->ao['id_periksa_agunan_tanah'];
+        $id_pe_ta = $check_ao->id_periksa_agunan_tanah;
 
         if ($id_pe_ta == null) {
             $PeriksaTanah = null;
         }
 
-        $id_pe_ke = $check->ao['id_periksa_agunan_kendaraan'];
+        $id_pe_ke = $check_ao->id_periksa_agunan_kendaraan;
 
         if ($id_pe_ke == null) {
             $PeriksaKenda = null;
@@ -1291,9 +1332,9 @@ class MasterCA_Controller extends BaseController
         }
 
         // $recom_pendapatan  = $check->ao['kapbul']['total_pemasukan'];
-        $recom_pendapatan  = $check->ao['kapbul']['total_pemasukan'];
-        $recom_pengeluaran = $check->ao['kapbul']['total_pengeluaran'];
-        $recom_angsuran    = $check->ao['kapbul']['angsuran'];
+        $recom_pendapatan  = $check_ao->kapbul['total_pemasukan'];
+        $recom_pengeluaran = $check_ao->kapbul['total_pengeluaran'];
+        $recom_angsuran    = $check_ao->kapbul['angsuran'];
 
         $recom_pend_bersih = $recom_pendapatan - $recom_pengeluaran;
 
@@ -1342,15 +1383,15 @@ class MasterCA_Controller extends BaseController
             'ringkasan_analisa_ca' => $dataRingkasan
         );
 
+        DB::connection('web')->beginTransaction();
         try{
-            DB::connection('web')->beginTransaction();
 
             DB::connection('web')->commit();
 
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'message'=> $resultAll
+                'data'   => $resultAll
             ], 200);
         } catch (\Exception $e) {
             $err = DB::connection('web')->rollback();

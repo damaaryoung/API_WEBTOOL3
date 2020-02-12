@@ -50,7 +50,7 @@ class MasterSO_Controller extends BaseController
             return response()->json([
                 "code"    => 404,
                 "status"  => "not found",
-                "message" => "Data kosong!!"
+                "message" => "Data di SO masih kosong"
             ], 404);
         }
 
@@ -138,7 +138,7 @@ class MasterSO_Controller extends BaseController
             return response()->json([
                 "code"    => 404,
                 "status"  => "not found",
-                "message" => "Data kosong!!"
+                "message" => "Data dengan id ".$id." tidak ada di SO atau belum di rekomendasikan oleh bagian DAS dan HM"
             ], 404);
         }
 
@@ -584,38 +584,6 @@ class MasterSO_Controller extends BaseController
                     'lamp_kk'          => empty($kkPen[$i])                     ? null : $kkPen[$i],
                     'lamp_buku_nikah'  => empty($bukuNikahPen[$i])              ? null : $bukuNikahPen[$i]
                 ];
-
-                /*if ($DP[$i]['lamp_ktp'] == null) {
-                    return response()->json([
-                        "code"    => 422,
-                        "status"  => "not valid request",
-                        "message" => "lamp_ktp_pen ada yang belum diisi"
-                    ], 422);
-                }
-
-                if ($DP[$i]['lamp_ktp_pasangan'] == null) {
-                    return response()->json([
-                        "code"    => 422,
-                        "status"  => "not valid request",
-                        "message" => "lamp_ktp_pasangan_penjamin ada yang belum diisi"
-                    ], 422);
-                }
-
-                if ($DP[$i]['lamp_kk'] == null) {
-                    return response()->json([
-                        "code"    => 422,
-                        "status"  => "not valid request",
-                        "message" => "lamp_kk ada yang belum diisi"
-                    ], 422);
-                }
-
-                if ($DP[$i]['lamp_buku_nikah'] == null) {
-                    return response()->json([
-                        "code"    => 422,
-                        "status"  => "not valid request",
-                        "message" => "lamp_buku_nikah ada yang belum diisi"
-                    ], 422);
-                }*/
             }
         }
 
@@ -691,7 +659,7 @@ class MasterSO_Controller extends BaseController
             return response()->json([
                 "code"    => 404,
                 "status"  => "not found",
-                "message" => "Data kosong!!"
+                "message" => "Data dengan id ".$id." tida ada di SO atau belum di rekomendasikan oleh DAS dan HM"
             ], 404);
         }
 
@@ -783,7 +751,7 @@ class MasterSO_Controller extends BaseController
             return response()->json([
                 "code"    => 404,
                 "status"  => "not found",
-                "message" => "Data kosong!!"
+                "message" => "Data di tidak ditemukan"
             ], 404);
         }else{
             foreach ($query as $key => $val) {
