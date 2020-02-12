@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Transaksi;
 use Laravel\Lumen\Routing\Controller as BaseController;
 use App\Http\Controllers\Controller as Helper;
 use App\Http\Requests\Transaksi\BlankRequest;
+use App\Models\Pengajuan\CAA\Penyimpangan;
 use App\Models\Pengajuan\AO\AgunanKendaraan;
 use App\Models\Pengajuan\AO\AgunanTanah;
 use Illuminate\Support\Facades\File;
@@ -403,7 +404,7 @@ class MasterCAA_Controller extends BaseController
             $file_tempat_tinggal = $path.'/'.$name;
 
         }else{
-            $file_tempat_tinggal = $check->so['debt']['lamp_tempat_tinggal'];
+            $file_tempat_tinggal = $check->debt['lamp_tempat_tinggal'];
         }
 
         // Othe File
@@ -464,6 +465,18 @@ class MasterCAA_Controller extends BaseController
 
         $teamS = explode(",", $data['pic_team_caa']);
 
+        $penyimpangan = array(
+            'id_trans_so'           => $id,
+            'biaya_provisi'         => $req->input('biaya_provisi'),
+            'biaya_admin'           => $req->input('biaya_admin'),
+            'biaya_kredit'          => $req->input('biaya_kredit'),
+            'ltv'                   => $req->input('ltv'),
+            'tenor'                 => $req->input('tenor'),
+            'kartu_pinjaman'        => $req->input('kartu_pinjaman'),
+            'sertifikat_diatas_50'  => $req->input('sertifikat_diatas_50'),
+            'sertifikat_diatas_150' => $req->input('sertifikat_diatas_150')
+        );
+
         DB::connection('web')->beginTransaction();
 
         try {
@@ -479,6 +492,11 @@ class MasterCAA_Controller extends BaseController
                     'id_pic'       => $teamS[$i],
                     'status'       => 'waiting'
                 ]);
+            }
+
+            if (!empty($penyimpangan)) {
+                $penyimpangan_merge = array_merge($penyimpangan, array('id_trans_caa' => $CAA->id));
+                Penyimpangan::create($penyimpangan_merge);
             }
 
             DB::connection('web')->commit();

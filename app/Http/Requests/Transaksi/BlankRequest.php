@@ -71,7 +71,7 @@ class BlankRequest extends FormRequest
                 // 'no_kk'                 => 'digits:16|unique:web.calon_debitur,no_kk,'.$trans->id_calon_debt,
                 // 'no_npwp'               => 'digits:15|unique:web.calon_debitur,no_npwp,'.$trans->id_calon_debt,
                 'tgl_lahir'             => 'date_format:d-m-Y',
-                'agama'                 => 'required', //'in:ISLAM,KRISTEN,KHATOLIK,HINDU,BUDHA',
+                // 'agama'                 => 'in:ISLAM,KRISTEN,KHATOLIK,HINDU,BUDHA',
                 'rt_ktp'                => 'integer',
                 'rw_ktp'                => 'integer',
                 'id_provinsi_ktp'       => 'integer',
