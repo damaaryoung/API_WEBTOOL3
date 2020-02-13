@@ -221,13 +221,13 @@ class MasterCAA_Controller extends BaseController
         //  ID-Cabang - AO / CA / SO - Bulan - Tahun - NO. Urut
         $nomor_caa = $PIC->id_cabang.'-'.$JPIC->nama_jenis.'-'.$month.'-'.$year.'-'.$lastNumb;
 
-        $check = TransSO::where('id',$id)->first();
+        $check = TransSO::where('id',$id)->where('status_das', 1)->where('status_hm', 1)->first();
 
         if (!$check) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
-                'message' => 'Transaksi dengan id '.$id.' belum ada di SO'
+                'message' => 'Transaksi dengan id '.$id.' belum ada di SO atau belum komplit saat pemeriksaaan DAS dan HM'
             ], 404);
         }
 
@@ -535,13 +535,13 @@ class MasterCAA_Controller extends BaseController
         $id_cabang = $pic->id_cabang;
         $scope     = $pic->jpic['cakupan'];
 
-        $check_so = TransSO::with('pic', 'cabang')->where('id', $id)->first();
+        $check_so = TransSO::with('pic', 'cabang')->where('id', $id)->where('status_das', 1)->where('status_hm', 1)->first();
 
         if ($check_so == null) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
-                'message' => 'Transaksi dengan id '.$id.' belum ada di SO'
+                'message' => 'Transaksi dengan id '.$id.' belum ada di SO atatu belum komplit saat pemeriksaaan DAS dan HM'
             ], 404);
         }
 
@@ -800,13 +800,13 @@ class MasterCAA_Controller extends BaseController
         $id_cabang = $pic->id_cabang;
         $scope     = $pic->jpic['cakupan'];
 
-        $check_so = TransSO::where('id', $id)->first();
+        $check_so = TransSO::where('id', $id)->where('status_das', 1)->where('status_hm', 1)->first();
 
         if (!$check_so) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
-                'message' => 'Transaksi dengan id '.$id.' belum ada di SO'
+                'message' => 'Transaksi dengan id '.$id.' belum ada di SO atau belum komplit saat pemeriksaan DAS da HM'
             ], 404);
         }
 
@@ -843,7 +843,7 @@ class MasterCAA_Controller extends BaseController
             ], 404);
         }
 
-        $id_agu_ta = explode (",",$val->so['ao']['id_agunan_tanah']);
+        $id_agu_ta = explode (",",$check_ao->id_agunan_tanah);
 
         $AguTa = AgunanTanah::whereIn('id', $id_agu_ta)->get();
 
@@ -870,7 +870,7 @@ class MasterCAA_Controller extends BaseController
         }
 
 
-        $id_agu_ke = explode (",",$val->so['ao']['id_agunan_kendaraan']);
+        $id_agu_ke = explode (",",$check_ao->id_agunan_kendaraan);
 
         $AguKe = AgunanKendaraan::whereIn('id', $id_agu_ke)->get();
 
@@ -896,10 +896,10 @@ class MasterCAA_Controller extends BaseController
             );
         }
 
-        $pic_team_caa = explode(",", $val->pic_team_caa);
+        $pic_team_caa = explode(",", $check_caa->pic_team_caa);
 
 
-        $get_pic = PIC::with('jpic')->whereIn('id', explode(",", $val->pic_team_caa))->get();
+        $get_pic = PIC::with('jpic')->whereIn('id', explode(",", $check_caa->pic_team_caa))->get();
 
         if($get_pic == '[]'){
             $ptc = null;
@@ -925,7 +925,7 @@ class MasterCAA_Controller extends BaseController
         }
 
         $data = array(
-            'id_trans_so' => $check_so->id == null ? null : (int) $check->id,
+            'id_trans_so' => $check_so->id == null ? null : (int) $check_so->id,
             'transaksi'   => [
                 'so' => [
                     'nomor' => $check_so->nomor_so,
@@ -1044,24 +1044,24 @@ class MasterCAA_Controller extends BaseController
             ],
             'data_biaya' => [
                 'reguler' => $reguler = array(
-                    'biaya_provisi'         => (int) $val->so['ca']['recom_ca']['biaya_provisi'],
-                    'biaya_administrasi'    => (int) $val->so['ca']['recom_ca']['biaya_administrasi'],
-                    'biaya_credit_checking' => (int) $val->so['ca']['recom_ca']['biaya_credit_checking'],
+                    'biaya_provisi'         => (int) $check_ca->recom_ca['biaya_provisi'],
+                    'biaya_administrasi'    => (int) $check_ca->recom_ca['biaya_administrasi'],
+                    'biaya_credit_checking' => (int) $check_ca->recom_ca['biaya_credit_checking'],
                     'biaya_premi' => [
-                        'asuransi_jiwa'     => (int) $val->so['ca']['recom_ca']['biaya_asuransi_jiwa'],
-                        'asuransi_jaminan'  => (int) $val->so['ca']['recom_ca']['biaya_asuransi_jaminan']
+                        'asuransi_jiwa'     => (int) $check_ca->recom_ca['biaya_asuransi_jiwa'],
+                        'asuransi_jaminan'  => (int) $check_ca->recom_ca['biaya_asuransi_jaminan']
                     ],
-                    'biaya_tabungan'                    => (int) $val->so['ca']['recom_ca']['biaya_tabungan'],
-                    'biaya_notaris'                     => (int) $val->so['ca']['recom_ca']['notaris'],
-                    'angsuran_pertama_bungan_berjalan'  => (int) $val->so['ca']['recom_ca']['angs_pertama_bunga_berjalan'],
-                    'pelunasan_nasabah_ro'              => (int) $val->so['ca']['recom_ca']['pelunasan_nasabah_ro']
+                    'biaya_tabungan'                    => (int) $check_ca->recom_ca['biaya_tabungan'],
+                    'biaya_notaris'                     => (int) $check_ca->recom_ca['notaris'],
+                    'angsuran_pertama_bungan_berjalan'  => (int) $check_ca->recom_ca['angs_pertama_bunga_berjalan'],
+                    'pelunasan_nasabah_ro'              => (int) $check_ca->recom_ca['pelunasan_nasabah_ro']
                 ),
 
                 'hold_dana' => $hold_dana = array(
-                    'pelunasan_tempat_lain'         => (int) $val->so['ca']['recom_ca']['pelunasan_tempat_lain'],
+                    'pelunasan_tempat_lain'         => (int) $check_ca->recom_ca['pelunasan_tempat_lain'],
                     'blokir' => [
-                        'tempat_lain'               => (int) $val->so['ca']['recom_ca']['blokir_dana'],
-                        'dua_kali_angsuran_kredit'  => (int) $val->so['ca']['recom_ca']['blokir_angs_kredit']
+                        'tempat_lain'               => (int) $check_ca->recom_ca['blokir_dana'],
+                        'dua_kali_angsuran_kredit'  => (int) $check_ca->recom_ca['blokir_angs_kredit']
                     ]
                 ),
 
@@ -1199,14 +1199,14 @@ class MasterCAA_Controller extends BaseController
 
         if ($month == null) {
             $query_dir = TransCA::with('so', 'pic', 'cabang')->where('status_ca', 1)
-                    ->orderBy('created_at', 'desc')
-                    ->whereYear('created_at', '=', $year);
+                    ->whereYear('created_at', '=', $year)
+                    ->orderBy('created_at', 'desc');
         }else{
 
             $query_dir = TransCA::with('so', 'pic', 'cabang')->where('status_ca', 1)
-                    ->orderBy('created_at', 'desc')
                     ->whereYear('created_at', '=', $year)
-                    ->whereMonth('created_at', '=', $month);
+                    ->whereMonth('created_at', '=', $month)
+                    ->orderBy('created_at', 'desc');
         }
 
         $method = 'get';

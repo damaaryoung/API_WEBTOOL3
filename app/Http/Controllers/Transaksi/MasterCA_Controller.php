@@ -139,13 +139,13 @@ class MasterCA_Controller extends BaseController
         $id_cabang = $pic->id_cabang;
         $scope     = $pic->jpic['cakupan'];
 
-        $check_so = TransSO::where('id', $id)->first();
+        $check_so = TransSO::where('id', $id)->where('status_das', 1)->where('status_hm', 1)->first();
 
         if (!$check_so) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
-                'message' => 'Transaksi dengan id '.$id.' belum ada di SO'
+                'message' => 'Transaksi dengan id '.$id.' belum ada di SO atau belum komplit saat pemeriksaaan DAS dan HM'
             ], 404);
         }
 
@@ -329,13 +329,13 @@ class MasterCA_Controller extends BaseController
         //  ID-Cabang - AO / CA / SO - Bulan - Tahun - NO. Urut
         $nomor_ca = $PIC->id_cabang.'-'.$JPIC->nama_jenis.'-'.$month.'-'.$year.'-'.$lastNumb;
 
-        $check_so = TransSO::where('id',$id)->first();
+        $check_so = TransSO::where('id',$id)->where('status_das', 1)->where('status_hm', 1)->first();
 
         if (!$check_so) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
-                'message' => 'Transaksi dengan id '.$id.' belum ada di SO'
+                'message' => 'Transaksi dengan id '.$id.' belum ada di SO atau belum komplit saat pemeriksaan DAS dan HM'
             ], 404);
         }
 
@@ -942,13 +942,13 @@ class MasterCA_Controller extends BaseController
             ], 404);
         }
 
-        $check_so = TransSO::where('id', $id_trans_so)->first();
+        $check_so = TransSO::where('id', $id_trans_so)->where('status_das', 1)->where('status_hm', 1)->first();
 
         if (!$check_so) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
-                'message' => 'Transaksi dengan id '.$id.' belum ada di SO'
+                'message' => 'Transaksi dengan id '.$id.' belum ada di SO atau belum komplit saat pemeriksaaan DAS dan HM'
             ], 404);
         }
 
@@ -1247,13 +1247,13 @@ class MasterCA_Controller extends BaseController
     // Sample
     public function operator($id_trans_so, Request $req, Helper $help) {
 
-        $check = TransSO::where('id',$id_trans_so)->first();
+        $check = TransSO::where('id',$id_trans_so)->where('status_das', 1)->where('status_hm', 1)->first();
 
         if (!$check) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
-                'message' => 'Transaksi dengan id '.$id.' belum ada di SO'
+                'message' => 'Transaksi dengan id '.$id.' belum ada di SO atau saat pemeriksaaan DAS dan HM'
             ], 404);
         }
 
@@ -1429,14 +1429,14 @@ class MasterCA_Controller extends BaseController
         if ($month == null) {
 
             $query_dir = TransAO::with('so', 'pic', 'cabang')->where('status_ao', 1)
-                    ->orderBy('created_at', 'desc')
-                    ->whereYear('created_at', '=', $year);
+                    ->whereYear('created_at', '=', $year)
+                    ->orderBy('created_at', 'desc');
         }else{
 
             $query_dir = TransAO::with('so', 'pic', 'cabang')->where('status_ao', 1)
-                    ->orderBy('created_at', 'desc')
                     ->whereYear('created_at', '=', $year)
-                    ->whereMonth('created_at', '=', $month);
+                    ->whereMonth('created_at', '=', $month)
+                    ->orderBy('created_at', 'desc');
         }
 
         $method = 'get';

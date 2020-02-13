@@ -27,9 +27,10 @@ class RingkasanAnalisa extends Model implements AuthenticatableContract, Authori
     ];
 
     protected $casts = [
-        'recom_nilai_pinjaman'          => 'integer',
+        'kuantitatif_ttl_pendapatan'    => 'integer',
         'kuantitatif_ttl_pengeluaran'   => 'integer',
         'kuantitatif_pendapatan_bersih' => 'integer',
+        'kuantitatif_angsuran'          => 'integer',
         'disposable_income'             => 'integer'
     ];
 

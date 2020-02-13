@@ -48,7 +48,7 @@ class MasterAO_Controller extends BaseController
         $id_cabang = $pic->id_cabang;
         $scope     = $pic->jpic['cakupan'];
 
-        $query_dir = TransSO::with('pic', 'cabang', 'asaldata', 'debt', 'pas', 'faspin', 'ao', 'ca')->orderBy('created_at', 'desc');
+        $query_dir = TransSO::with('pic', 'cabang', 'asaldata', 'debt', 'pas', 'faspin', 'ao', 'ca')->orderBy('created_at', 'desc')->where('status_das', 1)->where('status_hm', 1);
         $method = 'get';
 
         $query = Helper::checkDir($user_id, $scope, $query_dir, $id_area, $id_cabang, $method);
@@ -148,17 +148,18 @@ class MasterAO_Controller extends BaseController
         $id_cabang = $pic->id_cabang;
         $scope     = $pic->jpic['cakupan'];
 
-        $query_dir = TransSO::with('pic', 'cabang', 'asaldata', 'debt', 'pas', 'faspin', 'ao', 'ca')->where('id', $id);
+        $query_dir = TransSO::with('pic', 'cabang', 'asaldata', 'debt', 'pas', 'faspin', 'ao', 'ca')
+                ->where('id', $id); //->where('status_das', 1)->where('status_hm', 1);
         $method = 'first';
 
         $val = Helper::checkDir($user_id, $scope, $query_dir, $id_area, $id_cabang, $method);
 
 
-        if (!$val) {
+        if (!$query_dir->first()) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
-                'message' => 'Transaksi dengan id '.$id.' belum ada di SO'
+                'message' => 'Transaksi dengan id '.$id.' belum ada di SO cabang dan area anda, Atau data transaksi dari SO belum komplit saat pemeriksaaan DAS dan HM'
             ], 404);
         }
 
@@ -302,13 +303,13 @@ class MasterAO_Controller extends BaseController
         //  ID-Cabang - AO / CA / SO - Bulan - Tahun - NO. Urut
         $nomor_ao = $PIC->id_cabang.'-'.$JPIC->nama_jenis.'-'.$month.'-'.$year.'-'.$lastNumb;
 
-        $check = TransSO::where('id',$id)->first();
+        $check = TransSO::where('id',$id)->where('status_das', 1)->where('status_hm', 1)->first();
 
         if (!$check) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
-                'message' => 'Transaksi dengan id '.$id.' belum ada di SO'
+                'message' => 'Transaksi dengan id '.$id.' belum ada di SO atau belum komplit saat pemeriksaaan DAS dan HM'
             ], 404);
         }
 
@@ -1170,6 +1171,7 @@ class MasterAO_Controller extends BaseController
         $scope     = $pic->jpic['cakupan'];
 
         $query_dir = TransSO::with('pic', 'cabang', 'asaldata', 'debt', 'pas', 'faspin', 'ao', 'ca')
+                ->where('status_das', 1)->where('status_hm', 1)
                 ->where('nomor_so', 'like', '%'.$search.'%')->orderBy('created_at', 'desc');
         $method = 'get';
 
@@ -1277,14 +1279,16 @@ class MasterAO_Controller extends BaseController
         if ($month == null) {
 
             $query_dir = TransSO::with('pic', 'cabang', 'asaldata', 'debt', 'pas', 'faspin', 'ao', 'ca')
-                    ->orderBy('created_at', 'desc')
-                    ->whereYear('created_at', '=', $year);
+                    ->where('status_das', 1)->where('status_hm', 1)
+                    ->whereYear('created_at', '=', $year)
+                    ->orderBy('created_at', 'desc');
         }else{
 
             $query_dir = TransSO::with('pic', 'cabang', 'asaldata', 'debt', 'pas', 'faspin', 'ao', 'ca')
-                    ->orderBy('created_at', 'desc')
+                    ->where('status_das', 1)->where('status_hm', 1)
                     ->whereYear('created_at', '=', $year)
-                    ->whereMonth('created_at', '=', $month);
+                    ->whereMonth('created_at', '=', $month)
+                    ->orderBy('created_at', 'desc');
         }
 
         $method = 'get';
