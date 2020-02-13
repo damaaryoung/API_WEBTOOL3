@@ -6,6 +6,7 @@ use Laravel\Lumen\Routing\Controller as BaseController;
 use App\Http\Controllers\Controller as Helper;
 use App\Models\Pengajuan\AO\AgunanKendaraan;
 use App\Http\Requests\Transaksi\ApprovalReq;
+use App\Models\Pengajuan\CAA\Penyimpangan;
 use App\Models\Pengajuan\AO\AgunanTanah;
 use Illuminate\Support\Facades\File;
 use App\Models\Transaksi\Approval;
@@ -397,14 +398,30 @@ class Approval_Controller extends BaseController
             ], 404);
         }
 
-        $check = Approval::where('id', $id_approval)->first();
+        $check = Approval::where('id', $id_approval)->where('id_trans_so', $id)->first();
 
         if ($check == null) {
             return response()->json([
                 "code"    => 404,
                 "status"  => "not found",
-                "message" => "Transaksi dengan id ".$id." belum sampai ke daftar antrian Approval"
+                "message" => "Transaksi dengan id ".$id." dan dengan id approval ".$id_approval." tidak ada di daftar antrian Approval"
             ], 404);
+        }
+
+        if ($check->status != 'waiting') {
+            return response()->json([
+                "code"    => 404,
+                "status"  => "not found",
+                "message" => "Transaksi dengan id `{$id}` dan dengan id approval `{$id_approval}` sudah sudah dalam proses dengan status `{$check->status}`"
+            ], 404);
+        }
+
+        $forward_q = Approval::where('id_trans_so', $id)->where('id', '>', $id_approval)->first();
+
+        if ($forward_q == null) {
+            $to_forward = null;
+        }else{
+            $to_forward = $forward_q->id_pic;
         }
 
         $id_area   = $pic->id_area;
@@ -417,8 +434,8 @@ class Approval_Controller extends BaseController
             'plafon'        => $request->input('plafon'),
             'tenor'         => $request->input('tenor'),
             'rincian'       => $request->input('rincian'),
-            'status'        => $request->input('status'),
-            'tujuan_forward'=> $request->input('tujuan_forward'),
+            'status'        => $st = $request->input('status'),
+            'tujuan_forward'=> $st == 'forward' ? $to_forward : null //$request->input('tujuan_forward'),
             // 'tanggal'       => Carbon::now()->toDateTimeString()
         );
 
@@ -426,15 +443,23 @@ class Approval_Controller extends BaseController
 
         try {
 
-            if ($form['status'] == 'accept' || $form['status'] == 'reject') {
-                $status = $form['status'].' by user '.$user_id;
+
+            if ($form['status'] == 'accept' || $form['status'] == 'reject' || $form['status'] == 'return') {
+                $status = $form['status']." by picID {$pic->id}";
                 // TransCAA::where('id_trans_so', $id)->update(['status_team_caa' => $form['status'].' by user '.$user_id]);
-            }elseif ($form['status'] == 'forward' || $form['status'] == 'return') {
-                $status = $form['status'].' by picID '.$user_id.' to picID '.$form['tujuan_forward'];
+            }elseif ($form['status'] == 'forward') {
+                $status = $form['status']." by picID {$pic->id} to picID {$form['tujuan_forward']}";
             }
 
-            if ($form['status'] == 'return') {
-                TransCAA::where('id_trans_so', $id)->update(['status_caa' => 0, 'status_team_caa' => $status]);
+            if ($form['status'] === 'return') {
+                TransCAA::where('id_trans_so', $id)->where('id_trans_so', $id)->delete();
+                Approval::where('id_trans_so', $id)->delete();
+
+                $check_nst = Penyimpangan::where('id_trans_so', $id)->first();
+
+                if ($check_nst != null) {
+                    Penyimpangan::where('id_trans_so', $id)->delete();
+                }
             }
 
             TransCAA::where('id_trans_so', $check->id_trans_so)->update(['status_team_caa' => $status]);

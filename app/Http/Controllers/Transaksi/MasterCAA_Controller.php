@@ -232,7 +232,7 @@ class MasterCAA_Controller extends BaseController
         }
 
 
-        $check_ao = TransAO::where('id_trans_so', $id)->first();
+        $check_ao = TransAO::where('id_trans_so', $id)->where('status_ao', 1)->first();
 
         if (!$check_ao) {
             return response()->json([
@@ -242,7 +242,7 @@ class MasterCAA_Controller extends BaseController
             ], 404);
         }
 
-        $check_ca = TransCA::where('id_trans_so', $id)->first();
+        $check_ca = TransCA::where('id_trans_so', $id)->where('status_ca', 1)->first();
 
         if (!$check_ca) {
             return response()->json([
@@ -252,7 +252,7 @@ class MasterCAA_Controller extends BaseController
             ], 404);
         }
 
-        $check_caa = TransCAA::where('id_trans_so', $id)->first();
+        $check_caa = TransCAA::where('id_trans_so', $id)->where('status_caa', 1)->first();
 
         if ($check_caa != null) {
             return response()->json([
@@ -306,13 +306,14 @@ class MasterCAA_Controller extends BaseController
 
         // Agunan Files Condition
         $statusFileAgunan = $req->input('status_file_agunan');
+
         if ($statusFileAgunan == 'ORIGINAL') {
             for ($i = 0; $i < count($req->file_agunan); $i++){
                 $listAgunan['agunan'] = $req->file_agunan;
             }
 
             $file_agunan = implode(";", $listAgunan['agunan']);
-        }elseif ($statusFileAgunan == 'CUSTOM') {
+        }else{
 
             if($files = $req->file('file_agunan')){
 
@@ -341,9 +342,9 @@ class MasterCAA_Controller extends BaseController
                 }
 
                 $file_agunan = implode(";", $listAgunan['agunan']);
+            }else{
+                $file_agunan = null;
             }
-        }else{
-            $file_agunan = null;
         }
 
         // Usaha Files Condition
@@ -436,6 +437,7 @@ class MasterCAA_Controller extends BaseController
             }
 
             $team_caa = implode(",", $arrTeam['team']);
+
         }else{
 
             $arrTeam['team'] = null;
@@ -487,10 +489,14 @@ class MasterCAA_Controller extends BaseController
 
             TransSO::where('id', $id)->update(['id_trans_caa' => $CAA->id]);
 
+            $PIC_app = PIC::whereIn('id', explode(",", $team_caa))->get()->toArray();
+
             for ($i=0; $i < count($teamS); $i++){
+
                 Approval::create([
                     'id_trans_so'  => $id,
                     'id_trans_caa' => $CAA->id,
+                    'user_id'      => $PIC_app[$i]['user_id'],
                     'id_pic'       => $teamS[$i],
                     'status'       => 'waiting'
                 ]);
