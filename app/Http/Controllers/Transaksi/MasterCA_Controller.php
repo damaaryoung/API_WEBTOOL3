@@ -582,9 +582,15 @@ class MasterCA_Controller extends BaseController
         $recomCA = array_merge($inputRecomCA, $passRecomCA);
 
 
-        $recom_pendapatan  = $check->kapbul['total_pemasukan']   == null ? 0 : $check->kapbul['total_pemasukan'];
-        $recom_pengeluaran = $check->kapbul['total_pengeluaran'] == null ? 0 : $check->kapbul['total_pengeluaran'];
-        $recom_angsuran    = $check->kapbul['angsuran']          == null ? 0 : $check->kapbul['angsuran'];
+        $recom_pendapatan  = $check_ao->kapbul['total_pemasukan']   == null
+                            ? 0 : $check_ao->kapbul['total_pemasukan'];
+
+        $recom_pengeluaran = $check_ao->kapbul['total_pengeluaran'] == null
+                            ? 0 : $check_ao->kapbul['total_pengeluaran'];
+
+        $recom_angsuran    = $check_ao->kapbul['angsuran']          == null
+                            ? 0 : $check_ao->kapbul['angsuran'];
+
         $recom_pend_bersih = $recom_pendapatan - $recom_pengeluaran;
 
         $disposable_income = $recom_pendapatan - $recom_pengeluaran - $recom_angs;
@@ -827,7 +833,7 @@ class MasterCA_Controller extends BaseController
             $CA = TransCA::create($newTransCA);
             TransSO::where('id', $id)->update(['id_trans_ca' => $CA->id]);
 
-            KapBulanan::where('id', $check->id_kapasitas_bulanan)->update(['disposable_income' => $disposable_income]);
+            KapBulanan::where('id', $check_ao->id_kapasitas_bulanan)->update(['disposable_income' => $disposable_income]);
 
             DB::connection('web')->commit();
 

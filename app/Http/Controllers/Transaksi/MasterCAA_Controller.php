@@ -755,6 +755,16 @@ class MasterCAA_Controller extends BaseController
                 'collectabilitas_terendah' => min(array_column($infoCC, 'collectabilitas')),
                 'table'                    => $infoCC
             ],
+            'ringkasan_analisa' => [
+                'kuantitatif_ttl_pendapatan'    => $check_ca->ringkasan['kuantitatif_ttl_pendapatan'],
+                'kuantitatif_ttl_pengeluaran'   => $check_ca->ringkasan['kuantitatif_ttl_pengeluaran'],
+                'kuantitatif_pendapatan_bersih' => $check_ca->ringkasan['kuantitatif_pendapatan_bersih'],
+                'kuantitatif_angsuran'          => $check_ca->ringkasan['kuantitatif_angsuran'],
+                'kuantitatif_ltv'               => $check_ca->ringkasan['kuantitatif_ltv'],
+                'kuantitatif_dsr'               => $check_ca->ringkasan['kuantitatif_dsr'],
+                'kuantitatif_idir'              => $check_ca->ringkasan['kuantitatif_idir'],
+                'kuantitatif_hasil'             => $check_ca->ringkasan['kuantitatif_hasil']
+            ],
             'status_ca'  => $status_ca
         );
 
@@ -823,9 +833,9 @@ class MasterCAA_Controller extends BaseController
         $query_dir = TransCAA::with('so', 'pic', 'cabang')->where('id_trans_so', $id);
         $method = 'first';
 
-        $val = Helper::checkDir($user_id, $scope, $query_dir, $id_area, $id_cabang, $method);
+        $check_caa = Helper::checkDir($user_id, $scope, $query_dir, $id_area, $id_cabang, $method);
 
-        if ($val == null) {
+        if ($check_caa == null) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
@@ -906,78 +916,78 @@ class MasterCAA_Controller extends BaseController
         }
 
 
-        if ($val->status_caa == 1) {
+        if ($check_caa->status_caa == 1) {
             $status_caa = 'recommend';
-        }elseif($val->status_caa == 2){
+        }elseif($check_caa->status_caa == 2){
             $status_caa = 'not recommend';
         }else{
             $status_caa = 'waiting';
         }
 
         $data = array(
-            'id_trans_so' => $val->id_trans_so == null ? null : (int) $val->id_trans_so,
+            'id_trans_so' => $check_so->id == null ? null : (int) $check->id,
             'transaksi'   => [
                 'so' => [
-                    'nomor' => $val->so['nomor_so'],
-                    'nama'  => $val->so['pic']['nama']
+                    'nomor' => $check_so->nomor_so,
+                    'nama'  => $check_so->pic['nama']
                 ],
                 'ao' => [
-                    'nomor' => $val->so['ao']['nomor_ao'],
-                    'nama'  => $val->so['ao']['pic']['nama']
+                    'nomor' => $check_ao->nomor_ao,
+                    'nama'  => $check_ao->pic['nama']
                 ],
                 'ca' => [
-                    'nomor' => $val->so['ca']['nomor_ca'],
-                    'nama'  => $val->so['ca']['pic']['nama']
+                    'nomor' => $check_ca->nomor_ca,
+                    'nama'  => $check_ca->pic['nama']
                 ],
                 'caa' => [
-                    'nomor' => $val->nomor_caa,
-                    'nama'  => $val->pic['nama']
+                    'nomor' => $check_caa->nomor_caa,
+                    'nama'  => $check_caa->pic['nama']
                 ]
             ],
 
-            'nama_marketing' => $val->so['nama_marketing'],
+            'nama_marketing' => $check_so->nama_marketing,
             'pic'  => [
-                'id'   => $val->id_pic == null ? null : (int) $val->id_pic,
-                'nama' => $val->pic['nama'],
+                'id'   => $check_caa->id_pic == null ? null : (int) $check_caa->id_pic,
+                'nama' => $check_caa->pic['nama'],
             ],
             'area'   => [
-                'id'   => $val->id_area == null ? null : (int) $val->id_area,
-                'nama' => $val->area['nama']
+                'id'   => $check_caa->id_area == null ? null : (int) $check_caa->id_area,
+                'nama' => $check_caa->area['nama']
             ],
             'cabang' => [
-                'id'   => $val->id_cabang == null ? null : (int) $val->id_cabang,
-                'nama' => $val->cabang['nama'],
+                'id'   => $check_caa->id_cabang == null ? null : (int) $check_caa->id_cabang,
+                'nama' => $check_caa->cabang['nama'],
             ],
             'asaldata' => [
-                'id'   => $val->so['asaldata']['id'] == null ? null : (int) $val->so['asaldata']['id'],
-                'nama' => $val->so['asaldata']['nama'],
+                'id'   => $check_so->asaldata['id'] == null ? null : (int) $check_so->asaldata['id'],
+                'nama' => $check_so->asaldata['nama'],
             ],
             'data_debitur' => [
-                'id'           => $val->so['id_calon_debitur'] == null ? null : (int) $val->so['id_calon_debitur'],
-                'nama_lengkap' => $val->so['debt']['nama_lengkap'],
+                'id'           => $check_so->id_calon_debitur == null ? null : (int) $check_so->id_calon_debitur,
+                'nama_lengkap' => $check_so->debt['nama_lengkap'],
                 'alamat_domisili' => [
-                    'alamat_singkat' => $val->so['debt']['alamat_domisili'],
-                    'rt'             => $val->so['debt']['rt_domisili'] == null ? null : (int) $val->so['debt']['rt_domisili'],
-                    'rw'             => $val->so['debt']['rw_domisili'] == null ? null : (int) $val->so['debt']['rw_domisili'],
+                    'alamat_singkat' => $check_so->debt['alamat_domisili'],
+                    'rt'             => $check_so->debt['rt_domisili'] == null ? null : (int) $check_so->debt['rt_domisili'],
+                    'rw'             => $check_so->debt['rw_domisili'] == null ? null : (int) $check_so->debt['rw_domisili'],
                     'kelurahan' => [
-                        'id'    => $val->so['debt']['id_kel_tempat_kerja'] == null ? null : (int) $val->so['debt']['id_kel_tempat_kerja'],
-                        'nama'  => $val->so['debt']['kel_dom']['nama']
+                        'id'    => $check_so->debt['id_kel_tempat_kerja'] == null ? null : (int) $check_so->debt['id_kel_tempat_kerja'],
+                        'nama'  => $check_so->debt['kel_dom']['nama']
                     ],
                     'kecamatan' => [
-                        'id'    => $val->so['debt']['id_kec_domisili'] == null ? null : (int) $val->so['debt']['id_kec_domisili'],
-                        'nama'  => $val->so['debt']['kec_dom']['nama']
+                        'id'    => $check_so->debt['id_kec_domisili'] == null ? null : (int) $check_so->debt['id_kec_domisili'],
+                        'nama'  => $check_so->debt['kec_dom']['nama']
                     ],
                     'kabupaten' => [
-                        'id'    => $val->so['debt']['id_kab_domisili'] == null ? null : (int) $val->so['debt']['id_kab_domisili'],
-                        'nama'  => $val->so['debt']['kab_dom']['nama'],
+                        'id'    => $check_so->debt['id_kab_domisili'] == null ? null : (int) $check_so->debt['id_kab_domisili'],
+                        'nama'  => $check_so->debt['kab_dom']['nama'],
                     ],
                     'provinsi'  => [
-                        'id'   => $val->so['debt']['id_prov_domisili'] == null ? null : (int) $val->so['debt']['id_prov_domisili'],
-                        'nama' => $val->so['debt']['prov_dom']['nama'],
+                        'id'   => $check_so->debt['id_prov_domisili'] == null ? null : (int) $check_so->debt['id_prov_domisili'],
+                        'nama' => $check_so->debt['prov_dom']['nama'],
                     ],
-                    'kode_pos' => $val->so['debt']['kel_dom']['kode_pos'] == null ? null : (int) $val->so['debt']['kel_dom']['kode_pos']
+                    'kode_pos' => $check_so->debt['kel_dom']['kode_pos'] == null ? null : (int) $check_so->debt['kel_dom']['kode_pos']
                 ],
-                'lamp_usaha'   => $val->so['debt']['lamp_foto_usaha']
+                'lamp_usaha'   => $check_so->debt['lamp_foto_usaha']
             ],
             'data_agunan' => [
                 'agunan_tanah'     => $idTan,
@@ -985,52 +995,52 @@ class MasterCAA_Controller extends BaseController
             ],
 
             'pendapatan_usaha' => [
-                'id' => $val->so['ao']['id_pendapatan_usaha'] == null ? null : (int) $val->so['ao']['id_pendapatan_usaha'],
+                'id'        => $check_ao->id_pendapatan_usaha == null ? null : (int) $check_ao->id_pendapatan_usaha,
                 'pemasukan' => array(
-                    'tunai' => (int) $val->so['ao']['usaha']['pemasukan_tunai'],
-                    'kredit'=> (int) $val->so['ao']['usaha']['pemasukan_kredit'],
-                    'total' => (int) $val->so['ao']['usaha']['total_pemasukan']
+                    'tunai' => (int) $check_ao->usaha['pemasukan_tunai'],
+                    'kredit'=> (int) $check_ao->usaha['pemasukan_kredit'],
+                    'total' => (int) $check_ao->usaha['total_pemasukan']
                 ),
                 'pengeluaran' => array(
-                    'biaya_sewa'           => (int) $val->so['ao']['usaha']['biaya_sewa'],
-                    'biaya_gaji_pegawai'   => (int) $val->so['ao']['usaha']['biaya_gaji_pegawai'],
-                    'biaya_belanja_brg'    => (int) $val->so['ao']['usaha']['biaya_belanja_brg'],
-                    'biaya_telp_listr_air' => (int) $val->so['ao']['usaha']['biaya_telp_listr_air'],
-                    'biaya_sampah_kemanan' => (int) $val->so['ao']['usaha']['biaya_sampah_kemanan'],
-                    'biaya_kirim_barang'   => (int) $val->so['ao']['usaha']['biaya_kirim_barang'],
-                    'biaya_hutang_dagang'  => (int) $val->so['ao']['usaha']['biaya_hutang_dagang'],
-                    'angsuran'             => (int) $val->so['ao']['usaha']['biaya_angsuran'],
-                    'lain_lain'            => (int) $val->so['ao']['usaha']['biaya_lain_lain'],
-                    'total'                => (int) $val->so['ao']['usaha']['total_pengeluaran']
+                    'biaya_sewa'           => (int) $check_ao->usaha['biaya_sewa'],
+                    'biaya_gaji_pegawai'   => (int) $check_ao->usaha['biaya_gaji_pegawai'],
+                    'biaya_belanja_brg'    => (int) $check_ao->usaha['biaya_belanja_brg'],
+                    'biaya_telp_listr_air' => (int) $check_ao->usaha['biaya_telp_listr_air'],
+                    'biaya_sampah_kemanan' => (int) $check_ao->usaha['biaya_sampah_kemanan'],
+                    'biaya_kirim_barang'   => (int) $check_ao->usaha['biaya_kirim_barang'],
+                    'biaya_hutang_dagang'  => (int) $check_ao->usaha['biaya_hutang_dagang'],
+                    'angsuran'             => (int) $check_ao->usaha['biaya_angsuran'],
+                    'lain_lain'            => (int) $check_ao->usaha['biaya_lain_lain'],
+                    'total'                => (int) $check_ao->usaha['total_pengeluaran']
                 ),
-                'penghasilan_bersih' => (int) $val->so['ao']['usaha']['laba_usaha']
+                'penghasilan_bersih' => (int) $check_ao->usaha['laba_usaha']
             ],
 
-            'penyimpangan' => $val->penyimpangan,
+            'penyimpangan' => $check_caa->penyimpangan,
             'team_caa'  => $ptc,
             'pengajuan' => [
-                'plafon' => (int) $val->so['faspin']['plafon'],
-                'tenor'  => (int) $val->so['faspin']['tenor'],
-                'jenis_pinjaman' => $val->so['faspin']['jenis_pinjaman']
+                'plafon'         => (int) $check_so->faspin['plafon'],
+                'tenor'          => (int) $check_so->faspin['tenor'],
+                'jenis_pinjaman' => $check_so->faspin['jenis_pinjaman']
             ],
             'rekomendasi_ao'   => [
-                'id'               => $val->so['ao']['id_recom_ao'] == null ? null : (int) $val->so['ao']['id_recom_ao'],
-                'produk'           => $val->so['ao']['recom_ao']['produk'],
-                'plafon'           => (int) $val->so['ao']['recom_ao']['plafon_kredit'],
-                'tenor'            => (int) $val->so['ao']['recom_ao']['jangka_waktu'],
-                'suku_bunga'       => floatval($val->so['ao']['recom_ao']['suku_bunga']),
-                'pembayaran_bunga' => (int) $val->so['ao']['recom_ao']['pembayaran_bunga'],
-                'catatan'          => $val->so['ao']['catatan_ao']
+                'id'               => $check_ao->id_recom_ao == null ? null : (int) $check_ao->id_recom_ao,
+                'produk'           => $check_ao->recom_ao['produk'],
+                'plafon'           => (int) $check_ao->recom_ao['plafon_kredit'],
+                'tenor'            => (int) $check_ao->recom_ao['jangka_waktu'],
+                'suku_bunga'       => floatval($check_ao->recom_ao['suku_bunga']),
+                'pembayaran_bunga' => (int) $check_ao->recom_ao['pembayaran_bunga'],
+                'catatan'          => $check_ao->catatan_ao
             ],
             'rekomendasi_ca' => [
-                'id'                   => $val->so['ca']['id_recom_ca'] == null ? null : (int) $val->so['ca']['id_recom_ca'],
-                'produk'               => $val->so['ca']['recom_ca']['produk'],
-                'plafon'               => (int) $val->so['ca']['recom_ca']['plafon_kredit'],
-                'tenor'                => (int) $val->so['ca']['recom_ca']['jangka_waktu'],
-                'suku_bunga'           => floatval($val->so['ca']['recom_ca']['suku_bunga']),
-                'pembayaran_bunga'     => (int) $val->so['ca']['recom_ca']['pembayaran_bunga'],
-                'rekomendasi_angsuran' => (int) $val->so['ca']['recom_ca']['rekom_angsuran'],
-                'catatan'              => $val->so['ca']['catatan_ca']
+                'id'                   => $check_ca->id_recom_ca == null ? null : (int) $check_ca->id_recom_ca,
+                'produk'               => $check_ca->recom_ca['produk'],
+                'plafon'               => (int) $check_ca->recom_ca['plafon_kredit'],
+                'tenor'                => (int) $check_ca->recom_ca['jangka_waktu'],
+                'suku_bunga'           => floatval($check_ca->recom_ca['suku_bunga']),
+                'pembayaran_bunga'     => (int) $check_ca->recom_ca['pembayaran_bunga'],
+                'rekomendasi_angsuran' => (int) $check_ca->recom_ca['rekom_angsuran'],
+                'catatan'              => $check_ca->catatan_ca
             ],
             'data_biaya' => [
                 'reguler' => $reguler = array(
@@ -1062,14 +1072,14 @@ class MasterCAA_Controller extends BaseController
                 )
             ],
             'lampiran' => [
-                'file_report_mao'     => $val->file_report_mao,
-                'file_report_mca'     => $val->file_report_mca,
-                'file_agunan'         => empty($val->file_agunan) ? null : explode(";", $val->file_agunan),
-                'file_usaha'          => empty($val->file_usaha) ? null : explode(";", $val->file_usaha),
-                'file_tempat_tinggal' => $val->file_tempat_tinggal,
-                'file_lain'           => empty($val->file_lain) ? null : explode(";", $val->file_lain)
+                'file_report_mao'     => $check_caa->file_report_mao,
+                'file_report_mca'     => $check_caa->file_report_mca,
+                'file_agunan'         => empty($check_caa->file_agunan) ? null : explode(";", $check_caa->file_agunan),
+                'file_usaha'          => empty($check_caa->file_usaha) ? null : explode(";", $check_caa->file_usaha),
+                'file_tempat_tinggal' => $check_caa->file_tempat_tinggal,
+                'file_lain'           => empty($check_caa->file_lain) ? null : explode(";", $check_caa->file_lain)
             ],
-            'rincian'    => $val->rincian,
+            'rincian'    => $check_caa->rincian,
             'status_caa' => $status_caa
         );
 
