@@ -80,11 +80,6 @@ class Approval_Controller extends BaseController
             ], 404);
         }
 
-        // $arr = $parQuery->toArray();
-
-        // $pop = reset($arr); //array_pop(array_reverse($arr));
-        // dd($pop);
-
         $data = array();
         foreach ($parQuery as $key => $val) {
 
@@ -287,12 +282,6 @@ class Approval_Controller extends BaseController
         }else{
             $status = 'waiting';
         }
-
-        // if($val->pic['jpic'] == 'DIR UT') {
-        //     $list_status = array('accept', 'reject', 'return');
-        // }else{
-        //     $list_status = array('accept', 'forward', 'reject', 'return');
-        // }
 
         if($val->so['faspin']['plafon'] <= $val->pic['plafon_caa']) {
 
@@ -529,7 +518,7 @@ class Approval_Controller extends BaseController
 
         $check_team = Approval::where('id_trans_so', $id)->whereIn('id_pic', explode(",", $check_caa->pic_team_caa))->get();
 
-        if ($check_team == null) {
+        if ($check_team == '[]') {
             return response()->json([
                 "code"    => 404,
                 "status"  => "not found",
@@ -541,7 +530,7 @@ class Approval_Controller extends BaseController
         foreach ($check_team as $key => $val) {
             $data[] = [
                 'jabatan' => $val->pic['jpic']['nama_jenis'],
-                'id_pic'  => $val->id_pic == null ? null : (int) $val->id_pic,
+                'id_pic'  => $val->id_pic  == null ? null : (int) $val->id_pic,
                 'user_id' => $val->user_id == null ? null : (int) $val->user_id,
                 'nama_pic'=> $val->pic['nama'],
                 'plafon'  => (int) $val->plafon,
@@ -549,11 +538,12 @@ class Approval_Controller extends BaseController
                 'status'  => $val->status,
                 'rincian' => $val->rincian
             ];
-
-            // $approved_user = array_search('accept', $data[$key], true);
         }
 
-        $id_agu_ta = explode (",",$check_ao->id_agunan_tanah);
+        // Agunan Tanah
+        // $id_agu_ta = explode (",",$check_ao->id_agunan_tanah);
+
+        $id_agu_ta = explode (",", null);
 
         $AguTa = AgunanTanah::whereIn('id', $id_agu_ta)->get();
 
@@ -566,21 +556,44 @@ class Approval_Controller extends BaseController
         $imTan = implode("; ", $idTan);
 
 
-        $url_in_array = in_array('accept', array_column($data, 'status'));
+        // Agunan Kendaraan
+        $id_agu_ke = explode (",",$check_ao->id_agunan_kendaraan);
 
-        if($url_in_array != true){
+        $AguKe = AgunanKendaraan::whereIn('id', $id_agu_ke)->get();
 
-            $tenor = null;
+        $idKen = array();
+        foreach ($AguKe as $key => $value) {
+
+            $idKen[$key] = 'BPKB / '. ($value->no_bpkb == null ? 'null' : $value->no_bpkb);
+        }
+
+        $imKen = implode("; ", $idKen);
+
+
+        if ($imTan == "" && $imKen == "") {
+            $jaminan = null;
+        }elseif($imTan != "" && $imKen != ""){
+            $jaminan = $imTan.'; '.$imKen;
+        }elseif($imTan == "" && $imKen != ""){
+            $jaminan = $imKen;
+        }elseif($imTan != "" && $imKen == ""){
+            $jaminan = $imTan;
+        }
+
+        // $url_in_array = in_array('accept', $status_in_array);
+
+
+        $num_sts = array_search('accept', array_column($data, 'status'), true);;
+
+        if ($num_sts == false) {
+            $tenor  = null;
             $plafon = null;
-
         }else{
-
-            $num_sts = array_search('accept', array_column($data, 'status'), true);
-
             $tenor  = $data[$num_sts]['tenor'];
             $plafon = $data[$num_sts]['plafon'];
-
         }
+
+
 
         $result = array(
             'id_transaksi' => $check_caa->id_trans_so == null ? null : (int) $check_caa->id_trans_so,
@@ -594,7 +607,7 @@ class Approval_Controller extends BaseController
                 'nama_ca' => $check_caa->pic['nama'],
                 'plafon'  => (int) $plafon,
                 'tenor'   => (int) $tenor,
-                'jaminan' => $imTan
+                'jaminan' => $jaminan
             ],
             'list_approver' => $data
         );

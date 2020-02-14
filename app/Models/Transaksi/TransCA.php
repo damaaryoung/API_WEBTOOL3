@@ -40,7 +40,7 @@ class TransCA extends Model implements AuthenticatableContract, AuthorizableCont
     protected $primaryKey = 'id';
 
     protected $fillable = [
-        'nomor_ca', 'user_id', 'id_trans_so', 'id_pic', 'id_area', 'id_cabang', 'id_mutasi_bank', 'id_log_tabungan', 'id_info_analisa_cc', 'id_ringkasan_analisa', 'id_recom_ca', 'id_rekomendasi_pinjaman', 'id_asuransi_jiwa', 'id_asuransi_jaminan', 'catatan_ca', 'status_ca', 'flg_aktif'
+        'nomor_ca', 'user_id', 'id_trans_so', 'id_pic', 'id_area', 'id_cabang', 'id_mutasi_bank', 'id_log_tabungan', 'id_info_analisa_cc', 'id_ringkasan_analisa', 'id_recom_ca', 'id_rekomendasi_pinjaman', 'id_asuransi_jiwa', 'id_asuransi_jaminan', 'catatan_ca', 'status_ca', 'revisi', 'flg_aktif'
     ];
 
     public function so(){

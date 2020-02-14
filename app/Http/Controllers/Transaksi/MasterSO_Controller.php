@@ -149,25 +149,21 @@ class MasterSO_Controller extends BaseController
 
         for ($i = 0; $i < count($nama_anak); $i++) {
             $anak[] = [
-                'nama'  => $nama_anak[$i],
+                'nama'      => $nama_anak[$i],
                 'tgl_lahir' => $tgl_anak[$i]
             ];
         }
 
         $id_penj = explode (",",$val->id_penjamin);
 
-        $pen = Penjamin::whereIn('id', $id_penj)->get();
-
-        if ($pen == '[]') {
-            $penjamin = null;
-        }else{
-            foreach ($pen as $key => $value) {
-                $penjamin[$key] = [
-                    "id"    => $value->id == null ? null : (int) $value->id,
-                    "nama"  => $value->nama_ktp,
-                ];
-            }
+        foreach ($id_penj as $value) {
+            $pen[] = array(
+                'id' => (int) $value
+            );
         }
+
+        // $pen = Penjamin::select('id', 'nama_ktp as nama')->whereIn('id', $id_penj)->get()->toArray();
+
 
         if ($val->status_das == 1) {
             $status_das = 'complete';
@@ -248,7 +244,7 @@ class MasterSO_Controller extends BaseController
                 'id'      => $val->id_pasangan == null ? null : (int) $val->id_pasangan,
                 'nama'    => $val->pas['nama_lengkap'],
             ],
-            'penjamin'  => $penjamin,
+            'penjamin'  => $pen,
             'flg_aktif' => $val->flg_aktif == 0 ? "false" : "true"
         ];
 

@@ -293,7 +293,7 @@ class MasterCA_Controller extends BaseController
         }
     }
 
-    public function update($id, Request $request, BlankRequest $req, Helper $help) {
+    public function update($id, Request $request, BlankRequest $req) {
         $user_id  = $request->auth->user_id;
         $username = $request->auth->user;
 
@@ -500,59 +500,16 @@ class MasterCA_Controller extends BaseController
             'biaya_tabungan'        => $req->input('biaya_tabungan')
         );
 
-        // Check Pemeriksaan
-        $id_pe_ta = $check_ao->id_periksa_agunan_tanah;
-
-        if ($id_pe_ta == null) {
-            $PeriksaTanah = null;
-        }
-
-        $id_pe_ke = $check_ao->id_periksa_agunan_kendaraan;
-
-        if ($id_pe_ke == null) {
-            $PeriksaKenda = null;
-        }
-
-        $PeriksaTanah = PemeriksaanAgunTan::select('nilai_taksasi_agunan')->whereIn('id', explode(",", $id_pe_ta))->get()->toArray();
-
-        if ($PeriksaTanah == []) {
-            $sumTaksasiTan = 0;
-        }else{
-            $sumTaksasiTan = array_sum(array_column($PeriksaTanah,'nilai_taksasi_agunan')); //array_sum($PeriksaTanah);
-        }
-
-        $PeriksaKenda = PemeriksaanAgunTan::select('nilai_taksasi_agunan')->whereIn('id', explode(",", $id_pe_ta))->get()->toArray();
-
-        if ($PeriksaKenda == []) {
-            $sumTaksasiKen = 0;
-        }else{
-            $sumTaksasiKen = array_sum(array_column($PeriksaTanah,'nilai_taksasi_agunan')); //array_sum($PeriksaTanah);
-        }
-
-        $sumAllTaksasi = $sumTaksasiTan + $sumTaksasiKen; // Semua Nilai Taksasi dari semua agunan
-
-        // Analisa Kuantitatif dan Kualitatif
-        $staticMin    = 35;
-        $staticMax    = 80;
-
-        $staticPlafon = $sumAllTaksasi; // 70000000;
-
-        $ltvMax       = 70;
-        $percent      = 100;
-
         // Rekomendasi Angsuran pada table recom_ca
-        $plaf  = $inputRecomCA['plafon_kredit'] == null ? 0 : $inputRecomCA['plafon_kredit'];
-        $ten   = $inputRecomCA['jangka_waktu']  == null ? 0 : $inputRecomCA['jangka_waktu'];
-        $bunga = $inputRecomCA['suku_bunga']    == null ? 0 : ($inputRecomCA['suku_bunga'] / $percent);
+        $plafonCA = $inputRecomCA['plafon_kredit'] == null ? 0 : $inputRecomCA['plafon_kredit'];
+        $tenorCA  = $inputRecomCA['jangka_waktu']  == null ? 0 : $inputRecomCA['jangka_waktu'];
+        $bunga    = $inputRecomCA['suku_bunga']    == null ? 0 : ($inputRecomCA['suku_bunga'] / 100);
 
-        if ($plaf == 0 && $ten == 0 && $bunga == 0) {
-            $exec       = 0;
+        if ($plafonCA == 0 && $tenorCA == 0 && $bunga == 0) {
             $recom_angs = 0;
         }else{
-            $exec       = ($plaf + ($plaf * $ten * $bunga)) / $ten;
-            $recom_angs = $help->recom_angs($exec);
+            $recom_angs = Helper::recom_angs($plafonCA, $tenorCA, $bunga);
         }
-
 
         $passRecomCA = array(
 
@@ -581,55 +538,57 @@ class MasterCA_Controller extends BaseController
 
         $recomCA = array_merge($inputRecomCA, $passRecomCA);
 
+        $rekomen_pendapatan  = $check_ao->kapbul['total_pemasukan']   == null ? 0 : $check_ao->kapbul['total_pemasukan'];
+        $rekomen_pengeluaran = $check_ao->kapbul['total_pengeluaran'] == null ? 0 : $check_ao->kapbul['total_pengeluaran'];
+        $rekomen_angsuran    = $check_ao->kapbul['angsuran']          == null ? 0 : $check_ao->kapbul['angsuran'];
+        $rekomen_pend_bersih = $rekomen_pendapatan - $rekomen_pengeluaran;
+        $disposable_income   = $rekomen_pend_bersih - $recom_angs;
 
-        $recom_pendapatan  = $check_ao->kapbul['total_pemasukan']   == null
-                            ? 0 : $check_ao->kapbul['total_pemasukan'];
+        // Check Pemeriksaan
+        $id_pe_ta = $check_ao->id_periksa_agunan_tanah;
 
-        $recom_pengeluaran = $check_ao->kapbul['total_pengeluaran'] == null
-                            ? 0 : $check_ao->kapbul['total_pengeluaran'];
-
-        $recom_angsuran    = $check_ao->kapbul['angsuran']          == null
-                            ? 0 : $check_ao->kapbul['angsuran'];
-
-        $recom_pend_bersih = $recom_pendapatan - $recom_pengeluaran;
-
-        $disposable_income = $recom_pendapatan - $recom_pengeluaran - $recom_angs;
-
-        //$recom_ltv  = ($plaf * $percent) / $staticPlafon; // Division by zero
-        $recom_ltv  = ($plaf * $percent); /// $staticPlafon; // Division by zero
-
-        $recom_idir = ($recom_angs / ($recom_pendapatan - $recom_pengeluaran)) * $percent;
-        $recom_dsr  = ($recom_angs / ($recom_pendapatan - $recom_angsuran)) * $percent;
-
-
-        if ($recom_dsr <= $staticMin && $recom_ltv <= $ltvMax && $recom_idir > 0 && $recom_idir < $staticMax) {
-
-            $recom_hasil = 'LAYAK';
-
-        }elseif ($recom_dsr <= $staticMin && $recom_ltv > $ltvMax) {
-
-            $recom_hasil = 'DIPERTIMBANGKAN';
-
-        }elseif ($recom_dsr > $staticMin && $recom_ltv <= $ltvMax) {
-
-            $recom_hasil = 'DIPERTIMBANGKAN';
-
-        }elseif ($recom_dsr <= $staticMin && $recom_ltv <= $ltvMax) {
-            $recom_hasil = 'DIPERTIMBANGKAN';
-
-        }else{
-            $recom_hasil = 'RESIKO TINGGI';
+        if ($id_pe_ta == null) {
+            $PeriksaTanah = null;
         }
+
+        $id_pe_ke = $check_ao->id_periksa_agunan_kendaraan;
+
+        if ($id_pe_ke == null) {
+            $PeriksaKenda = null;
+        }
+
+        $PeriksaTanah = PemeriksaanAgunTan::select('nilai_taksasi_agunan')->whereIn('id', explode(",", $id_pe_ta))->get()->toArray();
+
+        if ($PeriksaTanah == []) {
+            $sumTaksasiTan = 0;
+        }else{
+            $sumTaksasiTan = array_sum(array_column($PeriksaTanah,'nilai_taksasi_agunan')); //array_sum($PeriksaTanah);
+        }
+
+        $PeriksaKenda = PemeriksaanAgunTan::select('nilai_taksasi_agunan')->whereIn('id', explode(",", $id_pe_ta))->get()->toArray();
+
+        if ($PeriksaKenda == []) {
+            $sumTaksasiKen = 0;
+        }else{
+            $sumTaksasiKen = array_sum(array_column($PeriksaTanah,'nilai_taksasi_agunan')); //array_sum($PeriksaTanah);
+        }
+        $sumAllTaksasi = $sumTaksasiTan + $sumTaksasiKen; // Semua Nilai Taksasi dari semua agunan
+
+
+        $recom_ltv   = Helper::recom_ltv($plafonCA, $sumAllTaksasi);
+        $recom_idir  = Helper::recom_idir($recom_angs, $rekomen_pendapatan, $rekomen_pengeluaran);
+        $recom_dsr   = Helper::recom_dsr($recom_angs, $rekomen_pendapatan, $rekomen_angsuran);
+        $recom_hasil = Helper::recom_hasil($recom_dsr, $recom_ltv, $recom_idir);
 
         // Data Ringkasan Analisa CA
         $dataRingkasan = array(
-            'kuantitatif_ttl_pendapatan'    => $recom_pendapatan,
-            'kuantitatif_ttl_pengeluaran'   => $recom_pengeluaran,
-            'kuantitatif_pendapatan_bersih' => $recom_pend_bersih,
+            'kuantitatif_ttl_pendapatan'    => $rekomen_pendapatan,
+            'kuantitatif_ttl_pengeluaran'   => $rekomen_pengeluaran,
+            'kuantitatif_pendapatan_bersih' => $rekomen_pend_bersih,
             'kuantitatif_angsuran'          => $recom_angs,
-            'kuantitatif_ltv'               => round($recom_ltv, 2),
-            'kuantitatif_dsr'               => round($recom_dsr, 2),
-            'kuantitatif_idir'              => round($recom_idir, 2),
+            'kuantitatif_ltv'               => $recom_ltv,
+            'kuantitatif_dsr'               => $recom_dsr,
+            'kuantitatif_idir'              => $recom_idir,
             'kuantitatif_hasil'             => $recom_hasil,
 
 
@@ -948,7 +907,7 @@ class MasterCA_Controller extends BaseController
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
-                'message' => 'Transaksi dengan id '.$id.' belum ada di SO atau belum komplit saat pemeriksaaan DAS dan HM'
+                'message' => 'Transaksi dengan id '.$id_trans_so.' belum ada di SO atau belum komplit saat pemeriksaaan DAS dan HM'
             ], 404);
         }
 
@@ -1003,57 +962,15 @@ class MasterCA_Controller extends BaseController
             'biaya_tabungan'        => $req->input('biaya_tabungan')
         );
 
-        // Analisa Kuantitatif dan Kualitatif
-        $id_pe_ta = $check_ao->id_periksa_agunan_tanah;
-
-        if ($id_pe_ta == null) {
-            $PeriksaTanah = null;
-        }
-
-        $id_pe_ke = $check_ao->id_periksa_agunan_kendaraan;
-
-        if ($id_pe_ke == null) {
-            $PeriksaKenda = null;
-        }
-
-        $PeriksaTanah = PemeriksaanAgunTan::select('nilai_taksasi_agunan')->whereIn('id', explode(",", $id_pe_ta))->get()->toArray();
-
-        if ($PeriksaTanah == null) {
-            $sumTaksasiTan = 0;
-        }else{
-            $sumTaksasiTan = array_sum(array_column($PeriksaTanah,'nilai_taksasi_agunan')); //array_sum($PeriksaTanah);
-        }
-
-        $PeriksaKenda = PemeriksaanAgunTan::select('nilai_taksasi_agunan')->whereIn('id', explode(",", $id_pe_ta))->get()->toArray();
-
-        if ($PeriksaKenda == null) {
-            $sumTaksasiKen = 0;
-        }else{
-            $sumTaksasiKen = array_sum(array_column($PeriksaTanah,'nilai_taksasi_agunan')); //array_sum($PeriksaTanah);
-        }
-
-        $sumAllTaksasi = $sumTaksasiTan + $sumTaksasiKen; // Semua Nilai Taksasi dari semua agunan
-
-        // Analisa Kuantitatif dan Kualitatif
-        $staticMin    = 35;
-        $staticMax    = 80;
-
-        $staticPlafon = $sumAllTaksasi; // 70000000;
-
-        $ltvMax       = 70;
-        $percent      = 100;
-
         // Rekomendasi Angsuran pada table recom_ca
-        $plaf  = $inputRecomCA['plafon_kredit'] == null ? 0 : $inputRecomCA['plafon_kredit'];
-        $ten   = $inputRecomCA['jangka_waktu']  == null ? 0 : $inputRecomCA['jangka_waktu'];
-        $bunga = $inputRecomCA['suku_bunga']    == null ? 0 : ($inputRecomCA['suku_bunga'] / $percent);
+        $plafonCA = $inputRecomCA['plafon_kredit'] == null ? 0 : $inputRecomCA['plafon_kredit'];
+        $tenorCA  = $inputRecomCA['jangka_waktu']  == null ? 0 : $inputRecomCA['jangka_waktu'];
+        $bunga    = $inputRecomCA['suku_bunga']    == null ? 0 : ($inputRecomCA['suku_bunga'] / 100);
 
-        if ($plaf == 0 && $ten == 0 && $bunga == 0) {
-            $exec       = 0;
+        if ($plafonCA == 0 && $tenorCA == 0 && $bunga == 0) {
             $recom_angs = 0;
         }else{
-            $exec       = ($plaf + ($plaf * $ten * $bunga)) / $ten;
-            $recom_angs = Helper::recom_angs($exec);
+            $recom_angs = Helper::recom_angs($plafonCA, $tenorCA, $bunga);
         }
 
         $passRecomCA = array(
@@ -1116,47 +1033,57 @@ class MasterCA_Controller extends BaseController
         );
 
 
-        // $recom_pendapatan  = $check->ao['kapbul']['total_pemasukan'];
-        $recom_pendapatan  = $check_ao->kapbul['total_pemasukan'];
-        $recom_pengeluaran = $check_ao->kapbul['total_pengeluaran'];
-        $recom_angsuran    = $check_ao->kapbul['angsuran'];
+        $rekomen_pendapatan  = $check_ao->kapbul['total_pemasukan']   == null ? 0 : $check_ao->kapbul['total_pemasukan'];
+        $rekomen_pengeluaran = $check_ao->kapbul['total_pengeluaran'] == null ? 0 : $check_ao->kapbul['total_pengeluaran'];
+        $rekomen_angsuran    = $check_ao->kapbul['angsuran']          == null ? 0 : $check_ao->kapbul['angsuran'];
+        $rekomen_pend_bersih = $rekomen_pendapatan - $rekomen_pengeluaran;
+        $disposable_income   = $rekomen_pend_bersih - $recom_angs;
 
-        $recom_pend_bersih = $recom_pendapatan - $recom_pengeluaran;
+        // Check Pemeriksaan
+        $id_pe_ta = $check_ao->id_periksa_agunan_tanah;
 
-        $disposable_income = $recom_pendapatan - $recom_pengeluaran - $recom_angs;
-
-        $recom_ltv  = ($plaf / $staticPlafon) * $percent;
-        $recom_idir = ($recom_angs / ($recom_pendapatan - $recom_pengeluaran)) * $percent;
-        $recom_dsr  = ($recom_angs / ($recom_pendapatan - $recom_angsuran)) * $percent;
-
-        if ($recom_dsr <= $staticMin && $recom_ltv <= $ltvMax && $recom_idir > 0 && $recom_idir < $staticMax) {
-
-            $recom_hasil = 'LAYAK';
-
-        }elseif ($recom_dsr <= $staticMin && $recom_ltv > $ltvMax) {
-
-            $recom_hasil = 'DIPERTIMBANGKAN';
-
-        }elseif ($recom_dsr > $staticMin && $recom_ltv <= $ltvMax) {
-
-            $recom_hasil = 'DIPERTIMBANGKAN';
-
-        }elseif ($recom_dsr <= $staticMin && $recom_ltv <= $ltvMax) {
-            $recom_hasil = 'DIPERTIMBANGKAN';
-
-        }else{
-            $recom_hasil = 'RESIKO TINGGI';
+        if ($id_pe_ta == null) {
+            $PeriksaTanah = null;
         }
+
+        $id_pe_ke = $check_ao->id_periksa_agunan_kendaraan;
+
+        if ($id_pe_ke == null) {
+            $PeriksaKenda = null;
+        }
+
+        $PeriksaTanah = PemeriksaanAgunTan::select('nilai_taksasi_agunan')->whereIn('id', explode(",", $id_pe_ta))->get()->toArray();
+
+        if ($PeriksaTanah == []) {
+            $sumTaksasiTan = 0;
+        }else{
+            $sumTaksasiTan = array_sum(array_column($PeriksaTanah,'nilai_taksasi_agunan')); //array_sum($PeriksaTanah);
+        }
+
+        $PeriksaKenda = PemeriksaanAgunTan::select('nilai_taksasi_agunan')->whereIn('id', explode(",", $id_pe_ta))->get()->toArray();
+
+        if ($PeriksaKenda == []) {
+            $sumTaksasiKen = 0;
+        }else{
+            $sumTaksasiKen = array_sum(array_column($PeriksaTanah,'nilai_taksasi_agunan')); //array_sum($PeriksaTanah);
+        }
+        $sumAllTaksasi = $sumTaksasiTan + $sumTaksasiKen; // Semua Nilai Taksasi dari semua agunan
+
+
+        $recom_ltv   = Helper::recom_ltv($plafonCA, $sumAllTaksasi);
+        $recom_idir  = Helper::recom_idir($recom_angs, $rekomen_pendapatan, $rekomen_pengeluaran);
+        $recom_dsr   = Helper::recom_dsr($recom_angs, $rekomen_pendapatan, $rekomen_angsuran);
+        $recom_hasil = Helper::recom_hasil($recom_dsr, $recom_ltv, $recom_idir);
 
         // Data Ringkasan Analisa CA
         $dataRingkasan = array(
-            'kuantitatif_ttl_pendapatan'    => $recom_pendapatan,
-            'kuantitatif_ttl_pengeluaran'   => $recom_pengeluaran,
-            'kuantitatif_pendapatan_bersih' => $recom_pend_bersih,
+            'kuantitatif_ttl_pendapatan'    => $rekomen_pendapatan,
+            'kuantitatif_ttl_pengeluaran'   => $rekomen_pengeluaran,
+            'kuantitatif_pendapatan_bersih' => $rekomen_pend_bersih,
             'kuantitatif_angsuran'          => $recom_angs,
-            'kuantitatif_ltv'               => round($recom_ltv, 2),
-            'kuantitatif_dsr'               => round($recom_dsr, 2),
-            'kuantitatif_idir'              => round($recom_idir, 2),
+            'kuantitatif_ltv'               => $recom_ltv,
+            'kuantitatif_dsr'               => $recom_dsr,
+            'kuantitatif_idir'              => $recom_idir,
             'kuantitatif_hasil'             => $recom_hasil,
 
 
@@ -1253,27 +1180,27 @@ class MasterCA_Controller extends BaseController
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
-                'message' => 'Transaksi dengan id '.$id.' belum ada di SO atau saat pemeriksaaan DAS dan HM'
+                'message' => 'Transaksi dengan id '.$id_trans_so.' belum ada di SO atau saat pemeriksaaan DAS dan HM'
             ], 404);
         }
 
-        $check_ao = TransAO::where('id_trans_so', $id)->where('status_ao', 1)->first();
+        $check_ao = TransAO::where('id_trans_so', $id_trans_so)->where('status_ao', 1)->first();
 
         if (!$check_ao) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
-                'message' => 'Transaksi dengan id '.$id.' belum sampai ke AO'
+                'message' => 'Transaksi dengan id '.$id_trans_so.' belum sampai ke AO'
             ], 404);
         }
 
-        $check_ca = TransCA::where('id_trans_so', $id)->where('status_ca', 1)->first();
+        $check_ca = TransCA::where('id_trans_so', $id_trans_so)->where('status_ca', 1)->first();
 
         if (!$check_ca) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
-                'message' => 'Transaksi dengan id '.$id.' belum sampai ke CA'
+                'message' => 'Transaksi dengan id '.$id_trans_so.' belum sampai ke CA'
             ], 404);
         }
 
@@ -1316,69 +1243,40 @@ class MasterCA_Controller extends BaseController
 
         $sumAllTaksasi = $sumTaksasiTan + $sumTaksasiKen; // Semua Nilai Taksasi dari semua agunan
 
-        // Analisa Kuantitatif dan Kualitatif
-        $staticMin    = 35;
-        $staticMax    = 80;
-
-        $staticPlafon = $sumAllTaksasi; // 70000000;
-        $ltvMax       = 70;
-        $percent      = 100;
-
         // Rekomendasi Angsuran pada table recom_ca
-        $plaf  = $inputRecomCA['plafon_kredit'] == null ? 0 : $inputRecomCA['plafon_kredit'];
-        $ten   = $inputRecomCA['jangka_waktu']  == null ? 0 : $inputRecomCA['jangka_waktu'];
-        $bunga = $inputRecomCA['suku_bunga']    == null ? 0 : ($inputRecomCA['suku_bunga'] / $percent);
+        $plafonCA = $inputRecomCA['plafon_kredit'] == null ? 0 : $inputRecomCA['plafon_kredit'];
+        $tenorCA  = $inputRecomCA['jangka_waktu']  == null ? 0 : $inputRecomCA['jangka_waktu'];
+        $bunga    = $inputRecomCA['suku_bunga']    == null ? 0 : ($inputRecomCA['suku_bunga'] / 100);
 
-        if ($plaf == 0 && $ten == 0 && $bunga == 0) {
-            $exec       = 0;
+        if ($plafonCA == 0 && $tenorCA == 0 && $bunga == 0) {
             $recom_angs = 0;
         }else{
-            $exec       = ($plaf + ($plaf * $ten * $bunga)) / $ten;
-            $recom_angs = $help->recom_angs($exec);
+            $recom_angs = Helper::recom_angs($plafonCA, $tenorCA, $bunga);
         }
 
-        // $recom_pendapatan  = $check->ao['kapbul']['total_pemasukan'];
-        $recom_pendapatan  = $check_ao->kapbul['total_pemasukan'];
-        $recom_pengeluaran = $check_ao->kapbul['total_pengeluaran'];
-        $recom_angsuran    = $check_ao->kapbul['angsuran'];
+        // $rekomen_pendapatan  = $check->ao['kapbul']['total_pemasukan'];
+        $rekomen_pendapatan  = $check_ao->kapbul['total_pemasukan'];
+        $rekomen_pengeluaran = $check_ao->kapbul['total_pengeluaran'];
+        $rekomen_angsuran    = $check_ao->kapbul['angsuran'];
+        $rekomen_pend_bersih = $rekomen_pendapatan - $rekomen_pengeluaran;
 
-        $recom_pend_bersih = $recom_pendapatan - $recom_pengeluaran;
+        $disposable_income = $rekomen_pend_bersih - $recom_angs;
 
-        $disposable_income = $recom_pendapatan - $recom_pengeluaran - $recom_angs;
-
-        $recom_ltv  = ($plaf / $staticPlafon) * $percent;
-        $recom_idir = ($recom_angs / ($recom_pendapatan - $recom_pengeluaran)) * $percent;
-        $recom_dsr  = ($recom_angs / ($recom_pendapatan - $recom_angsuran)) * $percent;
-
-
-        if ($recom_dsr <= $staticMin && $recom_ltv <= $ltvMax && $recom_idir > 0 && $recom_idir < $staticMax) {
-
-            $recom_hasil = 'LAYAK';
-
-        }elseif ($recom_dsr <= $staticMin && $recom_ltv > $ltvMax) {
-
-            $recom_hasil = 'DIPERTIMBANGKAN';
-
-        }elseif ($recom_dsr > $staticMin && $recom_ltv <= $ltvMax) {
-
-            $recom_hasil = 'DIPERTIMBANGKAN';
-
-        }elseif ($recom_dsr <= $staticMin && $recom_ltv <= $ltvMax) {
-            $recom_hasil = 'DIPERTIMBANGKAN';
-
-        }else{
-            $recom_hasil = 'RESIKO TINGGI';
-        }
+        // Analisa Kuantitatif dan Kualitatif
+        $recom_ltv   = Helper::recom_ltv($plafonCA, $sumAllTaksasi);
+        $recom_idir  = Helper::recom_idir($recom_angs, $rekomen_pendapatan, $rekomen_pengeluaran);
+        $recom_dsr   = Helper::recom_dsr($recom_angs, $rekomen_pendapatan, $rekomen_angsuran);
+        $recom_hasil = Helper::recom_hasil($recom_dsr, $recom_ltv, $recom_idir);
 
         // Data Ringkasan Analisa CA
         $dataRingkasan = array(
-            'kuantitatif_ttl_pendapatan'    => $recom_pendapatan,
-            'kuantitatif_ttl_pengeluaran'   => $recom_pengeluaran,
-            'kuantitatif_pendapatan_bersih' => $recom_pend_bersih,
+            'kuantitatif_ttl_pendapatan'    => $rekomen_pendapatan,
+            'kuantitatif_ttl_pengeluaran'   => $rekomen_pengeluaran,
+            'kuantitatif_pendapatan_bersih' => $rekomen_pend_bersih,
             'kuantitatif_angsuran'          => $recom_angs,
-            'kuantitatif_ltv'               => round($recom_ltv, 2),
-            'kuantitatif_dsr'               => round($recom_dsr, 2),
-            'kuantitatif_idir'              => round($recom_idir, 2),
+            'kuantitatif_ltv'               => $recom_ltv,
+            'kuantitatif_dsr'               => $recom_dsr,
+            'kuantitatif_idir'              => $recom_idir,
             'kuantitatif_hasil'             => $recom_hasil,
             'disposable_income'             => $disposable_income
         );

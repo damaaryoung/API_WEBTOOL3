@@ -139,7 +139,9 @@ class MasterCAA_Controller extends BaseController
             );
 
             $data[] = [
+                'status_revisi'  => $val->revisi == null ? 'N' : 'Y',
                 'id_trans_so'    => $val->id_trans_so == null ? null : (int) $val->id_trans_so,
+                'id_trans_ca'    => $val->id == null ? null : (int) $val->id,
                 'nomor_so'       => $val->so['nomor_so'],
 
                 'nomor_ao'       => $val->so['ao']['nomor_ao'],
@@ -382,8 +384,6 @@ class MasterCAA_Controller extends BaseController
                     $listUsaha['usaha'][] = $path.'/'.$name;
                 }
 
-                // dd($listUsaha);
-
                 $file_usaha = implode(";", $listUsaha['usaha']);
             }
         }else{
@@ -439,12 +439,8 @@ class MasterCAA_Controller extends BaseController
             $team_caa = implode(",", $arrTeam['team']);
 
         }else{
-
-            $arrTeam['team'] = null;
             $team_caa = null;
         }
-
-        // dd($team_caa);
 
         $data = array(
             'nomor_caa'          => $nomor_caa,
@@ -490,6 +486,14 @@ class MasterCAA_Controller extends BaseController
             TransSO::where('id', $id)->update(['id_trans_caa' => $CAA->id]);
 
             $PIC_app = PIC::whereIn('id', explode(",", $team_caa))->get()->toArray();
+
+            if($PIC_app == []){
+                return response()->json([
+                    'code'    => 404,
+                    'status'  => 'not found',
+                    'message' => 'Team CAA tidak terdaftar'
+                ], 404);
+            }
 
             for ($i=0; $i < count($teamS); $i++){
 
@@ -561,7 +565,7 @@ class MasterCAA_Controller extends BaseController
             ], 404);
         }
 
-        $query_dir = TransCA::with('pic', 'cabang')->where('id_trans_so', $id)->where('status_ca', 1);
+        $query_dir = TransCA::with('pic', 'cabang')->where('id_trans_so', $id)->where('status_ca', 1)->where('revisi', null);
         $method = 'first';
 
         $check_ca = Helper::checkDir($user_id, $scope, $query_dir, $id_area, $id_cabang, $method);
@@ -638,7 +642,9 @@ class MasterCAA_Controller extends BaseController
         }
 
         $data = array(
+            'status_revisi' => $check_ca->revisi == null ? 'N' : 'Y',
             'id_trans_so' => $check_so->id == null ? null : (int) $check_so->id,
+            'id_trans_ca' => $check_ca->id == null ? null : (int) $check_ca->id,
             'transaksi'   => [
                 'so' => [
                     'nomor' => $check_so->nomor_so,

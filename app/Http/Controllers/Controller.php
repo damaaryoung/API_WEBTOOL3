@@ -87,7 +87,6 @@ class Controller extends BaseController
     }
 
     public static function img64enc($file) {
-        // $file = $req->file('lam_imb');
         $type = pathinfo($file, PATHINFO_EXTENSION);
         $extention = $file->getClientOriginalExtension();
         $data = file_get_contents($file);
@@ -109,10 +108,6 @@ class Controller extends BaseController
         }
 
         return $result;
-    }
-
-    public static function recom_angs($num){
-        return (int) ceil($num / 1000) * 1000;
     }
 
     public static function checkDir($user_id, $scope, $query_dir, $id_area, $id_cabang, $method){
@@ -160,4 +155,56 @@ class Controller extends BaseController
 
         return $query;
     }
+
+    public static function recom_angs($plafon, $tenor, $bunga){
+        $exec   = ($plafon + ($plafon * $tenor * $bunga)) / $tenor;
+        $result = ceil($exec / 1000) * 1000;
+        return (int) $result;
+    }
+
+    public static function recom_ltv($plafon, $sumAllTaksasi){
+        $result = ($plafon / $sumAllTaksasi) * 100;
+        return round($result, 2);
+    }
+
+    public static function recom_idir($recom_angs, $rekomen_pendapatan, $rekomen_pengeluaran){
+        $result = ($recom_angs / ($rekomen_pendapatan - $rekomen_pengeluaran)) * 100;
+        return round($result, 2);
+    }
+
+    public static function recom_dsr($recom_angs, $rekomen_pendapatan, $rekomen_angsuran){
+        $result = ($recom_angs / ($rekomen_pendapatan - $rekomen_angsuran)) * 100;
+        return round($result, 2);
+    }
+
+    public static function recom_hasil($recom_dsr, $recom_ltv, $recom_idir){
+        $staticMin    = 35;
+        $staticMax    = 80;
+        $ltvMax       = 70;
+
+        if ($recom_dsr <= $staticMin && $recom_ltv <= $ltvMax && $recom_idir > 0 && $recom_idir < $staticMax) {
+
+            $result = 'LAYAK';
+
+        }elseif ($recom_dsr <= $staticMin && $recom_ltv > $ltvMax) {
+
+            $result = 'DIPERTIMBANGKAN';
+
+        }elseif ($recom_dsr > $staticMin && $recom_ltv <= $ltvMax) {
+
+            $result = 'DIPERTIMBANGKAN';
+
+        }elseif ($recom_dsr <= $staticMin && $recom_ltv <= $ltvMax) {
+
+            $result = 'DIPERTIMBANGKAN';
+
+        }else{
+
+            $result = 'RESIKO TINGGI';
+
+        }
+
+        return $result;
+    }
+
 }
