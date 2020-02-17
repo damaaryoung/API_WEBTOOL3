@@ -474,7 +474,9 @@ class MasterCAA_Controller extends BaseController
             'tenor'                 => $req->input('tenor'),
             'kartu_pinjaman'        => $req->input('kartu_pinjaman'),
             'sertifikat_diatas_50'  => $req->input('sertifikat_diatas_50'),
-            'sertifikat_diatas_150' => $req->input('sertifikat_diatas_150')
+            'sertifikat_diatas_150' => $req->input('sertifikat_diatas_150'),
+            'profesi_beresiko'      => $req->input('profesi_beresiko'),
+            'jaminan_kp_tenor_48'   => $req->input('jaminan_kp_tenor_48')
         );
 
         DB::connection('web')->beginTransaction();
