@@ -16,14 +16,15 @@ use App\Models\AreaKantor\PIC;
 use App\Models\AreaKantor\Area;
 use App\Models\AreaKantor\Cabang;
 
-use App\Models\Pengajuan\CA\MutasiBank;
 use App\Models\Pengajuan\CA\TabDebt;
 use App\Models\Pengajuan\CA\InfoACC;
-use App\Models\Pengajuan\CA\RingkasanAnalisa;
-use App\Models\Pengajuan\CA\RekomendasiCA;
-use App\Models\Pengajuan\CA\RekomendasiPinjaman;
+use App\Models\Pengajuan\CA\MutasiBank;
+use App\Models\Pengajuan\AO\KapBulanan;
 use App\Models\Pengajuan\CA\AsuransiJiwa;
+use App\Models\Pengajuan\CA\RekomendasiCA;
 use App\Models\Pengajuan\CA\AsuransiJaminan;
+use App\Models\Pengajuan\CA\RingkasanAnalisa;
+use App\Models\Pengajuan\CA\RekomendasiPinjaman;
 
 class TransCA extends Model implements AuthenticatableContract, AuthorizableContract
 {
@@ -40,7 +41,7 @@ class TransCA extends Model implements AuthenticatableContract, AuthorizableCont
     protected $primaryKey = 'id';
 
     protected $fillable = [
-        'nomor_ca', 'user_id', 'id_trans_so', 'id_pic', 'id_area', 'id_cabang', 'id_mutasi_bank', 'id_log_tabungan', 'id_info_analisa_cc', 'id_ringkasan_analisa', 'id_recom_ca', 'id_rekomendasi_pinjaman', 'id_asuransi_jiwa', 'id_asuransi_jaminan', 'catatan_ca', 'status_ca', 'revisi', 'flg_aktif'
+        'nomor_ca', 'user_id', 'id_trans_so', 'id_pic', 'id_area', 'id_cabang', 'id_mutasi_bank', 'id_log_tabungan', 'id_info_analisa_cc', 'id_ringkasan_analisa', 'id_recom_ca', 'id_rekomendasi_pinjaman', 'id_asuransi_jiwa', 'id_asuransi_jaminan', 'id_kapasitas_bulanan', 'catatan_ca', 'status_ca', 'revisi', 'flg_aktif'
     ];
 
     public function so(){
@@ -131,6 +132,13 @@ class TransCA extends Model implements AuthenticatableContract, AuthorizableCont
         return $this->belongsTo(AsuransiJaminan::class, 'id_asuransi_jaminan')
             ->withDefault(function () {
                 return new AsuransiJaminan();
+            });
+    }
+
+    public function kapbul(){
+        return $this->belongsTo(KapBulanan::class, 'id_kapasitas_bulanan')
+            ->withDefault(function () {
+                return new KapBulanan();
             });
     }
 }

@@ -23,15 +23,14 @@ class RingkasanAnalisa extends Model implements AuthenticatableContract, Authori
     protected $primaryKey = 'id';
 
     protected $fillable = [
-        'kuantitatif_ttl_pendapatan', 'kuantitatif_ttl_pengeluaran', 'kuantitatif_pendapatan_bersih', 'kuantitatif_angsuran', 'kuantitatif_ltv', 'kuantitatif_dsr', 'kuantitatif_idir', 'kuantitatif_hasil', 'kualitatif_analisa', 'kualitatif_strenght', 'kualitatif_weakness', 'kualitatif_opportunity', 'kualitatif_threatness', 'disposable_income'
+        'kuantitatif_ttl_pendapatan', 'kuantitatif_ttl_pengeluaran', 'kuantitatif_pendapatan_bersih', 'kuantitatif_angsuran', 'kuantitatif_ltv', 'kuantitatif_dsr', 'kuantitatif_idir', 'kuantitatif_hasil', 'kualitatif_analisa', 'kualitatif_strenght', 'kualitatif_weakness', 'kualitatif_opportunity', 'kualitatif_threatness'
     ];
 
     protected $casts = [
         'kuantitatif_ttl_pendapatan'    => 'integer',
         'kuantitatif_ttl_pengeluaran'   => 'integer',
         'kuantitatif_pendapatan_bersih' => 'integer',
-        'kuantitatif_angsuran'          => 'integer',
-        'disposable_income'             => 'integer'
+        'kuantitatif_angsuran'          => 'integer'
     ];
 
     public $timestamps = false;
