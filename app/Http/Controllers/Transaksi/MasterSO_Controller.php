@@ -360,9 +360,7 @@ class MasterSO_Controller extends BaseController
                 ], 200);
             }
         }else{
-            $check_ktp_debt = Debitur::where('no_ktp_kk', $no_ktp_kk)->first();
-
-            dd($check_ktp_debt);
+            $check_ktp_debt = Debitur::where('no_ktp', $ktp)->first();
 
             if (!empty($check_ktp_debt) && !empty($check_ktp_debt->no_ktp)) {
                 return response()->json([
@@ -435,32 +433,6 @@ class MasterSO_Controller extends BaseController
                     "code"    => 422,
                     "status"  => "not valid request",
                     "message" => 'no telp pasangan telah ada yang menggunakan'
-                ], 422);
-            }
-
-            $check_ktp_penj = Penjamin::where('no_ktp', $no_ktp_pen)->first();
-
-            if (!empty($check_ktp_penj) && !empty($check_ktp_penj->no_ktp)) {
-                return response()->json([
-                    "code"    => 422,
-                    "status"  => "not valid request",
-                    "message" => 'no ktp penjamin telah ada yang menggunakan'
-                ], 422);
-            }
-
-            if (!empty($check_ktp_penj) && !empty($check_ktp_penj->npwp)) {
-                return response()->json([
-                    "code"    => 422,
-                    "status"  => "not valid request",
-                    "message" => 'no npwp penjamin telah ada yang menggunakan'
-                ], 422);
-            }
-
-            if (!empty($check_ktp_debt) && !empty($check_ktp_debt->no_telp)) {
-                return response()->json([
-                    "code"    => 422,
-                    "status"  => "not valid request",
-                    "message" => 'no telp penjamin telah ada yang menggunakan'
                 ], 422);
             }
 
