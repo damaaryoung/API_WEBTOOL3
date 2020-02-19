@@ -421,53 +421,6 @@ class MasterCA_Controller extends BaseController
             }
         }
 
-        $dataTabUang = array(
-
-            'no_rekening'
-                => empty($req->input('no_rekening'))
-                ? null : $req->input('no_rekening'),
-
-            'nama_bank'
-                => empty($req->input('nama_bank'))
-                ? null : $req->input('nama_bank'),
-
-            'tujuan_pembukaan_rek'
-                => empty($req->input('tujuan_pembukaan_rek'))
-                ? null : $req->input('tujuan_pembukaan_rek'),
-
-            'penghasilan_per_tahun'
-                => empty($req->input('penghasilan_per_tahun'))
-                ? null : $req->input('penghasilan_per_tahun'),
-
-            'sumber_penghasilan'
-                => empty($req->input('sumber_penghasilan'))
-                ? null : $req->input('sumber_penghasilan'),
-
-            'pemasukan_per_bulan'
-                => empty($req->input('pemasukan_per_bulan'))
-                ? null : $req->input('pemasukan_per_bulan'),
-
-            'frek_trans_pemasukan'
-                => empty($req->input('frek_trans_pemasukan'))
-                ? null : $req->input('frek_trans_pemasukan'),
-
-            'pengeluaran_per_bulan'
-                => empty($req->input('pengeluaran_per_bulan'))
-                ? null : $req->input('pengeluaran_per_bulan'),
-
-            'frek_trans_pengeluaran'
-                => empty($req->input('frek_trans_pengeluaran'))
-                ? null : $req->input('frek_trans_pengeluaran'),
-
-            'sumber_dana_setoran'
-                => empty($req->input('sumber_dana_setoran'))
-                ? null : $req->input('sumber_dana_setoran'),
-
-            'tujuan_pengeluaran_dana'
-                => empty($req->input('tujuan_pengeluaran_dana'))
-                ? null : $req->input('tujuan_pengeluaran_dana')
-        );
-
         if (!empty($req->input('nama_bank_acc'))) {
             for ($i = 0; $i < count($req->input('nama_bank_acc')); $i++) {
                 $dataACC[] = array(
@@ -612,6 +565,8 @@ class MasterCA_Controller extends BaseController
         }
         $sumAllTaksasi = $sumTaksasiTan + $sumTaksasiKen; // Semua Nilai Taksasi dari semua agunan
 
+        // dd($sumAllTaksasi);
+
 
         $recom_ltv   = Helper::recom_ltv($plafonCA, $sumAllTaksasi);
         $recom_idir  = Helper::recom_idir($recom_angs, $rekomen_pendapatan, $rekomen_pengeluaran);
@@ -679,6 +634,53 @@ class MasterCA_Controller extends BaseController
             'note_recom'
                 => empty($req->input('note_recom'))
                 ? null : $req->input('note_recom')
+        );
+
+        $dataTabUang = array(
+
+            'no_rekening'
+                => empty($req->input('no_rekening'))
+                ? null : $req->input('no_rekening'),
+
+            'nama_bank'
+                => empty($req->input('nama_bank'))
+                ? null : $req->input('nama_bank'),
+
+            'tujuan_pembukaan_rek'
+                => empty($req->input('tujuan_pembukaan_rek'))
+                ? null : $req->input('tujuan_pembukaan_rek'),
+
+            'penghasilan_per_tahun'
+                => empty($req->input('penghasilan_per_tahun'))
+                ? ($rekomen_pendapatan == 0 ? 0 : $rekomen_pendapatan * 12) : $req->input('penghasilan_per_tahun'),
+
+            'sumber_penghasilan'
+                => empty($req->input('sumber_penghasilan'))
+                ? null : $req->input('sumber_penghasilan'),
+
+            'pemasukan_per_bulan'
+                => empty($req->input('pemasukan_per_bulan'))
+                ? null : $req->input('pemasukan_per_bulan'),
+
+            'frek_trans_pemasukan'
+                => empty($req->input('frek_trans_pemasukan'))
+                ? null : $req->input('frek_trans_pemasukan'),
+
+            'pengeluaran_per_bulan'
+                => empty($req->input('pengeluaran_per_bulan'))
+                ? null : $req->input('pengeluaran_per_bulan'),
+
+            'frek_trans_pengeluaran'
+                => empty($req->input('frek_trans_pengeluaran'))
+                ? null : $req->input('frek_trans_pengeluaran'),
+
+            'sumber_dana_setoran'
+                => empty($req->input('sumber_dana_setoran'))
+                ? null : $req->input('sumber_dana_setoran'),
+
+            'tujuan_pengeluaran_dana'
+                => empty($req->input('tujuan_pengeluaran_dana'))
+                ? null : $req->input('tujuan_pengeluaran_dana')
         );
 
         // Tambahan Rekomendasi CA
@@ -1275,15 +1277,15 @@ class MasterCA_Controller extends BaseController
             ], 404);
         }
 
-        $check_ca = TransCA::where('id_trans_so', $id_trans_so)->where('status_ca', 1)->first();
+        // $check_ca = TransCA::where('id_trans_so', $id_trans_so)->where('status_ca', 1)->first();
 
-        if (!$check_ca) {
-            return response()->json([
-                'code'    => 404,
-                'status'  => 'not found',
-                'message' => 'Transaksi dengan id '.$id_trans_so.' belum sampai ke CA'
-            ], 404);
-        }
+        // if (!$check_ca) {
+        //     return response()->json([
+        //         'code'    => 404,
+        //         'status'  => 'not found',
+        //         'message' => 'Transaksi dengan id '.$id_trans_so.' belum sampai ke CA'
+        //     ], 404);
+        // }
 
         // Analisa Kuantitatif dan Kualitatif
         $id_pe_ta = $check_ao->id_periksa_agunan_tanah;

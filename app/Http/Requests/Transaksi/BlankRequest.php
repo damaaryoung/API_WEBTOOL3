@@ -245,9 +245,9 @@ class BlankRequest extends FormRequest
                 // Data History Bank pada CA
                 'no_rekening'             => 'numeric',
                 'penghasilan_per_tahun'   => 'integer',
-                'pemasukan_per_bulan'     => 'integer',
+                'pemasukan_per_bulan'     => 'in:A,B,C,D',
                 'frek_trans_pemasukan'    => 'in:A,B,C',
-                'pengeluaran_per_bulan'   => 'integer',
+                'pengeluaran_per_bulan'   => 'in:A,B,C,D',
                 'frek_trans_pengeluaran'  => 'in:A,B,C,D',
                 // 'sumber_dana_setoran'     =>
                 'tujuan_pengeluaran_dana' => 'in:KONSUMTIF,MODAL,INVESTASI',
@@ -504,9 +504,9 @@ class BlankRequest extends FormRequest
                 // Data History Bank pada CA
                 'no_rekening'             => 'numeric',
                 'penghasilan_per_tahun'   => 'integer',
-                'pemasukan_per_bulan'     => 'integer',
+                'pemasukan_per_bulan'     => 'in:A,B,C,D',
                 'frek_trans_pemasukan'    => 'in:A,B,C',
-                'pengeluaran_per_bulan'   => 'integer',
+                'pengeluaran_per_bulan'   => 'in:A,B,C,D',
                 'frek_trans_pengeluaran'  => 'in:A,B,C,D',
                 // 'sumber_dana_setoran'     =>
                 'tujuan_pengeluaran_dana' => 'in:KONSUMTIF,MODAL,INVESTASI',
@@ -850,10 +850,9 @@ class BlankRequest extends FormRequest
             // Data History Bank pada CA
             'no_rekening.integer'           => $numeric,
             'penghasilan_per_tahun.integer' => $integer,
-            'pemasukan_per_bulan.integer'   => $integer,
+            'pemasukan_per_bulan.integer'   => ':attribute harus salah satu dari jenis berikut :values, A untuk < 2jt, B untuk 2jt - 5jt, C untuk 5jt - 10jt, D untuk > 10jt',
             'frek_trans_pemasukan.in'       => ':attribute harus salah satu dari jenis berikut :values, A untuk frek. 1 -  5 Kali, B untuk untuk frek. 2.6 - 10 kali, C untuk frek. lebih dari 10 kali',
-            'pengeluaran_per_bulan.integer' => $integer,
-            'frek_trans_pengeluaran.in'     => ':attribute harus salah satu dari jenis berikut :values, A untuk frek. 1 -  5 Kali, B untuk untuk frek. 2.6 - 10 kali, C untuk frek. 3.1 - 15 kali, D untuk frek. lebih dari 15 kali',
+            'pengeluaran_per_bulan.integer' => ':attribute harus salah satu dari jenis berikut :values, A untuk < 2jt, B untuk 2jt - 5jt, C untuk 5jt - 10jt, D untuk > 10jt',            'frek_trans_pengeluaran.in'     => ':attribute harus salah satu dari jenis berikut :values, A untuk frek. 1 -  5 Kali, B untuk untuk frek. 2.6 - 10 kali, C untuk frek. 3.1 - 15 kali, D untuk frek. lebih dari 15 kali',
             'tujuan_pengeluaran_dana.in'    => $in,
 
             // Info ACC

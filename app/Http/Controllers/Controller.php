@@ -157,23 +157,47 @@ class Controller extends BaseController
     }
 
     public static function recom_angs($plafon, $tenor, $bunga){
-        $exec   = ($plafon + ($plafon * $tenor * $bunga)) / $tenor;
-        $result = ceil($exec / 1000) * 1000;
+        if ($plafon == 0 || $tenor == 0 || $bunga == 0) {
+            $result = 0;
+        }else{
+            $exec   = ($plafon + ($plafon * $tenor * $bunga)) / $tenor;
+            $result = ceil($exec / 1000) * 1000;
+        }
+
         return (int) $result;
     }
 
     public static function recom_ltv($plafon, $sumAllTaksasi){
-        $result = ($plafon / $sumAllTaksasi) * 100;
+        if ($sumAllTaksasi == 0) {
+            $result = 0.00;
+        }else{
+            $result = ($plafon / $sumAllTaksasi) * 100;
+        }
+
         return round($result, 2);
     }
 
     public static function recom_idir($recom_angs, $rekomen_pendapatan, $rekomen_pengeluaran){
-        $result = ($recom_angs / ($rekomen_pendapatan - $rekomen_pengeluaran)) * 100;
+        $selisih = $rekomen_pendapatan - $rekomen_pengeluaran;
+
+        if ($recom_angs == 0 || $selisih == 0) {
+            $result = 0.00;
+        }else{
+            $result = ($recom_angs / $selisih) * 100;
+        }
+
         return round($result, 2);
     }
 
     public static function recom_dsr($recom_angs, $rekomen_pendapatan, $rekomen_angsuran){
-        $result = ($recom_angs / ($rekomen_pendapatan - $rekomen_angsuran)) * 100;
+        $selisih = $rekomen_pendapatan - $rekomen_angsuran;
+
+        if ($recom_angs == 0 || $selisih == 0) {
+            $result = 0.00;
+        }else{
+            $result = ($recom_angs / ($rekomen_pendapatan - $rekomen_angsuran)) * 100;
+        }
+
         return round($result, 2);
     }
 
