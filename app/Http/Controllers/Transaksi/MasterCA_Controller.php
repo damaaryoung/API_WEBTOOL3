@@ -369,7 +369,7 @@ class MasterCA_Controller extends BaseController
             'id_cabang'   => $PIC->id_cabang,
             'catatan_ca'  => $req->input('catatan_ca'),
             'status_ca'   => empty($req->input('status_ca')) ? 1 : $req->input('status_ca'),
-            'revisi'      => 'N'
+            'revisi'      => $check_ca->id
         );
 
         // Mutasi Bank
@@ -564,8 +564,6 @@ class MasterCA_Controller extends BaseController
             $sumTaksasiKen = array_sum(array_column($PeriksaTanah,'nilai_taksasi_agunan')); //array_sum($PeriksaTanah);
         }
         $sumAllTaksasi = $sumTaksasiTan + $sumTaksasiKen; // Semua Nilai Taksasi dari semua agunan
-
-        // dd($sumAllTaksasi);
 
 
         $recom_ltv   = Helper::recom_ltv($plafonCA, $sumAllTaksasi);

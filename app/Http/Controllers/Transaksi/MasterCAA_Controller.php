@@ -139,7 +139,7 @@ class MasterCAA_Controller extends BaseController
             );
 
             $data[] = [
-                'status_revisi'  => $val->revisi <= 0 ? 'N' : 'Y',
+                'status_revisi'  => $val->revisi >= 1 ? 'Y' : 'N',
                 'id_trans_so'    => $val->id_trans_so == null ? null : (int) $val->id_trans_so,
                 'id_trans_ca'    => $val->id == null ? null : (int) $val->id,
                 'nomor_so'       => $val->so['nomor_so'],
@@ -567,7 +567,7 @@ class MasterCAA_Controller extends BaseController
             ], 404);
         }
 
-        $query_dir = TransCA::with('pic', 'cabang')->where('id_trans_so', $id)->where('status_ca', 1)->where('revisi', '<=', 0);
+        $query_dir = TransCA::with('pic', 'cabang')->where('id_trans_so', $id)->where('status_ca', 1)->where('revisi', null);
         $method = 'first';
 
         $check_ca = Helper::checkDir($user_id, $scope, $query_dir, $id_area, $id_cabang, $method);
@@ -644,7 +644,7 @@ class MasterCAA_Controller extends BaseController
         }
 
         $data = array(
-            'status_revisi' => $check_ca->revisi <= 0 ? 'N' : 'Y',
+            'status_revisi' => $check_ca->revisi >= 1 ? 'Y' : 'N',
             'id_trans_so' => $check_so->id == null ? null : (int) $check_so->id,
             'id_trans_ca' => $check_ca->id == null ? null : (int) $check_ca->id,
             'transaksi'   => [
