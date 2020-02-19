@@ -34,6 +34,16 @@ class DebiturController extends BaseController
             ], 404);
         }
 
+        $nama_anak = explode(",", $val->nama_anak);
+        $tgl_anak = explode(",", $val->tgl_lahir_anak);
+
+        for ($i = 0; $i < count($nama_anak); $i++) {
+            $anak[] = array(
+                'nama'      => $nama_anak[$i],
+                'tgl_lahir' => Carbon::parse($tgl_anak[$i])->format("d-m-Y")
+            );
+        }
+
         $data = array(
             'id'                    => $val->id == null ? null : (int) $val->id,
             'nama_lengkap'          => $val->nama_lengkap,
@@ -51,6 +61,7 @@ class DebiturController extends BaseController
             'tempat_lahir'          => $val->tempat_lahir,
             'tgl_lahir'             => Carbon::parse($val->tgl_lahir)->format('d-m-Y'),
             'agama'                 => $val->agama,
+            'anak'                  => $anak,
             'alamat_ktp' => [
                 'alamat_singkat' => $val->alamat_ktp,
                 'rt'     => $val->rt_ktp == null ? null : (int) $val->rt_ktp,

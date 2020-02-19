@@ -1277,16 +1277,6 @@ class MasterCA_Controller extends BaseController
             ], 404);
         }
 
-        // $check_ca = TransCA::where('id_trans_so', $id_trans_so)->where('status_ca', 1)->first();
-
-        // if (!$check_ca) {
-        //     return response()->json([
-        //         'code'    => 404,
-        //         'status'  => 'not found',
-        //         'message' => 'Transaksi dengan id '.$id_trans_so.' belum sampai ke CA'
-        //     ], 404);
-        // }
-
         // Analisa Kuantitatif dan Kualitatif
         $id_pe_ta = $check_ao->id_periksa_agunan_tanah;
 
@@ -1341,31 +1331,31 @@ class MasterCA_Controller extends BaseController
         $inputKapBul = array(
 
             'pemasukan_cadebt'
-                => empty($req->input('pemasukan_debitur'))    ? null : (int) $req->input('pemasukan_debitur'),
+                => empty($req->input('pemasukan_debitur'))    ? 0 : (int) $req->input('pemasukan_debitur'),
 
             'pemasukan_pasangan'
-                => empty($req->input('pemasukan_pasangan'))   ? null : (int) $req->input('pemasukan_pasangan'),
+                => empty($req->input('pemasukan_pasangan'))   ? 0 : (int) $req->input('pemasukan_pasangan'),
 
             'pemasukan_penjamin'
-                => empty($req->input('pemasukan_penjamin'))   ? null : (int) $req->input('pemasukan_penjamin'),
+                => empty($req->input('pemasukan_penjamin'))   ? 0 : (int) $req->input('pemasukan_penjamin'),
 
             'biaya_rumah_tangga'
-                => empty($req->input('biaya_rumah_tangga'))   ? null : (int) $req->input('biaya_rumah_tangga'),
+                => empty($req->input('biaya_rumah_tangga'))   ? 0 : (int) $req->input('biaya_rumah_tangga'),
 
             'biaya_transport'
-                => empty($req->input('biaya_transport'))      ? null : (int) $req->input('biaya_transport'),
+                => empty($req->input('biaya_transport'))      ? 0 : (int) $req->input('biaya_transport'),
 
             'biaya_pendidikan'
-                => empty($req->input('biaya_pendidikan'))     ? null : (int) $req->input('biaya_pendidikan'),
+                => empty($req->input('biaya_pendidikan'))     ? 0 : (int) $req->input('biaya_pendidikan'),
 
             'biaya_telp_listr_air'
-                => empty($req->input('biaya_telp_listr_air')) ? null : (int) $req->input('biaya_telp_listr_air'),
+                => empty($req->input('biaya_telp_listr_air')) ? 0 : (int) $req->input('biaya_telp_listr_air'),
 
             'angsuran'
-                => empty($req->input('angsuran'))             ? null : (int) $req->input('angsuran'),
+                => empty($req->input('angsuran'))             ? 0 : (int) $req->input('angsuran'),
 
             'biaya_lain'
-                => empty($req->input('biaya_lain'))           ? null : (int) $req->input('biaya_lain'),
+                => empty($req->input('biaya_lain'))           ? 0 : (int) $req->input('biaya_lain'),
         );
 
         $total_KapBul = array(
