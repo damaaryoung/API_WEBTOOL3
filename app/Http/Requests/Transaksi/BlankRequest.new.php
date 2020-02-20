@@ -670,7 +670,7 @@ class BlankRequest extends FormRequest
             'no_npwp.required'                => $required,
             'no_npwp.required'                => $required,
             'tgl_lahir.required'              => $required,
-            'agama.required'                  => $required,
+            // 'agama.required'                  => $required,
             'rt_ktp.required'                 => $required,
             'rw_ktp.required'                 => $required,
             'id_provinsi_ktp.required'        => $required,

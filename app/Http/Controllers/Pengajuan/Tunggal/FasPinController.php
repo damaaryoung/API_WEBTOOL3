@@ -21,6 +21,23 @@ use DB;
 
 class FaspinController extends BaseController
 {
+    public function segmentasiBPR(){
+        $query = DB::connection('web')->table('view_segmentasi_bpr')->select('kode', 'nama')->get();
+
+        try {
+            return response()->json([
+                'code'   => 200,
+                'status' => 'success',
+                'data'   => $query
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                "code"    => 501,
+                "status"  => "error",
+                "message" => $e
+            ], 501);
+        }
+    }
 
     public function show($id){
         $check = FasilitasPinjaman::where('id', $id)->first();

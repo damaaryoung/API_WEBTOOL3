@@ -17,6 +17,8 @@ $router->get('/api', function () use ($router) {
 
 $router->get('produk', 'Master\CodeController@produk');
 
+$router->get('segmentasi', 'Pengajuan\Tunggal\FaspinController@segmentasiBPR');
+
 $router->group(['prefix' => '/wilayah'], function () use ($router) {
     $router->get('/', function () use ($router) {
         return 'add parameters after slash';

@@ -98,8 +98,8 @@ class PemeriksaanTanahController extends BaseController
             'nilai_taksasi_bangunan'        => empty($req->input('nilai_taksasi_bangunan')) ? $check->nilai_taksasi_bangunan : $req->input('nilai_taksasi_bangunan'),
             'tgl_taksasi'                   => empty($req->input('tgl_taksasi_agunan')) ? $check->tgl_taksasi : Carbon::parse($req->input('tgl_taksasi_agunan'))->format('Y-m-d'),
             'nilai_likuidasi'               => empty($req->input('nilai_likuidasi_agunan')) ? $check->nilai_likuidasi : $req->input('nilai_likuidasi_agunan'),
-            'nilai_agunan_independen'       => empty($req->nilai_agunan_independen) ? $check->nilai_agunan_independen : $req->nilai_agunan_independen,
-            'perusahaan_penilai_independen' => empty($req->perusahaan_penilai_independen) ? $check->perusahaan_penilai_independen : $req->perusahaan_penilai_independen
+            'nilai_agunan_independen'       => empty($req->input('nilai_agunan_independen')) ? $check->nilai_agunan_independen : $req->input('nilai_agunan_independen'),
+            'perusahaan_penilai_independen' => empty($req->input('perusahaan_penilai_independen')) ? $check->perusahaan_penilai_independen : $req->input('perusahaan_penilai_independen')
         );
 
         DB::connection('web')->beginTransaction();
