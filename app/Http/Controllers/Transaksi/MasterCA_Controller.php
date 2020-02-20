@@ -368,8 +368,7 @@ class MasterCA_Controller extends BaseController
             'id_area'     => $PIC->id_area,
             'id_cabang'   => $PIC->id_cabang,
             'catatan_ca'  => $req->input('catatan_ca'),
-            'status_ca'   => empty($req->input('status_ca')) ? 1 : $req->input('status_ca'),
-            'revisi'      => $check_ca->id
+            'status_ca'   => empty($req->input('status_ca')) ? 1 : $req->input('status_ca')
         );
 
         // Mutasi Bank
@@ -982,7 +981,7 @@ class MasterCA_Controller extends BaseController
             'id_cabang'   => $check_ca->id_cabang,
             'catatan_ca'  => $check_ca->catatan_ca,
             'status_ca'   => $check_ca->status_ca,
-            'revisi'      => 'Y'
+            'revisi'      => $check_ca->id
         );
 
 
