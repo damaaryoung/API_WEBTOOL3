@@ -89,13 +89,18 @@ class MasterCAA_Controller extends BaseController
             $id_agu_ke = explode (",",$val->so['ao']['id_agunan_kendaraan']);
             $AguKe = AgunanKendaraan::whereIn('id', $id_agu_ke)->get();
 
-            $Ken = array();
-            foreach ($AguKe as $key => $value) {
-                $Ken[$key] = array(
-                    'id'    => $id_agu_ke[$key] == null ? null : (int) $id_agu_ke[$key],
-                    'jenis' => $value->jenis
-                );
+            if ($AguKe == '[]') {
+                $Ken = null;
+            }else{
+                $Ken = array();
+                foreach ($AguKe as $key => $value) {
+                    $Ken[$key] = array(
+                        'id'    => $id_agu_ke[$key] == null ? null : (int) $id_agu_ke[$key],
+                        'jenis' => $value->jenis
+                    );
+                }
             }
+
 
             // Check Approval
             $id_komisi = explode(",", $val->so['caa']['pic_team_caa']);
@@ -585,53 +590,61 @@ class MasterCAA_Controller extends BaseController
 
         $AguTa = AgunanTanah::whereIn('id', $id_agu_ta)->get();
 
-        foreach ($AguTa as $key => $value) {
-            $idTan[$key] = array(
-                'id'             => $value->id == null ? null : (int) $value->id,
-                'jenis'          => $value->jenis_sertifikat,
-                'tipe_lokasi'    => $value->tipe_lokasi,
-                'luas' => [
-                    'tanah'    => (int) $value->luas_tanah,
-                    'bangunan' => (int) $value->luas_bangunan
-                ],
-                'tgl_berlaku_shgb'        => Carbon::parse($value->tgl_berlaku_shgb)->format("d-m-Y"),
-                'nama_pemilik_sertifikat' => $value->nama_pemilik_sertifikat,
-                'tgl_atau_no_ukur'        => $value->tgl_ukur_sertifikat,
-                'lampiran' => [
-                    'agunan_bag_depan'      => $value->agunan_bag_depan,
-                    'agunan_bag_jalan'      => $value->agunan_bag_jalan,
-                    'agunan_bag_ruangtamu'  => $value->agunan_bag_ruangtamu,
-                    'agunan_bag_kamarmandi' => $value->agunan_bag_kamarmandi,
-                    'agunan_bag_dapur'      => $value->agunan_bag_dapur
-                ]
-            );
+        if ($AguTa == '[]') {
+            $idTan = null;
+        }else{
+            foreach ($AguTa as $key => $value) {
+                $idTan[$key] = array(
+                    'id'             => $value->id == null ? null : (int) $value->id,
+                    'jenis'          => $value->jenis_sertifikat,
+                    'tipe_lokasi'    => $value->tipe_lokasi,
+                    'luas' => [
+                        'tanah'    => (int) $value->luas_tanah,
+                        'bangunan' => (int) $value->luas_bangunan
+                    ],
+                    'tgl_berlaku_shgb'        => Carbon::parse($value->tgl_berlaku_shgb)->format("d-m-Y"),
+                    'nama_pemilik_sertifikat' => $value->nama_pemilik_sertifikat,
+                    'tgl_atau_no_ukur'        => $value->tgl_ukur_sertifikat,
+                    'lampiran' => [
+                        'agunan_bag_depan'      => $value->agunan_bag_depan,
+                        'agunan_bag_jalan'      => $value->agunan_bag_jalan,
+                        'agunan_bag_ruangtamu'  => $value->agunan_bag_ruangtamu,
+                        'agunan_bag_kamarmandi' => $value->agunan_bag_kamarmandi,
+                        'agunan_bag_dapur'      => $value->agunan_bag_dapur
+                    ]
+                );
+            }
         }
-
 
         $id_agu_ke = explode (",",$check_ao->id_agunan_kendaraan);
         $AguKe = AgunanKendaraan::whereIn('id', $id_agu_ke)->get();
 
-        foreach ($AguKe as $key => $value) {
-            $idKen[$key] = array(
-                'id'                    => $value->id == null ? null : (int) $value->id,
-                'jenis'                 => 'BPKB',
-                'tipe_kendaraan'        => $value->jenis,
-                'merk'                  => $value->merk,
-                'tgl_kadaluarsa_pajak'  => Carbon::parse($value->tgl_kadaluarsa_pajak)->format('d-m-Y'),
-                'tgl_kadaluarsa_stnk'   => Carbon::parse($value->tgl_kadaluarsa_stnk)->format('d-m-Y'),
-                'nama_pemilik'          => $value->nama_pemilik,
-                'no_bpkb'               => $value->no_bpkb,
-                'no_polisi'             => $value->no_polisi,
-                'no_stnk'               => $value->no_stnk,
-                'lampiran' => [
-                    'agunan_depan'    => $value->lamp_agunan_depan,
-                    'agunan_kanan'    => $value->lamp_agunan_kanan,
-                    'agunan_kiri'     => $value->lamp_agunan_kiri,
-                    'agunan_belakang' => $value->lamp_agunan_belakang,
-                    'agunan_dalam'    => $value->lamp_agunan_dalam,
-                ]
-            );
+        if ($AguKe == '[]') {
+            $idKen = null;
+        }else{
+            foreach ($AguKe as $key => $value) {
+                $idKen[$key] = array(
+                    'id'                    => $value->id == null ? null : (int) $value->id,
+                    'jenis'                 => 'BPKB',
+                    'tipe_kendaraan'        => $value->jenis,
+                    'merk'                  => $value->merk,
+                    'tgl_kadaluarsa_pajak'  => Carbon::parse($value->tgl_kadaluarsa_pajak)->format('d-m-Y'),
+                    'tgl_kadaluarsa_stnk'   => Carbon::parse($value->tgl_kadaluarsa_stnk)->format('d-m-Y'),
+                    'nama_pemilik'          => $value->nama_pemilik,
+                    'no_bpkb'               => $value->no_bpkb,
+                    'no_polisi'             => $value->no_polisi,
+                    'no_stnk'               => $value->no_stnk,
+                    'lampiran' => [
+                        'agunan_depan'    => $value->lamp_agunan_depan,
+                        'agunan_kanan'    => $value->lamp_agunan_kanan,
+                        'agunan_kiri'     => $value->lamp_agunan_kiri,
+                        'agunan_belakang' => $value->lamp_agunan_belakang,
+                        'agunan_dalam'    => $value->lamp_agunan_dalam,
+                    ]
+                );
+            }  
         }
+
 
         $infoCC = InfoACC::whereIn('id', explode(",", $check_ca->id_info_analisa_cc))->get()->toArray();
 
@@ -861,26 +874,30 @@ class MasterCAA_Controller extends BaseController
 
         $AguTa = AgunanTanah::whereIn('id', $id_agu_ta)->get();
 
-        foreach ($AguTa as $key => $value) {
-            $idTan[$key] = array(
-                'id'             => $value->id == null ? null : (int) $value->id,
-                'jenis'          => $value->jenis_sertifikat,
-                'tipe_lokasi'    => $value->tipe_lokasi,
-                'luas' => [
-                    'tanah'    => (int) $value->luas_tanah,
-                    'bangunan' => (int) $value->luas_bangunan
-                ],
-                'tgl_berlaku_shgb'        => Carbon::parse($value->tgl_berlaku_shgb)->format("d-m-Y"),
-                'nama_pemilik_sertifikat' => $value->nama_pemilik_sertifikat,
-                'tgl_atau_no_ukur'        => $value->tgl_ukur_sertifikat,
-                'lampiran' => [
-                    'agunan_bag_depan'      => $value->agunan_bag_depan,
-                    'agunan_bag_jalan'      => $value->agunan_bag_jalan,
-                    'agunan_bag_ruangtamu'  => $value->agunan_bag_ruangtamu,
-                    'agunan_bag_kamarmandi' => $value->agunan_bag_kamarmandi,
-                    'agunan_bag_dapur'      => $value->agunan_bag_dapur
-                ]
-            );
+        if ($AguTa == '[]') {
+            $idTan = null;
+        }else{
+            foreach ($AguTa as $key => $value) {
+                $idTan[$key] = array(
+                    'id'             => $value->id == null ? null : (int) $value->id,
+                    'jenis'          => $value->jenis_sertifikat,
+                    'tipe_lokasi'    => $value->tipe_lokasi,
+                    'luas' => [
+                        'tanah'    => (int) $value->luas_tanah,
+                        'bangunan' => (int) $value->luas_bangunan
+                    ],
+                    'tgl_berlaku_shgb'        => Carbon::parse($value->tgl_berlaku_shgb)->format("d-m-Y"),
+                    'nama_pemilik_sertifikat' => $value->nama_pemilik_sertifikat,
+                    'tgl_atau_no_ukur'        => $value->tgl_ukur_sertifikat,
+                    'lampiran' => [
+                        'agunan_bag_depan'      => $value->agunan_bag_depan,
+                        'agunan_bag_jalan'      => $value->agunan_bag_jalan,
+                        'agunan_bag_ruangtamu'  => $value->agunan_bag_ruangtamu,
+                        'agunan_bag_kamarmandi' => $value->agunan_bag_kamarmandi,
+                        'agunan_bag_dapur'      => $value->agunan_bag_dapur
+                    ]
+                );
+            }  
         }
 
 
@@ -888,27 +905,32 @@ class MasterCAA_Controller extends BaseController
 
         $AguKe = AgunanKendaraan::whereIn('id', $id_agu_ke)->get();
 
-        foreach ($AguKe as $key => $value) {
-            $idKen[$key] = array(
-                'id'                    => $value->id == null ? null : (int) $value->id,
-                'jenis'                 => 'BPKB',
-                'tipe_kendaraan'        => $value->jenis,
-                'merk'                  => $value->merk,
-                'tgl_kadaluarsa_pajak'  => Carbon::parse($value->tgl_kadaluarsa_pajak)->format('d-m-Y'),
-                'tgl_kadaluarsa_stnk'   => Carbon::parse($value->tgl_kadaluarsa_stnk)->format('d-m-Y'),
-                'nama_pemilik'          => $value->nama_pemilik,
-                'no_bpkb'               => $value->no_bpkb,
-                'no_polisi'             => $value->no_polisi,
-                'no_stnk'               => $value->no_stnk,
-                'lampiran' => [
-                    'agunan_depan'    => $value->lamp_agunan_depan,
-                    'agunan_kanan'    => $value->lamp_agunan_kanan,
-                    'agunan_kiri'     => $value->lamp_agunan_kiri,
-                    'agunan_belakang' => $value->lamp_agunan_belakang,
-                    'agunan_dalam'    => $value->lamp_agunan_dalam,
-                ]
-            );
+        if ($AguKe == '[]') {
+            $idKen = null;
+        }else{
+            foreach ($AguKe as $key => $value) {
+                $idKen[$key] = array(
+                    'id'                    => $value->id == null ? null : (int) $value->id,
+                    'jenis'                 => 'BPKB',
+                    'tipe_kendaraan'        => $value->jenis,
+                    'merk'                  => $value->merk,
+                    'tgl_kadaluarsa_pajak'  => Carbon::parse($value->tgl_kadaluarsa_pajak)->format('d-m-Y'),
+                    'tgl_kadaluarsa_stnk'   => Carbon::parse($value->tgl_kadaluarsa_stnk)->format('d-m-Y'),
+                    'nama_pemilik'          => $value->nama_pemilik,
+                    'no_bpkb'               => $value->no_bpkb,
+                    'no_polisi'             => $value->no_polisi,
+                    'no_stnk'               => $value->no_stnk,
+                    'lampiran' => [
+                        'agunan_depan'    => $value->lamp_agunan_depan,
+                        'agunan_kanan'    => $value->lamp_agunan_kanan,
+                        'agunan_kiri'     => $value->lamp_agunan_kiri,
+                        'agunan_belakang' => $value->lamp_agunan_belakang,
+                        'agunan_dalam'    => $value->lamp_agunan_dalam,
+                    ]
+                );
+            }
         }
+
 
         $pic_team_caa = explode(",", $check_caa->pic_team_caa);
 
@@ -1272,13 +1294,18 @@ class MasterCAA_Controller extends BaseController
             $id_agu_ke = explode (",",$val->so['ao']['id_agunan_kendaraan']);
             $AguKe = AgunanKendaraan::whereIn('id', $id_agu_ke)->get();
 
-            $Ken = array();
-            foreach ($AguKe as $key => $value) {
-                $Ken[$key] = array(
-                    'id'    => $id_agu_ke[$key] == null ? null : (int) $id_agu_ke[$key],
-                    'jenis' => $value->jenis
-                );
+            if ($AguKe == '[]') {
+                $Ken = null;
+            }else{
+                $Ken = array();
+                foreach ($AguKe as $key => $value) {
+                    $Ken[$key] = array(
+                        'id'    => $id_agu_ke[$key] == null ? null : (int) $id_agu_ke[$key],
+                        'jenis' => $value->jenis
+                    );
+                }
             }
+
 
             // Check Approval
             $id_komisi = explode(",", $val->so['caa']['pic_team_caa']);
