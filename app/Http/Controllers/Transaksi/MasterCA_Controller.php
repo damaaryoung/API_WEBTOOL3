@@ -9,6 +9,7 @@ use App\Models\Pengajuan\AO\PemeriksaanAgunTan;
 use App\Models\Pengajuan\AO\PemeriksaanAgunKen;
 
 use App\Models\Pengajuan\CA\AsuransiJaminan;
+use App\Models\Pengajuan\AO\PendapatanUsaha;
 use App\Http\Controllers\Controller as Helper;
 use App\Http\Requests\Transaksi\BlankRequest;
 use App\Models\Pengajuan\CA\RingkasanAnalisa;
@@ -519,7 +520,7 @@ class MasterCA_Controller extends BaseController
 
         $total_KapBul = array(
             'total_pemasukan'    => $ttl1 = array_sum(array_slice($inputKapBul, 0, 2)),
-            'total_pengeluaran'  => $ttl2 = array_sum(array_slice($inputKapBul, 2)),
+            'total_pengeluaran'  => $ttl2 = array_sum(array_slice($inputKapBul, 3)),
             'penghasilan_bersih' => $ttl1 - $ttl2
         );
 
@@ -739,6 +740,29 @@ class MasterCA_Controller extends BaseController
             );
         }
 
+        // Pendapatan Usaha Cadebt
+        $dataPendapatanUsaha = array(
+            'pemasukan_tunai'      => empty($req->input('pemasukan_tunai')) ? 0 : $req->input('pemasukan_tunai'),
+            'pemasukan_kredit'     => empty($req->input('pemasukan_kredit')) ? 0 : $req->input('pemasukan_kredit'),
+            'biaya_sewa'           => empty($req->input('biaya_sewa')) ? 0 : $req->input('biaya_sewa'),
+            'biaya_gaji_pegawai'   => empty($req->input('biaya_gaji_pegawai')) ? 0 : $req->input('biaya_gaji_pegawai'),
+            'biaya_belanja_brg'    => empty($req->input('biaya_belanja_brg')) ? 0 : $req->input('biaya_belanja_brg'),
+            'biaya_telp_listr_air' => empty($req->input('biaya_telp_listr_air')) ? 0 : $req->input('biaya_telp_listr_air'),
+            'biaya_sampah_kemanan' => empty($req->input('biaya_sampah_kemanan')) ? 0 : $req->input('biaya_sampah_kemanan'),
+            'biaya_kirim_barang'   => empty($req->input('biaya_kirim_barang')) ? 0 : $req->input('biaya_kirim_barang'),
+            'biaya_hutang_dagang'  => empty($req->input('biaya_hutang_dagang')) ? 0 : $req->input('biaya_hutang_dagang'),
+            'biaya_angsuran'       => empty($req->input('biaya_angsuran')) ? 0 : $req->input('biaya_angsuran'),
+            'biaya_lain_lain'      => empty($req->input('biaya_lain_lain')) ? 0 : $req->input('biaya_lain_lain')
+        );
+
+        $totalPendapatan = array(
+            'total_pemasukan'    => $ttl1 = array_sum(array_slice($dataPendapatanUsaha, 0, 2)),
+            'total_pengeluaran'  => $ttl2 = array_sum(array_slice($dataPendapatanUsaha, 2)),
+            'laba_usaha'         => $ttl1 - $ttl2
+        );
+
+        $Pendapatan = array_merge($dataPendapatanUsaha, $totalPendapatan);
+
         try{
             DB::connection('web')->beginTransaction();
 
@@ -811,6 +835,13 @@ class MasterCA_Controller extends BaseController
                 $idReCA = null;
             }
 
+            if (!empty($Pendapatan)) {
+                $pend = PendapatanUsaha::create($Pendapatan);
+                $idPendUs = $pend->id;
+            }else{
+                $idPendUs = null;
+            }
+
             if (!empty($kapBul)) {
                 $Q_Kapbul = KapBulanan::create($kapBul);
                 $idKapBul = $Q_Kapbul->id;
@@ -827,7 +858,8 @@ class MasterCA_Controller extends BaseController
                 'id_rekomendasi_pinjaman' => $idrecomPin,
                 'id_asuransi_jiwa'        => $idJiwa,
                 'id_asuransi_jaminan'     => $idJaminan,
-                'id_kapasitas_bulanan'    => $idKapBul
+                'id_kapasitas_bulanan'    => $idKapBul,
+                'id_pendapatan_usaha'     => $idPendUs
             );
 
             $newTransCA = array_merge($transCA, $dataID);

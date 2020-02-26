@@ -102,19 +102,21 @@ class UsahaCadebtController extends BaseController
             'biaya_kirim_barang'   => empty($req->input('biaya_kirim_barang')) ? $check->biaya_kirim_barang : $req->input('biaya_kirim_barang'),
             'biaya_hutang_dagang'  => empty($req->input('biaya_hutang_dagang')) ? $check->biaya_hutang_dagang : $req->input('biaya_hutang_dagang'),
             'biaya_angsuran'       => empty($req->input('biaya_angsuran')) ? $check->biaya_angsuran : $req->input('biaya_angsuran'),
-            'biaya_lain_lain'      => empty($req->input('biaya_lain_lain')) ? $check->biaya_lain_lain : $req->input('biaya_lain_lain'),
-
-            'total_pemasukan'      => (empty($req->input('pemasukan_tunai')) ? $check->pemasukan_tunai : $req->input('pemasukan_tunai')) + (empty($req->input('pemasukan_kredit')) ? $check->pemasukan_kredit : $req->input('pemasukan_kredit')),
-
-            'total_pengeluaran'    => (empty($req->input('biaya_sewa')) ? $check->biaya_sewa : $req->input('biaya_sewa')) + (empty($req->input('biaya_gaji_pegawai')) ? $check->biaya_gaji_pegawai : $req->input('biaya_gaji_pegawai')) + (empty($req->input('biaya_belanja_brg')) ? $check->biaya_belanja_brg : $req->input('biaya_belanja_brg')) + (empty($req->input('biaya_telp_listr_air')) ? $check->biaya_telp_listr_air : $req->input('biaya_telp_listr_air')) + (empty($req->input('biaya_sampah_kemanan')) ? $check->biaya_sampah_kemanan : $req->input('biaya_sampah_kemanan')) + (empty($req->input('biaya_kirim_barang')) ? $check->biaya_kirim_barang : $req->input('biaya_kirim_barang')) + (empty($req->input('biaya_hutang_dagang')) ? $check->biaya_hutang_dagang : $req->input('biaya_hutang_dagang')) + (empty($req->input('biaya_angsuran')) ? $check->biaya_angsuran : $req->input('biaya_angsuran')) + (empty($req->input('biaya_lain_lain')) ? $check->biaya_lain_lain : $req->input('biaya_lain_lain')),
-
-            'laba_usaha'           => ((empty($req->input('pemasukan_tunai')) ? $check->pemasukan_tunai : $req->input('pemasukan_tunai')) + (empty($req->input('pemasukan_kredit')) ? $check->pemasukan_kredit : $req->input('pemasukan_kredit'))) - ((empty($req->input('biaya_sewa')) ? $check->biaya_sewa : $req->input('biaya_sewa')) + (empty($req->input('biaya_gaji_pegawai')) ? $check->biaya_gaji_pegawai : $req->input('biaya_gaji_pegawai')) + (empty($req->input('biaya_belanja_brg')) ? $check->biaya_belanja_brg : $req->input('biaya_belanja_brg')) + (empty($req->input('biaya_telp_listr_air')) ? $check->biaya_telp_listr_air : $req->input('biaya_telp_listr_air')) + (empty($req->input('biaya_sampah_kemanan')) ? $check->biaya_sampah_kemanan : $req->input('biaya_sampah_kemanan')) + (empty($req->input('biaya_kirim_barang')) ? $check->biaya_kirim_barang : $req->input('biaya_kirim_barang')) + (empty($req->input('biaya_hutang_dagang')) ? $check->biaya_hutang_dagang : $req->input('biaya_hutang_dagang')) + (empty($req->input('biaya_angsuran')) ? $check->biaya_angsuran : $req->input('biaya_angsuran')) + (empty($req->input('biaya_lain_lain')) ? $check->biaya_lain_lain : $req->input('biaya_lain_lain')))
+            'biaya_lain_lain'      => empty($req->input('biaya_lain_lain')) ? $check->biaya_lain_lain : $req->input('biaya_lain_lain')
         );
+
+        $totalPendapatan = array(
+            'total_pemasukan'    => $ttl1 = array_sum(array_slice($dataPendapatanUsaha, 0, 2)),
+            'total_pengeluaran'  => $ttl2 = array_sum(array_slice($dataPendapatanUsaha, 2)),
+            'laba_usaha'         => $ttl1 - $ttl2
+        );
+
+        $Pendapatan = array_merge($dataPendapatanUsaha, $totalPendapatan);
 
         DB::connection('web')->beginTransaction();
 
         try {
-            PendapatanUsaha::where('id', $id)->update($dataPendapatanUsaha);
+            PendapatanUsaha::where('id', $id)->update($Pendapatan);
 
             DB::connection('web')->commit();
 

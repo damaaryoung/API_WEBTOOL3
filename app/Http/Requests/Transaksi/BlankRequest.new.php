@@ -265,10 +265,10 @@ class BlankRequest extends FormRequest
                 // Data History Bank pada CA
                 'no_rekening'             => 'numeric',
                 'penghasilan_per_tahun'   => 'integer',
-                'pemasukan_per_bulan'     => 'in:A,B,C,D',
-                'frek_trans_pemasukan'    => 'in:A,B,C',
-                'pengeluaran_per_bulan'   => 'in:A,B,C,D',
-                'frek_trans_pengeluaran'  => 'in:A,B,C,D',
+                'pemasukan_per_bulan'     => 'in:A,B,C,D,E',
+                'frek_trans_pemasukan'    => 'in:A,B,C,D,E',
+                'pengeluaran_per_bulan'   => 'in:A,B,C,D,E',
+                'frek_trans_pengeluaran'  => 'in:A,B,C,D,E',
                 // 'sumber_dana_setoran'     =>
                 'tujuan_pengeluaran_dana' => 'in:KONSUMTIF,MODAL,INVESTASI',
 
