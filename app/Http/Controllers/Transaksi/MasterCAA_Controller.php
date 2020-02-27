@@ -705,25 +705,25 @@ class MasterCAA_Controller extends BaseController
                 'agunan_kendaraan' => $idKen
             ],
             'pendapatan_usaha' => [
-                'id'        => $check_ao->id_pendapatan_usaha == null ? null : (int) $check_ao->id_pendapatan_usaha,
+                'id'        => $check_ca->id_pendapatan_usaha == null ? null : (int) $check_ao->id_pendapatan_usaha,
                 'pemasukan' => array(
-                    'tunai' => (int) $check_ao->usaha['pemasukan_tunai'],
-                    'kredit'=> (int) $check_ao->usaha['pemasukan_kredit'],
-                    'total' => (int) $check_ao->usaha['total_pemasukan']
+                    'tunai' => (int) $check_ca->usaha['pemasukan_tunai'],
+                    'kredit'=> (int) $check_ca->usaha['pemasukan_kredit'],
+                    'total' => (int) $check_ca->usaha['total_pemasukan']
                 ),
                 'pengeluaran' => array(
-                    'biaya_sewa'           => (int) $check_ao->usaha['biaya_sewa'],
-                    'biaya_gaji_pegawai'   => (int) $check_ao->usaha['biaya_gaji_pegawai'],
-                    'biaya_belanja_brg'    => (int) $check_ao->usaha['biaya_belanja_brg'],
-                    'biaya_telp_listr_air' => (int) $check_ao->usaha['biaya_telp_listr_air'],
-                    'biaya_sampah_kemanan' => (int) $check_ao->usaha['biaya_sampah_kemanan'],
-                    'biaya_kirim_barang'   => (int) $check_ao->usaha['biaya_kirim_barang'],
-                    'biaya_hutang_dagang'  => (int) $check_ao->usaha['biaya_hutang_dagang'],
-                    'angsuran'             => (int) $check_ao->usaha['biaya_angsuran'],
-                    'lain_lain'            => (int) $check_ao->usaha['biaya_lain_lain'],
-                    'total'                => (int) $check_ao->usaha['total_pengeluaran']
+                    'biaya_sewa'           => (int) $check_ca->usaha['biaya_sewa'],
+                    'biaya_gaji_pegawai'   => (int) $check_ca->usaha['biaya_gaji_pegawai'],
+                    'biaya_belanja_brg'    => (int) $check_ca->usaha['biaya_belanja_brg'],
+                    'biaya_telp_listr_air' => (int) $check_ca->usaha['biaya_telp_listr_air'],
+                    'biaya_sampah_kemanan' => (int) $check_ca->usaha['biaya_sampah_kemanan'],
+                    'biaya_kirim_barang'   => (int) $check_ca->usaha['biaya_kirim_barang'],
+                    'biaya_hutang_dagang'  => (int) $check_ca->usaha['biaya_hutang_dagang'],
+                    'angsuran'             => (int) $check_ca->usaha['biaya_angsuran'],
+                    'lain_lain'            => (int) $check_ca->usaha['biaya_lain_lain'],
+                    'total'                => (int) $check_ca->usaha['total_pengeluaran']
                 ),
-                'penghasilan_bersih' => (int) $check_ao->usaha['laba_usaha']
+                'penghasilan_bersih' => (int) $check_ca->usaha['laba_usaha']
             ],
             'pengajuan' => [
                 'plafon' => (int) $check_so->faspin['plafon'],

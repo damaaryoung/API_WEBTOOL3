@@ -1,6 +1,9 @@
 /.idea
 Homestead.json
 Homestead.yaml
+storage
 public
 .phpunit.result.cache
 .editorconfig
+.phpintel
+.vscode

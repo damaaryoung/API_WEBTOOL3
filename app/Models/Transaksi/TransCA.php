@@ -143,7 +143,7 @@ class TransCA extends Model implements AuthenticatableContract, AuthorizableCont
             });
     }
 
-    public function pend_us(){
+    public function usaha(){
         return $this->belongsTo(PendapatanUsaha::class, 'id_pendapatan_usaha')
             ->withDefault(function () {
                 return new PendapatanUsaha();
