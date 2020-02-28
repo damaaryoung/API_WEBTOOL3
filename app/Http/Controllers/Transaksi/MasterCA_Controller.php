@@ -124,6 +124,103 @@ class MasterCA_Controller extends BaseController
         }
     }
 
+    public function indexWait($ao_ca, $status, Request $req){
+        $user_id  = $req->auth->user_id;
+
+        $pic = PIC::where('user_id', $user_id)->first();
+
+        if ($pic == null) {
+            return response()->json([
+                "code"    => 404,
+                "status"  => "not found",
+                "message" => "User_ID anda adalah '".$user_id."' dengan username '".$req->auth->user."' . Namun anda belum terdaftar sebagai PIC(CA). Harap daftarkan diri sebagai PIC(CA) pada form PIC atau hubungi bagian IT"
+            ], 404);
+        }
+
+        $id_area   = $pic->id_area;
+        $id_cabang = $pic->id_cabang;
+        $scope     = $pic->jpic['cakupan'];
+
+        $query_dir = TransAO::with('so', 'pic', 'cabang')->where('status_ao', 1)->orderBy('created_at', 'desc');
+        $method = 'get';
+
+        $query = Helper::checkDir($user_id, $scope, $query_dir, $id_area, $id_cabang, $method);
+
+
+        if ($query == '[]') {
+            return response()->json([
+                'code'    => 404,
+                'status'  => 'not found',
+                'message' => 'Data di AO masih kosong'
+            ], 404);
+        }
+
+
+        foreach ($query as $key => $val) {
+
+            if ($val->status_ao == 1) {
+                $status_ao = 'recommend';
+            }elseif($val->status_ao == 2){
+                $status_ao = 'not recommend';
+            }else{
+                $status_ao = 'waiting';
+            }
+
+            if ($val->so['ca']['status_ca'] == 1) {
+                $status_ca = 'recommend';
+            }elseif($val->so['ca']['status_ca'] == 2){
+                $status_ca = 'not recommend';
+            }else{
+                $status_ca = 'waiting';
+            }
+
+            $data[$key] = [
+                'id_trans_so'    => $val->id_trans_so == null ? null : (int) $val->id_trans_so,
+                'id_trans_ca'    => $val->so['id_trans_ca'] == null ? null : (int) $val->so['id_trans_ca'],
+                'nomor_so'       => $val->so['nomor_so'],
+                'nomor_ao'       => $val->nomor_ao,
+                // 'nomor_ca'       => $val->so['ca']['nomor_ca'],
+                'pic'            => $val->pic['nama'],
+                'area'           => $val->area['nama'],
+                'cabang'         => $val->cabang['nama'],
+                'asal_data'      => $val->so['asaldata']['nama'],
+                'nama_marketing' => $val->so['nama_marketing'],
+                'nama_debitur'   => $val->so['debt']['nama_lengkap'],
+                'plafon'         => (int) $val->so['faspin']['plafon'],
+                'tenor'          => (int) $val->so['faspin']['tenor'],
+                "ao" => [
+                    'status_ao'     => $status_ao,
+                    'catatan_ao'    => $val->catatan_ao
+                ],
+                "ca" => [
+                    'status_ca'     => $status_ca,
+                    'catatan_ca'    => $val->so['ca']['catatan_ca']
+                ],
+            ];
+        }
+
+        $res = array_filter($data, function ($value) use ($ao_ca, $status) {
+
+            return ($value[$ao_ca]["status_{$ao_ca}"] == $status);
+
+        });
+
+        try {
+            return response()->json([
+                'code'   => 200,
+                'status' => 'success',
+                'count'  => count($res),
+                'data'   => $res
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                "code"    => 501,
+                "status"  => "error",
+                "message" => $e
+            ], 501);
+        }
+    }
+
     public function show($id, Request $req){
         $user_id = $req->auth->user_id;
         $pic     = PIC::where('user_id', $user_id)->first();
@@ -1541,6 +1638,181 @@ class MasterCA_Controller extends BaseController
                 'status' => 'success',
                 'count'  => $query->count(),
                 'data'   => $data
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                "code"    => 501,
+                "status"  => "error",
+                "message" => $e
+            ], 501);
+        }
+    }
+
+    public function full_show($id, Request $req){
+        $user_id = $req->auth->user_id;
+        $pic     = PIC::where('user_id', $user_id)->first();
+
+        if ($pic == null) {
+            return response()->json([
+                "code"    => 404,
+                "status"  => "not found",
+                "message" => "User_ID anda adalah '".$user_id."' dengan username '".$req->auth->user."' . Namun anda belum terdaftar sebagai PIC(CA). Harap daftarkan diri sebagai PIC(CA) pada form PIC atau hubungi bagian IT"
+            ], 404);
+        }
+
+        $id_area   = $pic->id_area;
+        $id_cabang = $pic->id_cabang;
+        $scope     = $pic->jpic['cakupan'];
+
+        $check_so = TransSO::where('id', $id)->where('status_das', 1)->where('status_hm', 1)->first();
+
+        if ($check_so == null) {
+            return response()->json([
+                'code'    => 404,
+                'status'  => 'not found',
+                'message' => 'Transaksi dengan id '.$id.' belum ada di SO atau belum komplit saat pemeriksaaan DAS dan HM'
+            ], 404);
+        }
+
+        
+        $check_ao = TransAO::with('pic', 'cabang')->where('id_trans_so', $id)->where('status_ao', 1)->first();
+        
+        if ($check_ao == null) {
+            return response()->json([
+                'code'    => 404,
+                'status'  => 'not found',
+                'message' => 'Transaksi dengan id '.$id.' belum sampai ke AO'
+            ], 404);
+        }
+        
+        $check_ca = TransCA::with('so', 'pic', 'cabang')->where('id_trans_so', $id)->where('status_ca', 1)->first();
+
+
+        if ($check_ca == null) {
+            return response()->json([
+                'code'    => 404,
+                'status'  => 'not found',
+                'message' => 'Transaksi dengan id '.$id.' belum sampai ke CA'
+            ], 404);
+        }
+
+        if ($check_ca->status_ca == 1) {
+            $status_ca = 'recommend';
+        }elseif($check_ca->status_ca == 2){
+            $status_ca = 'not recommend';
+        }else{
+            $status_ca = 'waiting';
+        }
+
+        $mutasi = MutasiBank::whereIn('id', explode(",", $check_ca->id_mutasi_bank))->get();
+        
+
+        if($mutasi != '[]'){
+            foreach($mutasi as $key => $mut){
+                // foreach($mut->periode as $val)){
+                //     $per = array('periode' => explode(";", $val->periode));
+                //     $f_deb = array('periode' => explode(";", $mut->periode));
+                // }
+                    $periode[]       = explode(";", $mut->periode);
+                    $frek_debet[]    = explode(";", $mut->frek_debet);
+                    $nominal_debet[] = explode(";", $mut->nominal_debet);
+                    $frek_kredit[]   = explode(";", $mut->frek_kredit);
+                    $nominal_kredit[]= explode(";", $mut->nominal_kredit);
+                    $saldo[]         = explode(";", $mut->saldo);
+
+                    // $dataMut[]['nama_pemilik'] = $mutasi[$key]->nama_pemilik;
+
+                    // $row['row'][] = array_merge($dataMut, $periode);
+            }
+
+            for($i = 0; $i < 2; $i++){
+                $dataMut['nama_pemilik'] = $mutasi[$i]->nama_pemilik;
+                // $dataMut['row'][] = array(
+                //     'periode'   => $row[$i]
+                // );
+                $row[] = array(
+                    'nama_pemilik' => $mutasi[$i]->nama_pemilik,
+                    'periode'      => $perCount = $periode[$i]
+                );
+            }
+
+            dd($periode, $dataMut, $row);
+
+            // for($i = 0; $i <= count($periode[0]); $i++){
+            //     $res = array(
+            //         'periode'     => $periode[0],
+            //         'frek_debet'  => $frek_debet[0]
+            //     );
+            // }
+
+            // dd($res);
+
+                $dataMut[] = array(
+                    'urutan_mutasi' => $mutasi[0]->urutan_mutasi,
+                    'nama_bank'     => $mutasi[0]->nama_bank,
+                    'no_rekening'   => $mutasi[0]->no_rekening,
+                    'nama_pemilik'  => $mutasi[0]->nama_pemilik,
+                    'row' => array(
+                        $res
+                    )
+                    // 'periode'       => explode(";", $mut->periode),
+                    // 'frek_debet'    => explode(";", $mut->frek_debet),
+                    // 'nominal_debet' => explode(";", $mut->nominal_debet),
+                    // 'frek_kredit'   => explode(";", $mut->frek_kredit),
+                    // 'nominal_kredit'=> explode(";", $mut->nominal_kredit),
+                    // 'saldo'         => explode(";", $mut->saldo)
+                );
+                // $result[] = array('periode' => $child[$key]['periode'][$key]);
+            // }
+        }else{
+            $dataMut = null;
+        }
+
+        $data[] = [
+            'id_trans_so'    => $check_so->id == null ? null : (int) $check_so->id,
+            'nomor_so'       => $check_so->nomor_so,
+            'kapasitas_bulanan' => [
+                'id'         => $check_ca->id_kapasitas_bulanan == null ? null : (int) $check_ca->id_kapasitas_bulanan,
+                'pemasukan_cadebt'      => (int) $check_ca->kapbul['pemasukan_cadebt'],
+                'pemasukan_pasangan'    => (int) $check_ca->kapbul['pemasukan_pasangan'], 
+                'pemasukan_penjamin'    => (int) $check_ca->kapbul['pemasukan_penjamin'], 
+                'biaya_rumah_tangga'    => (int) $check_ca->kapbul['biaya_rumah_tangga'],
+                'biaya_transport'       => (int) $check_ca->kapbul['biaya_transport'],
+                'biaya_pendidikan'      => (int) $check_ca->kapbul['biaya_pendidikan'],
+                'biaya_telp_listr_air'  => (int) $check_ca->kapbul['biaya_telp_listr_air'],
+                'angsuran'              => (int) $check_ca->kapbul['angsuran'],
+                'biaya_lain'            => (int) $check_ca->kapbul['biaya_lain'],
+                'total_pemasukan'       => (int) $check_ca->kapbul['total_pemasukan'],
+                'total_pengeluaran'     => (int) $check_ca->kapbul['total_pengeluaran'],
+                'penghasilan_bersih'    => (int) $check_ca->kapbul['penghasilan_bersih'],
+                'disposable_income'     => (int) $check_ca->kapbul['disposable_income']
+            ],
+            'pendapatan_usaha'  => [
+                'id'            => $check_ca->id_pendapatan_usaha  == null ? null : (int) $check_ca->id_pendapatan_usaha,
+                'pemasukan_tunai'       => $check_ca->usaha['pemasukan_tunai'],
+                'pemasukan_kredit'      => $check_ca->usaha['pemasukan_kredit'],
+                'biaya_sewa'            => $check_ca->usaha['biaya_sewa'],
+                'biaya_gaji_pegawai'    => $check_ca->usaha['biaya_gaji_pegawai'],
+                'biaya_belanja_brg'     => $check_ca->usaha['biaya_belanja_brg'],
+                'biaya_telp_listr_air'  => $check_ca->usaha['biaya_telp_listr_air'],
+                'biaya_sampah_kemanan'  => $check_ca->usaha['biaya_sampah_kemanan'],
+                'biaya_kirim_barang'    => $check_ca->usaha['biaya_kirim_barang'],
+                'biaya_hutang_dagang'   => $check_ca->usaha['biaya_hutang_dagang'],
+                'biaya_angsuran'        => $check_ca->usaha['biaya_angsuran'],
+                'biaya_lain_lain'       => $check_ca->usaha['biaya_lain_lain'],
+                'total_pemasukan'       => $check_ca->usaha['total_pemasukan'],
+                'total_pengeluaran'     => $check_ca->usaha['total_pengeluaran'],
+                'laba_usaha'            => $check_ca->usaha['laba_usaha']
+            ],
+            'mutasi_bank'  => $dataMut,
+            'status_ca' => $status_ca
+        ];
+
+        try {
+            return response()->json([
+                'code'   => 200,
+                'status' => 'success',
+                'data'   => $data[0]
             ], 200);
         } catch (Exception $e) {
             return response()->json([

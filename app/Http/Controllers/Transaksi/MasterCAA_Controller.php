@@ -572,7 +572,8 @@ class MasterCAA_Controller extends BaseController
             ], 404);
         }
 
-        $query_dir = TransCA::with('pic', 'cabang')->where('id_trans_so', $id)->where('status_ca', 1)->where('revisi', null);
+        $query_dir = TransCA::with('pic', 'cabang')->where('id_trans_so', $id)
+            ->where('status_ca', 1);
         $method = 'first';
 
         $check_ca = Helper::checkDir($user_id, $scope, $query_dir, $id_area, $id_cabang, $method);

@@ -231,4 +231,12 @@ class Controller extends BaseController
         return $result;
     }
 
+    // public static function filtArray($array) { 
+    //     // returns if the input integer is even 
+    //     if($array==0) 
+    //         return TRUE; 
+    //     else 
+    //         return FALSE;  
+    // }
+
 }

@@ -26,13 +26,5 @@ class MutasiBank extends Model implements AuthenticatableContract, AuthorizableC
         'urutan_mutasi', 'nama_bank', 'no_rekening', 'nama_pemilik', 'periode', 'frek_debet', 'nominal_debet', 'frek_kredit', 'nominal_kredit', 'saldo'
     ];
 
-    protected $casts = [
-        'frek_debet'    => 'integer',
-        'nominal_debet' => 'integer',
-        'frek_kredit'   => 'integer',
-        'nominal_kredit'=> 'integer',
-        'saldo'         => 'integer',
-    ];
-
     public $timestamps = false;
 }

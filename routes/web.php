@@ -316,6 +316,11 @@ $router->group(['middleware' => ['jwt.auth'], 'prefix' => 'api'], function () us
 
                 // Revisi
                 $router->post('/{id_trans_so}/revisi/{id_trans_ca}', ['subject' => 'Revisi Trans_CA', 'uses' => 'MasterCA_Controller@revisi']); //Update CA BY ID
+
+                // Full Show after update
+                $router->get('/{id}/detail', ['subject' => 'Detail After Update Trans_AO', 'uses' => 'MasterCA_Controller@full_show']);
+
+                $router->get('/status/{ao_ca}/{status}', ['subject' => 'Filter status_ca', 'uses' => 'MasterCA_Controller@indexWait']);
             });
 
 
