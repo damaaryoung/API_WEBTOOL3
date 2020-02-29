@@ -49,8 +49,8 @@ class KapBulController extends BaseController
                 'lain_lain'     => (int) $check->biaya_lain,
                 'total'         => (int) $check->total_pengeluaran
             ),
-            'penghasilan_bersih' => (int) $check->penghasilan_bersih
-            // 'disposable_income'  => $check->disposable_income
+            'penghasilan_bersih' => (int) $check->penghasilan_bersih,
+            'disposable_income'  => (int) $check->disposable_income
         );
 
         try {
@@ -107,7 +107,7 @@ class KapBulController extends BaseController
                 ($check->biaya_transport == null ? 0 : $check->biaya_transport) : $req->input('biaya_transport'),
 
             'biaya_pendidikan'      => empty($req->input('biaya_pendidikan')) ? 
-                ($check->biaya_pendidikan == null ? 0 : ($check->biaya_pendidikan) : $req->input('biaya_pendidikan'),
+                ($check->biaya_pendidikan == null ? 0 : $check->biaya_pendidikan) : $req->input('biaya_pendidikan'),
 
             'biaya_telp_listr_air'  => empty($req->input('biaya_telp_listr_air')) ? 
                 ($check->biaya_telp_listr_air == null ? 0 : $check->biaya_telp_listr_air) : $req->input('biaya_telp_listr_air'),

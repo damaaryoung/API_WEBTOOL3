@@ -40,8 +40,8 @@ class PasanganRequest extends FormRequest
             $rules = [
                 // Pasangan
                 'jenis_kelamin_pas'         => 'in:L,P',
-                'lamp_ktp_pas'              => 'mimes:jpg,jpeg,png,pdf|max:2048',
-                'lamp_kk_pas'               => 'mimes:jpg,jpeg,png,pdf|max:2048',
+                'lamp_ktp_pas'              => 'mimes:jpg,jpeg,png,pdf',
+                'lamp_kk_pas'               => 'mimes:jpg,jpeg,png,pdf',
                 'pekerjaan_pas'             => 'in:KARYAWAN,PNS,WIRASWASTA,PENGURUS_RT',
                 'rt_tempat_kerja_pas'       => 'numeric',
                 'rw_tempat_kerja_pas'       => 'numeric',
@@ -61,8 +61,8 @@ class PasanganRequest extends FormRequest
                 'no_npwp_pas'           => 'digits:15|unique:web.pasangan_calon_debitur,no_npwp',
                 'tgl_lahir_pas'         => 'date_format:d-m-Y',
                 'no_telp_pas'           => 'between:11,13|unique:web.pasangan_calon_debitur,no_telp',
-                'lamp_ktp_pas'          => 'mimes:jpg,jpeg,png,pdf|max:2048',
-                'lamp_kk_pas'           => 'mimes:jpg,jpeg,png,pdf|max:2048'
+                'lamp_ktp_pas'          => 'mimes:jpg,jpeg,png,pdf',
+                'lamp_kk_pas'           => 'mimes:jpg,jpeg,png,pdf'
             ];
         }
 
@@ -92,8 +92,8 @@ class PasanganRequest extends FormRequest
             'no_telp_pas.unique'               => ':attribute telah ada yang menggunakan',
             'lamp_ktp_pas.mimes'               => ':attribute harus bertipe :values',
             'lamp_kk_pas.mimes'                => ':attribute harus bertipe :values',
-            'lamp_ktp_pas.max'                 => 'ukuran :attribute max :max kb',
-            'lamp_kk_pas.max'                  => 'ukuran :attribute max :max kb',
+            // 'lamp_ktp_pas.max'                 => 'ukuran :attribute max :max kb',
+            // 'lamp_kk_pas.max'                  => 'ukuran :attribute max :max kb',
             'pekerjaan_pas.in'                 => ':attribute harus salah satu dari jenis berikut :values',
             'rt_tempat_kerja_pas.numeric'      => ':attribute harus berupa angka',
             'rw_tempat_kerja_pas.numeric'      => ':attribute harus berupa angka',

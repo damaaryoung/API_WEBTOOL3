@@ -3,13 +3,10 @@
 namespace App\Http\Controllers\Master\AreaKantor;
 
 use Laravel\Lumen\Routing\Controller as BaseController;
-use App\Http\Controllers\Controller as Helper;
 use App\Http\Requests\AreaKantor\AreaPICReq;
 use App\Models\AreaKantor\AreaPIC;
-use Illuminate\Http\Request;
-use App\Models\User;
+use App\Models\AreaKantor\PIC;
 use Carbon\Carbon;
-use DB;
 
 class AreaPICController extends BaseController
 {
@@ -26,13 +23,17 @@ class AreaPICController extends BaseController
 
         $res = array();
         foreach ($query as $key => $val) {
+            $ko = PIC::whereIn('id', explode(",", $val->id_pic))->get()->toArray();
+
+            // dd($ko);
             $res[$key] = [
                 'id'                => $val->id,
                 "nama_area_pic"     => $val->nama_area_pic,
                 "nama_area_kerja"   => $val->area['nama'],
                 "nama_kantor_cabang"=> $val->cabang['nama'],
                 "nama_kelurahan"    => $val->kel['nama'],
-                "kode_pos"          => $val->kel['kode_pos']
+                "kode_pos"          => $val->kel['kode_pos'],
+                // "pic"               => 
             ];
         }
 
@@ -53,6 +54,13 @@ class AreaPICController extends BaseController
     }
 
     public function store(AreaPICReq $req) {
+        
+        if(!empty($req->input('id_pic'))){
+            for($i = 0; $i < count($req->input('id_pic')); $i++){
+                $pic[] = empty($req->input('id_pic')[$i]) ? null : $req->input('id_pic')[$i];
+            }
+        }
+
         $data = array(
             'id_area'       => $req->input('id_mk_area'),
             'id_cabang'     => $req->input('id_mk_cabang'),
@@ -60,7 +68,8 @@ class AreaPICController extends BaseController
             'id_provinsi'   => $req->input('id_provinsi'),
             'id_kabupaten'  => $req->input('id_kabupaten'),
             'id_kecamatan'  => $req->input('id_kecamatan'),
-            'id_kelurahan'  => $req->input('id_kelurahan')
+            'id_kelurahan'  => $req->input('id_kelurahan'),
+            'id_pic'        => implode(",", $pic)
         );
 
         AreaPIC::create($data);

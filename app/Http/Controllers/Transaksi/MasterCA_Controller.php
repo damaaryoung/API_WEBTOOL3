@@ -6,7 +6,7 @@ use Laravel\Lumen\Routing\Controller as BaseController;
 use App\Models\Pengajuan\CA\RekomendasiPinjaman;
 
 use App\Models\Pengajuan\AO\PemeriksaanAgunTan;
-use App\Models\Pengajuan\AO\PemeriksaanAgunKen;
+// use App\Models\Pengajuan\AO\PemeriksaanAgunKen;
 
 use App\Models\Pengajuan\CA\AsuransiJaminan;
 use App\Models\Pengajuan\AO\PendapatanUsaha;
@@ -17,7 +17,6 @@ use App\Models\Pengajuan\CA\RekomendasiCA;
 use App\Models\Pengajuan\CA\AsuransiJiwa;
 use App\Models\Pengajuan\AO\KapBulanan;
 use App\Models\Pengajuan\CA\MutasiBank;
-use Illuminate\Support\Facades\File;
 use App\Models\Pengajuan\CA\TabDebt;
 use App\Models\Pengajuan\CA\InfoACC;
 use App\Models\Transaksi\TransCA;
@@ -26,8 +25,6 @@ use App\Models\Transaksi\TransSO;
 use App\Models\AreaKantor\JPIC;
 use App\Models\AreaKantor\PIC;
 use Illuminate\Http\Request;
-use App\Http\Requests;
-use App\Models\User;
 use Carbon\Carbon;
 use DB;
 
@@ -174,7 +171,7 @@ class MasterCA_Controller extends BaseController
                 $status_ca = 'waiting';
             }
 
-            $data[$key] = [
+            $data[] = [
                 'id_trans_so'    => $val->id_trans_so == null ? null : (int) $val->id_trans_so,
                 'id_trans_ca'    => $val->so['id_trans_ca'] == null ? null : (int) $val->so['id_trans_ca'],
                 'nomor_so'       => $val->so['nomor_so'],
@@ -199,19 +196,30 @@ class MasterCA_Controller extends BaseController
             ];
         }
 
-        $res = array_filter($data, function ($value) use ($ao_ca, $status) {
-
-            return ($value[$ao_ca]["status_{$ao_ca}"] == $status);
-
+        $res = array_filter($data, function ($item) use ($ao_ca, $status) {
+            if (stripos($item[$ao_ca]["status_{$ao_ca}"], $status) !== false) {
+                return true;
+            }
+            return false;
         });
-
+        
         try {
-            return response()->json([
-                'code'   => 200,
-                'status' => 'success',
-                'count'  => count($res),
-                'data'   => $res
-            ], 200);
+            if($res == false){
+                return response()->json([
+                    'code'   => 404,
+                    'status' => 'not found',
+                    'count'  => 0,
+                    'message'=> 'data tidak ditemukan'
+                ], 404);
+            }else{
+                foreach($res as $val){$result[] = $val;}
+                return response()->json([
+                    'code'   => 200,
+                    'status' => 'success',
+                    'count'  => count($res),
+                    'data'   => $result
+                ], 200);
+            }
         } catch (Exception $e) {
             return response()->json([
                 "code"    => 501,
@@ -1704,108 +1712,62 @@ class MasterCA_Controller extends BaseController
             $status_ca = 'waiting';
         }
 
-        $mutasi = MutasiBank::whereIn('id', explode(",", $check_ca->id_mutasi_bank))->get();
-        
+        $mutasi = MutasiBank::whereIn('id', explode(",", $check_ca->id_mutasi_bank))->get()->toArray();
 
-        if($mutasi != '[]'){
-            foreach($mutasi as $key => $mut){
-                // foreach($mut->periode as $val)){
-                //     $per = array('periode' => explode(";", $val->periode));
-                //     $f_deb = array('periode' => explode(";", $mut->periode));
-                // }
-                    $periode[]       = explode(";", $mut->periode);
-                    $frek_debet[]    = explode(";", $mut->frek_debet);
-                    $nominal_debet[] = explode(";", $mut->nominal_debet);
-                    $frek_kredit[]   = explode(";", $mut->frek_kredit);
-                    $nominal_kredit[]= explode(";", $mut->nominal_kredit);
-                    $saldo[]         = explode(";", $mut->saldo);
+        if($mutasi != []){
 
-                    // $dataMut[]['nama_pemilik'] = $mutasi[$key]->nama_pemilik;
-
-                    // $row['row'][] = array_merge($dataMut, $periode);
+            foreach($mutasi as $i => $mut){
+                $doub[$i] = array_slice($mut, 0, 5);
             }
 
-            for($i = 0; $i < 2; $i++){
-                $dataMut['nama_pemilik'] = $mutasi[$i]->nama_pemilik;
-                // $dataMut['row'][] = array(
-                //     'periode'   => $row[$i]
-                // );
-                $row[] = array(
-                    'nama_pemilik' => $mutasi[$i]->nama_pemilik,
-                    'periode'      => $perCount = $periode[$i]
-                );
+            foreach($mutasi as $i => $mut){
+                $slice[$i] = array_slice($mut, 5);
+                foreach($slice as $key => $val){
+                    foreach($val as $row => $col){
+                        $arr[$i][$row] = explode(";",$col);
+                    }
+                }
             }
 
-            dd($periode, $dataMut, $row);
+            foreach ($arr as $key => $subarr)
+            {
+                foreach ($subarr as $subkey => $subvalue)
+                {
+                    foreach($subvalue as $childkey => $childvalue)
+                    {   
+                        $out[$key][$childkey][$subkey] = ($childvalue);
+                    }
 
-            // for($i = 0; $i <= count($periode[0]); $i++){
-            //     $res = array(
-            //         'periode'     => $periode[0],
-            //         'frek_debet'  => $frek_debet[0]
-            //     );
-            // }
-
-            // dd($res);
-
-                $dataMut[] = array(
-                    'urutan_mutasi' => $mutasi[0]->urutan_mutasi,
-                    'nama_bank'     => $mutasi[0]->nama_bank,
-                    'no_rekening'   => $mutasi[0]->no_rekening,
-                    'nama_pemilik'  => $mutasi[0]->nama_pemilik,
-                    'row' => array(
-                        $res
-                    )
-                    // 'periode'       => explode(";", $mut->periode),
-                    // 'frek_debet'    => explode(";", $mut->frek_debet),
-                    // 'nominal_debet' => explode(";", $mut->nominal_debet),
-                    // 'frek_kredit'   => explode(";", $mut->frek_kredit),
-                    // 'nominal_kredit'=> explode(";", $mut->nominal_kredit),
-                    // 'saldo'         => explode(";", $mut->saldo)
-                );
-                // $result[] = array('periode' => $child[$key]['periode'][$key]);
-            // }
+                    $dataMut[$key] = array_merge($doub[$key], array('table' => $out[$key]));
+                }
+            }
         }else{
             $dataMut = null;
         }
 
+        // $check_ca->getRelations(); // get all the related models
+        // $check_ca->getRelation('author'); // to get only related author model
+
         $data[] = [
-            'id_trans_so'    => $check_so->id == null ? null : (int) $check_so->id,
-            'nomor_so'       => $check_so->nomor_so,
-            'kapasitas_bulanan' => [
-                'id'         => $check_ca->id_kapasitas_bulanan == null ? null : (int) $check_ca->id_kapasitas_bulanan,
-                'pemasukan_cadebt'      => (int) $check_ca->kapbul['pemasukan_cadebt'],
-                'pemasukan_pasangan'    => (int) $check_ca->kapbul['pemasukan_pasangan'], 
-                'pemasukan_penjamin'    => (int) $check_ca->kapbul['pemasukan_penjamin'], 
-                'biaya_rumah_tangga'    => (int) $check_ca->kapbul['biaya_rumah_tangga'],
-                'biaya_transport'       => (int) $check_ca->kapbul['biaya_transport'],
-                'biaya_pendidikan'      => (int) $check_ca->kapbul['biaya_pendidikan'],
-                'biaya_telp_listr_air'  => (int) $check_ca->kapbul['biaya_telp_listr_air'],
-                'angsuran'              => (int) $check_ca->kapbul['angsuran'],
-                'biaya_lain'            => (int) $check_ca->kapbul['biaya_lain'],
-                'total_pemasukan'       => (int) $check_ca->kapbul['total_pemasukan'],
-                'total_pengeluaran'     => (int) $check_ca->kapbul['total_pengeluaran'],
-                'penghasilan_bersih'    => (int) $check_ca->kapbul['penghasilan_bersih'],
-                'disposable_income'     => (int) $check_ca->kapbul['disposable_income']
-            ],
-            'pendapatan_usaha'  => [
-                'id'            => $check_ca->id_pendapatan_usaha  == null ? null : (int) $check_ca->id_pendapatan_usaha,
-                'pemasukan_tunai'       => $check_ca->usaha['pemasukan_tunai'],
-                'pemasukan_kredit'      => $check_ca->usaha['pemasukan_kredit'],
-                'biaya_sewa'            => $check_ca->usaha['biaya_sewa'],
-                'biaya_gaji_pegawai'    => $check_ca->usaha['biaya_gaji_pegawai'],
-                'biaya_belanja_brg'     => $check_ca->usaha['biaya_belanja_brg'],
-                'biaya_telp_listr_air'  => $check_ca->usaha['biaya_telp_listr_air'],
-                'biaya_sampah_kemanan'  => $check_ca->usaha['biaya_sampah_kemanan'],
-                'biaya_kirim_barang'    => $check_ca->usaha['biaya_kirim_barang'],
-                'biaya_hutang_dagang'   => $check_ca->usaha['biaya_hutang_dagang'],
-                'biaya_angsuran'        => $check_ca->usaha['biaya_angsuran'],
-                'biaya_lain_lain'       => $check_ca->usaha['biaya_lain_lain'],
-                'total_pemasukan'       => $check_ca->usaha['total_pemasukan'],
-                'total_pengeluaran'     => $check_ca->usaha['total_pengeluaran'],
-                'laba_usaha'            => $check_ca->usaha['laba_usaha']
-            ],
-            'mutasi_bank'  => $dataMut,
-            'status_ca' => $status_ca
+            'id_trans_so'           => $check_so->id == null ? null : (int) $check_so->id,
+            'nomor_so'              => $check_so->nomor_so,
+            'kapasitas_bulanan'     => $check_ca->kapbul,
+            'pendapatan_usaha'      => $check_ca->usaha,
+            'mutasi_bank'           => $dataMut,
+            'data_keuangan'         => $check_ca->log_tab,
+            'informasi_analisa_cc'  => array(
+                'table'         => $iac = InfoACC::whereIn('id', explode(",", $check_ca->id_info_analisa_cc))->get()->toArray(),
+                'total_plafon'  => array_sum(array_column($iac,'plafon')),
+                'total_baki_debet' => array_sum(array_column($iac,'baki_debet')),
+                'angsuran'         => array_sum(array_column($iac,'angsuran')),
+                'collectabitas_tertinggi' => max(array_column($iac,'collectabilitas'))
+            ),
+            'ringkasan_analisa'     => $check_ca->ringkasan,
+            'rekomendasi_pinjaman'  => $check_ca->recom_pin,
+            'rekomendasi_ca'        => $check_ca->recom_ca,
+            'asuransi_jiwa'         => $check_ca->as_jiwa,
+            'asuransi_jaminan'      => AsuransiJaminan::whereIn('id', explode(";", $check_ca->id_asuransi_jaminan))->get()->toArray(),
+            'status_ca'             => $status_ca
         ];
 
         try {

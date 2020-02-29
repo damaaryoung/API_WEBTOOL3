@@ -69,18 +69,18 @@ class DebiturRequest extends FormRequest
             // 'tgl_mulai_kerja'       => 'date_format:d-m-Y',
             'no_telp_tempat_kerja'  => 'numeric',
 
-            'lamp_ktp'              => 'mimes:jpg,jpeg,png,pdf|max:2048',
-            'lamp_kk'               => 'mimes:jpg,jpeg,png,pdf|max:2048',
-            'lamp_surat_cerai'      => 'mimes:jpg,jpeg,png,pdf|max:2048',
-            'lamp_sttp_pbb'         => 'mimes:jpg,jpeg,png,pdf|max:2048',
-            'lamp_sertifikat'       => 'mimes:jpg,jpeg,png,pdf|max:2048',
-            'lamp_imb'              => 'mimes:jpg,jpeg,png,pdf|max:2048',
-            'lamp_buku_tabungan.*'  => 'mimes:jpg,jpeg,png,pdf|max:2048',
-            'lamp_sku.*'            => 'mimes:jpg,jpeg,png,pdf|max:2048',
-            'lamp_slip_gaji'        => 'mimes:jpg,jpeg,png,pdf|max:2048',
-            'lamp_foto_usaha.*'     => 'mimes:jpg,jpeg,png,pdf|max:2048',
-            'lamp_skk'              => 'mimes:jpg,jpeg,png,pdf|max:2048',
-            'foto_pembukuan_usaha.*'=> 'mimes:jpg,jpeg,png,pdf|max:2048',
+            'lamp_ktp'              => 'mimes:jpg,jpeg,png,pdf',
+            'lamp_kk'               => 'mimes:jpg,jpeg,png,pdf',
+            'lamp_surat_cerai'      => 'mimes:jpg,jpeg,png,pdf',
+            'lamp_sttp_pbb'         => 'mimes:jpg,jpeg,png,pdf',
+            'lamp_sertifikat'       => 'mimes:jpg,jpeg,png,pdf',
+            'lamp_imb'              => 'mimes:jpg,jpeg,png,pdf',
+            'lamp_buku_tabungan.*'  => 'mimes:jpg,jpeg,png,pdf',
+            'lamp_sku.*'            => 'mimes:jpg,jpeg,png,pdf',
+            'lamp_slip_gaji'        => 'mimes:jpg,jpeg,png,pdf',
+            'lamp_foto_usaha.*'     => 'mimes:jpg,jpeg,png,pdf',
+            'lamp_skk'              => 'mimes:jpg,jpeg,png,pdf',
+            'foto_pembukuan_usaha.*'=> 'mimes:jpg,jpeg,png,pdf',
         ];
 
         return $rules;
@@ -163,13 +163,13 @@ class DebiturRequest extends FormRequest
             'lamp_sku.mimes'                 => ':attribute harus bertipe :values',
             'lamp_slip_gaji.mimes'           => ':attribute harus bertipe :values',
             'lamp_foto_usaha.mimes'          => ':attribute harus bertipe :values',
-            'lamp_surat_cerai.max'           => 'ukuran :attribute max :values',
-            'lamp_buku_tabungan.max'         => 'ukuran :attribute max :max kb',
-            'lamp_ktp.max'                   => 'ukuran :attribute max :max kb',
-            'lamp_kk.max'                    => 'ukuran :attribute max :max kb',
-            'lamp_sku.max'                   => 'ukuran :attribute max :max kb',
-            'lamp_slip_gaji.max'             => 'ukuran :attribute max :max kb',
-            'lamp_foto_usaha.max'            => 'ukuran :attribute max :max kb'
+            // 'lamp_surat_cerai.max'           => 'ukuran :attribute max :values',
+            // 'lamp_buku_tabungan.max'         => 'ukuran :attribute max :max kb',
+            // 'lamp_ktp.max'                   => 'ukuran :attribute max :max kb',
+            // 'lamp_kk.max'                    => 'ukuran :attribute max :max kb',
+            // 'lamp_sku.max'                   => 'ukuran :attribute max :max kb',
+            // 'lamp_slip_gaji.max'             => 'ukuran :attribute max :max kb',
+            // 'lamp_foto_usaha.max'            => 'ukuran :attribute max :max kb'
         ];
     }
 

@@ -101,18 +101,18 @@ class BlankRequest extends FormRequest
                 'rw_tempat_kerja'       => 'numeric',
                 // 'tgl_mulai_kerja'       => 'date_format:d-m-Y',
                 'no_telp_tempat_kerja'  => 'numeric',
-                'lamp_surat_cerai'      => 'mimes:jpg,jpeg,png,pdf|max:2048',
-                'lamp_buku_tabungan.*'  => 'mimes:jpg,jpeg,png,pdf|max:2048',
-                'lamp_ktp'              => 'mimes:jpg,jpeg,png,pdf|max:2048',
-                'lamp_kk'               => 'mimes:jpg,jpeg,png,pdf|max:2048',
-                'lamp_sku.*'            => 'mimes:jpg,jpeg,png,pdf|max:2048',
-                'lamp_slip_gaji'        => 'mimes:jpg,jpeg,png,pdf|max:2048',
-                'lamp_foto_usaha.*'     => 'mimes:jpg,jpeg,png,pdf|max:2048',
+                'lamp_surat_cerai'      => 'mimes:jpg,jpeg,png,pdf',
+                'lamp_buku_tabungan.*'  => 'mimes:jpg,jpeg,png,pdf',
+                'lamp_ktp'              => 'mimes:jpg,jpeg,png,pdf',
+                'lamp_kk'               => 'mimes:jpg,jpeg,png,pdf',
+                'lamp_sku.*'            => 'mimes:jpg,jpeg,png,pdf',
+                'lamp_slip_gaji'        => 'mimes:jpg,jpeg,png,pdf',
+                'lamp_foto_usaha.*'     => 'mimes:jpg,jpeg,png,pdf',
 
                 // Pasangan
                 'jenis_kelamin_pas'         => 'in:L,P',
-                'lamp_ktp_pas'              => 'mimes:jpg,jpeg,png,pdf|max:2048',
-                'lamp_kk_pas'               => 'mimes:jpg,jpeg,png,pdf|max:2048',
+                'lamp_ktp_pas'              => 'mimes:jpg,jpeg,png,pdf',
+                'lamp_kk_pas'               => 'mimes:jpg,jpeg,png,pdf',
                 'pekerjaan_pas'             => 'in:KARYAWAN,PNS,WIRASWASTA,PENGURUS_RT',
                 'rt_tempat_kerja_pas'       => 'numeric',
                 'rw_tempat_kerja_pas'       => 'numeric',
@@ -126,10 +126,10 @@ class BlankRequest extends FormRequest
                 // Penjamin
                 'tgl_lahir_pen.*'            => 'date_format:d-m-Y',
                 'jenis_kelamin_pen.*'        => 'in:L,P',
-                'lamp_ktp_pen.*'             => 'mimes:jpg,jpeg,png,pdf|max:2048',
-                'lamp_ktp_pasangan_pen.*'    => 'mimes:jpg,jpeg,png,pdf|max:2048',
-                'lamp_kk_pen.*'              => 'mimes:jpg,jpeg,png,pdf|max:2048',
-                'lamp_buku_nikah_pen.*'      => 'mimes:jpg,jpeg,png,pdf|max:2048',
+                'lamp_ktp_pen.*'             => 'mimes:jpg,jpeg,png,pdf',
+                'lamp_ktp_pasangan_pen.*'    => 'mimes:jpg,jpeg,png,pdf',
+                'lamp_kk_pen.*'              => 'mimes:jpg,jpeg,png,pdf',
+                'lamp_buku_nikah_pen.*'      => 'mimes:jpg,jpeg,png,pdf',
 
                 'pekerjaan_pen.*'            => 'in:KARYAWAN,PNS,WIRASWASTA,PENGURUS_RT',
                 'rt_tempat_kerja_pen.*'      => 'numeric',
@@ -180,21 +180,21 @@ class BlankRequest extends FormRequest
                 'jenis_sertifikat.*'    => 'in:SHM,SHGB',
                 // 'tgl_ukur_sertifikat.*' => 'date_format:d-m-Y',
                 'tgl_berlaku_shgb.*'      => 'date_format:d-m-Y',
-                'agunan_bag_depan.*'      => 'mimes:jpg,jpeg,png,pdf|max:2048',
-                'agunan_bag_jalan.*'      => 'mimes:jpg,jpeg,png,pdf|max:2048',
-                'agunan_bag_ruangtamu.*'  => 'mimes:jpg,jpeg,png,pdf|max:2048',
-                'agunan_bag_kamarmandi.*' => 'mimes:jpg,jpeg,png,pdf|max:2048',
-                'agunan_bag_dapur.*'      => 'mimes:jpg,jpeg,png,pdf|max:2048',
+                'agunan_bag_depan.*'      => 'mimes:jpg,jpeg,png,pdf',
+                'agunan_bag_jalan.*'      => 'mimes:jpg,jpeg,png,pdf',
+                'agunan_bag_ruangtamu.*'  => 'mimes:jpg,jpeg,png,pdf',
+                'agunan_bag_kamarmandi.*' => 'mimes:jpg,jpeg,png,pdf',
+                'agunan_bag_dapur.*'      => 'mimes:jpg,jpeg,png,pdf',
 
                 // Agunan Kendaraan
                 'tahun.*'                    => 'date_format:Y',
                 'tgl_kadaluarsa_pajak.*'     => 'date_format:d-m-Y',
                 'tgl_kadaluarsa_stnk.*'      => 'date_format:d-m-Y',
-                'lamp_agunan_depan_ken.*'    => 'mimes:jpg,jpeg,png,pdf|max:2048',
-                'lamp_agunan_kanan_ken.*'    => 'mimes:jpg,jpeg,png,pdf|max:2048',
-                'lamp_agunan_kiri_ken.*'     => 'mimes:jpg,jpeg,png,pdf|max:2048',
-                'lamp_agunan_belakang_ken.*' => 'mimes:jpg,jpeg,png,pdf|max:2048',
-                'lamp_agunan_dalam_ken.*'    => 'mimes:jpg,jpeg,png,pdf|max:2048',
+                'lamp_agunan_depan_ken.*'    => 'mimes:jpg,jpeg,png,pdf',
+                'lamp_agunan_kanan_ken.*'    => 'mimes:jpg,jpeg,png,pdf',
+                'lamp_agunan_kiri_ken.*'     => 'mimes:jpg,jpeg,png,pdf',
+                'lamp_agunan_belakang_ken.*' => 'mimes:jpg,jpeg,png,pdf',
+                'lamp_agunan_dalam_ken.*'    => 'mimes:jpg,jpeg,png,pdf',
 
                 // Kapasitas Bulanan
                 'pemasukan_debitur'     => 'integer',
@@ -294,13 +294,13 @@ class BlankRequest extends FormRequest
                 // Transaksi CAA
                 'penyimpangan'       => 'in:ADA,TIDAK',
                 'team_caa.*'         => 'required|integer',
-                'file_report_mao'    => 'mimes:jpg,jpeg,png,pdf|max:2048',
-                'file_report_mca'    => 'mimes:jpg,jpeg,png,pdf|max:2048',
+                'file_report_mao'    => 'mimes:jpg,jpeg,png,pdf',
+                'file_report_mca'    => 'mimes:jpg,jpeg,png,pdf',
                 'status_file_agunan' => 'in:ORIGINAL,CUSTOM',
                 'status_file_usaha'  => 'in:ORIGINAL,CUSTOM',
-                // 'file_agunan.*'      => 'mimes:jpg,jpeg,png,pdf|max:2048',
-                // 'file_usaha.*'       => 'mimes:jpg,jpeg,png,pdf|max:2048',
-                'file_lain'          => 'mimes:jpg,jpeg,png,pdf|max:2048'
+                // 'file_agunan.*'      => 'mimes:jpg,jpeg,png,pdf',
+                // 'file_usaha.*'       => 'mimes:jpg,jpeg,png,pdf',
+                'file_lain'          => 'mimes:jpg,jpeg,png,pdf'
             ];
         }else{
 
@@ -348,13 +348,13 @@ class BlankRequest extends FormRequest
                 'rw_tempat_kerja'       => 'numeric',
                 // 'tgl_mulai_kerja'       => 'date_format:d-m-Y',
                 'no_telp_tempat_kerja'  => 'numeric',
-                'lamp_surat_cerai'      => 'mimes:jpg,jpeg,png,pdf|max:2048',
-                'lamp_buku_tabungan.*'  => 'mimes:jpg,jpeg,png,pdf|max:2048',
-                'lamp_ktp'              => 'mimes:jpg,jpeg,png,pdf|max:2048',
-                'lamp_kk'               => 'mimes:jpg,jpeg,png,pdf|max:2048',
-                'lamp_sku.*'            => 'mimes:jpg,jpeg,png,pdf|max:2048',
-                'lamp_slip_gaji'        => 'mimes:jpg,jpeg,png,pdf|max:2048',
-                'lamp_foto_usaha.*'     => 'mimes:jpg,jpeg,png,pdf|max:2048',
+                'lamp_surat_cerai'      => 'mimes:jpg,jpeg,png,pdf',
+                'lamp_buku_tabungan.*'  => 'mimes:jpg,jpeg,png,pdf',
+                'lamp_ktp'              => 'mimes:jpg,jpeg,png,pdf',
+                'lamp_kk'               => 'mimes:jpg,jpeg,png,pdf',
+                'lamp_sku.*'            => 'mimes:jpg,jpeg,png,pdf',
+                'lamp_slip_gaji'        => 'mimes:jpg,jpeg,png,pdf',
+                'lamp_foto_usaha.*'     => 'mimes:jpg,jpeg,png,pdf',
 
                 // Pasangan
                 'jenis_kelamin_pas'         => 'in:L,P',
@@ -366,8 +366,8 @@ class BlankRequest extends FormRequest
                 'no_telp_pas'               => 'between:11,13',
                 'tgl_lahir_pas'             => 'date_format:d-m-Y',
 
-                'lamp_ktp_pas'              => 'mimes:jpg,jpeg,png,pdf|max:2048',
-                'lamp_kk_pas'               => 'mimes:jpg,jpeg,png,pdf|max:2048',
+                'lamp_ktp_pas'              => 'mimes:jpg,jpeg,png,pdf',
+                'lamp_kk_pas'               => 'mimes:jpg,jpeg,png,pdf',
                 'pekerjaan_pas'             => 'in:KARYAWAN,PNS,WIRASWASTA,PENGURUS_RT',
                 'rt_tempat_kerja_pas'       => 'numeric',
                 'rw_tempat_kerja_pas'       => 'numeric',
@@ -385,10 +385,10 @@ class BlankRequest extends FormRequest
 
                 'tgl_lahir_pen.*'            => 'date_format:d-m-Y',
                 'jenis_kelamin_pen.*'        => 'in:L,P',
-                'lamp_ktp_pen.*'             => 'mimes:jpg,jpeg,png,pdf|max:2048',
-                'lamp_ktp_pasangan_pen.*'    => 'mimes:jpg,jpeg,png,pdf|max:2048',
-                'lamp_kk_pen.*'              => 'mimes:jpg,jpeg,png,pdf|max:2048',
-                'lamp_buku_nikah_pen.*'      => 'mimes:jpg,jpeg,png,pdf|max:2048',
+                'lamp_ktp_pen.*'             => 'mimes:jpg,jpeg,png,pdf',
+                'lamp_ktp_pasangan_pen.*'    => 'mimes:jpg,jpeg,png,pdf',
+                'lamp_kk_pen.*'              => 'mimes:jpg,jpeg,png,pdf',
+                'lamp_buku_nikah_pen.*'      => 'mimes:jpg,jpeg,png,pdf',
 
                 'pekerjaan_pen.*'            => 'in:KARYAWAN,PNS,WIRASWASTA,PENGURUS_RT',
                 'rt_tempat_kerja_pen.*'      => 'numeric',
@@ -439,21 +439,21 @@ class BlankRequest extends FormRequest
                 'jenis_sertifikat.*'    => 'in:SHM,SHGB',
                 // 'tgl_ukur_sertifikat.*' => 'date_format:d-m-Y',
                 'tgl_berlaku_shgb.*'      => 'date_format:d-m-Y',
-                'agunan_bag_depan.*'      => 'mimes:jpg,jpeg,png,pdf|max:2048',
-                'agunan_bag_jalan.*'      => 'mimes:jpg,jpeg,png,pdf|max:2048',
-                'agunan_bag_ruangtamu.*'  => 'mimes:jpg,jpeg,png,pdf|max:2048',
-                'agunan_bag_kamarmandi.*' => 'mimes:jpg,jpeg,png,pdf|max:2048',
-                'agunan_bag_dapur.*'      => 'mimes:jpg,jpeg,png,pdf|max:2048',
+                'agunan_bag_depan.*'      => 'mimes:jpg,jpeg,png,pdf',
+                'agunan_bag_jalan.*'      => 'mimes:jpg,jpeg,png,pdf',
+                'agunan_bag_ruangtamu.*'  => 'mimes:jpg,jpeg,png,pdf',
+                'agunan_bag_kamarmandi.*' => 'mimes:jpg,jpeg,png,pdf',
+                'agunan_bag_dapur.*'      => 'mimes:jpg,jpeg,png,pdf',
 
                 // Agunan Kendaraan
                 'tahun.*'                    => 'date_format:Y',
                 'tgl_kadaluarsa_pajak.*'     => 'date_format:d-m-Y',
                 'tgl_kadaluarsa_stnk.*'      => 'date_format:d-m-Y',
-                'lamp_agunan_depan_ken.*'    => 'mimes:jpg,jpeg,png,pdf|max:2048',
-                'lamp_agunan_kanan_ken.*'    => 'mimes:jpg,jpeg,png,pdf|max:2048',
-                'lamp_agunan_kiri_ken.*'     => 'mimes:jpg,jpeg,png,pdf|max:2048',
-                'lamp_agunan_belakang_ken.*' => 'mimes:jpg,jpeg,png,pdf|max:2048',
-                'lamp_agunan_dalam_ken.*'    => 'mimes:jpg,jpeg,png,pdf|max:2048',
+                'lamp_agunan_depan_ken.*'    => 'mimes:jpg,jpeg,png,pdf',
+                'lamp_agunan_kanan_ken.*'    => 'mimes:jpg,jpeg,png,pdf',
+                'lamp_agunan_kiri_ken.*'     => 'mimes:jpg,jpeg,png,pdf',
+                'lamp_agunan_belakang_ken.*' => 'mimes:jpg,jpeg,png,pdf',
+                'lamp_agunan_dalam_ken.*'    => 'mimes:jpg,jpeg,png,pdf',
 
                 // Kapasitas Bulanan
                 'pemasukan_debitur'     => 'integer',
@@ -553,13 +553,13 @@ class BlankRequest extends FormRequest
                 // Transaksi CAA
                 'penyimpangan'       => 'in:ADA,TIDAK',
                 'team_caa.*'         => 'required|integer',
-                'file_report_mao'    => 'mimes:jpg,jpeg,png,pdf|max:2048',
-                'file_report_mca'    => 'mimes:jpg,jpeg,png,pdf|max:2048',
+                'file_report_mao'    => 'mimes:jpg,jpeg,png,pdf',
+                'file_report_mca'    => 'mimes:jpg,jpeg,png,pdf',
                 'status_file_agunan' => 'in:ORIGINAL,CUSTOM',
                 'status_file_usaha'  => 'in:ORIGINAL,CUSTOM',
-                // 'file_agunan.*'      => 'mimes:jpg,jpeg,png,pdf|max:2048',
-                // 'file_usaha.*'       => 'mimes:jpg,jpeg,png,pdf|max:2048',
-                'file_lain'          => 'mimes:jpg,jpeg,png,pdf|max:2048'
+                // 'file_agunan.*'      => 'mimes:jpg,jpeg,png,pdf',
+                // 'file_usaha.*'       => 'mimes:jpg,jpeg,png,pdf',
+                'file_lain'          => 'mimes:jpg,jpeg,png,pdf'
             ];
         }
 
@@ -577,8 +577,8 @@ class BlankRequest extends FormRequest
         $date_format = ':attribute harus berupa angka dengan format :format';
         $between     = ':attribute harus berada diantara :min - :max.';
         $mimes       = ':attribute harus bertipe :values';
-        $max         = ':attribute tidak boleh lebih dari :max kb';
-        $size        = ':attribute tidak boleh lebih dari :size kb';
+        // $max         = ':attribute tidak boleh lebih dari :max kb';
+        // $size        = ':attribute tidak boleh lebih dari :size kb';
 
         return [
             // Fasilitas Pinjaman
@@ -666,13 +666,13 @@ class BlankRequest extends FormRequest
             'lamp_sku.mimes'                 => $mimes,
             'lamp_slip_gaji.mimes'           => $mimes,
             'lamp_foto_usaha.mimes'          => $mimes,
-            'lamp_surat_cerai.max'           => $max,
-            'lamp_buku_tabungan.*.max'       => $max,
-            'lamp_ktp.max'                   => $max,
-            'lamp_kk.max'                    => $max,
-            'lamp_sku.max.*'                 => $max,
-            'lamp_slip_gaji.max'             => $max,
-            'lamp_foto_usaha.*.max'          => $max,
+            // 'lamp_surat_cerai.max'           => $max,
+            // 'lamp_buku_tabungan.*.max'       => $max,
+            // 'lamp_ktp.max'                   => $max,
+            // 'lamp_kk.max'                    => $max,
+            // 'lamp_sku.max.*'                 => $max,
+            // 'lamp_slip_gaji.max'             => $max,
+            // 'lamp_foto_usaha.*.max'          => $max,
 
             // Pasangan
             'jenis_kelamin_pas.in'             => $in,
@@ -695,8 +695,8 @@ class BlankRequest extends FormRequest
             'no_telp_pas.unique'               => $unique,
             'lamp_ktp_pas.mimes'               => $mimes,
             'lamp_kk_pas.mimes'                => $mimes,
-            'lamp_ktp_pas.max'                 => $max,
-            'lamp_kk_pas.max'                  => $max,
+            // 'lamp_ktp_pas.max'                 => $max,
+            // 'lamp_kk_pas.max'                  => $max,
             'pekerjaan_pas.in'                 => $in,
             'rt_tempat_kerja_pas.integer'      => $numeric,
             'rw_tempat_kerja_pas.integer'      => $numeric,
@@ -716,10 +716,10 @@ class BlankRequest extends FormRequest
             'lamp_ktp_pasangan_pen.*.mimes'      => $mimes,
             'lamp_kk_pen.*.mimes'                => $mimes,
             'lamp_buku_nikah_pen.*.mimes'        => $mimes,
-            'lamp_ktp_pen.*.max'                 => $max,
-            'lamp_ktp_pasangan_pen.*.max'        => $max,
-            'lamp_kk_pen.*.max'                  => $max,
-            'lamp_buku_nikah_pen.*.max'          => $max,
+            // 'lamp_ktp_pen.*.max'                 => $max,
+            // 'lamp_ktp_pasangan_pen.*.max'        => $max,
+            // 'lamp_kk_pen.*.max'                  => $max,
+            // 'lamp_buku_nikah_pen.*.max'          => $max,
             'pekerjaan_pen.*.in'                 => $in,
             'rt_tempat_kerja_pen.*.integer'      => $numeric,
             'rw_tempat_kerja_pen.*.integer'      => $numeric,
@@ -777,11 +777,11 @@ class BlankRequest extends FormRequest
             'agunan_bag_kamarmandi.*.mimes'  => $mimes,
             'agunan_bag_dapur.*.mimes'       => $mimes,
 
-            'agunan_bag_depan.*.max'         => $max,
-            'agunan_bag_jalan.*.max'         => $max,
-            'agunan_bag_ruangtamu.*.max'     => $max,
-            'agunan_bag_kamarmandi.*.max'    => $max,
-            'agunan_bag_dapur.*.max'         => $max,
+            // 'agunan_bag_depan.*.max'         => $max,
+            // 'agunan_bag_jalan.*.max'         => $max,
+            // 'agunan_bag_ruangtamu.*.max'     => $max,
+            // 'agunan_bag_kamarmandi.*.max'    => $max,
+            // 'agunan_bag_dapur.*.max'         => $max,
 
             // Agunan Kendaraan
             'tahun_ken.*.date_format'         => $date_format,
@@ -794,11 +794,11 @@ class BlankRequest extends FormRequest
             'lamp_agunan_belakang.ken.*.mimes'=> $mimes,
             'lamp_agunan_dalam.ken.*.mimes'   => $mimes,
 
-            'lamp_agunan_depan.ken.*.max'     => $max,
-            'lamp_agunan_kanan.ken.*.max'     => $max,
-            'lamp_agunan_kiri.ken.*.max'      => $max,
-            'lamp_agunan_belakang.ken.*.max'  => $max,
-            'lamp_agunan_dalam.ken.*.max'     => $max,
+            // 'lamp_agunan_depan.ken.*.max'     => $max,
+            // 'lamp_agunan_kanan.ken.*.max'     => $max,
+            // 'lamp_agunan_kiri.ken.*.max'      => $max,
+            // 'lamp_agunan_belakang.ken.*.max'  => $max,
+            // 'lamp_agunan_dalam.ken.*.max'     => $max,
 
             // Kapasitas Bulanan
             'pemasukan_debitur.integer'     => $integer,
@@ -902,9 +902,9 @@ class BlankRequest extends FormRequest
             'team_caa.*.required'         => $required,
             'team_caa.*.integer'          => $integer,
             'file_report_mao.mimes'       => $in,
-            'file_report_mao.max'         => $max,
+            // 'file_report_mao.max'         => $max,
             'file_report_mca.mimes'       => $in,
-            'file_report_mca.max'         => $max,
+            // 'file_report_mca.max'         => $max,
             'status_file_agunan.required' => $required,
             'status_file_agunan.in'       => $in,
             'status_file_usaha.required'  => $required,
@@ -916,7 +916,7 @@ class BlankRequest extends FormRequest
             // 'file_usaha.*.mimes'          => $in,
             // 'file_usaha.*.max'            => $max,
             'file_lain.mimes'             => $in,
-            'file_lain.max'               => $max,
+            // 'file_lain.max'               => $max,
         ];
     }
 

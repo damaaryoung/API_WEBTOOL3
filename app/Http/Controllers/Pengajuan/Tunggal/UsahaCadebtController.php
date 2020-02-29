@@ -25,6 +25,8 @@ class UsahaCadebtController extends BaseController
     public function show($id){
         $check = PendapatanUsaha::where('id', $id)->first();
 
+        dd($check->toArray());
+
         if ($check == null) {
             return response()->json([
                 'code'    => 404,

@@ -26,6 +26,7 @@ class AreaPICReq extends FormRequest
             'id_kabupaten'  => 'required',
             'id_kecamatan'  => 'required',
             'id_kelurahan'  => 'required',
+            'id_pic'        => 'required',
             'flg_aktif'     => 'in:false,true'
         ];
     }
@@ -39,6 +40,7 @@ class AreaPICReq extends FormRequest
             'id_kabupaten.required'  => ':attribute wajib diisi',
             'id_kecamatan.required'  => ':attribute wajib diisi',
             'id_kelurahan.required'  => ':attribute wajib diisi',
+            'id_pic.required'        => ':attribute wajib diisi',
             'flg_aktif.in'           => ':attribute harus salah satu dari jenis berikut :values'
         ];
     }

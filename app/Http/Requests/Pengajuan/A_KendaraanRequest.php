@@ -28,11 +28,11 @@ class A_KendaraanRequest extends FormRequest
                 'tahun.*'                 => 'date_format:Y',
                 'tgl_kadaluarsa_pajak.*'  => 'date_format:d-m-Y',
                 'tgl_kadaluarsa_stnk.*'   => 'date_format:d-m-Y',
-                'lamp_agunan_depan.*'     => 'mimes:jpg,jpeg,png,pdf|max:2048',
-                'lamp_agunan_kanan.*'     => 'mimes:jpg,jpeg,png,pdf|max:2048',
-                'lamp_agunan_kiri.*'      => 'mimes:jpg,jpeg,png,pdf|max:2048',
-                'lamp_agunan_belakang.*'  => 'mimes:jpg,jpeg,png,pdf|max:2048',
-                'lamp_agunan_dalam.*'     => 'mimes:jpg,jpeg,png,pdf|max:2048'
+                'lamp_agunan_depan.*'     => 'mimes:jpg,jpeg,png,pdf',
+                'lamp_agunan_kanan.*'     => 'mimes:jpg,jpeg,png,pdf',
+                'lamp_agunan_kiri.*'      => 'mimes:jpg,jpeg,png,pdf',
+                'lamp_agunan_belakang.*'  => 'mimes:jpg,jpeg,png,pdf',
+                'lamp_agunan_dalam.*'     => 'mimes:jpg,jpeg,png,pdf'
             ];
         }else{
             $rules = [
@@ -40,11 +40,11 @@ class A_KendaraanRequest extends FormRequest
                 'tahun'                 => 'date_format:Y',
                 'tgl_kadaluarsa_pajak'  => 'date_format:d-m-Y',
                 'tgl_kadaluarsa_stnk'   => 'date_format:d-m-Y',
-                'lamp_agunan_depan'     => 'mimes:jpg,jpeg,png,pdf|max:2048',
-                'lamp_agunan_kanan'     => 'mimes:jpg,jpeg,png,pdf|max:2048',
-                'lamp_agunan_kiri'      => 'mimes:jpg,jpeg,png,pdf|max:2048',
-                'lamp_agunan_belakang'  => 'mimes:jpg,jpeg,png,pdf|max:2048',
-                'lamp_agunan_dalam'     => 'mimes:jpg,jpeg,png,pdf|max:2048'
+                'lamp_agunan_depan'     => 'mimes:jpg,jpeg,png,pdf',
+                'lamp_agunan_kanan'     => 'mimes:jpg,jpeg,png,pdf',
+                'lamp_agunan_kiri'      => 'mimes:jpg,jpeg,png,pdf',
+                'lamp_agunan_belakang'  => 'mimes:jpg,jpeg,png,pdf',
+                'lamp_agunan_dalam'     => 'mimes:jpg,jpeg,png,pdf'
             ];
         }
 
@@ -70,11 +70,11 @@ class A_KendaraanRequest extends FormRequest
                 'lamp_agunan_belakang.*.mimes'      => ':attribute harus bertipe :values',
                 'lamp_agunan_dalam.*.mimes'         => ':attribute harus bertipe :values',
 
-                'lamp_agunan_depan.*.max'           => 'ukuran :attribute max :max kb',
-                'lamp_agunan_kanan.*.max'           => 'ukuran :attribute max :max kb',
-                'lamp_agunan_kiri.*.max'            => 'ukuran :attribute max :max kb',
-                'lamp_agunan_belakang.*.max'        => 'ukuran :attribute max :max kb',
-                'lamp_agunan_dalam.*.max'           => 'ukuran :attribute max :max kb',
+                // 'lamp_agunan_depan.*.max'           => 'ukuran :attribute max :max kb',
+                // 'lamp_agunan_kanan.*.max'           => 'ukuran :attribute max :max kb',
+                // 'lamp_agunan_kiri.*.max'            => 'ukuran :attribute max :max kb',
+                // 'lamp_agunan_belakang.*.max'        => 'ukuran :attribute max :max kb',
+                // 'lamp_agunan_dalam.*.max'           => 'ukuran :attribute max :max kb',
 
                 // Agunan Tanah
                 'tipe_lokasi_agunan.in'           => ':attribute harus salah satu dari jenis berikut :values',
@@ -90,13 +90,13 @@ class A_KendaraanRequest extends FormRequest
                 'lamp_agunan_kanan.mimes'         => ':attribute harus bertipe :values',
                 'lamp_agunan_kiri.mimes'          => ':attribute harus bertipe :values',
                 'lamp_agunan_belakang.mimes'      => ':attribute harus bertipe :values',
-                'lamp_agunan_dalam.mimes'         => ':attribute harus bertipe :values',
+                'lamp_agunan_dalam.mimes'         => ':attribute harus bertipe :values'
 
-                'lamp_agunan_depan.max'           => 'ukuran :attribute max :max kb',
-                'lamp_agunan_kanan.max'           => 'ukuran :attribute max :max kb',
-                'lamp_agunan_kiri.max'            => 'ukuran :attribute max :max kb',
-                'lamp_agunan_belakang.max'        => 'ukuran :attribute max :max kb',
-                'lamp_agunan_dalam.max'           => 'ukuran :attribute max :max kb'
+                // 'lamp_agunan_depan.max'           => 'ukuran :attribute max :max kb',
+                // 'lamp_agunan_kanan.max'           => 'ukuran :attribute max :max kb',
+                // 'lamp_agunan_kiri.max'            => 'ukuran :attribute max :max kb',
+                // 'lamp_agunan_belakang.max'        => 'ukuran :attribute max :max kb',
+                // 'lamp_agunan_dalam.max'           => 'ukuran :attribute max :max kb'
             ];
     }
 

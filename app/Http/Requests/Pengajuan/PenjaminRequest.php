@@ -36,10 +36,10 @@ class PenjaminRequest extends FormRequest
                 // Penjamin
                 'tgl_lahir_pen'            => 'date_format:d-m-Y',
                 'jenis_kelamin_pen'        => 'in:L,P',
-                'lamp_ktp_pen'             => 'mimes:jpg,jpeg,png,pdf|max:2048',
-                'lamp_ktp_pasangan_pen'    => 'mimes:jpg,jpeg,png,pdf|max:2048',
-                'lamp_kk_pen'              => 'mimes:jpg,jpeg,png,pdf|max:2048',
-                'lamp_buku_nikah_pen'      => 'mimes:jpg,jpeg,png,pdf|max:2048',
+                'lamp_ktp_pen'             => 'mimes:jpg,jpeg,png,pdf',
+                'lamp_ktp_pasangan_pen'    => 'mimes:jpg,jpeg,png,pdf',
+                'lamp_kk_pen'              => 'mimes:jpg,jpeg,png,pdf',
+                'lamp_buku_nikah_pen'      => 'mimes:jpg,jpeg,png,pdf',
 
                 'pekerjaan_pen'            => 'in:KARYAWAN,PNS,WIRASWASTA,PENGURUS_RT',
                 'rt_tempat_kerja_pen'      => 'numeric',
@@ -55,10 +55,10 @@ class PenjaminRequest extends FormRequest
                 'tgl_lahir_pen.*'         => 'date_format:d-m-Y',
                 'jenis_kelamin_pen.*'     => 'in:L,P',
                 'no_telp_pen.*'           => 'between:11,13}unique:web.penjamin_calon_debitur,no_telp',
-                'lamp_ktp_pen.*'          => 'mimes:jpg,jpeg,png,pdf|max:2048',
-                'lamp_ktp_pasangan_pen.*' => 'mimes:jpg,jpeg,png,pdf|max:2048',
-                'lamp_kk_pen.*'           => 'mimes:jpg,jpeg,png,pdf|max:2048',
-                'lamp_buku_nikah_pen.*'   => 'mimes:jpg,jpeg,png,pdf|max:2048'
+                'lamp_ktp_pen.*'          => 'mimes:jpg,jpeg,png,pdf',
+                'lamp_ktp_pasangan_pen.*' => 'mimes:jpg,jpeg,png,pdf',
+                'lamp_kk_pen.*'           => 'mimes:jpg,jpeg,png,pdf',
+                'lamp_buku_nikah_pen.*'   => 'mimes:jpg,jpeg,png,pdf'
             ];
         }
 
@@ -81,10 +81,10 @@ class PenjaminRequest extends FormRequest
                 'lamp_ktp_pasangan_pen.mimes'      => ':attribute harus bertipe :values',
                 'lamp_kk_pen.mimes'                => ':attribute harus bertipe :values',
                 'lamp_buku_nikah_pen.mimes'        => ':attribute harus bertipe :values',
-                'lamp_ktp_pen.max'                 => 'ukuran :attribute max :max kb',
+                // 'lamp_ktp_pen.max'                 => 'ukuran :attribute max :max kb',
                 'lamp_ktp_pasangan_pen.max'        => 'ukuran :attribute max :max kb',
                 'lamp_kk_pen.max'                  => 'ukuran :attribute max :max kb',
-                'lamp_buku_nikah_pen.max'          => 'ukuran :attribute max :max kb',
+                // 'lamp_buku_nikah_pen.max'          => 'ukuran :attribute max :max kb',
                 'pekerjaan_pen.in'                 => ':attribute harus salah satu dari jenis berikut :values',
                 'rt_tempat_kerja_pen.numeric'      => ':attribute harus berupa angka',
                 'rw_tempat_kerja_pen.numeric'      => ':attribute harus berupa angka',
@@ -103,10 +103,10 @@ class PenjaminRequest extends FormRequest
                 'lamp_ktp_pasangan_pen.*.mimes'      => ':attribute harus bertipe :values',
                 'lamp_kk_pen.*.mimes'                => ':attribute harus bertipe :values',
                 'lamp_buku_nikah_pen.*.mimes'        => ':attribute harus bertipe :values',
-                'lamp_ktp_pen.*.max'                 => 'ukuran :attribute max :max kb',
-                'lamp_ktp_pasangan_pen.*.max'        => 'ukuran :attribute max :max kb',
-                'lamp_kk_pen.*.max'                  => 'ukuran :attribute max :max kb',
-                'lamp_buku_nikah_pen.*.max'          => 'ukuran :attribute max :max kb',
+                // 'lamp_ktp_pen.*.max'                 => 'ukuran :attribute max :max kb',
+                // 'lamp_ktp_pasangan_pen.*.max'        => 'ukuran :attribute max :max kb',
+                // 'lamp_kk_pen.*.max'                  => 'ukuran :attribute max :max kb',
+                // 'lamp_buku_nikah_pen.*.max'          => 'ukuran :attribute max :max kb',
                 'pekerjaan_pen.*.in'                 => ':attribute harus salah satu dari jenis berikut :values',
                 'rt_tempat_kerja_pen.*.numeric'      => ':attribute harus berupa angka',
                 'rw_tempat_kerja_pen.*.numeric'      => ':attribute harus berupa angka',
