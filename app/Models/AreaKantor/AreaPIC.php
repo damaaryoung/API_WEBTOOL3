@@ -16,6 +16,8 @@ use App\Models\Wilayah\Kabupaten;
 use App\Models\Wilayah\Kecamatan;
 use App\Models\Wilayah\Kelurahan;
 
+use App\Models\AreaKantor\PIC;
+
 class AreaPIC extends Model implements AuthenticatableContract, AuthorizableContract
 {
     use Authenticatable, Authorizable;
@@ -73,6 +75,13 @@ class AreaPIC extends Model implements AuthenticatableContract, AuthorizableCont
         return $this->belongsTo(Kelurahan::class, 'id_kelurahan')->select(['id', 'nama', 'kode_pos'])
             ->withDefault(function () {
                 return new Kelurahan();
+            });
+    }
+
+    public function pic(){
+        return $this->belongsTo(PIC::class, 'id_pic')
+            ->withDefault(function () {
+                return new PIC();
             });
     }
 }

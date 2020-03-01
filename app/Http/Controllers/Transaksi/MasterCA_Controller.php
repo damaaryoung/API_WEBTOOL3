@@ -682,14 +682,15 @@ class MasterCA_Controller extends BaseController
             $sumTaksasiTan = array_sum(array_column($PeriksaTanah,'nilai_taksasi_agunan')); //array_sum($PeriksaTanah);
         }
 
-        $PeriksaKenda = PemeriksaanAgunTan::select('nilai_taksasi_agunan')->whereIn('id', explode(",", $id_pe_ta))->get()->toArray();
+        // $PeriksaKenda = PemeriksaanAgunTan::select('nilai_taksasi_agunan')->whereIn('id', explode(",", $id_pe_ta))->get()->toArray();
 
-        if ($PeriksaKenda == []) {
-            $sumTaksasiKen = 0;
-        }else{
-            $sumTaksasiKen = array_sum(array_column($PeriksaTanah,'nilai_taksasi_agunan')); //array_sum($PeriksaTanah);
-        }
-        $sumAllTaksasi = $sumTaksasiTan + $sumTaksasiKen; // Semua Nilai Taksasi dari semua agunan
+        // if ($PeriksaKenda == []) {
+        //     $sumTaksasiKen = 0;
+        // }else{
+        //     $sumTaksasiKen = array_sum(array_column($PeriksaTanah,'nilai_taksasi_agunan')); //array_sum($PeriksaTanah);
+        // }
+        // $sumAllTaksasi = $sumTaksasiTan + $sumTaksasiKen; // Semua Nilai Taksasi dari semua agunan
+        $sumAllTaksasi = $sumTaksasiTan; // Semua Nilai Taksasi dari semua agunan
 
 
         $recom_ltv   = Helper::recom_ltv($plafonCA, $sumAllTaksasi);
@@ -820,7 +821,7 @@ class MasterCA_Controller extends BaseController
             'nama_asuransi'       => $req->input('nama_asuransi_jiwa'),
             'jangka_waktu'        => $req->input('jangka_waktu_as_jiwa'),
             'nilai_pertanggungan' => $req->input('nilai_pertanggungan_as_jiwa'),
-            'jatuh_tempo'         => Carbon::parse($req->input('jatuh_tempo_as_jiwa'))->format('Y-m-d'),
+            'jatuh_tempo'         => empty($req->input('jatuh_tempo_as_jiwa')) ? null : Carbon::parse($req->input('jatuh_tempo_as_jiwa'))->format('Y-m-d'),
             'berat_badan'         => $req->input('berat_badan_as_jiwa'),
             'tinggi_badan'        => $req->input('tinggi_badan_as_jiwa'),
             'umur_nasabah'        => $req->input('umur_nasabah_as_jiwa')
@@ -835,19 +836,19 @@ class MasterCA_Controller extends BaseController
                 $asJaminan[] = array(
                     'nama_asuransi'
                         => empty($req->input('nama_asuransi_jaminan')[$i])
-                        ? 'null' : $req->input('nama_asuransi_jaminan')[$i],
+                        ? null : $req->nama_asuransi_jaminan[$i],
 
                     'jangka_waktu'
                         => empty($req->input('jangka_waktu_as_jaminan')[$i])
-                        ? 'null' : $req->input('jangka_waktu_as_jaminan')[$i],
+                        ? null : $req->jangka_waktu_as_jaminan[$i],
 
                     'nilai_pertanggungan'
                         => empty($req->input('nilai_pertanggungan_as_jaminan')[$i])
-                        ? 'null' : $req->input('nilai_pertanggungan_as_jaminan')[$i],
+                        ? null : $req->nilai_pertanggungan_as_jaminan[$i],
 
                     'jatuh_tempo'
                         => empty($req->input('jatuh_tempo_as_jaminan')[$i])
-                        ? 'null' : Carbon::parse($req->input('jatuh_tempo_as_jaminan')[$i])->format('Y-m-d')
+                        ? null : Carbon::parse($req->jatuh_tempo_as_jaminan[$i])->format('Y-m-d')
                 );
             }
 
@@ -1277,14 +1278,15 @@ class MasterCA_Controller extends BaseController
             $sumTaksasiTan = array_sum(array_column($PeriksaTanah,'nilai_taksasi_agunan')); //array_sum($PeriksaTanah);
         }
 
-        $PeriksaKenda = PemeriksaanAgunTan::select('nilai_taksasi_agunan')->whereIn('id', explode(",", $id_pe_ta))->get()->toArray();
+        // $PeriksaKenda = PemeriksaanAgunTan::select('nilai_taksasi_agunan')->whereIn('id', explode(",", $id_pe_ta))->get()->toArray();
 
-        if ($PeriksaKenda == []) {
-            $sumTaksasiKen = 0;
-        }else{
-            $sumTaksasiKen = array_sum(array_column($PeriksaTanah,'nilai_taksasi_agunan')); //array_sum($PeriksaTanah);
-        }
-        $sumAllTaksasi = $sumTaksasiTan + $sumTaksasiKen; // Semua Nilai Taksasi dari semua agunan
+        // if ($PeriksaKenda == []) {
+        //     $sumTaksasiKen = 0;
+        // }else{
+        //     $sumTaksasiKen = array_sum(array_column($PeriksaTanah,'nilai_taksasi_agunan')); //array_sum($PeriksaTanah);
+        // }
+        // $sumAllTaksasi = $sumTaksasiTan + $sumTaksasiKen; // Semua Nilai Taksasi dari semua agunan
+        $sumAllTaksasi = $sumTaksasiTan; // Semua Nilai Taksasi dari semua agunan
 
 
         $recom_ltv   = Helper::recom_ltv($plafonCA, $sumAllTaksasi);
@@ -1424,21 +1426,22 @@ class MasterCA_Controller extends BaseController
 
         $PeriksaTanah = PemeriksaanAgunTan::select('nilai_taksasi_agunan')->whereIn('id', explode(",", $id_pe_ta))->get()->toArray();
 
-        if ($PeriksaTanah == null) {
+        if ($PeriksaTanah == []) {
             $sumTaksasiTan = 0;
         }else{
             $sumTaksasiTan = array_sum(array_column($PeriksaTanah,'nilai_taksasi_agunan')); //array_sum($PeriksaTanah);
         }
 
-        $PeriksaKenda = PemeriksaanAgunTan::select('nilai_taksasi_agunan')->whereIn('id', explode(",", $id_pe_ta))->get()->toArray();
+        // $PeriksaKenda = PemeriksaanAgunTan::select('nilai_taksasi_agunan')->whereIn('id', explode(",", $id_pe_ta))->get()->toArray();
 
-        if ($PeriksaKenda == null) {
-            $sumTaksasiKen = 0;
-        }else{
-            $sumTaksasiKen = array_sum(array_column($PeriksaTanah,'nilai_taksasi_agunan')); //array_sum($PeriksaTanah);
-        }
+        // if ($PeriksaKenda == null) {
+        //     $sumTaksasiKen = 0;
+        // }else{
+        //     $sumTaksasiKen = array_sum(array_column($PeriksaTanah,'nilai_taksasi_agunan')); //array_sum($PeriksaTanah);
+        // }
 
-        $sumAllTaksasi = $sumTaksasiTan + $sumTaksasiKen; // Semua Nilai Taksasi dari semua agunan
+        // $sumAllTaksasi = $sumTaksasiTan + $sumTaksasiKen; // Semua Nilai Taksasi dari semua agunan
+        $sumAllTaksasi = $sumTaksasiTan; // Semua Nilai Taksasi dari semua agunan
 
         // Rekomendasi CA
         $inputRecomCA = array(

@@ -23,9 +23,16 @@ class AreaPICController extends BaseController
 
         $res = array();
         foreach ($query as $key => $val) {
-            $ko = PIC::whereIn('id', explode(",", $val->id_pic))->get()->toArray();
+            $pic = PIC::whereIn('id', explode(",", $val->id_pic))->select('id','nama', 'email', 'id_mj_pic')->get();
 
-            // dd($ko);
+            $pics = array();
+            foreach($pic as $i => $pi){
+                $pics[$i]['id'] = $pi->id;
+                $pics[$i]['nama'] = $pi->nama;
+                $pics[$i]['email'] = $pi->email;
+                $pics[$i]['jabatan'] = $pi->jpic['nama_jenis'];
+            }
+
             $res[$key] = [
                 'id'                => $val->id,
                 "nama_area_pic"     => $val->nama_area_pic,
@@ -33,7 +40,7 @@ class AreaPICController extends BaseController
                 "nama_kantor_cabang"=> $val->cabang['nama'],
                 "nama_kelurahan"    => $val->kel['nama'],
                 "kode_pos"          => $val->kel['kode_pos'],
-                // "pic"               => 
+                "pic"               => $pics
             ];
         }
 
@@ -100,6 +107,16 @@ class AreaPICController extends BaseController
             ], 404);
         }
 
+        $pic = PIC::whereIn('id', explode(",", $val->id_pic))->select('id','nama', 'email', 'id_mj_pic')->get();
+
+        $pics = array();
+        foreach($pic as $i => $pi){
+            $pics[$i]['id'] = $pi->id;
+            $pics[$i]['nama'] = $pi->nama;
+            $pics[$i]['email'] = $pi->email;
+            $pics[$i]['jabatan'] = $pi->jpic['nama_jenis'];
+        }
+
         $res = array(
             'id'                => $val->id,
             "nama_area_pic"     => $val->nama_area_pic,
@@ -116,6 +133,7 @@ class AreaPICController extends BaseController
             "id_kelurahan"      => $val->id_kelurahan,
             "nama_kelurahan"    => $val->kel['nama'],
             "kode_pos"          => $val->kel['kode_pos'],
+            "pic"               => $pics,
             "flg_aktif"         => $val->flg_aktif == 0 ? "false" : "true",
             "created_at"        => Carbon::parse($val->created_at)->format('d-m-Y H:i:s')
         );

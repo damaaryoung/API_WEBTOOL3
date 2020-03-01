@@ -473,4 +473,56 @@ $router->group(['middleware' => ['jwt.auth'], 'prefix' => 'api'], function () us
             $router->post('/{id}', ['subject' => 'Update pendapatan_calon_debitur', 'uses' => 'UsahaCadebtController@update']);
         });
     });
+
+    // CA
+    $router->group(['namespace' => 'Pengajuan\TunggalCA'], function() use ($router){
+        // Mutasi Bank
+        $router->group(['prefix' => '/mutasi_bank'], function() use ($router) {
+            $router->get('/',     ['subject' => 'Read Mutasi Bank',     'uses' => 'MutasiController@index']);
+            $router->get('/{id}', ['subject' => 'Detail Mutasi Bank',   'uses' => 'MutasiController@show']);
+            $router->put('/{id}', ['subject' => 'Update pendapatan_calon_debitur', 'uses' => 'MutasiController@update']);
+        });
+
+        // Data Keuangan (Tabungan) Bank Milik Nasabah
+        $router->group(['prefix' => '/data_keuangan'], function() use ($router) {
+            $router->get('/',     ['subject' => 'Read Data Tabungan',   'uses' => 'LogTabController@index']);
+            $router->get('/{id}', ['subject' => 'Detail Tabungan',      'uses' => 'LogTabController@show']);
+            $router->put('/{id}', ['subject' => 'Update Data Tabungan', 'uses' => 'LogTabController@update']);
+        });
+
+        // Infor,asi Analisa
+        $router->group(['prefix' => '/info_cc'], function() use ($router) {
+            $router->get('/',     ['subject' => 'Read Info Analisa Credit Checking',   'uses' => 'IAC_Controller@index']);
+            $router->get('/{id}', ['subject' => 'Detail Info Analisa Credit Checking', 'uses' => 'IAC_Controller@show']);
+            $router->put('/{id}', ['subject' => 'Update Info Analisa Credit Checking', 'uses' => 'IAC_Controller@update']);
+        });
+
+        // Ringkasan Analisa
+        $router->group(['prefix' => '/ring_analisa'], function() use ($router) {
+            $router->get('/',     ['subject' => 'Read - Ringkasan Analisa',   'uses' => 'RAnalisController@index']);
+            $router->get('/{id}', ['subject' => 'Detail - Ringkasan Analisa', 'uses' => 'RAnalisController@show']);
+            $router->put('/{id}', ['subject' => 'Update - Ringkasan Analisa', 'uses' => 'RAnalisController@update']);
+        });
+
+        // Rekomendasi Pinjaman
+        $router->group(['prefix' => '/rekom_pinjaman'], function() use ($router) {
+            $router->get('/',     ['subject' => 'Read - Rekomendasi Pinjaman',   'uses' => 'RekomPinController@index']);
+            $router->get('/{id}', ['subject' => 'Detail - Rekomendasi Pinjaman', 'uses' => 'RekomPinController@show']);
+            $router->put('/{id}', ['subject' => 'Update - Rekomendasi Pinjaman', 'uses' => 'RekomPinController@update']);
+        });
+
+        // Asuransi Jiwa
+        $router->group(['prefix' => '/asuransi_jiwa'], function() use ($router) {
+            $router->get('/',     ['subject' => 'Read - Asuransi Jiwa',   'uses' => 'AsJiwaController@index']);
+            $router->get('/{id}', ['subject' => 'Detail - Asuransi Jiwa', 'uses' => 'AsJiwaController@show']);
+            $router->put('/{id}', ['subject' => 'Update - Asuransi Jiwa', 'uses' => 'AsJiwaController@update']);
+        });
+
+        // Asuransi Jaminan
+        $router->group(['prefix' => '/asuransi_jaminan'], function() use ($router) {
+            $router->get('/',     ['subject' => 'Read - Asuransi Jaminan',   'uses' => 'AsJaminanController@index']);
+            $router->get('/{id}', ['subject' => 'Detail - Asuransi Jaminan', 'uses' => 'AsJaminanController@show']);
+            $router->put('/{id}', ['subject' => 'Update - Asuransi Jaminan', 'uses' => 'AsJaminanController@update']);
+        });
+    });
 });

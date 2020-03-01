@@ -231,7 +231,19 @@ class Controller extends BaseController
         return $result;
     }
 
-    public static function flip_array($array){
+    public static function second_flip_array($array){
+        foreach ($array as $key => $subarr)
+        {
+            foreach ($subarr as $subkey => $subvalue)
+            {
+                $out[$subkey][$key] = ($subvalue);
+            }
+        }
+
+        return $out;
+    }
+
+    public static function third_flip_array($array){
         foreach ($array as $key => $subarr)
         {
             foreach ($subarr as $subkey => $subvalue)

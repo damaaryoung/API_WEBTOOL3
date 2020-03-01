@@ -504,10 +504,10 @@ class BlankRequest extends FormRequest
                 // Data History Bank pada CA
                 'no_rekening'             => 'numeric',
                 'penghasilan_per_tahun'   => 'integer',
-                'pemasukan_per_bulan'     => 'in:A,B,C,D',
-                'frek_trans_pemasukan'    => 'in:A,B,C',
-                'pengeluaran_per_bulan'   => 'in:A,B,C,D',
-                'frek_trans_pengeluaran'  => 'in:A,B,C,D',
+                'pemasukan_per_bulan'     => 'in:A,B,C,D,E',
+                'frek_trans_pemasukan'    => 'in:A,B,C,D,E',
+                'pengeluaran_per_bulan'   => 'in:A,B,C,D,E',
+                'frek_trans_pengeluaran'  => 'in:A,B,C,D,E',
                 // 'sumber_dana_setoran'     =>
                 'tujuan_pengeluaran_dana' => 'in:KONSUMTIF,MODAL,INVESTASI',
 
@@ -840,7 +840,7 @@ class BlankRequest extends FormRequest
 
             // Mutasi Bank pada CA
             'urutan_mutasi.*.integer'           => $integer,
-            'no_rekening_mutasi.*.integer'      => $numeric,
+            'no_rekening_mutasi.*.numeric'      => $numeric,
             'frek_debet_mutasi.*.*.integer'     => $integer,
             'nominal_debet_mutasi.*.*.integer'  => $integer,
             'frek_kredit_mutasi.*.*.integer'    => $integer,
@@ -850,9 +850,9 @@ class BlankRequest extends FormRequest
             // Data History Bank pada CA
             'no_rekening.integer'           => $numeric,
             'penghasilan_per_tahun.integer' => $integer,
-            'pemasukan_per_bulan.integer'   => ':attribute harus salah satu dari jenis berikut :values, A untuk < 2jt, B untuk 2jt - 5jt, C untuk 5jt - 10jt, D untuk > 10jt',
+            'pemasukan_per_bulan.in'        => ':attribute harus salah satu dari jenis berikut :values, A untuk < 2jt, B untuk 2jt - 5jt, C untuk 5jt - 10jt, D untuk > 10jt',
             'frek_trans_pemasukan.in'       => ':attribute harus salah satu dari jenis berikut :values, A untuk frek. 1 -  5 Kali, B untuk untuk frek. 2.6 - 10 kali, C untuk frek. lebih dari 10 kali',
-            'pengeluaran_per_bulan.integer' => ':attribute harus salah satu dari jenis berikut :values, A untuk < 2jt, B untuk 2jt - 5jt, C untuk 5jt - 10jt, D untuk > 10jt',            'frek_trans_pengeluaran.in'     => ':attribute harus salah satu dari jenis berikut :values, A untuk frek. 1 -  5 Kali, B untuk untuk frek. 2.6 - 10 kali, C untuk frek. 3.1 - 15 kali, D untuk frek. lebih dari 15 kali',
+            'pengeluaran_per_bulan.in'      => ':attribute harus salah satu dari jenis berikut :values, A untuk < 2jt, B untuk 2jt - 5jt, C untuk 5jt - 10jt, D untuk > 10jt',            'frek_trans_pengeluaran.in'     => ':attribute harus salah satu dari jenis berikut :values, A untuk frek. 1 -  5 Kali, B untuk untuk frek. 2.6 - 10 kali, C untuk frek. 3.1 - 15 kali, D untuk frek. lebih dari 15 kali',
             'tujuan_pengeluaran_dana.in'    => $in,
 
             // Info ACC
@@ -891,8 +891,8 @@ class BlankRequest extends FormRequest
             'umur_nasabah_as_jiwa.integer'        => $integer,
 
             // Asuransi Jaminan pada CA
-            // 'jangka_waktu_as_jaminan.*.integer'        => $integer,
-            // 'jangka_waktu_as_jaminan.in'             => $in,
+            // 'jangka_waktu_as_jaminan.*.integer'      => $integer,
+            // 'jangka_waktu_as_jaminan.*.in'           => $in,
             'nilai_pertanggungan_as_jaminan.*.integer' => $integer,
             'jatuh_tempo_as_jaminan.*.date_format'     => $date_format,
 
