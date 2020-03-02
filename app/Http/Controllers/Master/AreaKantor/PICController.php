@@ -16,12 +16,12 @@ class PICController extends BaseController
     public function index() {
 
         $query = PIC::with('jpic','area','cabang')
-                ->whereHas('jpic', function($q) {
-                    // Query the name field in status table
-                    $q->where('nama_jenis', 'SO'); // '=' is optional
-                    $q->orWhere('nama_jenis', 'AO');
-                    $q->orWhere('nama_jenis', 'CA');
-                })
+                // ->whereHas('jpic', function($q) {
+                //     // Query the name field in status table
+                //     $q->where('nama_jenis', 'SO'); // '=' is optional
+                //     $q->orWhere('nama_jenis', 'AO');
+                //     $q->orWhere('nama_jenis', 'CA');
+                // })
                 ->where('flg_aktif', 1)
                 ->orderBy('nama', 'asc')
                 ->get();
@@ -270,8 +270,35 @@ class PICController extends BaseController
         }
     }
 
-    public function search($search) {
-        $query = PIC::with('jpic','area','cabang')->where('flg_aktif', 1)->where('nama', 'like', '%'.$search.'%')->orderBy('nama', 'asc')->get();
+    public function search($param, $key, $operator, $value, $valid) {
+        if($param != 'filter' && $param != 'search'){
+            return response()->json([
+                'code'    => 412,
+                'status'  => 'not valid',
+                'message' => 'gunakan parameter yang valid diantara berikut: filter, search'
+            ], 412);
+        }
+
+        if($operator != '=' && $param != '!=' && $param != '<' && $param != '<=' && $param != '>' && $param != '>='){
+            return response()->json([
+                'code'    => 412,
+                'status'  => 'not valid',
+                'message' => 'gunakan operator yang valid diantara berikut: =, !=, <, <=, >, >='
+            ], 412);
+        }
+
+        if($key != 'user_id' && $key != 'id_area' && $key != 'id_cabang' && $key != 'id_mj_pic' && $key != 'nama' && $key != 'email' && $key != 'plafon_caa' && $key != 'status'){
+            return response()->json([
+                'code'    => 412,
+                'status'  => 'not valid',
+                'message' => 'gunakan key yang valid diantara berikut: user_id, id_area, id_cabang, id_mj_pic, nama, email, plafon_caa'
+            ], 412);
+        }
+
+        $query = PIC::with('jpic','area','cabang')
+            ->where("{$key}", "{$operator}", "%{$value}%")
+            ->where('flg_aktif', $valid)
+            ->get();
 
         if ($query == '[]') {
             return response()->json([

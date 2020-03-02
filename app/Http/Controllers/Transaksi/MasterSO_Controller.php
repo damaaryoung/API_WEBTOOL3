@@ -280,7 +280,7 @@ class MasterSO_Controller extends BaseController
 
         $countTSO = TransSO::latest('id','nomor_so')->first();
 
-        if (!$countTSO) {
+        if ($countTSO == null) {
             $lastNumb = 1;
         }else{
             $no = $countTSO->nomor_so;

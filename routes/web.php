@@ -231,7 +231,7 @@ $router->group(['middleware' => ['jwt.auth'], 'prefix' => 'api'], function () us
                 $router->get('/trash/restore/{id}', ['subject' => 'Restore PIC',  'uses' => 'PICController@restore']);
 
                 // Search
-                $router->get('/{search}/search', ['subject' => 'Search PIC', 'uses' => 'PICController@search']);
+                $router->get('/{param}/{key}{operator}={value}/status={valid}', ['subject' => 'Search PIC', 'uses' => 'PICController@search']);
             });
 
             //Jenis PIC
