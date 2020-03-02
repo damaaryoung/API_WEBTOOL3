@@ -270,7 +270,7 @@ class PICController extends BaseController
         }
     }
 
-    public function search($param, $key, $operator, $value, $valid) {
+    public function search($param, $key, $operator, $value, $valid, Request $req) {
         if($param != 'filter' && $param != 'search'){
             return response()->json([
                 'code'    => 412,
@@ -279,24 +279,36 @@ class PICController extends BaseController
             ], 412);
         }
 
-        if($operator != '=' && $param != '!=' && $param != '<' && $param != '<=' && $param != '>' && $param != '>='){
+        // if($operator != "=" && $operator != "!=" && $operator != "<" && $operator != "<=" && $operator != ">" && $operator != ">=" && $operator != "%"){
+        //     return response()->json([
+        //         'code'    => 412,
+        //         'status'  => 'not valid',
+        //         'message' => 'gunakan operator yang valid diantara berikut: =, !=, <, <=, >, >=, %'
+        //     ], 412);
+        // }
+
+        if($key != 'id' && $key != 'user_id' && $key != 'id_area' && $key != 'id_cabang' && $key != 'id_mj_pic' && $key != 'nama' && $key != 'email' && $key != 'plafon_caa' && $key != 'status'){
             return response()->json([
                 'code'    => 412,
                 'status'  => 'not valid',
-                'message' => 'gunakan operator yang valid diantara berikut: =, !=, <, <=, >, >='
+                'message' => 'gunakan key yang valid diantara berikut: id, user_id, id_area, id_cabang, id_mj_pic, nama, email, plafon_caa'
             ], 412);
         }
 
-        if($key != 'user_id' && $key != 'id_area' && $key != 'id_cabang' && $key != 'id_mj_pic' && $key != 'nama' && $key != 'email' && $key != 'plafon_caa' && $key != 'status'){
-            return response()->json([
-                'code'    => 412,
-                'status'  => 'not valid',
-                'message' => 'gunakan key yang valid diantara berikut: user_id, id_area, id_cabang, id_mj_pic, nama, email, plafon_caa'
-            ], 412);
+        if($param == 'search'){
+            $func_opr   = "like";
+            $func_value = "%{$value}%";
+        }else{
+            $func_opr   = str_replace('=','', $operator); //"{$operator}";
+            $func_value = "{$value}";
         }
+
+        dd($func_opr);
+
+        // dd($req);
 
         $query = PIC::with('jpic','area','cabang')
-            ->where("{$key}", "{$operator}", "%{$value}%")
+            ->where("{$key}", $func_opr, $func_value)
             ->where('flg_aktif', $valid)
             ->get();
 

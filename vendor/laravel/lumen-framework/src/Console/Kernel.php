@@ -6,8 +6,8 @@ use Exception;
 use Illuminate\Console\Application as Artisan;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Contracts\Console\Kernel as KernelContract;
-use Illuminate\Http\Request;
 use Laravel\Lumen\Application;
+use Laravel\Lumen\Http\Request;
 use RuntimeException;
 use Symfony\Component\Debug\Exception\FatalThrowableError;
 use Throwable;
@@ -68,7 +68,7 @@ class Kernel implements KernelContract
      */
     protected function setRequestForConsole(Application $app)
     {
-        $uri = $app->make('config')->get('app.url', env('APP_URL', 'http://localhost'));
+        $uri = $app->make('config')->get('app.url', 'http://localhost');
 
         $components = parse_url($uri);
 
@@ -169,7 +169,7 @@ class Kernel implements KernelContract
      * Queue the given console command.
      *
      * @param  string  $command
-     * @param  array   $parameters
+     * @param  array  $parameters
      * @return void
      */
     public function queue($command, array $parameters = [])

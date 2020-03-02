@@ -12,10 +12,16 @@ use Illuminate\Support\Facades\Facade;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use Laravel\Lumen\Routing\Router;
+use Nyholm\Psr7\Factory\Psr17Factory;
+use Nyholm\Psr7\Response as NyholmPsrResponse;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use RuntimeException;
 use Symfony\Bridge\PsrHttpMessage\Factory\DiactorosFactory;
+use Symfony\Bridge\PsrHttpMessage\Factory\PsrHttpFactory;
 use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
-use Zend\Diactoros\Response as PsrResponse;
+use Zend\Diactoros\Response as ZendPsrResponse;
+use Zend\Diactoros\ServerRequestFactory;
 
 class Application extends Container
 {
@@ -140,7 +146,7 @@ class Application extends Container
      */
     public function version()
     {
-        return 'Lumen (6.2.0) (Laravel Components ^6.0)';
+        return 'Lumen (6.3.3) (Laravel Components ^6.0)';
     }
 
     /**
@@ -364,6 +370,8 @@ class Application extends Container
     protected function registerDatabaseBindings()
     {
         $this->singleton('db', function () {
+            $this->configure('app');
+
             return $this->loadComponent(
                 'database', [
                     'Illuminate\Database\DatabaseServiceProvider',
@@ -512,8 +520,19 @@ class Application extends Container
      */
     protected function registerPsrRequestBindings()
     {
-        $this->singleton('Psr\Http\Message\ServerRequestInterface', function () {
-            return (new DiactorosFactory)->createRequest($this->make('request'));
+        $this->singleton(ServerRequestInterface::class, function ($app) {
+            if (class_exists(Psr17Factory::class) && class_exists(PsrHttpFactory::class)) {
+                $psr17Factory = new Psr17Factory;
+
+                return (new PsrHttpFactory($psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory))
+                    ->createRequest($app->make('request'));
+            }
+
+            if (class_exists(ServerRequestFactory::class) && class_exists(DiactorosFactory::class)) {
+                return (new DiactorosFactory)->createRequest($app->make('request'));
+            }
+
+            throw new Exception('Unable to resolve PSR request. Please install symfony/psr-http-message-bridge and nyholm/psr7.');
         });
     }
 
@@ -524,8 +543,16 @@ class Application extends Container
      */
     protected function registerPsrResponseBindings()
     {
-        $this->singleton('Psr\Http\Message\ResponseInterface', function () {
-            return new PsrResponse();
+        $this->singleton(ResponseInterface::class, function () {
+            if (class_exists(NyholmPsrResponse::class)) {
+                return new NyholmPsrResponse;
+            }
+
+            if (class_exists(ZendPsrResponse::class)) {
+                return new ZendPsrResponse;
+            }
+
+            throw new Exception('Unable to resolve PSR response. Please install nyholm/psr7.');
         });
     }
 
@@ -672,7 +699,7 @@ class Application extends Container
      * Register the facades for the application.
      *
      * @param  bool  $aliases
-     * @param  array $userAliases
+     * @param  array  $userAliases
      * @return void
      */
     public function withFacades($aliases = true, $userAliases = [])
@@ -855,7 +882,7 @@ class Application extends Container
      */
     public function runningInConsole()
     {
-        return php_sapi_name() === 'cli' || php_sapi_name() === 'phpdbg';
+        return \PHP_SAPI === 'cli' || \PHP_SAPI === 'phpdbg';
     }
 
     /**
@@ -998,6 +1025,10 @@ class Application extends Container
             'log' => 'Psr\Log\LoggerInterface',
             'Illuminate\Contracts\Queue\Factory' => 'queue',
             'Illuminate\Contracts\Queue\Queue' => 'queue.connection',
+            'Illuminate\Redis\RedisManager' => 'redis',
+            'Illuminate\Contracts\Redis\Factory' => 'redis',
+            'Illuminate\Redis\Connections\Connection' => 'redis.connection',
+            'Illuminate\Contracts\Redis\Connection' => 'redis.connection',
             'request' => 'Illuminate\Http\Request',
             'Laravel\Lumen\Routing\Router' => 'router',
             'Illuminate\Contracts\Translation\Translator' => 'translator',

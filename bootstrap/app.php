@@ -21,10 +21,11 @@ $app = new Laravel\Lumen\Application(
     dirname(__DIR__)
 );
 
-class_alias(Intervention\Image\Facades\Image::class, 'Image');
-$app->withFacades();
+// class_alias(Intervention\Image\Facades\Image::class, 'Image');
+$app->withFacades(
+    class_alias('Intervention\Image\Facades\Image', 'Image')
+);
 
-$app->register(Intervention\Image\ImageServiceProvider::class); //Intervention Image
 $app->withEloquent();
 
 
@@ -95,6 +96,8 @@ $app->configure('database'); //file to ensure the Redis database configuration i
 // class_alias(App\Helpers\LogActivity::class, 'LogActivity'); // Aliases
 
 $app->register(Irazasyed\Larasupport\Providers\ArtisanServiceProvider::class); // Path
+$app->register(Intervention\Image\ImageServiceProvider::class); // Intervention Image
+// $app->register(Intervention\Image\ImageServiceProviderLumen::class); //Intervention Image
 
 /*
 |--------------------------------------------------------------------------
