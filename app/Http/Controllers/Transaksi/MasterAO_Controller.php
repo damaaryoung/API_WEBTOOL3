@@ -1335,7 +1335,7 @@ class MasterAO_Controller extends BaseController
                     ->orderBy('created_at', 'desc');
         }
 
-        $query = Helper::checkDir$scope, $query_dir, $id_area, $id_cabang);
+        $query = Helper::checkDir($scope, $query_dir, $id_area, $id_cabang);
 
 
         if ($query->get() == '[]') {
