@@ -48,12 +48,10 @@ class MasterCA_Controller extends BaseController
         $scope     = $pic->jpic['cakupan'];
 
         $query_dir = TransAO::with('so', 'pic', 'cabang')->where('status_ao', 1)->orderBy('created_at', 'desc');
-        $method = 'get';
 
-        $query = Helper::checkDir($user_id, $scope, $query_dir, $id_area, $id_cabang, $method);
+        $query = Helper::checkDir($scope, $query_dir, $id_area, $id_cabang);
 
-
-        if ($query == '[]') {
+        if ($query->get() == '[]') {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
@@ -61,8 +59,8 @@ class MasterCA_Controller extends BaseController
             ], 404);
         }
 
-
-        foreach ($query as $key => $val) {
+        $data = array();
+        foreach ($query->get() as $key => $val) {
 
             if ($val->status_ao == 1) {
                 $status_ao = 'recommend';
@@ -92,8 +90,8 @@ class MasterCA_Controller extends BaseController
                 'asal_data'      => $val->so['asaldata']['nama'],
                 'nama_marketing' => $val->so['nama_marketing'],
                 'nama_debitur'   => $val->so['debt']['nama_lengkap'],
-                'plafon'         => (int) $val->so['faspin']['plafon'],
-                'tenor'          => (int) $val->so['faspin']['tenor'],
+                'plafon'         => $val->so['faspin']['plafon'],
+                'tenor'          => $val->so['faspin']['tenor'],
                 "ao" => [
                     'status_ao'     => $status_ao,
                     'catatan_ao'    => $val->catatan_ao
@@ -109,7 +107,7 @@ class MasterCA_Controller extends BaseController
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'count'  => $query->count(),
+                'count'  => sizeof($data),
                 'data'   => $data
             ], 200);
         } catch (Exception $e) {
@@ -139,12 +137,10 @@ class MasterCA_Controller extends BaseController
         $scope     = $pic->jpic['cakupan'];
 
         $query_dir = TransAO::with('so', 'pic', 'cabang')->where('status_ao', 1)->orderBy('created_at', 'desc');
-        $method = 'get';
 
-        $query = Helper::checkDir($user_id, $scope, $query_dir, $id_area, $id_cabang, $method);
+        $query = Helper::checkDir($scope, $query_dir, $id_area, $id_cabang);
 
-
-        if ($query == '[]') {
+        if ($query->get() == '[]') {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
@@ -152,8 +148,8 @@ class MasterCA_Controller extends BaseController
             ], 404);
         }
 
-
-        foreach ($query as $key => $val) {
+        $data = array();
+        foreach ($query->get() as $key => $val) {
 
             if ($val->status_ao == 1) {
                 $status_ao = 'recommend';
@@ -216,7 +212,7 @@ class MasterCA_Controller extends BaseController
                 return response()->json([
                     'code'   => 200,
                     'status' => 'success',
-                    'count'  => count($res),
+                    'count'  => sizeof($result),
                     'data'   => $result
                 ], 200);
             }
@@ -256,12 +252,11 @@ class MasterCA_Controller extends BaseController
         }
 
         $query_dir = TransAO::with('so', 'pic', 'cabang')->where('id_trans_so', $id);
-        $method = 'first';
 
-        $val = Helper::checkDir($user_id, $scope, $query_dir, $id_area, $id_cabang, $method);
+        $vals = Helper::checkDir($scope, $query_dir, $id_area, $id_cabang);
+        $val = $vals->first();
 
-
-        if (!$val) {
+        if ($val == null) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
@@ -331,7 +326,7 @@ class MasterCA_Controller extends BaseController
         }
 
 
-        $data[] = [
+        $data = array(
             'id_trans_so'    => $val->id_trans_so == null ? null : (int) $val->id_trans_so,
             'id_trans_ca'    => $val->so['id_trans_ca'] == null ? null : (int) $val->so['id_trans_ca'],
             'nomor_so'       => $val->so['nomor_so'],
@@ -382,13 +377,13 @@ class MasterCA_Controller extends BaseController
             'rekomendasi_ao'    => ['id' => $val->id_recom_ao          == null ? null : (int) $val->id_recom_ao],
             'status_ao'         => $status_ao,
             'status_ca'         => $status_ca
-        ];
+        );
 
         try {
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'data'   => $data[0]
+                'data'   => $data
             ], 200);
         } catch (Exception $e) {
             return response()->json([
@@ -976,7 +971,8 @@ class MasterCA_Controller extends BaseController
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'message'=> 'Data untuk CA berhasil dikirim'
+                'message'=> 'Data untuk CA berhasil dikirim',
+                'data'   => $CA
             ], 200);
         } catch (\Exception $e) {
             $err = DB::connection('web')->rollback();
@@ -988,7 +984,8 @@ class MasterCA_Controller extends BaseController
         }
     }
 
-    public function search($search, Request $req){
+    public function search($param, $key, $value, $status, $orderVal, $orderBy, $limit, Request $req)
+    {
         $user_id  = $req->auth->user_id;
 
         $pic = PIC::where('user_id', $user_id)->first();
@@ -1001,19 +998,68 @@ class MasterCA_Controller extends BaseController
             ], 404);
         }
 
+        $column = array(
+            'id', 'nomor_ao', 'id_trans_so', 'user_id', 'id_pic', 'id_area', 'id_cabang', 'id_validasi', 'id_verifikasi', 'id_agunan_tanah', 'id_agunan_kendaraan', 'id_periksa_agunan_tanah', 'id_periksa_agunan_kendaraan', 'id_kapasitas_bulanan', 'id_pendapatan_usaha', 'id_recom_ao', 'catatan_ao', 'status_ao', 'form_persetujuan_ideb'
+        );
+
+        if($param != 'filter' && $param != 'search'){
+            return response()->json([
+                'code'    => 412,
+                'status'  => 'not valid',
+                'message' => 'gunakan parameter yang valid diantara berikut: filter, search'
+            ], 412);
+        }
+
+        if (in_array($key, $column) == false)
+        {
+            return response()->json([
+                'code'    => 412,
+                'status'  => 'not valid',
+                'message' => 'gunakan key yang valid diantara berikut: '.implode(",", $column)
+            ], 412);
+        }
+
+        if (in_array($orderBy, $column) == false)
+        {
+            return response()->json([
+                'code'    => 412,
+                'status'  => 'not valid',
+                'message' => 'gunakan order by yang valid diantara berikut: '.implode(",", $column)
+            ], 412);
+        }
+
+        if($param == 'search'){
+            $operator   = "like";
+            $func_value = "%{$value}%";
+        }else{
+            $operator   = "=";
+            $func_value = "{$value}";
+        }
+
         $id_area   = $pic->id_area;
         $id_cabang = $pic->id_cabang;
         $scope     = $pic->jpic['cakupan'];
 
         $query_dir = TransAO::with('so', 'pic', 'cabang')
-                ->where('status_ao', 1)
-                ->orWhere('nomor_ao', 'like', '%'.$search.'%')->orderBy('created_at', 'desc');
+            ->where('status_ao', 1)
+            ->where('flg_aktif', $status)
+            ->orderBy($orderBy, $orderVal);
+        
+        $query = Helper::checkDir($scope, $query_dir, $id_area, $id_cabang);
 
-        $method = 'get';
+        if($value == 'default'){
+            $res = $query;
+        }else{
+            $res = $query->where($key, $operator, $func_value);
+        }
 
-        $query = Helper::checkDir($user_id, $scope, $query_dir, $id_area, $id_cabang, $method);
+        if($limit == 'default'){
+            $result = $res;
+        }else{
+            $result = $res->limit($limit);
+        }
 
-        if ($query == '[]') {
+        if ($result->get() == '[]') {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
@@ -1022,7 +1068,7 @@ class MasterCA_Controller extends BaseController
         }
 
 
-        foreach ($query as $key => $val) {
+        foreach ($result->get() as $key => $val) {
 
             if ($val->status_ao == 1) {
                 $status_ao = 'recommend';
@@ -1053,6 +1099,7 @@ class MasterCA_Controller extends BaseController
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
+                'count'  => sizeof($data),
                 'data'   => $data
             ], 200);
         } catch (Exception $e) {
@@ -1585,12 +1632,9 @@ class MasterCA_Controller extends BaseController
                     ->orderBy('created_at', 'desc');
         }
 
-        $method = 'get';
+        $query = Helper::checkDir($scope, $query_dir, $id_area, $id_cabang);
 
-        $query = Helper::checkDir($user_id, $scope, $query_dir, $id_area, $id_cabang, $method);
-
-
-        if ($query == '[]') {
+        if ($query->get() == '[]') {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
@@ -1598,8 +1642,8 @@ class MasterCA_Controller extends BaseController
             ], 404);
         }
 
-
-        foreach ($query as $key => $val) {
+        $data = array();
+        foreach ($query->get() as $key => $val) {
 
             if ($val->status_ao == 1) {
                 $status_ao = 'recommend';
@@ -1629,8 +1673,8 @@ class MasterCA_Controller extends BaseController
                 'asal_data'      => $val->so['asaldata']['nama'],
                 'nama_marketing' => $val->so['nama_marketing'],
                 'nama_debitur'   => $val->so['debt']['nama_lengkap'],
-                'plafon'         => (int) $val->so['faspin']['plafon'],
-                'tenor'          => (int) $val->so['faspin']['tenor'],
+                'plafon'         => $val->so['faspin']['plafon'],
+                'tenor'          => $val->so['faspin']['tenor'],
                 "ao" => [
                     'status_ao'     => $status_ao,
                     'catatan_ao'    => $val->catatan_ao
@@ -1647,7 +1691,7 @@ class MasterCA_Controller extends BaseController
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'count'  => $query->count(),
+                'count'  => sizeof($data),
                 'data'   => $data
             ], 200);
         } catch (Exception $e) {

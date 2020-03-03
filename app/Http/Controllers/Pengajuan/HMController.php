@@ -328,13 +328,63 @@ class HMController extends BaseController
         }
     }
 
-    public function search($search, Request $req){
-        $query = TransSO::with('asaldata','debt', 'pic')
-                ->where('nomor_so', 'like', '%'.$search.'%')
-                ->orderBy('created_at', 'desc')
-                ->get();
+    public function search($param, $key, $value, $status, $orderVal, $orderBy, $limit)
+    {
+        $column = array(
+            'id', 'nomor_so', 'user_id', 'id_pic', 'id_area', 'id_cabang', 'id_asal_data', 'nama_marketing', 'nama_so', 'id_fasilitas_pinjaman', 'id_calon_debitur', 'id_pasangan', 'id_penjamin', 'id_trans_ao', 'id_trans_ca', 'id_trans_caa', 'catatan_das', 'catatan_hm', 'status_das', 'status_hm', 'lamp_ideb', 'lamp_pefindo'
+        );
 
-        if ($query == '[]') {
+        if($param != 'filter' && $param != 'search'){
+            return response()->json([
+                'code'    => 412,
+                'status'  => 'not valid',
+                'message' => 'gunakan parameter yang valid diantara berikut: filter, search'
+            ], 412);
+        }
+
+        if (in_array($key, $column) == false)
+        {
+            return response()->json([
+                'code'    => 412,
+                'status'  => 'not valid',
+                'message' => 'gunakan key yang valid diantara berikut: '.implode(",", $column)
+            ], 412);
+        }
+
+        if (in_array($orderBy, $column) == false)
+        {
+            return response()->json([
+                'code'    => 412,
+                'status'  => 'not valid',
+                'message' => 'gunakan order by yang valid diantara berikut: '.implode(",", $column)
+            ], 412);
+        }
+
+        if($param == 'search'){
+            $operator   = "like";
+            $func_value = "%{$value}%";
+        }else{
+            $operator   = "=";
+            $func_value = "{$value}";
+        }
+
+        $query = TransSO::with('pic', 'cabang', 'asaldata','debt', 'faspin')
+        ->where('flg_aktif', $status)
+        ->orderBy($orderBy, $orderVal);
+
+        if($value == 'default'){
+            $res = $query;
+        }else{
+            $res = $query->where($key, $operator, $func_value);
+        }
+
+        if($limit == 'default'){
+            $result = $res;
+        }else{
+            $result = $res->limit($limit);
+        }
+
+        if ($result->get() == '[]') {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
@@ -343,7 +393,7 @@ class HMController extends BaseController
         }
 
         $data = array();
-        foreach ($query as $key => $val) {
+        foreach ($result->get() as $key => $val) {
 
             if ($val->status_das == 1) {
                 $status_das = 'complete';
@@ -361,14 +411,6 @@ class HMController extends BaseController
                 $status_hm = 'waiting';
             }
 
-            // if ($val->ao['status_ao'] == 1) {
-            //     $status_ao = 'recommend';
-            // }elseif ($val->ao['status_ao'] == 2) {
-            //     $status_ao = 'not recommend';
-            // }else{
-            //     $status_ao = 'waiting';
-            // }
-
             $data[$key] = [
                 'id'             => $val->id == null ? null : (int) $val->id,
                 'nomor_so'       => $val->nomor_so,
@@ -379,13 +421,12 @@ class HMController extends BaseController
                 'asal_data'      => $val->asaldata['nama'],
                 'nama_marketing' => $val->nama_marketing,
                 'nama_debitur'   => $val->debt['nama_lengkap'],
-                'plafon'         => (int) $val->faspin['plafon'],
-                'tenor'          => (int) $val->faspin['tenor'],
+                'plafon'         => $val->faspin['plafon'],
+                'tenor'          => $val->faspin['tenor'],
                 'das_status'     => $status_das,
                 'das_note'       => $val->catatan_das,
                 'hm_status'      => $status_hm,
-                'hm_note'        => $val->catatan_hm,
-                // 'status_ao'      => $status_ao
+                'hm_note'        => $val->catatan_hm
             ];
         }
 
@@ -393,6 +434,7 @@ class HMController extends BaseController
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
+                'count'  => sizeof($data),
                 'data'   => $data
             ], 200);
         } catch (Exception $e) {

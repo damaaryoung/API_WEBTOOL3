@@ -3,22 +3,19 @@
 namespace App\Http\Controllers\Transaksi;
 
 use Laravel\Lumen\Routing\Controller as BaseController;
-use App\Http\Controllers\Controller as Helper;
+// use App\Http\Controllers\Controller as Helper;
 use App\Models\Pengajuan\AO\AgunanKendaraan;
 use App\Http\Requests\Transaksi\ApprovalReq;
 use App\Models\Pengajuan\CAA\Penyimpangan;
 use App\Models\Pengajuan\AO\AgunanTanah;
-use Illuminate\Support\Facades\File;
+// use Illuminate\Support\Facades\File;
 use App\Models\Transaksi\Approval;
 use App\Models\Transaksi\TransCAA;
 use App\Models\Transaksi\TransCA;
 use App\Models\Transaksi\TransAO;
 use App\Models\Transaksi\TransSO;
-use App\Models\Karyawan\TeamCAA;
 use App\Models\AreaKantor\PIC;
 use Illuminate\Http\Request;
-use App\Http\Requests;
-use App\Models\User;
 use Carbon\Carbon;
 use DB;
 
@@ -98,7 +95,7 @@ class Approval_Controller extends BaseController
                 "jabatan"   => $val->jpic['nama_jenis'],
                 "nama"      => $val->nama,
                 "email"     => $val->email,
-                // "flg_aktif" => $val->flg_aktif == 1 ? "true" : "false",
+                // "flg_aktif" => (bool) $val->flg_aktif,
                 "checked"   => $checked
             );
 
@@ -157,7 +154,7 @@ class Approval_Controller extends BaseController
             "nama"      => $val->nama,
             "email"     => $val->email,
             "plafon_max"=> (int) $val->plafon_caa,
-            "flg_aktif" => $val->flg_aktif == 1 ? "true" : "false"
+            "flg_aktif" => (bool) $val->flg_aktif
         );
 
         try {
@@ -188,9 +185,6 @@ class Approval_Controller extends BaseController
                 "message" => "User_ID anda adalah '".$user_id."' dengan username '".$req->auth->user."'. Yang berhak melihat halaman ini adalah Direktur, CRM, PC dan AM. Mohon cek dimenu Team CAA untuk validasi data anda atau silahkan hubungin tim IT"
             ], 404);
         }
-
-        $id_area   = $pic->id_area;
-        $id_cabang = $pic->id_cabang;
 
         $query = Approval::with('so', 'caa', 'pic')
                 ->where('id_trans_so', $id)
@@ -451,16 +445,20 @@ class Approval_Controller extends BaseController
                 }
             }
 
-            TransCAA::where('id_trans_so', $check->id_trans_so)->update(['status_team_caa' => $status]);
+            $trans_caa = TransCAA::where('id_trans_so', $check->id_trans_so)->update(['status_team_caa' => $status]);
 
-            Approval::where('id', $id_approval)->update($form);
+            $approval = Approval::where('id', $id_approval)->update($form);
 
             DB::connection('web')->commit();
 
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'message'=> 'Data untuk berhasil di - '.$form['status']
+                'message'=> 'Data untuk berhasil di - '.$form['status'],
+                'data'   => array(
+                    'approval'  => $approval,
+                    'transaksi' => $trans_caa
+                )
             ], 200);
         } catch (Exception $e) {
             $err = DB::connection('web')->rollback();

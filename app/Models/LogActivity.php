@@ -21,6 +21,7 @@ class LogActivity extends Model implements AuthenticatableContract, Authorizable
     protected $connection = 'web';
 
     protected $table = 'access_logs';
+    protected $primaryKey = 'id';
 
     protected $fillable = [
        'subject', 'url', 'method', 'ip', 'agent', 'user_id', 'login_name', 'time'

@@ -3,12 +3,10 @@
 namespace App\Http\Controllers\Menu;
 
 use Laravel\Lumen\Routing\Controller as BaseController;
-use App\Http\Controllers\Controller as Helper;
+// use App\Http\Controllers\Controller as Helper;
 use App\Models\Menu\MenuAccess;
 use Illuminate\Http\Request;
-use App\Models\User;
-use Carbon\Carbon;
-use DB;
+// use DB;
 
 class MenuAccessController extends BaseController
 {
@@ -24,8 +22,9 @@ class MenuAccessController extends BaseController
                 ], 404);
             }
 
+            $data = array();
             foreach ($query as $key => $val) {
-                $res[$key] = [
+                $data[$key] = [
                     'id'          => $val->id,
                     'id_user'     => $val->id_user,
                     'menu_master' => $val->menu_master['nama'],
@@ -36,8 +35,8 @@ class MenuAccessController extends BaseController
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'count'  => $query->count(),
-                'data'   => $res
+                'count'  => sizeof($data),
+                'data'   => $data
             ], 200);
         } catch (Exception $e) {
             return response()->json([
@@ -70,7 +69,7 @@ class MenuAccessController extends BaseController
             'add_access'    => $val->add_access,
             'edit_access'   => $val->edit_access,
             'delete_access' => $val->delete_access,
-            'flg_aktif'     => $val->flg_aktif == 0 ? "false" : "true"
+            'flg_aktif'     => (bool) $val->flg_aktif
         ];
 
         try {
@@ -261,8 +260,9 @@ class MenuAccessController extends BaseController
             ], 404);
         }
 
+        $data = array();
         foreach ($query as $key => $val) {
-            $res[$key] = [
+            $data[$key] = [
                 'id'          => $val->id,
                 'id_user'     => $val->id_user,
                 'menu_master' => $val->menu_master['nama'],
@@ -274,8 +274,8 @@ class MenuAccessController extends BaseController
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'count'  => $query->count(),
-                'data'   => $res
+                'count'  => sizeof($data),
+                'data'   => $data
             ], 200);
         } catch (Exception $e) {
             return response()->json([

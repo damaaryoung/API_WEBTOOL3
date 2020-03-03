@@ -95,12 +95,12 @@ $router->post('/api/operator/{id_trans_so}', 'Transaksi\MasterCA_Controller@oper
 $router->group(['middleware' => ['jwt.auth'], 'prefix' => 'api'], function () use ($router) {
 
     // Logs (History)
-    // $router->group(['prefix' => '/logs'], function () use ($router){
-    //     $router->get('/', 'LogsController@index'); //Log History All
-    //     $router->get('/{id}', 'LogsController@detail'); //Log History By ID
-    //     $router->get('/limit/{limit}', 'LogsController@limit'); //Log History Limit
-    //     $router->get('/search/{search}', 'LogsController@search'); //Log History Search
-    // });
+    $router->group(['prefix' => '/logs'], function () use ($router){
+        $router->get('/',     ['subject' => 'Read Logs',  'uses' => 'LogsController@index']); //Log History All
+        $router->get('/{id}', ['subject' => 'Detail Log', 'uses' => 'LogsController@detail']); //Log History By ID
+        $router->get('/limit/{limit}', ['subject' => 'Limit Logs', 'uses' => 'LogsController@limit']); //Log History Limit
+        $router->get('/{param}/{key}={value}/status={status}/{orderVal}={orderBy}/limit={limit}', ['subject' => 'Search Logs', 'uses' => 'LogsController@search']); //Log History Search
+    });
 
     // Users And User
     $router->get('/users',                ['subject' => 'Get All Users' ,        'uses' => 'UserController@getUsers']);
@@ -149,7 +149,7 @@ $router->group(['middleware' => ['jwt.auth'], 'prefix' => 'api'], function () us
             // Mitra Bisnis
             $router->get('/mitra',                 ['subject' => 'Read mitra',   'uses' => 'MitraController@index']);
             $router->get('/mitra/{kode_mitra}',    ['subject' => 'Detail Mitra', 'uses' => 'MitraController@show']);
-            $router->get('/mitra/{search}/search', ['subject' => 'Search Mitra', 'uses' => 'MitraController@search']);
+            $router->get('/mitra/{param}/{key}={value}/status={status}/{orderVal}={orderBy}/limit={limit}', ['subject' => 'Search Mitra', 'uses' => 'MitraController@search']);
         });
 
         $router->group(['namespace' => 'Master\AreaKantor'], function () use ($router){
@@ -167,7 +167,7 @@ $router->group(['middleware' => ['jwt.auth'], 'prefix' => 'api'], function () us
                 $router->get('/trash/restore/{id}', ['subject' => 'Restore Asal_Data',  'uses' => 'AsalDataController@restore']);
 
                 // Search
-                $router->get('/{search}/search', ['subject' => 'Search Asal_Data', 'uses' => 'AsalDataController@search']);
+                $router->get('/{param}/{key}={value}/status={status}/{orderVal}={orderBy}/limit={limit}', ['subject' => 'Search Asal_Data', 'uses' => 'AsalDataController@search']);
             });
 
             //Area Kantor
@@ -183,7 +183,7 @@ $router->group(['middleware' => ['jwt.auth'], 'prefix' => 'api'], function () us
                 $router->get('/trash/restore/{id}', ['subject' => 'Restore Area',  'uses' => 'AreaController@restore']);
 
                 // Search
-                $router->get('/{search}/search', ['subject' => 'Search Area', 'uses' => 'AreaController@search']);
+                $router->get('/{param}/{key}={value}/status={status}/{orderVal}={orderBy}/limit={limit}', ['subject' => 'Search Area', 'uses' => 'AreaController@search']);
             });
 
             //Cabang Kantor
@@ -199,7 +199,7 @@ $router->group(['middleware' => ['jwt.auth'], 'prefix' => 'api'], function () us
                 $router->get('/trash/restore/{id}', ['subject' => 'Restore Cabang',  'uses' => 'CabangController@restore']);
 
                 // Search
-                $router->get('/{search}/search', ['subject' => 'Search Cabang', 'uses' => 'CabangController@search']);
+                $router->get('/{param}/{key}={value}/status={status}/{orderVal}={orderBy}/limit={limit}', ['subject' => 'Search Cabang', 'uses' => 'CabangController@search']);
             });
 
             // Area PIC
@@ -215,7 +215,7 @@ $router->group(['middleware' => ['jwt.auth'], 'prefix' => 'api'], function () us
                 $router->get('/trash/restore/{id}', ['subject' => 'Restore Area_PIC',  'uses' => 'AreaPICController@restore']);
 
                 // Search
-                $router->get('/{search}/search', ['subject' => 'Search Area PIC', 'uses' => 'AreaPICController@search']);
+                $router->get('/{param}/{key}={value}/status={status}/{orderVal}={orderBy}/limit={limit}', ['subject' => 'Search Area PIC', 'uses' => 'AreaPICController@search']);
             });
 
             // Daftar PIC
@@ -231,7 +231,7 @@ $router->group(['middleware' => ['jwt.auth'], 'prefix' => 'api'], function () us
                 $router->get('/trash/restore/{id}', ['subject' => 'Restore PIC',  'uses' => 'PICController@restore']);
 
                 // Search
-                $router->get('/{param}/{key}&{operator}{value}/status={valid}', ['subject' => 'Search PIC', 'uses' => 'PICController@search']);
+                $router->get('/{param}/{key}={value}/status={status}/{orderVal}={orderBy}/limit={limit}', ['subject' => 'Search PIC', 'uses' => 'PICController@search']);
             });
 
             //Jenis PIC
@@ -247,12 +247,8 @@ $router->group(['middleware' => ['jwt.auth'], 'prefix' => 'api'], function () us
                 $router->get('trash/restore/{id}', ['subject' => 'Restore jenis_pic',  'uses' => 'JPICController@restore']);
 
                 // Search
-                $router->get('/{search}/search', ['subject' => 'Search jenis_pic', 'uses' => 'JPICController@search']);
+                $router->get('/{param}/{key}={value}/status={status}/{orderVal}={orderBy}/limit={limit}', ['subject' => 'Search jenis_pic', 'uses' => 'JPICController@search']);
             });
-
-            // Kode Kantor from DPM_ONLINE (user)
-            // $router->get('/kode_kantor', 'KodeKantorController@index');
-
         });
 
         // DAS
@@ -261,7 +257,7 @@ $router->group(['middleware' => ['jwt.auth'], 'prefix' => 'api'], function () us
         $router->post('/das/{id}', ['subject' => 'Give Status and Note to Trans_SO','uses' => 'Pengajuan\DASController@update']);
 
         // Search
-        $router->get('/das/{search}/search', ['subject' => 'Search Trans_SO from DAS Admin', 'uses' => 'Pengajuan\DASController@search']);
+        $router->get('/das/{param}/{key}={value}/status={status}/{orderVal}={orderBy}/limit={limit}', ['subject' => 'Search Trans_SO from DAS Admin', 'uses' => 'Pengajuan\DASController@search']);
 
 
         // HM
@@ -270,7 +266,7 @@ $router->group(['middleware' => ['jwt.auth'], 'prefix' => 'api'], function () us
         $router->put('/hm/{id}', ['subject' => 'Give Status and Note to Trans_SO', 'uses' => 'Pengajuan\HMController@update']);
 
         // Search
-        $router->get('/hm/{search}/search', ['subject' => 'Search Trans_SO from ds_spv', 'uses' => 'Pengajuan\HMController@search']);
+        $router->get('/hm/{param}/{key}={value}/status={status}/{orderVal}={orderBy}/limit={limit}', ['subject' => 'Search Trans_SO from ds_spv', 'uses' => 'Pengajuan\HMController@search']);
 
         // Transaksi From SO -> CAA, etc
         $router->group(['namespace' => 'Transaksi'], function() use ($router) {
@@ -283,7 +279,7 @@ $router->group(['middleware' => ['jwt.auth'], 'prefix' => 'api'], function () us
                 $router->get('/{id}',  ['subject' => 'Detail Trans_SO', 'uses' => 'MasterSO_Controller@show']);
 
                 // Search
-                $router->get('/{search}/search', ['subject' => 'Search Trans_SO', 'uses' => 'MasterSO_Controller@search']);
+                $router->get('/{param}/{key}={value}/status={status}/{orderVal}={orderBy}/limit={limit}', ['subject' => 'Search Trans_SO', 'uses' => 'MasterSO_Controller@search']);
 
                 // Filter
                 $router->get('/filter/{year}/{month}', ['subject' => 'Filter Trans_SO', 'uses' => 'MasterSO_Controller@filter']);
@@ -296,7 +292,7 @@ $router->group(['middleware' => ['jwt.auth'], 'prefix' => 'api'], function () us
                 $router->get('/{id}',  ['subject' => 'Detail Trans_SO', 'uses' => 'MasterAO_Controller@show']);
 
                 // Search
-                $router->get('/{search}/search', ['subject' => 'Search Trans_SO', 'uses' => 'MasterAO_Controller@search']);
+                $router->get('/{param}/{key}={value}/status={status}/{orderVal}={orderBy}/limit={limit}', ['subject' => 'Search Trans_SO', 'uses' => 'MasterAO_Controller@search']);
 
                 // Filter
                 $router->get('/filter/{year}/{month}', ['subject' => 'Filter Trans_SO', 'uses' => 'MasterAO_Controller@filter']);
@@ -309,7 +305,7 @@ $router->group(['middleware' => ['jwt.auth'], 'prefix' => 'api'], function () us
                 $router->get('/{id}',  ['subject' => 'Detail Trans_AO', 'uses' => 'MasterCA_Controller@show']);
 
                 //Search
-                $router->get('/{search}/search', ['subject' => 'Search Trans_AO', 'uses' => 'MasterCA_Controller@search']);
+                $router->get('/{param}/{key}={value}/status={status}/{orderVal}={orderBy}/limit={limit}', ['subject' => 'Search Trans_AO', 'uses' => 'MasterCA_Controller@search']);
 
                 // Filter
                 $router->get('/filter/{year}/{month}', ['subject' => 'Filter Trans_AO', 'uses' => 'MasterCA_Controller@filter']);
@@ -335,7 +331,7 @@ $router->group(['middleware' => ['jwt.auth'], 'prefix' => 'api'], function () us
                 $router->get('/{id}/detail', ['subject' => 'Detail Trans_CAA', 'uses' => 'MasterCAA_Controller@detail']);
 
                 // Search
-                $router->get('/{search}/search', ['subject' => 'Search Trans_CA', 'uses' => 'MasterCAA_Controller@search']);
+                $router->get('/{param}/{key}={value}/status={status}/{orderVal}={orderBy}/limit={limit}', ['subject' => 'Search Trans_CA', 'uses' => 'MasterCAA_Controller@search']);
 
                 // Filter
                 $router->get('/filter/{year}/{month}', ['subject' => 'Filter Trans_CAA', 'uses' => 'MasterCAA_Controller@filter']);
@@ -370,7 +366,7 @@ $router->group(['middleware' => ['jwt.auth'], 'prefix' => 'api'], function () us
             $router->get('/trash/restore/{id}', ['subject' => 'Restore Master Menu',  'uses' => 'MenuMasterController@restore']);
 
             // Search
-            $router->get('/{search}/search', ['subject' => 'Search Master Menu', 'uses' => 'MenuMasterController@search']);
+            $router->get('/{param}/{key}={value}/status={status}/{orderVal}={orderBy}/limit={limit}', ['subject' => 'Search Master Menu', 'uses' => 'MenuMasterController@search']);
         });
 
         // Menu Akses
@@ -399,7 +395,7 @@ $router->group(['middleware' => ['jwt.auth'], 'prefix' => 'api'], function () us
             $router->get('/trash/restore/{id}', ['display' => 'Restore Sub Menu',  'uses' => 'MenuSubController@restore']);
 
             // Search
-            $router->get('/{search}/search', ['subject' => 'Search Sub Menu', 'uses' => 'MenuSubController@search']);
+            $router->get('/{param}/{key}={value}/status={status}/{orderVal}={orderBy}/limit={limit}', ['subject' => 'Search Sub Menu', 'uses' => 'MenuSubController@search']);
         });
 
     });

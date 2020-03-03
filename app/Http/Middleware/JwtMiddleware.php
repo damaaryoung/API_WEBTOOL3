@@ -42,7 +42,7 @@ class JwtMiddleware
                 return response()->json([
                     'code'    => 401,
                     'status'  => 'Error',
-                    'message' => 'Galat saat mendekode token.'
+                    'message' => "{$e} - mohon login ulang" //'Galat saat mendekode token.'
                 ], 401);
             }
 

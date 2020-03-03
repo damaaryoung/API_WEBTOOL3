@@ -3,15 +3,12 @@
 namespace App\Http\Controllers\Master\AreaKantor;
 
 use Laravel\Lumen\Routing\Controller as BaseController;
-use App\Http\Controllers\Controller as Helper;
 use App\Http\Requests\AreaKantor\CabangRequest;
 use App\Models\AreaKantor\Cabang;
-use App\Models\AreaKantor\Area;
-use App\Models\AreaKantor\PIC;
-use Illuminate\Http\Request;
+// use Illuminate\Http\Request;
 use App\Models\User;
 use Carbon\Carbon;
-use DB;
+// use DB;
 
 class CabangController extends BaseController
 {
@@ -110,7 +107,7 @@ class CabangController extends BaseController
             "nama_kelurahan" => $check->kel['nama'],
             "kode_pos"       => $check->kel['kode_pos'],
             "jenis_kantor"   => $check->jenis_kantor,
-            "flg_aktif"      => $check->flg_aktif == 0 ? "false" : "true",
+            "flg_aktif"      => (bool) $check->flg_aktif,
             "created_at"     => Carbon::parse($check->created_at)->format('d-m-Y H:i:s')
         );
 
@@ -255,13 +252,59 @@ class CabangController extends BaseController
         }
     }
 
-    public function search($search) {
-        $query = Cabang::where('flg_aktif', 1)
-                ->where('nama', 'like', '%'.$search.'%')
-                ->orderBy('nama', 'asc')
-                ->get();
+    public function search($param, $key, $value, $status, $orderVal, $orderBy, $limit)
+    {
+        $column = array('id', 'id_area', 'nama', 'id_provinsi', 'id_kabupaten', 'id_kecamatan', 'id_kelurahan', 'jenis_kantor');
 
-        if ($query == '[]') {
+        if($param != 'filter' && $param != 'search'){
+            return response()->json([
+                'code'    => 412,
+                'status'  => 'not valid',
+                'message' => 'gunakan parameter yang valid diantara berikut: filter, search'
+            ], 412);
+        }
+
+        if (in_array($key, $column) == false)
+        {
+            return response()->json([
+                'code'    => 412,
+                'status'  => 'not valid',
+                'message' => 'gunakan key yang valid diantara berikut: '.implode(",", $column)
+            ], 412);
+        }
+
+        if (in_array($orderBy, $column) == false)
+        {
+            return response()->json([
+                'code'    => 412,
+                'status'  => 'not valid',
+                'message' => 'gunakan order by yang valid diantara berikut: '.implode(",", $column)
+            ], 412);
+        }
+
+        if($param == 'search'){
+            $operator   = "like";
+            $func_value = "%{$value}%";
+        }else{
+            $operator   = "=";
+            $func_value = "{$value}";
+        }
+
+        $query = Cabang::where('flg_aktif', $status)->orderBy($orderBy, $orderVal);
+
+        if($value == 'default'){
+            $res = $query;
+        }else{
+            $res = $query->where($key, $operator, $func_value);
+        }
+
+        if($limit == 'default'){
+            $result = $res;
+        }else{
+            $result = $res->limit($limit);
+        }
+
+        if ($result->get() == '[]') {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
@@ -269,9 +312,9 @@ class CabangController extends BaseController
             ], 404);
         }
 
-        $res = array();
-        foreach ($query as $key => $val) {
-            $res[$key] = [
+        $data = array();
+        foreach ($result->get() as $key => $val) {
+            $data[$key] = [
                 "id"             => $val->id,
                 "nama_area"      => $val->area['nama'],
                 "nama_cabang"    => $val->nama,
@@ -287,7 +330,8 @@ class CabangController extends BaseController
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'data'   => $res
+                'count'  => sizeof($data),
+                'data'   => $data
             ], 200);
         } catch (Exception $e) {
             return response()->json([

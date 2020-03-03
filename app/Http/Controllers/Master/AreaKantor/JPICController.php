@@ -3,11 +3,10 @@
 namespace App\Http\Controllers\Master\AreaKantor;
 
 use Laravel\Lumen\Routing\Controller as BaseController;
-use App\Http\Controllers\Controller as Helper;
 use App\Http\Requests\AreaKantor\JenisPICReq;
 use App\Models\AreaKantor\JPIC;
-use Illuminate\Http\Request;
-use App\Models\User;
+// use Illuminate\Http\Request;
+// use App\Models\User;
 use Carbon\Carbon;
 
 class JPICController extends BaseController
@@ -206,10 +205,59 @@ class JPICController extends BaseController
         }
     }
 
-    public function search($search) {
-        $query = JPIC::select('id', 'nama_jenis','keterangan')->where('nama_jenis', 'like', '%'.$search.'%')->orderBy('nama_jenis', 'asc')->get();
+    public function search($param, $key, $value, $status, $orderVal, $orderBy, $limit)
+    {
+        $column = array('id', 'nama_jenis', 'cakupan', 'urutan_jabatan', 'keterangan', 'bagian');
 
-        if ($query == '[]') {
+        if($param != 'filter' && $param != 'search'){
+            return response()->json([
+                'code'    => 412,
+                'status'  => 'not valid',
+                'message' => 'gunakan parameter yang valid diantara berikut: filter, search'
+            ], 412);
+        }
+
+        if (in_array($key, $column) == false)
+        {
+            return response()->json([
+                'code'    => 412,
+                'status'  => 'not valid',
+                'message' => 'gunakan key yang valid diantara berikut: '.implode(",", $column)
+            ], 412);
+        }
+
+        if (in_array($orderBy, $column) == false)
+        {
+            return response()->json([
+                'code'    => 412,
+                'status'  => 'not valid',
+                'message' => 'gunakan order by yang valid diantara berikut: '.implode(",", $column)
+            ], 412);
+        }
+
+        if($param == 'search'){
+            $operator   = "like";
+            $func_value = "%{$value}%";
+        }else{
+            $operator   = "=";
+            $func_value = "{$value}";
+        }
+
+        $query = JPIC::select('id', 'nama_jenis','keterangan')->orderBy($orderBy, $orderVal);
+
+        if($value == 'default'){
+            $res = $query;
+        }else{
+            $res = $query->where($key, $operator, $func_value);
+        }
+
+        if($limit == 'default'){
+            $result = $res;
+        }else{
+            $result = $res->limit($limit);
+        }
+
+        if ($result->get() == '[]') {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
@@ -221,7 +269,8 @@ class JPICController extends BaseController
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'data'   => $query
+                'count'  => $result->count(),
+                'data'   => $result->get()
             ], 200);
         } catch (Exception $e) {
             return response()->json([

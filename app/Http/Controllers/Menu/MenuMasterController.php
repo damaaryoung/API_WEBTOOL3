@@ -3,13 +3,11 @@
 namespace App\Http\Controllers\Menu;
 
 use Laravel\Lumen\Routing\Controller as BaseController;
-use App\Http\Controllers\Controller as Helper;
+// use App\Http\Controllers\Controller as Helper;
 use App\Http\Requests\Menu\MasterMenuReq;
 use App\Models\Menu\MenuMaster;
 use Illuminate\Http\Request;
-use App\Models\User;
-use Carbon\Carbon;
-use DB;
+// use DB;
 
 class MenuMasterController extends BaseController
 {
@@ -111,7 +109,7 @@ class MenuMasterController extends BaseController
             'nama'      => $query->nama,
             'icon'      => $query->icon,
             'url'       => $query->url,
-            'flg_aktif' => $query->flg_aktif == 0 ? "false" : "true"
+            'flg_aktif' => (bool) $query->flg_aktif
         );
 
         try {
@@ -238,22 +236,98 @@ class MenuMasterController extends BaseController
         }
     }
 
-    public function search($search) {
-        try {
-            $query = MenuMaster::select('id','nama','url')->where('flg_aktif', 1)->where('nama', 'like', '%'.$search.'%')->orderBy('nama', 'asc')->get();
+    public function search($param, $key, $value, $status, $orderVal, $orderBy, $limit) 
+    {
+        $column = array('id', 'nama', 'url', 'icon');
 
-            if ($query == '[]') {
-                return response()->json([
-                    "code"    => 404,
-                    "status"  => "not found",
-                    "message" => "Data kosong"
-                ], 404);
-            }
+        if($param != 'filter' && $param != 'search'){
+            return response()->json([
+                'code'    => 412,
+                'status'  => 'not valid',
+                'message' => 'gunakan parameter yang valid diantara berikut: filter, search'
+            ], 412);
+        }
+
+        if (in_array($key, $column) == false)
+        {
+            return response()->json([
+                'code'    => 412,
+                'status'  => 'not valid',
+                'message' => 'gunakan key yang valid diantara berikut: '.implode(",", $column)
+            ], 412);
+        }
+
+        if (in_array($orderBy, $column) == false)
+        {
+            return response()->json([
+                'code'    => 412,
+                'status'  => 'not valid',
+                'message' => 'gunakan order by yang valid diantara berikut: '.implode(",", $column)
+            ], 412);
+        }
+
+        if($param == 'search'){
+            $operator   = "like";
+            $func_value = "%{$value}%";
+        }else{
+            $operator   = "=";
+            $func_value = "{$value}";
+        }
+
+        if ($key != 'id' && $key != 'nama' && $key != 'url' && $key != 'icon') {
+            return response()->json([
+                'code'    => 412,
+                'status'  => 'not valid',
+                'message' => 'gunakan key yang valid diantara berikut: id, nama, url, icon'
+            ], 412);
+        }
+
+        if ($orderBy != 'id' && $orderBy != 'nama' && $orderBy != 'url' && $orderBy != 'icon') {
+            return response()->json([
+                'code'    => 412,
+                'status'  => 'not valid',
+                'message' => 'gunakan order by yang valid diantara berikut: id, nama, url, icon'
+            ], 412);
+        }
+
+        if($param == 'search'){
+            $operator   = "like";
+            $func_value = "%{$value}%";
+        }else{
+            $operator   = "=";
+            $func_value = "{$value}";
+        }
+        
+        $query = MenuMaster::select('id','nama','url')
+            ->where('flg_aktif', $status)
+            ->orderBy($orderBy, $orderVal);
+
+        if($value == 'default'){
+            $res = $query;
+        }else{
+            $res = $query->where($key, $operator, $func_value);
+        }
+
+        if($limit == 'default'){
+            $result = $res;
+        }else{
+            $result = $res->limit($limit);
+        }
+
+        if ($result->get() == '[]') {
+            return response()->json([
+                "code"    => 404,
+                "status"  => "not found",
+                "message" => "Data kosong"
+            ], 404);
+        }
+        try {
 
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'data'   => $query
+                'count'  => $result->count(),
+                'data'   => $result->get()
             ], 200);
         } catch (Exception $e) {
             return response()->json([

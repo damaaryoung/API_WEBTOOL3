@@ -3,18 +3,28 @@
 namespace App\Http\Controllers\Master\AreaKantor;
 
 use Laravel\Lumen\Routing\Controller as BaseController;
-use App\Http\Controllers\Controller as Helper;
 use App\Http\Requests\AreaKantor\AreaRequest;
 use App\Models\AreaKantor\Area;
-use Illuminate\Http\Request;
-use App\Models\User;
 use Carbon\Carbon;
-use DB;
+// use DB;
 
 class AreaController extends BaseController
 {
     public function index() {
-        $query = Area::where('flg_aktif', 1)->orderBy('nama', 'asc')->get();
+        // $query = Area::where('flg_aktif', 1)->orderBy('nama', 'asc')->get();
+
+        $query = Area::select('id', 'nama as nama_area')->addSelect([
+            'nama_provinsi' => function ($q) {
+                $q->select('nama')
+                ->from('master_provinsi')
+                ->whereColumn('id_provinsi', 'master_provinsi.id');
+            },
+            'nama_kabupaten' => function ($q) {
+                $q->select('nama')
+                ->from('master_kabupaten')
+                ->whereColumn('id_kabupaten', 'master_kabupaten.id');
+            }
+        ])->get();
 
         if ($query == '[]') {
             return response()->json([
@@ -24,22 +34,12 @@ class AreaController extends BaseController
             ], 404);
         }
 
-        $res = array();
-        foreach ($query as $key => $val) {
-            $res[$key] = [
-                "id"             => $val->id,
-                "nama_area"      => $val->nama,
-                "nama_provinsi"  => $val->prov['nama'],
-                "nama_kabupaten" => $val->kab['nama']
-            ];
-        }
-
         try {
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
                 'count'  => $query->count(),
-                'data'   => $res
+                'data'   => $query
             ], 200);
         } catch (Exception $e) {
             return response()->json([
@@ -92,7 +92,7 @@ class AreaController extends BaseController
             "nama_provinsi"  => $val->prov['nama'],
             "id_kabupaten"   => $val->id_kabupaten,
             "nama_kabupaten" => $val->kab['nama'],
-            "flg_aktif"      => $val->flg_aktif == 0 ? "false" : "true",
+            "flg_aktif"      => (bool) $val->flg_aktif,
             "created_at"     => Carbon::parse($val->created_at)->format('d-m-Y H:i:s')
         );
 
@@ -192,9 +192,9 @@ class AreaController extends BaseController
             ], 404);
         }
 
-        $res = array();
+        $data = array();
         foreach ($query as $key => $val) {
-            $res[$key] = [
+            $data[$key] = [
                 "id"             => $val->id,
                 "nama_area"      => $val->nama,
                 "nama_provinsi"  => $val->prov['nama'],
@@ -207,8 +207,8 @@ class AreaController extends BaseController
             return response()->json([
                 'code'    => 200,
                 'status'  => 'success',
-                'count'   => $query->count(),
-                'data'    => $res
+                'count'   => sizeof($data),
+                'data'    => $data
             ], 200);
         } catch (Exception $e) {
             return response()->json([
@@ -237,10 +237,59 @@ class AreaController extends BaseController
         }
     }
 
-    public function search($search) {
-        $query = Area::where('flg_aktif', 1)->where('nama', 'like', '%'.$search.'%')->orderBy('nama', 'asc')->get();
+    public function search($param, $key, $value, $status, $orderVal, $orderBy, $limit)
+    {
+        $column = array('id', 'nama', 'id_provinsi', 'id_kabupaten');
 
-        if ($query == '[]') {
+        if($param != 'filter' && $param != 'search'){
+            return response()->json([
+                'code'    => 412,
+                'status'  => 'not valid',
+                'message' => 'gunakan parameter yang valid diantara berikut: filter, search'
+            ], 412);
+        }
+
+        if (in_array($key, $column) == false)
+        {
+            return response()->json([
+                'code'    => 412,
+                'status'  => 'not valid',
+                'message' => 'gunakan key yang valid diantara berikut: '.implode(",", $column)
+            ], 412);
+        }
+
+        if (in_array($orderBy, $column) == false)
+        {
+            return response()->json([
+                'code'    => 412,
+                'status'  => 'not valid',
+                'message' => 'gunakan order by yang valid diantara berikut: '.implode(",", $column)
+            ], 412);
+        }
+
+        if($param == 'search'){
+            $operator   = "like";
+            $func_value = "%{$value}%";
+        }else{
+            $operator   = "=";
+            $func_value = "{$value}";
+        }
+
+        $query = Area::where('flg_aktif', $status)->orderBy($orderBy, $orderVal);
+
+        if($value == 'default'){
+            $res = $query;
+        }else{
+            $res = $query->where($key, $operator, $func_value);
+        }
+
+        if($limit == 'default'){
+            $result = $res;
+        }else{
+            $result = $res->limit($limit);
+        }
+
+        if ($result->get() == '[]') {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
@@ -248,9 +297,9 @@ class AreaController extends BaseController
             ], 404);
         }
 
-        $res = array();
-        foreach ($query as $key => $val) {
-            $res[$key] = [
+        $data = array();
+        foreach ($result->get() as $key => $val) {
+            $data[$key] = [
                 "id"             => $val->id,
                 "nama_area"      => $val->nama,
                 "nama_provinsi"  => $val->prov['nama'],
@@ -262,7 +311,8 @@ class AreaController extends BaseController
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'data'   => $res
+                'count'  => sizeof($data),
+                'data'   => $data
             ], 200);
         } catch (Exception $e) {
             return response()->json([

@@ -40,7 +40,7 @@ class AuthController extends Controller
             'email'     => $user->email,
             'nama'      => $user->nama,
             'iat'       => time(), // created at
-            'exp'       => time() + (60*60*24*7) //,expiresIn: '7d'
+            'exp'       => time() + (60*60*24*7*2) //,expiresIn: '14d'
         ];
         return JWT::encode($payload, env('JWT_SECRET'));
     }

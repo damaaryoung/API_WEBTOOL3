@@ -15,17 +15,13 @@ use App\Models\Pengajuan\AO\KapBulanan;
 use App\Models\Pengajuan\AO\ValidModel;
 use App\Models\Pengajuan\AO\VerifModel;
 use App\Models\Pengajuan\SO\Penjamin;
-use App\Models\Pengajuan\SO\Pasangan;
 use App\Models\Pengajuan\SO\Debitur;
-use Illuminate\Support\Facades\File;
-use App\Models\AreaKantor\Cabang;
+// use Illuminate\Support\Facades\File;
 use App\Models\Transaksi\TransSO;
 use App\Models\Transaksi\TransAO;
 use App\Models\AreaKantor\JPIC;
 use App\Models\AreaKantor\PIC;
 use Illuminate\Http\Request;
-use App\Http\Requests;
-use App\Models\User;
 use Carbon\Carbon;
 use DB;
 
@@ -49,12 +45,10 @@ class MasterAO_Controller extends BaseController
         $scope     = $pic->jpic['cakupan'];
 
         $query_dir = TransSO::with('pic', 'cabang', 'asaldata', 'debt', 'pas', 'faspin', 'ao', 'ca')->orderBy('created_at', 'desc')->where('status_das', 1)->where('status_hm', 1);
-        $method = 'get';
 
-        $query = Helper::checkDir($user_id, $scope, $query_dir, $id_area, $id_cabang, $method);
+        $query = Helper::checkDir($scope, $query_dir, $id_area, $id_cabang);
 
-
-        if ($query == '[]') {
+        if ($query->get() == '[]') {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
@@ -62,7 +56,8 @@ class MasterAO_Controller extends BaseController
             ], 404);
         }
 
-        foreach ($query as $key => $val) {
+        $data = array();
+        foreach ($query->get() as $key => $val) {
 
             if ($val->status_das == 1) {
                 $status_das = 'complete';
@@ -120,7 +115,7 @@ class MasterAO_Controller extends BaseController
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'count'  => $query->count(),
+                'count'  => sizeof($data),
                 'data'   => $data
             ], 200);
         } catch (Exception $e) {
@@ -150,12 +145,11 @@ class MasterAO_Controller extends BaseController
 
         $query_dir = TransSO::with('pic', 'cabang', 'asaldata', 'debt', 'pas', 'faspin', 'ao', 'ca')
                 ->where('id', $id); //->where('status_das', 1)->where('status_hm', 1);
-        $method = 'first';
 
-        $val = Helper::checkDir($user_id, $scope, $query_dir, $id_area, $id_cabang, $method);
+        $vals = Helper::checkDir($scope, $query_dir, $id_area, $id_cabang);
+        $val  = $vals->first();
 
-
-        if (!$query_dir->first()) {
+        if ($val == null) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
@@ -168,6 +162,7 @@ class MasterAO_Controller extends BaseController
         $penjamin = Penjamin::whereIn('id', $id_penj)->get();
 
         if ($penjamin != '[]') {
+            $pen = array();
             foreach ($penjamin as $key => $value) {
                 $pen[$key] = [
                     "id"        => $val->id == null ? null : (int) $value->id,
@@ -202,7 +197,7 @@ class MasterAO_Controller extends BaseController
             $status_ao = 'waiting';
         }
 
-        $data[] = [
+        $data = array(
             'id'          => $val->id          == null ? null : (int) $val->id,
             'id_trans_ao' => $val->id_trans_ao == null ? null : (int) $val->id_trans_ao,
             'nomor_so'    => $val->nomor_so,
@@ -249,13 +244,13 @@ class MasterAO_Controller extends BaseController
                 "ideb"      => explode(";", $val->lamp_ideb),
                 "pefindo"   => explode(";", $val->lamp_pefindo)
             ]
-        ];
+        );
 
         try {
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'data'   => $data[0]
+                'data'   => $data
             ], 200);
         } catch (Exception $e) {
             return response()->json([
@@ -482,7 +477,6 @@ class MasterAO_Controller extends BaseController
                 $path = $lamp_dir.'/agunan_kendaraan';
                 $name = 'agunan_belakang.' . $file->getClientOriginalName();
                 $file->move($path,$name);
-                $a++;
 
                 $agunanBelakangKen[] = $path.'/'.$name;
             }
@@ -1140,7 +1134,8 @@ class MasterAO_Controller extends BaseController
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'message'=> 'Data untuk AO berhasil dikirim'
+                'message'=> 'Data untuk AO berhasil dikirim',
+                'data'   => $new_TransAO
                 // 'message'=> $msg
             ], 200);
         } catch (\Exception $e) {
@@ -1153,7 +1148,8 @@ class MasterAO_Controller extends BaseController
         }
     }
 
-    public function search($search, Request $req){
+    public function search($param, $key, $value, $status, $orderVal, $orderBy, $limit, Request $req)
+    {
         $user_id  = $req->auth->user_id;
 
         $pic = PIC::where('user_id', $user_id)->first();
@@ -1166,19 +1162,69 @@ class MasterAO_Controller extends BaseController
             ], 404);
         }
 
+        $column = array(
+            'id', 'nomor_so', 'user_id', 'id_pic', 'id_area', 'id_cabang', 'id_asal_data', 'nama_marketing', 'nama_so', 'id_fasilitas_pinjaman', 'id_calon_debitur', 'id_pasangan', 'id_penjamin', 'id_trans_ao', 'id_trans_ca', 'id_trans_caa', 'catatan_das', 'catatan_hm', 'status_das', 'status_hm', 'lamp_ideb', 'lamp_pefindo'
+        );
+
+        if($param != 'filter' && $param != 'search'){
+            return response()->json([
+                'code'    => 412,
+                'status'  => 'not valid',
+                'message' => 'gunakan parameter yang valid diantara berikut: filter, search'
+            ], 412);
+        }
+
+        if (in_array($key, $column) == false)
+        {
+            return response()->json([
+                'code'    => 412,
+                'status'  => 'not valid',
+                'message' => 'gunakan key yang valid diantara berikut: '.implode(",", $column)
+            ], 412);
+        }
+
+        if (in_array($orderBy, $column) == false)
+        {
+            return response()->json([
+                'code'    => 412,
+                'status'  => 'not valid',
+                'message' => 'gunakan order by yang valid diantara berikut: '.implode(",", $column)
+            ], 412);
+        }
+
+        if($param == 'search'){
+            $operator   = "like";
+            $func_value = "%{$value}%";
+        }else{
+            $operator   = "=";
+            $func_value = "{$value}";
+        }
+
         $id_area   = $pic->id_area;
         $id_cabang = $pic->id_cabang;
         $scope     = $pic->jpic['cakupan'];
-
+    
         $query_dir = TransSO::with('pic', 'cabang', 'asaldata', 'debt', 'pas', 'faspin', 'ao', 'ca')
-                ->where('status_das', 1)->where('status_hm', 1)
-                ->where('nomor_so', 'like', '%'.$search.'%')->orderBy('created_at', 'desc');
-        $method = 'get';
+            ->where('status_hm', 1)
+            ->where('status_das', 1)
+            ->where('flg_aktif', $status)
+            ->orderBy($orderBy, $orderVal);
+        
+        $query = Helper::checkDir($scope, $query_dir, $id_area, $id_cabang);
 
-        $query = Helper::checkDir($user_id, $scope, $query_dir, $id_area, $id_cabang, $method);
+        if($value == 'default'){
+            $res = $query;
+        }else{
+            $res = $query->where($key, $operator, $func_value);
+        }
 
+        if($limit == 'default'){
+            $result = $res;
+        }else{
+            $result = $res->limit($limit);
+        }
 
-        if ($query == '[]') {
+        if ($result->get() == '[]') {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
@@ -1186,7 +1232,8 @@ class MasterAO_Controller extends BaseController
             ], 404);
         }
 
-        foreach ($query as $key => $val) {
+        $data = array();
+        foreach ($result->get() as $key => $val) {
 
             if ($val->status_das == 1) {
                 $status_das = 'complete';
@@ -1237,10 +1284,6 @@ class MasterAO_Controller extends BaseController
                     'status'  => $status_ao,
                     'catatan' => $val->ao['catatan_ao']
                 ]
-                // 'das_status'     => $status_das,
-                // 'das_note'       => $val->catatan_das,
-                // 'hm_status'      => $status_das,
-                // 'hm_note'        => $val->catatan_hm,
             ];
         }
 
@@ -1248,6 +1291,7 @@ class MasterAO_Controller extends BaseController
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
+                'count'  => sizeof($data),
                 'data'   => $data
             ], 200);
         } catch (Exception $e) {
@@ -1291,12 +1335,10 @@ class MasterAO_Controller extends BaseController
                     ->orderBy('created_at', 'desc');
         }
 
-        $method = 'get';
-
-        $query = Helper::checkDir($user_id, $scope, $query_dir, $id_area, $id_cabang, $method);
+        $query = Helper::checkDir$scope, $query_dir, $id_area, $id_cabang);
 
 
-        if ($query == '[]') {
+        if ($query->get() == '[]') {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
@@ -1304,7 +1346,8 @@ class MasterAO_Controller extends BaseController
             ], 404);
         }
 
-        foreach ($query as $key => $val) {
+        $data = array();
+        foreach ($query->get() as $key => $val) {
 
             if ($val->status_das == 1) {
                 $status_das = 'complete';
@@ -1363,7 +1406,7 @@ class MasterAO_Controller extends BaseController
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'count'  => $query->count(),
+                'count'  => sizeof($data),
                 'data'   => $data
             ], 200);
         } catch (Exception $e) {

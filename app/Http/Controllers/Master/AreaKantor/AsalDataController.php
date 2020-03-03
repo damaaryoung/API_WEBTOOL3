@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Master\AreaKantor;
 
 use Laravel\Lumen\Routing\Controller as BaseController;
-use App\Http\Controllers\Controller as Helper;
 use App\Models\AreaKantor\AsalData;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
@@ -205,22 +204,72 @@ class AsalDataController extends BaseController
         }
     }
 
-    public function search($search) {
+    public function search($param, $key, $value, $status, $orderVal, $orderBy, $limit)
+    {
+        $column = array('id', 'nama', 'info');
+
+        if($param != 'filter' && $param != 'search'){
+            return response()->json([
+                'code'    => 412,
+                'status'  => 'not valid',
+                'message' => 'gunakan parameter yang valid diantara berikut: filter, search'
+            ], 412);
+        }
+
+        if (in_array($key, $column) == false)
+        {
+            return response()->json([
+                'code'    => 412,
+                'status'  => 'not valid',
+                'message' => 'gunakan key yang valid diantara berikut: '.implode(",", $column)
+            ], 412);
+        }
+
+        if (in_array($orderBy, $column) == false)
+        {
+            return response()->json([
+                'code'    => 412,
+                'status'  => 'not valid',
+                'message' => 'gunakan order by yang valid diantara berikut: '.implode(",", $column)
+            ], 412);
+        }
+
+        if($param == 'search'){
+            $operator   = "like";
+            $func_value = "%{$value}%";
+        }else{
+            $operator   = "=";
+            $func_value = "{$value}";
+        }
+
+        $query = AsalData::select('nama', 'info')->where('flg_aktif', $status)->orderBy($orderBy, $orderVal);
+
+        if($value == 'default'){
+            $res = $query;
+        }else{
+            $res = $query->where($key, $operator, $func_value);
+        }
+
+        if($limit == 'default'){
+            $result = $res;
+        }else{
+            $result = $res->limit($limit);
+        }
+
+        if ($result->get() == '[]') {
+            return response()->json([
+                'code'    => 404,
+                'status'  => 'not found',
+                'message' => 'Data kosong'
+            ], 404);
+        }
+        
         try {
-            $query = AsalData::select('nama', 'info')->where('flg_aktif', 1)->where('nama', 'like', '%'.$search.'%')->orderBy('nama', 'asc')->get();
-
-            if ($query == '[]') {
-                return response()->json([
-                    "code"    => 404,
-                    "status"  => "not found",
-                    "message" => "Data kosong"
-                ], 404);
-            }
-
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'data'   => $query
+                'count'  => $result->count(),
+                'data'   => $result->get()
             ], 200);
         } catch (Exception $e) {
             return response()->json([

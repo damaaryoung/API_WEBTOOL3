@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Pengajuan\Tunggal;
 
 use Laravel\Lumen\Routing\Controller as BaseController;
-use App\Http\Controllers\Controller as Helper;
+// use App\Http\Controllers\Controller as Helper;
 
 // Form Request
 use App\Http\Requests\Pengajuan\DebiturRequest;
@@ -11,11 +11,8 @@ use App\Http\Requests\Pengajuan\DebiturRequest;
 // Models
 use App\Models\Pengajuan\SO\Debitur;
 use App\Models\Transaksi\TransSO;
-use App\Models\User;
 
 use Illuminate\Support\Facades\File;
-use Illuminate\Http\Request;
-use App\Http\Requests;
 use Carbon\Carbon;
 use DB;
 

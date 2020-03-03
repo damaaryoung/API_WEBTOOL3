@@ -18,8 +18,6 @@ use App\Models\Transaksi\TransAO;
 use App\Models\AreaKantor\JPIC;
 use App\Models\AreaKantor\PIC;
 use Illuminate\Http\Request;
-use App\Http\Requests;
-use App\Models\User;
 use Carbon\Carbon;
 use DB;
 
@@ -43,11 +41,10 @@ class MasterCAA_Controller extends BaseController
         $scope     = $pic->jpic['cakupan'];
 
         $query_dir = TransCA::with('so', 'pic', 'cabang')->where('status_ca', 1)->orderBy('created_at', 'desc');
-        $method = 'get';
 
-        $query = Helper::checkDir($user_id, $scope, $query_dir, $id_area, $id_cabang, $method);
+        $query = Helper::checkDir($scope, $query_dir, $id_area, $id_cabang);
 
-        if ($query == '[]') {
+        if ($query->get() == '[]') {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
@@ -55,7 +52,8 @@ class MasterCAA_Controller extends BaseController
             ], 404);
         }
 
-        foreach ($query as $key => $val) {
+        $data = array();
+        foreach ($query->get() as $key => $val) {
 
             if ($val->status_ca == 1) {
                 $status_ca = 'recommend';
@@ -159,8 +157,8 @@ class MasterCAA_Controller extends BaseController
                 'asal_data'      => $val->so['asaldata']['nama'],
                 'nama_marketing' => $val->so['nama_marketing'],
                 'pengajuan' => [
-                    'plafon' => (int) $val->so['faspin']['plafon'],
-                    'tenor'  => (int) $val->so['faspin']['tenor']
+                    'plafon' => $val->so['faspin']['plafon'],
+                    'tenor'  => $val->so['faspin']['tenor']
                 ],
                 'rekomendasi_ao' => $rekomendasi_ao,
                 'rekomendasi_ca' => $rekomendasi_ca,
@@ -180,7 +178,7 @@ class MasterCAA_Controller extends BaseController
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'count'  => $query->count(),
+                'count'  => sizeof($data),
                 'data'   => $data
             ], 200);
         } catch (Exception $e) {
@@ -502,9 +500,10 @@ class MasterCAA_Controller extends BaseController
                 ], 404);
             }
 
+            $approval = array();
             for ($i=0; $i < count($teamS); $i++){
 
-                Approval::create([
+                $approval[] = Approval::create([
                     'id_trans_so'  => $id,
                     'id_trans_caa' => $CAA->id,
                     'user_id'      => $PIC_app[$i]['user_id'],
@@ -523,7 +522,8 @@ class MasterCAA_Controller extends BaseController
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'message'=> 'Data untuk CAA berhasil dikirim'
+                'message'=> 'Data untuk CAA berhasil dikirim',
+                'data'   => $approval
             ], 200);
         } catch (Exception $e) {
             $err = DB::connection('web')->rollback();
@@ -574,9 +574,9 @@ class MasterCAA_Controller extends BaseController
 
         $query_dir = TransCA::with('pic', 'cabang')->where('id_trans_so', $id)
             ->where('status_ca', 1);
-        $method = 'first';
 
-        $check_ca = Helper::checkDir($user_id, $scope, $query_dir, $id_area, $id_cabang, $method);
+        $ca = Helper::checkDir($scope, $query_dir, $id_area, $id_cabang);
+        $check_ca = $ca->first();
 
         if ($check_ca == null) {
             return response()->json([
@@ -594,6 +594,7 @@ class MasterCAA_Controller extends BaseController
         if ($AguTa == '[]') {
             $idTan = null;
         }else{
+            $idTan = array();
             foreach ($AguTa as $key => $value) {
                 $idTan[$key] = array(
                     'id'             => $value->id == null ? null : (int) $value->id,
@@ -623,6 +624,7 @@ class MasterCAA_Controller extends BaseController
         if ($AguKe == '[]') {
             $idKen = null;
         }else{
+            $idKen = array();
             foreach ($AguKe as $key => $value) {
                 $idKen[$key] = array(
                     'id'                    => $value->id == null ? null : (int) $value->id,
@@ -859,9 +861,9 @@ class MasterCAA_Controller extends BaseController
         }
 
         $query_dir = TransCAA::with('so', 'pic', 'cabang')->where('id_trans_so', $id);
-        $method = 'first';
 
-        $check_caa = Helper::checkDir($user_id, $scope, $query_dir, $id_area, $id_cabang, $method);
+        $caa = Helper::checkDir($scope, $query_dir, $id_area, $id_cabang);
+        $check_caa = $caa->first();
 
         if ($check_caa == null) {
             return response()->json([
@@ -878,6 +880,7 @@ class MasterCAA_Controller extends BaseController
         if ($AguTa == '[]') {
             $idTan = null;
         }else{
+            $idTan = array();
             foreach ($AguTa as $key => $value) {
                 $idTan[$key] = array(
                     'id'             => $value->id == null ? null : (int) $value->id,
@@ -909,6 +912,7 @@ class MasterCAA_Controller extends BaseController
         if ($AguKe == '[]') {
             $idKen = null;
         }else{
+            $idKen = array();
             foreach ($AguKe as $key => $value) {
                 $idKen[$key] = array(
                     'id'                    => $value->id == null ? null : (int) $value->id,
@@ -931,10 +935,6 @@ class MasterCAA_Controller extends BaseController
                 );
             }
         }
-
-
-        $pic_team_caa = explode(",", $check_caa->pic_team_caa);
-
 
         $get_pic = PIC::with('jpic')->whereIn('id', explode(",", $check_caa->pic_team_caa))->get();
 
@@ -1034,49 +1034,49 @@ class MasterCAA_Controller extends BaseController
             'pendapatan_usaha' => [
                 'id'        => $check_ao->id_pendapatan_usaha == null ? null : (int) $check_ao->id_pendapatan_usaha,
                 'pemasukan' => array(
-                    'tunai' => (int) $check_ao->usaha['pemasukan_tunai'],
-                    'kredit'=> (int) $check_ao->usaha['pemasukan_kredit'],
-                    'total' => (int) $check_ao->usaha['total_pemasukan']
+                    'tunai' => $check_ao->usaha['pemasukan_tunai'],
+                    'kredit'=> $check_ao->usaha['pemasukan_kredit'],
+                    'total' => $check_ao->usaha['total_pemasukan']
                 ),
                 'pengeluaran' => array(
-                    'biaya_sewa'           => (int) $check_ao->usaha['biaya_sewa'],
-                    'biaya_gaji_pegawai'   => (int) $check_ao->usaha['biaya_gaji_pegawai'],
-                    'biaya_belanja_brg'    => (int) $check_ao->usaha['biaya_belanja_brg'],
-                    'biaya_telp_listr_air' => (int) $check_ao->usaha['biaya_telp_listr_air'],
-                    'biaya_sampah_kemanan' => (int) $check_ao->usaha['biaya_sampah_kemanan'],
-                    'biaya_kirim_barang'   => (int) $check_ao->usaha['biaya_kirim_barang'],
-                    'biaya_hutang_dagang'  => (int) $check_ao->usaha['biaya_hutang_dagang'],
-                    'angsuran'             => (int) $check_ao->usaha['biaya_angsuran'],
-                    'lain_lain'            => (int) $check_ao->usaha['biaya_lain_lain'],
-                    'total'                => (int) $check_ao->usaha['total_pengeluaran']
+                    'biaya_sewa'           => $check_ao->usaha['biaya_sewa'],
+                    'biaya_gaji_pegawai'   => $check_ao->usaha['biaya_gaji_pegawai'],
+                    'biaya_belanja_brg'    => $check_ao->usaha['biaya_belanja_brg'],
+                    'biaya_telp_listr_air' => $check_ao->usaha['biaya_telp_listr_air'],
+                    'biaya_sampah_kemanan' => $check_ao->usaha['biaya_sampah_kemanan'],
+                    'biaya_kirim_barang'   => $check_ao->usaha['biaya_kirim_barang'],
+                    'biaya_hutang_dagang'  => $check_ao->usaha['biaya_hutang_dagang'],
+                    'angsuran'             => $check_ao->usaha['biaya_angsuran'],
+                    'lain_lain'            => $check_ao->usaha['biaya_lain_lain'],
+                    'total'                => $check_ao->usaha['total_pengeluaran']
                 ),
-                'penghasilan_bersih' => (int) $check_ao->usaha['laba_usaha']
+                'penghasilan_bersih' => $check_ao->usaha['laba_usaha']
             ],
 
             'penyimpangan' => $check_caa->penyimpangan,
             'team_caa'  => $ptc,
             'pengajuan' => [
-                'plafon'         => (int) $check_so->faspin['plafon'],
-                'tenor'          => (int) $check_so->faspin['tenor'],
+                'plafon'         => $check_so->faspin['plafon'],
+                'tenor'          => $check_so->faspin['tenor'],
                 'jenis_pinjaman' => $check_so->faspin['jenis_pinjaman']
             ],
             'rekomendasi_ao'   => [
                 'id'               => $check_ao->id_recom_ao == null ? null : (int) $check_ao->id_recom_ao,
                 'produk'           => $check_ao->recom_ao['produk'],
-                'plafon'           => (int) $check_ao->recom_ao['plafon_kredit'],
-                'tenor'            => (int) $check_ao->recom_ao['jangka_waktu'],
+                'plafon'           => $check_ao->recom_ao['plafon_kredit'],
+                'tenor'            => $check_ao->recom_ao['jangka_waktu'],
                 'suku_bunga'       => floatval($check_ao->recom_ao['suku_bunga']),
-                'pembayaran_bunga' => (int) $check_ao->recom_ao['pembayaran_bunga'],
+                'pembayaran_bunga' => $check_ao->recom_ao['pembayaran_bunga'],
                 'catatan'          => $check_ao->catatan_ao
             ],
             'rekomendasi_ca' => [
                 'id'                   => $check_ca->id_recom_ca == null ? null : (int) $check_ca->id_recom_ca,
                 'produk'               => $check_ca->recom_ca['produk'],
-                'plafon'               => (int) $check_ca->recom_ca['plafon_kredit'],
-                'tenor'                => (int) $check_ca->recom_ca['jangka_waktu'],
+                'plafon'               => $check_ca->recom_ca['plafon_kredit'],
+                'tenor'                => $check_ca->recom_ca['jangka_waktu'],
                 'suku_bunga'           => floatval($check_ca->recom_ca['suku_bunga']),
-                'pembayaran_bunga'     => (int) $check_ca->recom_ca['pembayaran_bunga'],
-                'rekomendasi_angsuran' => (int) $check_ca->recom_ca['rekom_angsuran'],
+                'pembayaran_bunga'     => $check_ca->recom_ca['pembayaran_bunga'],
+                'rekomendasi_angsuran' => $check_ca->recom_ca['rekom_angsuran'],
                 'catatan'              => $check_ca->catatan_ca
             ],
             'data_biaya' => [
@@ -1135,7 +1135,8 @@ class MasterCAA_Controller extends BaseController
         }
     }
 
-    public function search($search, Request $req){
+    public function search($param, $key, $value, $status, $orderVal, $orderBy, $limit, Request $req)
+    {
         $user_id  = $req->auth->user_id;
 
         $pic = PIC::where('user_id', $user_id)->first();
@@ -1148,20 +1149,68 @@ class MasterCAA_Controller extends BaseController
             ], 404);
         }
 
+        $column = array(
+            'id', 'nomor_ca', 'user_id', 'id_trans_so', 'id_pic', 'id_area', 'id_cabang', 'id_mutasi_bank', 'id_log_tabungan', 'id_info_analisa_cc', 'id_ringkasan_analisa', 'id_recom_ca', 'id_rekomendasi_pinjaman', 'id_asuransi_jiwa', 'id_asuransi_jaminan', 'id_kapasitas_bulanan', 'id_pendapatan_usaha', 'catatan_ca', 'status_ca', 'revisi'
+        );
+
+        if($param != 'filter' && $param != 'search'){
+            return response()->json([
+                'code'    => 412,
+                'status'  => 'not valid',
+                'message' => 'gunakan parameter yang valid diantara berikut: filter, search'
+            ], 412);
+        }
+
+        if (in_array($key, $column) == false)
+        {
+            return response()->json([
+                'code'    => 412,
+                'status'  => 'not valid',
+                'message' => 'gunakan key yang valid diantara berikut: '.implode(",", $column)
+            ], 412);
+        }
+
+        if (in_array($orderBy, $column) == false)
+        {
+            return response()->json([
+                'code'    => 412,
+                'status'  => 'not valid',
+                'message' => 'gunakan order by yang valid diantara berikut: '.implode(",", $column)
+            ], 412);
+        }
+
+        if($param == 'search'){
+            $operator   = "like";
+            $func_value = "%{$value}%";
+        }else{
+            $operator   = "=";
+            $func_value = "{$value}";
+        }
+
         $id_area   = $pic->id_area;
         $id_cabang = $pic->id_cabang;
         $scope     = $pic->jpic['cakupan'];
 
         $query_dir = TransCA::with('pic', 'cabang')
-                ->where('status_ca', 1)
-                ->where('nomor_ca', 'like', '%'.$search.'%')->orderBy('created_at', 'desc');
+            ->where('status_ca', 1)
+            ->where('flg_aktif', $status)
+            ->orderBy($orderBy, $orderVal);
+        
+        $query = Helper::checkDir($scope, $query_dir, $id_area, $id_cabang);
 
-        $method = 'get';
+        if($value == 'default'){
+            $res = $query;
+        }else{
+            $res = $query->where($key, $operator, $func_value);
+        }
 
-        $query = Helper::checkDir($user_id, $scope, $query_dir, $id_area, $id_cabang, $method);
+        if($limit == 'default'){
+            $result = $res;
+        }else{
+            $result = $res->limit($limit);
+        }
 
-
-        if ($query == '[]') {
+        if ($result->get() == '[]') {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
@@ -1169,8 +1218,8 @@ class MasterCAA_Controller extends BaseController
             ], 404);
         }
 
-
-        foreach ($query as $key => $val) {
+        $data = array();
+        foreach ($result->get() as $key => $val) {
 
             if ($val->status_ca == 1) {
                 $status_ca = 'recommend';
@@ -1206,6 +1255,7 @@ class MasterCAA_Controller extends BaseController
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
+                'count'  => sizeof($data),
                 'data'   => $data
             ], 200);
         } catch (Exception $e) {
@@ -1246,11 +1296,9 @@ class MasterCAA_Controller extends BaseController
                     ->orderBy('created_at', 'desc');
         }
 
-        $method = 'get';
+        $query = Helper::checkDir($scope, $query_dir, $id_area, $id_cabang);
 
-        $query = Helper::checkDir($user_id, $scope, $query_dir, $id_area, $id_cabang, $method);
-
-        if ($query == '[]') {
+        if ($query->get() == '[]') {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
@@ -1258,7 +1306,8 @@ class MasterCAA_Controller extends BaseController
             ], 404);
         }
 
-        foreach ($query as $key => $val) {
+        $data = array();
+        foreach ($query->get() as $key => $val) {
 
             if ($val->status_ca == 1) {
                 $status_ca = 'recommend';
@@ -1363,8 +1412,8 @@ class MasterCAA_Controller extends BaseController
                 'asal_data'      => $val->so['asaldata']['nama'],
                 'nama_marketing' => $val->so['nama_marketing'],
                 'pengajuan' => [
-                    'plafon' => (int) $val->so['faspin']['plafon'],
-                    'tenor'  => (int) $val->so['faspin']['tenor']
+                    'plafon' => $val->so['faspin']['plafon'],
+                    'tenor'  => $val->so['faspin']['tenor']
                 ],
                 'rekomendasi_ao' => $rekomendasi_ao,
                 'rekomendasi_ca' => $rekomendasi_ca,
@@ -1384,7 +1433,7 @@ class MasterCAA_Controller extends BaseController
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'count'  => $query->count(),
+                'count'  => sizeof($data),
                 'data'   => $data
             ], 200);
         } catch (Exception $e) {

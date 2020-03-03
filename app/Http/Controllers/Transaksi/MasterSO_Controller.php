@@ -9,15 +9,13 @@ use App\Http\Requests\Transaksi\BlankRequest;
 use App\Models\Pengajuan\SO\Penjamin;
 use App\Models\Pengajuan\SO\Pasangan;
 use App\Models\Pengajuan\SO\Debitur;
-use Illuminate\Support\Facades\File;
+// use Illuminate\Support\Facades\File;
 use App\Models\AreaKantor\Cabang;
 use App\Models\Transaksi\TransSO;
 use App\Models\AreaKantor\JPIC;
 use App\Models\AreaKantor\PIC;
-use App\Models\KeuanganUsaha;
+// use App\Models\KeuanganUsaha;
 use Illuminate\Http\Request;
-use App\Http\Requests;
-Use App\Models\User;
 use Carbon\Carbon;
 use DB;
 
@@ -41,12 +39,9 @@ class MasterSO_Controller extends BaseController
 
         $query_dir = TransSO::with('pic', 'cabang', 'asaldata','debt', 'faspin')->orderBy('created_at', 'desc');
 
-        $method = 'get';
+        $query = Helper::checkDir($scope, $query_dir, $id_area, $id_cabang);
 
-        $query = Helper::checkDir($user_id, $scope, $query_dir, $id_area, $id_cabang, $method);
-
-
-        if ($query == '[]') {
+        if ($query->get() == '[]') {
             return response()->json([
                 "code"    => 404,
                 "status"  => "not found",
@@ -54,7 +49,8 @@ class MasterSO_Controller extends BaseController
             ], 404);
         }
 
-        foreach ($query as $key => $val) {
+        $data = array();
+        foreach ($query->get() as $key => $val) {
             if ($val->status_das == 1) {
                 $status_das = 'complete';
             }elseif($val->status_das == 2){
@@ -71,7 +67,7 @@ class MasterSO_Controller extends BaseController
                 $status_hm = 'waiting';
             }
 
-            $res[$key] = [
+            $data[$key] = [
                 'id'              => $val->id == null ? null : (int) $val->id,
                 'nomor_so'        => $val->nomor_so,
                 'nama_so'         => $val->nama_so,
@@ -99,8 +95,8 @@ class MasterSO_Controller extends BaseController
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'count'  => $query->count(),
-                'data'   => $res
+                'count'  => sizeof($data),
+                'data'   => $data
             ], 200);
         } catch (Exception $e) {
             return response()->json([
@@ -129,12 +125,11 @@ class MasterSO_Controller extends BaseController
         $scope     = $pic->jpic['cakupan'];
 
         $query_dir = TransSO::with('pic', 'cabang', 'asaldata', 'debt', 'pas', 'faspin', 'ao', 'ca')->where('id', $id);
-        $method = 'first';
 
-        $val = Helper::checkDir($user_id, $scope, $query_dir, $id_area, $id_cabang, $method);
+        $vals = Helper::checkDir($scope, $query_dir, $id_area, $id_cabang);
+        $val  = $vals->first();
 
-
-        if (!$val) {
+        if ($val->first() == null) {
             return response()->json([
                 "code"    => 404,
                 "status"  => "not found",
@@ -147,6 +142,7 @@ class MasterSO_Controller extends BaseController
         $nama_anak = explode (",",$val->nama_anak);
         $tgl_anak  = explode (",",$val->tgl_lahir_anak);
 
+        $anak = array();
         for ($i = 0; $i < count($nama_anak); $i++) {
             $anak[] = [
                 'nama'      => $nama_anak[$i],
@@ -155,7 +151,7 @@ class MasterSO_Controller extends BaseController
         }
 
         $id_penj = explode (",",$val->id_penjamin);
-
+        $pen = array();
         foreach ($id_penj as $value) {
             $pen[] = array(
                 'id' => (int) $value
@@ -208,7 +204,7 @@ class MasterSO_Controller extends BaseController
             $status_caa = 'waiting';
         }
 
-        $res = [
+        $data = [
             'id'          => $val->id == null ? null : (int) $val->id,
             'nomor_so'    => $val->nomor_so,
             'nama_so'     => $val->nama_so,
@@ -252,7 +248,7 @@ class MasterSO_Controller extends BaseController
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'data'   => $res
+                'data'   => $data
             ], 200);
         } catch (Exception $e) {
             return response()->json([
@@ -656,10 +652,6 @@ class MasterSO_Controller extends BaseController
         try {
             $debt = Debitur::create($dataDebitur);
 
-            $id_debt = $debt->id;
-
-            $arrIdDebt = array('id_calon_debitur' => $id_debt);
-
             if ($dataFasPin) {
                 $FasPin    = FasilitasPinjaman::create($dataFasPin);
                 $id_faspin = $FasPin->id;
@@ -689,20 +681,21 @@ class MasterSO_Controller extends BaseController
 
             $arrTr = array(
                 'id_fasilitas_pinjaman' => $id_faspin,
-                'id_calon_debitur'      => $id_debt,
+                'id_calon_debitur'      => $debt->id,
                 'id_pasangan'           => $id_pasangan,
                 'id_penjamin'           => $penID
             );
 
             $mergeTr  = array_merge($trans_so, $arrTr);
-            TransSO::create($mergeTr);
+            $transaksi = TransSO::create($mergeTr);
 
             DB::connection('web')->commit();
 
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'message'=> 'Data berhasil dibuat'
+                'message'=> 'Data berhasil dibuat',
+                'data'   => $transaksi
             ], 200);
         }catch (\Exception $e) {
             $err = DB::connection('web')->rollback();
@@ -790,7 +783,8 @@ class MasterSO_Controller extends BaseController
         }
     }
 
-    public function search($search, Request $req){
+    public function search($param, $key, $value, $status, $orderVal, $orderBy, $limit, Request $req)
+    {
         $user_id = $req->auth->user_id;
         $pic     = PIC::where('user_id', $user_id)->first();
 
@@ -802,50 +796,102 @@ class MasterSO_Controller extends BaseController
             ], 404);
         }
 
+        $column = array(
+            'id', 'nomor_so', 'user_id', 'id_pic', 'id_area', 'id_cabang', 'id_asal_data', 'nama_marketing', 'nama_so', 'id_fasilitas_pinjaman', 'id_calon_debitur', 'id_pasangan', 'id_penjamin', 'id_trans_ao', 'id_trans_ca', 'id_trans_caa', 'catatan_das', 'catatan_hm', 'status_das', 'status_hm', 'lamp_ideb', 'lamp_pefindo'
+        );
+
+        if($param != 'filter' && $param != 'search'){
+            return response()->json([
+                'code'    => 412,
+                'status'  => 'not valid',
+                'message' => 'gunakan parameter yang valid diantara berikut: filter, search'
+            ], 412);
+        }
+
+        if (in_array($key, $column) == false)
+        {
+            return response()->json([
+                'code'    => 412,
+                'status'  => 'not valid',
+                'message' => 'gunakan key yang valid diantara berikut: '.implode(",", $column)
+            ], 412);
+        }
+
+        if (in_array($orderBy, $column) == false)
+        {
+            return response()->json([
+                'code'    => 412,
+                'status'  => 'not valid',
+                'message' => 'gunakan order by yang valid diantara berikut: '.implode(",", $column)
+            ], 412);
+        }
+
+        if($param == 'search'){
+            $operator   = "like";
+            $func_value = "%{$value}%";
+        }else{
+            $operator   = "=";
+            $func_value = "{$value}";
+        }
+
         $id_area   = $pic->id_area;
         $id_cabang = $pic->id_cabang;
         $scope     = $pic->jpic['cakupan'];
 
-        $query_dir = TransSO::with('pic', 'cabang', 'asaldata','debt', 'faspin')->where('nomor_so', 'like', '%'.$search.'%')->orderBy('created_at', 'desc');
-        $method = 'get';
+        $query_dir = TransSO::with('pic', 'cabang', 'asaldata','debt', 'faspin')
+            ->where('flg_aktif', $status)
+            ->orderBy($orderBy, $orderVal);
+        
+        $query = Helper::checkDir($scope, $query_dir, $id_area, $id_cabang);
 
-        $query = Helper::checkDir($user_id, $scope, $query_dir, $id_area, $id_cabang, $method);
-
-
-        if ($query == '[]') {
-            return response()->json([
-                "code"    => 404,
-                "status"  => "not found",
-                "message" => "Data di tidak ditemukan"
-            ], 404);
+        if($value == 'default'){
+            $res = $query;
         }else{
-            foreach ($query as $key => $val) {
-                $res[$key] = [
-                    'id'              => $val->id == null ? null : (int) $val->id,
-                    'nomor_so'        => $val->nomor_so,
-                    'nama_so'         => $val->nama_so,
-                    'pic'             => $val->pic['nama'],
-                    'area'            => $val->area['nama'],
-                    'cabang'          => $val->cabang['nama'],
-                    'asal_data'       => $val->asaldata['nama'],
-                    'nama_marketing'  => $val->nama_marketing,
-                    'nama_calon_debt' => $val->debt['nama_lengkap']
-                ];
-            }
+            $res = $query->where($key, $operator, $func_value);
+        }
 
-            try {
-                return response()->json([
-                    'code'   => 200,
-                    'status' => 'success',
-                    'data'   => $res
-                ], 200);
-            } catch (Exception $e) {
-                return response()->json([
-                    "code"    => 501,
-                    "status"  => "error",
-                    "message" => $e
-                ], 501);
-            }
+        if($limit == 'default'){
+            $result = $res;
+        }else{
+            $result = $res->limit($limit);
+        }
+
+        if ($result->get() == '[]') {
+            return response()->json([
+                'code'    => 404,
+                'status'  => 'not found',
+                'message' => 'Data tidak ditemukan'
+            ], 404);
+        }
+
+        $data = array();
+        foreach ($result->get() as $key => $val) {
+            $data[$key] = [
+                'id'              => $val->id == null ? null : (int) $val->id,
+                'nomor_so'        => $val->nomor_so,
+                'nama_so'         => $val->nama_so,
+                'pic'             => $val->pic['nama'],
+                'area'            => $val->area['nama'],
+                'cabang'          => $val->cabang['nama'],
+                'asal_data'       => $val->asaldata['nama'],
+                'nama_marketing'  => $val->nama_marketing,
+                'nama_calon_debt' => $val->debt['nama_lengkap']
+            ];
+        }
+
+        try {
+            return response()->json([
+                'code'   => 200,
+                'status' => 'success',
+                'count'  => sizeof($data),
+                'data'   => $data
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                "code"    => 501,
+                "status"  => "error",
+                "message" => $e
+            ], 501);
         }
     }
 
@@ -876,12 +922,9 @@ class MasterSO_Controller extends BaseController
                     ->whereMonth('created_at', '=', $month);
         }
 
-        $method = 'get';
+        $query = Helper::checkDir($scope, $query_dir, $id_area, $id_cabang);
 
-        $query = Helper::checkDir($user_id, $scope, $query_dir, $id_area, $id_cabang, $method);
-
-
-        if ($query == '[]') {
+        if ($query->get() == '[]') {
             return response()->json([
                 "code"    => 404,
                 "status"  => "not found",
@@ -889,7 +932,8 @@ class MasterSO_Controller extends BaseController
             ], 404);
         }
 
-        foreach ($query as $key => $val) {
+        $data = array();
+        foreach ($query->get() as $key => $val) {
             if ($val->status_das == 1) {
                 $status_das = 'complete';
             }elseif($val->status_das == 2){
@@ -906,7 +950,7 @@ class MasterSO_Controller extends BaseController
                 $status_hm = 'waiting';
             }
 
-            $res[$key] = [
+            $data[$key] = [
                 'id'              => $val->id == null ? null : (int) $val->id,
                 'nomor_so'        => $val->nomor_so,
                 'nama_so'         => $val->nama_so,
@@ -935,8 +979,8 @@ class MasterSO_Controller extends BaseController
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'count'  => $query->count(),
-                'data'   => $res
+                'count'  => sizeof($data),
+                'data'   => $data
             ], 200);
         } catch (Exception $e) {
             return response()->json([

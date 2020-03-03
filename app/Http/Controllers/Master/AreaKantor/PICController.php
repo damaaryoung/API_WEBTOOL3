@@ -3,13 +3,12 @@
 namespace App\Http\Controllers\Master\AreaKantor;
 
 use Laravel\Lumen\Routing\Controller as BaseController;
-use App\Http\Controllers\Controller as Helper;
+// use App\Http\Controllers\Controller as Helper;
 use App\Http\Requests\AreaKantor\PICRequest;
 use App\Models\AreaKantor\PIC;
 use Illuminate\Http\Request;
-use App\Models\User;
 use Carbon\Carbon;
-use DB;
+// use DB;
 
 class PICController extends BaseController
 {
@@ -34,8 +33,9 @@ class PICController extends BaseController
             ], 404);
         }
 
+        $data = array();
         foreach ($query as $key => $val) {
-            $res[$key]= [
+            $data[$key]= [
                 "id"          => $val->id,
                 "nama"        => $val->nama,
                 "email"       => $val->email,
@@ -52,8 +52,8 @@ class PICController extends BaseController
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'count'  => $query->count(),
-                'data'   => $res
+                'count'  => sizeof($data),
+                'data'   => $data
             ], 200);
         } catch (Exception $e) {
             return response()->json([
@@ -116,7 +116,7 @@ class PICController extends BaseController
                 "id_cabang"      => $query->id_cabang,
                 "nama_cabang"    => $query->cabang['nama'],
                 "plafon_max"     => $query->plafon_caa,
-                "flg_aktif"      => $query->flg_aktif == 0 ? "false" : "true",
+                "flg_aktif"      => (bool) $query->flg_aktif,
                 "created_at"     => Carbon::parse($query->created_at)->format('d-m-Y H:i:s')
             ];
 
@@ -204,12 +204,11 @@ class PICController extends BaseController
 
     public function trash() {
         $query = PIC::with('jpic','area','cabang')
-                ->whereHas('jpic', function($q) {
-                    // Query the name field in status table
-                    $q->where('nama_jenis', 'SO'); // '=' is optional
-                    $q->orWhere('nama_jenis', 'AO');
-                    $q->orWhere('nama_jenis', 'CA');
-                })
+                // ->whereHas('jpic', function($q) {
+                //     $q->where('nama_jenis', 'SO');
+                //     $q->orWhere('nama_jenis', 'AO');
+                //     $q->orWhere('nama_jenis', 'CA');
+                // })
                 ->where('flg_aktif', 0)
                 ->orderBy('nama', 'asc')
                 ->get();
@@ -270,7 +269,12 @@ class PICController extends BaseController
         }
     }
 
-    public function search($param, $key, $operator, $value, $valid, Request $req) {
+    public function search($param, $key, $value, $status, $orderVal, $orderBy, $limit)
+    {
+        $column = array(
+            'id', 'user_id', 'id_area', 'id_cabang', 'id_mj_pic', 'nama', 'email'
+        );
+
         if($param != 'filter' && $param != 'search'){
             return response()->json([
                 'code'    => 412,
@@ -279,40 +283,49 @@ class PICController extends BaseController
             ], 412);
         }
 
-        // if($operator != "=" && $operator != "!=" && $operator != "<" && $operator != "<=" && $operator != ">" && $operator != ">=" && $operator != "%"){
-        //     return response()->json([
-        //         'code'    => 412,
-        //         'status'  => 'not valid',
-        //         'message' => 'gunakan operator yang valid diantara berikut: =, !=, <, <=, >, >=, %'
-        //     ], 412);
-        // }
-
-        if($key != 'id' && $key != 'user_id' && $key != 'id_area' && $key != 'id_cabang' && $key != 'id_mj_pic' && $key != 'nama' && $key != 'email' && $key != 'plafon_caa' && $key != 'status'){
+        if (in_array($key, $column) == false)
+        {
             return response()->json([
                 'code'    => 412,
                 'status'  => 'not valid',
-                'message' => 'gunakan key yang valid diantara berikut: id, user_id, id_area, id_cabang, id_mj_pic, nama, email, plafon_caa'
+                'message' => 'gunakan key yang valid diantara berikut: '.implode(",", $column)
+            ], 412);
+        }
+
+        if (in_array($orderBy, $column) == false)
+        {
+            return response()->json([
+                'code'    => 412,
+                'status'  => 'not valid',
+                'message' => 'gunakan order by yang valid diantara berikut: '.implode(",", $column)
             ], 412);
         }
 
         if($param == 'search'){
-            $func_opr   = "like";
+            $operator   = "like";
             $func_value = "%{$value}%";
         }else{
-            $func_opr   = str_replace('=','', $operator); //"{$operator}";
+            $operator   = "=";
             $func_value = "{$value}";
         }
 
-        dd($func_opr);
-
-        // dd($req);
-
         $query = PIC::with('jpic','area','cabang')
-            ->where("{$key}", $func_opr, $func_value)
-            ->where('flg_aktif', $valid)
-            ->get();
+            ->where('flg_aktif', $status)
+            ->orderBy($orderBy, $orderVal);
 
-        if ($query == '[]') {
+        if($value == 'default'){
+            $res = $query;
+        }else{
+            $res = $query->where($key, $operator, $func_value);
+        }
+
+        if($limit == 'default'){
+            $result = $res;
+        }else{
+            $result = $res->limit($limit);
+        }
+
+        if ($result->get() == '[]') {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
@@ -320,8 +333,8 @@ class PICController extends BaseController
             ], 404);
         }
 
-        foreach ($query as $key => $val) {
-            $res[$key]= [
+        foreach ($result->get() as $key => $val) {
+            $exec[$key]= [
                 "id"          => $val->id,
                 "nama"        => $val->nama,
                 "email"       => $val->email,
@@ -335,7 +348,8 @@ class PICController extends BaseController
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'data'   => $res
+                'count'  => $result->count(),
+                'data'   => $exec
             ], 200);
         } catch (Exception $e) {
             return response()->json([

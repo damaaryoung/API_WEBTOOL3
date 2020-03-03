@@ -110,47 +110,19 @@ class Controller extends BaseController
         return $result;
     }
 
-    public static function checkDir($user_id, $scope, $query_dir, $id_area, $id_cabang, $method){
+    public static function checkDir($scope, $query_dir, $id_area, $id_cabang){
 
         if($scope == 'PUSAT'){
 
-            if ($method == 'get') {
-
-                $query = $query_dir->get();
-            }else{
-                $query = $query_dir->first();
-            }
+            $query = $query_dir;
 
         }elseif($scope == 'AREA'){
 
-            if ($method == 'get') {
-
-                $query = $query_dir
-                        ->where('id_area', $id_area)
-                        ->get();
-
-            }else{
-
-                $query = $query_dir
-                        ->where('id_area', $id_area)
-                        ->first();
-            }
+            $query = $query_dir->where('id_area', $id_area);
 
         }else{
 
-            if ($method == 'get'){
-
-                $query = $query_dir
-                        // ->where('id_area', $id_area)
-                        ->where('id_cabang', $id_cabang)
-                        ->get();
-            }else{
-
-                $query = $query_dir
-                        // ->where('id_area', $id_area)
-                        ->where('id_cabang', $id_cabang)
-                        ->first();
-            }
+            $query = $query_dir->where('id_cabang', $id_cabang);
         }
 
         return $query;

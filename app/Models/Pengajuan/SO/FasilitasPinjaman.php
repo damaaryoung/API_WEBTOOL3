@@ -26,5 +26,10 @@ class FasilitasPinjaman extends Model implements AuthenticatableContract, Author
         'jenis_pinjaman', 'tujuan_pinjaman', 'plafon', 'tenor', 'segmentasi_bpr'
     ];
 
+    protected $casts = [
+        'plafon' => 'integer',
+        'tenor'  => 'integer'
+    ];
+
     public $timestamps = false;
 }

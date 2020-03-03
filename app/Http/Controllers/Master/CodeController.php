@@ -28,6 +28,7 @@ class CodeController extends BaseController
         return response()->json([
             "code"   => 200,
             "status" => "success",
+            "count"  => $query->count(),
             "data"   => $query
         ]);
     }
@@ -45,6 +46,7 @@ class CodeController extends BaseController
         return response()->json([
             "code"   => 200,
             "status" => "success",
+            "count"  => $query->count(),
             "data"   => $query
         ]);
     }
@@ -66,6 +68,7 @@ class CodeController extends BaseController
         return response()->json([
             "code"   => 200,
             "status" => "success",
+            "count"  => $query->count(),
             "data"   => $query
         ]);
     }
@@ -83,6 +86,7 @@ class CodeController extends BaseController
         return response()->json([
             "code"   => 200,
             "status" => "success",
+            "count"  => $query->count(),
             "data"   => $query
         ]);
     }
@@ -99,6 +103,7 @@ class CodeController extends BaseController
         return response()->json([
             "code"   => 200,
             "status" => "success",
+            "count"  => $query->count(),
             "data"   => $query
         ]);
     }
@@ -130,6 +135,7 @@ class CodeController extends BaseController
             return response()->json([
                 "code"   => 200,
                 "status" => "success",
+                "count"  => $query->count(),
                 "data"   => $query
             ]);
         }
@@ -155,6 +161,7 @@ class CodeController extends BaseController
             return response()->json([
                 "code"   => 200,
                 "status" => "success",
+                "count"  => $query->count(),
                 "data"   => $query
             ]);
         }
@@ -184,6 +191,7 @@ class CodeController extends BaseController
             return response()->json([
                 "code"   => 200,
                 "status" => "success",
+                "count"  => $query->count(),
                 "data"   => $query
             ]);
         }
@@ -209,6 +217,7 @@ class CodeController extends BaseController
             return response()->json([
                 "code"   => 200,
                 "status" => "success",
+                "count"  => $query->count(),
                 "data"   => $query
             ]);
         }
@@ -233,6 +242,7 @@ class CodeController extends BaseController
             return response()->json([
                 "code"   => 200,
                 "status" => "success",
+                "count"  => $query->count(),
                 "data"   => $query
             ]);
         }
@@ -247,6 +257,7 @@ class CodeController extends BaseController
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
+                "count"  => $query->count(),
                 'data'   => $query
             ], 200);
         } catch (Exception $e) {

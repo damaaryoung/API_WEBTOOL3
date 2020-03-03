@@ -3,10 +3,7 @@
 namespace App\Http\Controllers\Master\Bisnis;
 
 use Laravel\Lumen\Routing\Controller as BaseController;
-use App\Http\Controllers\Controller as Helper;
-use App\Http\Requests\Bisnis\AsalDataReq;
-use Illuminate\Http\Request;
-use Carbon\Carbon;
+// use App\Http\Controllers\Controller as Helper;
 use DB;
 
 class MitraController extends BaseController
@@ -38,17 +35,69 @@ class MitraController extends BaseController
         }
     }
 
-    public function search($search) {
+    public function search($param, $key, $value, $status, $orderVal, $orderBy, $limit) 
+    {
+        $column = array('kode_mitra', 'nama_mitra');
 
+        if($param != 'filter' && $param != 'search'){
+            return response()->json([
+                'code'    => 412,
+                'status'  => 'not valid',
+                'message' => 'gunakan parameter yang valid diantara berikut: filter, search'
+            ], 412);
+        }
+
+        if (in_array($key, $column) == false)
+        {
+            return response()->json([
+                'code'    => 412,
+                'status'  => 'not valid',
+                'message' => 'gunakan key yang valid diantara berikut: '.implode(",", $column)
+            ], 412);
+        }
+
+        if (in_array($orderBy, $column) == false)
+        {
+            return response()->json([
+                'code'    => 412,
+                'status'  => 'not valid',
+                'message' => 'gunakan order by yang valid diantara berikut: '.implode(",", $column)
+            ], 412);
+        }
+
+        if($param == 'search'){
+            $operator   = "like";
+            $func_value = "%{$value}%";
+        }else{
+            $operator   = "=";
+            $func_value = "{$value}";
+        }
+
+        if($key == 'kode_mitra'){
+            $orderVal == $keyPar = 'kode_group5';
+        }elseif($key == 'nama_mitra'){
+            $orderVal == $keyPar = 'deskripsi_group5';
+        }
+        
         $query = DB::connection('dpm')->table('kre_kode_group5')
-                ->select('kode_group5 as kode_mitra','deskripsi_group5 as nama_mitra', 'jenis_mitra')
-                ->where('jenis_mitra', 'MB')
-                ->where('kode_group5', 'like', "%{$search}%")
-                ->orWhere('deskripsi_group5', 'like', "%{$search}%")
-                ->orderBy('deskripsi_group5', 'asc')
-                ->get();
+            ->select('kode_group5 as kode_mitra','deskripsi_group5 as nama_mitra')
+            ->where('jenis_mitra', 'MB')
+            ->where('flg_aktif', $status)
+            ->orderBy($orderBy, $orderVal);
 
-        if ($query == '[]') {
+        if($value == 'default'){
+            $res = $query;
+        }else{
+            $res = $query->where($keyPar, $operator, $func_value);
+        }
+
+        if($limit == 'default'){
+            $result = $res;
+        }else{
+            $result = $res->limit($limit);
+        }
+
+        if ($result->get() == '[]') {
             return response()->json([
                 "code"    => 404,
                 "status"  => "not found",
@@ -60,7 +109,8 @@ class MitraController extends BaseController
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'data'   => $query
+                'count'  => $result->count(),
+                'data'   => $result
             ], 200);
         } catch (Exception $e) {
             return response()->json([

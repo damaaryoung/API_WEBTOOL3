@@ -3,12 +3,10 @@
 namespace App\Http\Controllers\Menu;
 
 use Laravel\Lumen\Routing\Controller as BaseController;
-use App\Http\Controllers\Controller as Helper;
+// use App\Models\Menu\MenuMaster;
 use App\Models\Menu\MenuSub;
 use Illuminate\Http\Request;
-use App\Models\User;
-use Carbon\Carbon;
-use DB;
+// use DB;
 
 class MenuSubController extends BaseController
 {
@@ -114,7 +112,7 @@ class MenuSubController extends BaseController
             'nama'        => $query->nama,
             'url'         => $query->url,
             'menu_master' => $query->menu_master['nama'],
-            'flg_aktif'   => $query->flg_aktif == 0 ? "false" : "true"
+            'flg_aktif'   => (bool) $query->flg_aktif
         ];
 
         try {
@@ -216,11 +214,70 @@ class MenuSubController extends BaseController
         }
     }
 
-    public function search($search) {
-        try {
-            $query = MenuSub::with('menu_master')->select('id','nama','url', 'id_menu_master')->where('flg_aktif', 1)->where('nama', 'like', '%'.$search.'%')->orderBy('nama', 'asc')->get();
+    public function search($param, $key, $value, $status, $orderVal, $orderBy, $limit)
+    {
+        $column = array('id', 'nama', 'url', 'menu_master');
 
-            if ($query == '[]') {
+        if($param != 'filter' && $param != 'search'){
+            return response()->json([
+                'code'    => 412,
+                'status'  => 'not valid',
+                'message' => 'gunakan parameter yang valid diantara berikut: filter, search'
+            ], 412);
+        }
+
+        if (in_array($key, $column) == false) {
+            return response()->json([
+                'code'    => 412,
+                'status'  => 'not valid',
+                'message' => 'gunakan key yang valid diantara berikut: '.implode(",", $column)
+            ], 412);
+        }
+
+        if (in_array($orderBy, $column) == false) {
+            return response()->json([
+                'code'    => 412,
+                'status'  => 'not valid',
+                'message' => 'gunakan order by yang valid diantara berikut: '.implode(",", $column)
+            ], 412);
+        }
+
+        if($param == 'search'){
+            $operator   = "like";
+            $func_value = "%{$value}%";
+        }else{
+            $operator   = "=";
+            $func_value = "{$value}";
+        }
+
+        try {
+            // $query = MenuSub::addSelect(['menu_master' => MenuMaster::select('nama')
+            // ->whereColumn('id_menu_master', 'menu_master.id')
+            // ])
+            // ->where('flg_aktif', $status)
+            // ->orderBy($orderBy, $orderVal);
+
+            $query = MenuSub::addSelect(['menu_master' => function ($q) {
+                $q->select('nama')
+                    ->from('menu_master')
+                    ->whereColumn('id_menu_master', 'menu_master.id');
+            }])
+            ->where('flg_aktif', $status)
+            ->orderBy($orderBy, $orderVal);
+    
+            if($value == 'default'){
+                $res = $query;
+            }else{
+                $res = $query->where($key, $operator, $func_value);
+            }
+
+            if($limit == 'default'){
+                $result = $res;
+            }else{
+                $result = $res->limit($limit);
+            }
+
+            if ($result->get() == '[]') {
                 return response()->json([
                     "code"    => 404,
                     "status"  => "not found",
@@ -228,19 +285,11 @@ class MenuSubController extends BaseController
                 ], 404);
             }
 
-            foreach ($query as $key => $val) {
-                $res[$key] = [
-                    'id'          => $val->id,
-                    'nama'        => $val->nama,
-                    'url'         => $val->url,
-                    'menu_master' => $val->menu_master['nama']
-                ];
-            }
-
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'data'   => $res
+                'count'  => $result->count(),
+                'data'   => $result->get()->makeHidden('id_menu_master') //->pluck('menu_master')
             ], 200);
         } catch (Exception $e) {
             return response()->json([
