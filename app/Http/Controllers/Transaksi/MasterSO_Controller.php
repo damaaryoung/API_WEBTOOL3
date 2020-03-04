@@ -543,6 +543,23 @@ class MasterSO_Controller extends BaseController
                 $foto_agunan_rumah = null;
             }
 
+            if ($file = $req->file('lamp_surat_cerai')) {
+                $path = $lamp_dir.'/debitur';
+                $name = 'lamp_surat_cerai.' . $file->getClientOriginalName();
+
+                $img = Image::make($file)->resize(320, 240);
+
+                if(!File::isDirectory($path)){
+                    File::makeDirectory($path, 0777, true, true);
+                }
+
+                $img->save($path.'/'.$name);
+
+                $lamp_surat_cerai = $path.'/'.$name;
+            }else{
+                $lamp_surat_cerai = null;
+            }
+
             // Data Calon Debitur
             $dataDebitur = array(
                 'nama_lengkap'          => $req->input('nama_lengkap'),
@@ -582,6 +599,7 @@ class MasterSO_Controller extends BaseController
                 'lamp_sertifikat'       => $sertifikatDebt,
                 'lamp_sttp_pbb'         => $pbbDebt,
                 'lamp_imb'              => $imbDebt,
+                'lamp_surat_cerai'      => $lamp_surat_cerai,
                 'foto_agunan_rumah'     => $foto_agunan_rumah,
                 'NASABAH_ID'            => $NASABAH_ID
             );

@@ -503,6 +503,23 @@ class DebiturController extends BaseController
             $lamp_foto_usaha = $check->lamp_foto_usaha;
         }
 
+        if ($file = $req->file('lamp_surat_cerai')) {
+            $path = $lamp_dir.'/debitur';
+            $name = 'lamp_surat_cerai.' . $file->getClientOriginalName();
+
+            $img = Image::make($file)->resize(320, 240);
+
+            if(!File::isDirectory($path)){
+                File::makeDirectory($path, 0777, true, true);
+            }
+
+            $img->save($path.'/'.$name);
+
+            $lamp_surat_cerai = $path.'/'.$name;
+        }else{
+            $lamp_surat_cerai = $check->lamp_surat_cerai;
+        }
+
 
         // Data Debitur
         $dataDebitur = array(
@@ -573,7 +590,9 @@ class DebiturController extends BaseController
             'lamp_slip_gaji'        => $lamp_slip_gaji,
             'foto_pembukuan_usaha'  => $foto_pembukuan_usaha,
             'lamp_foto_usaha'       => $lamp_foto_usaha,
-            'foto_agunan_rumah'     => $foto_agunan_rumah
+            'foto_agunan_rumah'     => $foto_agunan_rumah,
+
+            'lamp_surat_cerai'      => $lamp_surat_cerai
         );
 
         DB::connection('web')->beginTransaction();
