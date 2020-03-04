@@ -277,15 +277,16 @@ class MasterCAA_Controller extends BaseController
 
             $name = $file->getClientOriginalName();
 
-            if(!empty($check_caa->file_report_mao))
-            {
-                File::delete($check_caa->file_report_mao);
-            }
             
             $img = Image::make($file)->resize(320, 240);
             
             if (!file_exists($path)) {
                 mkdir($path, 666, true);
+            }
+            
+            if(!empty($check_caa->file_report_mao))
+            {
+                File::delete($check_caa->file_report_mao);
             }
 
             $img->save($path.'/'.$name);
@@ -304,15 +305,16 @@ class MasterCAA_Controller extends BaseController
 
             $name = $file->getClientOriginalName();
             
-            if(!empty($check_caa->file_report_mca))
-            {
-                File::delete($check_caa->file_report_mca);
-            }
             
             $img = Image::make($file)->resize(320, 240);
             
             if (!file_exists($path)) {
                 mkdir($path, 666, true);
+            }
+            
+            if(!empty($check_caa->file_report_mca))
+            {
+                File::delete($check_caa->file_report_mca);
             }
 
             $img->save($path.'/'.$name);
@@ -358,15 +360,16 @@ class MasterCAA_Controller extends BaseController
                     $path = $lamp_dir.'/mcaa/file_agunan';
                     $name = $file->getClientOriginalName();
 
+                    
+                    $img = Image::make($file)->resize(320, 240);
+                    
+                    if (!file_exists($path)) {
+                        mkdir($path, 666, true);
+                    }
+                    
                     if(!empty($check_caa->file_agunan))
                     {
                         File::delete($check_caa->file_agunan);
-                    }
-                    
-                    $img = Image::make($file)->resize(320, 240);
-                        
-                    if (!file_exists($path)) {
-                        mkdir($path, 666, true);
                     }
         
                     $img->save($path.'/'.$name);
@@ -413,15 +416,16 @@ class MasterCAA_Controller extends BaseController
                     $path = $lamp_dir.'/mcaa/file_usaha';
                     $name = $file->getClientOriginalName();
                     
+                    
+                    if (!file_exists($path)) {
+                        mkdir($path, 666, true);
+                    }
+                    
                     if(!empty($check_caa->file_usaha))
                     {
                         File::delete($check_caa->file_usaha);
                     }
                     
-                    if (!file_exists($path)) {
-                        mkdir($path, 666, true);
-                    }
-
                     $img = Image::make($file)->resize(320, 240);
         
                     $img->save($path.'/'.$name);
@@ -443,15 +447,16 @@ class MasterCAA_Controller extends BaseController
 
             $name = $file->getClientOriginalName();
 
-            if(!empty($check_caa->file_tempat_tinggal))
-            {
-                File::delete($check_caa->file_tempat_tinggal);
-            }
-
+            
             $img = Image::make($file)->resize(320, 240);
             
             if (!file_exists($path)) {
                 mkdir($path, 666, true);
+            }
+            
+            if(!empty($check_caa->file_tempat_tinggal))
+            {
+                File::delete($check_caa->file_tempat_tinggal);
             }
 
             $img->save($path.'/'.$name);
@@ -471,12 +476,13 @@ class MasterCAA_Controller extends BaseController
 
             $name = $file->getClientOriginalName();
 
+            
+            $img = Image::make($file)->resize(320, 240);
+            
             if (!file_exists($path)) {
                 mkdir($path, 666, true);
             }
-
-            $img = Image::make($file)->resize(320, 240);
-
+            
             if(!empty($check_caa->file_lain))
             {
                 File::delete($check_caa->file_lain);

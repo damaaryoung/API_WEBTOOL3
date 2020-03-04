@@ -326,15 +326,16 @@ class MasterAO_Controller extends BaseController
             $path = $lamp_dir.'/ideb';
             $name = 'form_persetujuan_ideb.' . $file->getClientOriginalName();
 
+            
+            $img = Image::make($file)->resize(320, 240);
+            
+            if (!file_exists($path)) {
+                mkdir($path, 666, true);
+            }
+            
             if(!empty($check_ao->form_persetujuan_ideb))
             {
                 File::delete($check_ao->form_persetujuan_ideb);
-            }
-
-            $img = Image::make($file)->resize(320, 240);
-
-            if (!file_exists($path)) {
-                mkdir($path, 666, true);
             }
 
             $img->save($path.'/'.$name);
@@ -1066,15 +1067,16 @@ class MasterAO_Controller extends BaseController
             $path = $lamp_dir.'/debitur';
             $name = 'lamp_skk.'.$file->getClientOriginalName();
 
+            
+            $img = Image::make($file)->resize(320, 240);
+            
+            if (!file_exists($path)) {
+                mkdir($path, 666, true);
+            }
+            
             if(!empty($check_ao->form_persetujuan_ideb))
             {
                 File::delete($check_ao->form_persetujuan_ideb);
-            }
-            
-            $img = Image::make($file)->resize(320, 240);
-
-            if (!file_exists($path)) {
-                mkdir($path, 666, true);
             }
 
             $img->save($path.'/'.$name);
