@@ -277,10 +277,11 @@ class MasterCAA_Controller extends BaseController
 
             $name = $file->getClientOriginalName();
 
-            
             $img = Image::make($file)->resize(320, 240);
             
-            
+            if(!File::isDirectory($path)){
+                File::makeDirectory($path, 0777, true, true);
+            }
             
             if(!empty($check_caa->file_report_mao))
             {
@@ -288,7 +289,6 @@ class MasterCAA_Controller extends BaseController
             }
 
             $img->save($path.'/'.$name);
-            // $file->move($path,$name);
 
             $file_report_mao = $path.'/'.$name;
 
@@ -303,10 +303,11 @@ class MasterCAA_Controller extends BaseController
 
             $name = $file->getClientOriginalName();
             
-            
             $img = Image::make($file)->resize(320, 240);
             
-            
+            if(!File::isDirectory($path)){
+                File::makeDirectory($path, 0777, true, true);
+            }
             
             if(!empty($check_caa->file_report_mca))
             {
@@ -314,8 +315,6 @@ class MasterCAA_Controller extends BaseController
             }
 
             $img->save($path.'/'.$name);
-
-            // $file->move($path,$name);
 
             $file_report_mca = $path.'/'.$name;
 
@@ -365,8 +364,6 @@ class MasterCAA_Controller extends BaseController
         
                     $img->save($path.'/'.$name);
 
-                    // $file->move($path,$name);
-
                     $listAgunan['agunan'][] = $path.'/'.$name;
                 }
 
@@ -406,14 +403,18 @@ class MasterCAA_Controller extends BaseController
 
                     $path = $lamp_dir.'/mcaa/file_usaha';
                     $name = $file->getClientOriginalName();
+                     
+                    $img = Image::make($file)->resize(320, 240);
+                    
+                    if(!File::isDirectory($path)){
+                        File::makeDirectory($path, 0777, true, true);
+                    }
                     
                     if(!empty($check_caa->file_usaha))
                     {
                         File::delete($check_caa->file_usaha);
                     }
-                    
-                    $img = Image::make($file)->resize(320, 240);
-        
+
                     $img->save($path.'/'.$name);
                     // $file->move($path,$name);
 
@@ -433,10 +434,11 @@ class MasterCAA_Controller extends BaseController
 
             $name = $file->getClientOriginalName();
 
-            
             $img = Image::make($file)->resize(320, 240);
             
-            
+            if(!File::isDirectory($path)){
+                File::makeDirectory($path, 0777, true, true);
+            }
             
             if(!empty($check_caa->file_tempat_tinggal))
             {
@@ -460,10 +462,11 @@ class MasterCAA_Controller extends BaseController
 
             $name = $file->getClientOriginalName();
 
-            
             $img = Image::make($file)->resize(320, 240);
             
-            
+            if(!File::isDirectory($path)){
+                File::makeDirectory($path, 0777, true, true);
+            }
             
             if(!empty($check_caa->file_lain))
             {
@@ -471,8 +474,6 @@ class MasterCAA_Controller extends BaseController
             }
 
             $img->save($path.'/'.$name);
-
-            // $file->move($path,$name);
 
             $file_lain = $path.'/'.$name;
 

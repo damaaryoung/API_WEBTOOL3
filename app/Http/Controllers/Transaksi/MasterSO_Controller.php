@@ -442,9 +442,11 @@ class MasterSO_Controller extends BaseController
 
                 $img = Image::make($file)->resize(320, 240);
 
-                $img->save($path.'/'.$name);
+                if(!File::isDirectory($path)){
+                    File::makeDirectory($path, 0777, true, true);
+                }
 
-                // $file->move($path,$name);
+                $img->save($path.'/'.$name);
 
                 $ktpDebt = $path.'/'.$name;
             }else{
@@ -456,6 +458,10 @@ class MasterSO_Controller extends BaseController
                 $name = 'kk.' . $file->getClientOriginalName();
 
                 $img = Image::make($file)->resize(320, 240);
+
+                if(!File::isDirectory($path)){
+                    File::makeDirectory($path, 0777, true, true);
+                }
 
                 $img->save($path.'/'.$name);
                 // $file->move($path,$name);
@@ -471,6 +477,10 @@ class MasterSO_Controller extends BaseController
 
                 $img = Image::make($file)->resize(320, 240);
 
+                if(!File::isDirectory($path)){
+                    File::makeDirectory($path, 0777, true, true);
+                }
+
                 $img->save($path.'/'.$name);
                 // $file->move($path,$name);
 
@@ -484,6 +494,10 @@ class MasterSO_Controller extends BaseController
                 $name = 'pbb.' . $file->getClientOriginalName();
 
                 $img = Image::make($file)->resize(320, 240);
+
+                if(!File::isDirectory($path)){
+                    File::makeDirectory($path, 0777, true, true);
+                }
 
                 $img->save($path.'/'.$name);
                 // $file->move($path,$name);
@@ -499,6 +513,10 @@ class MasterSO_Controller extends BaseController
 
                 $img = Image::make($file)->resize(320, 240);
 
+                if(!File::isDirectory($path)){
+                    File::makeDirectory($path, 0777, true, true);
+                }
+
                 $img->save($path.'/'.$name);
                 // $file->move($path,$name);
 
@@ -512,6 +530,10 @@ class MasterSO_Controller extends BaseController
                 $name = 'foto_agunan_rumah.' . $file->getClientOriginalName();
 
                 $img = Image::make($file)->resize(320, 240);
+
+                if(!File::isDirectory($path)){
+                    File::makeDirectory($path, 0777, true, true);
+                }
 
                 $img->save($path.'/'.$name);
                 // $file->move($path,$name);
@@ -570,6 +592,10 @@ class MasterSO_Controller extends BaseController
 
                 $img = Image::make($file)->resize(320, 240);
 
+                if(!File::isDirectory($path)){
+                    File::makeDirectory($path, 0777, true, true);
+                }
+
                 $img->save($path.'/'.$name);
                 // $file->move($path,$name);
 
@@ -583,6 +609,10 @@ class MasterSO_Controller extends BaseController
                 $name = 'buku_nikah.' . $file->getClientOriginalName();
 
                 $img = Image::make($file)->resize(320, 240);
+
+                if(!File::isDirectory($path)){
+                    File::makeDirectory($path, 0777, true, true);
+                }
 
                 $img->save($path.'/'.$name);
                 // $file->move($path,$name);
@@ -626,6 +656,10 @@ class MasterSO_Controller extends BaseController
 
                     $img = Image::make($file)->resize(320, 240);
 
+                    if(!File::isDirectory($path)){
+                        File::makeDirectory($path, 0777, true, true);
+                    }
+
                     $img->save($path.'/'.$name);
                     // $file->move($path,$name);
 
@@ -640,6 +674,10 @@ class MasterSO_Controller extends BaseController
 
                     $img = Image::make($file)->resize(320, 240);
 
+                    if(!File::isDirectory($path)){
+                        File::makeDirectory($path, 0777, true, true);
+                    }
+
                     $img->save($path.'/'.$name);
                     // $file->move($path,$name);
 
@@ -653,6 +691,10 @@ class MasterSO_Controller extends BaseController
                     $name = 'kk_penjamin.' . $file->getClientOriginalName();
 
                     $img = Image::make($file)->resize(320, 240);
+
+                    if(!File::isDirectory($path)){
+                        File::makeDirectory($path, 0777, true, true);
+                    }
 
                     $img->save($path.'/'.$name);
 
@@ -669,6 +711,10 @@ class MasterSO_Controller extends BaseController
 
                     $img = Image::make($file)->resize(320, 240);
 
+                    if(!File::isDirectory($path)){
+                        File::makeDirectory($path, 0777, true, true);
+                    }
+                    
                     $img->save($path.'/'.$name);
                     // $file->move($path,$name);
 

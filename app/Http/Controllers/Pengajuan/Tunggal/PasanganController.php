@@ -126,10 +126,11 @@ class PasanganController extends BaseController
             $path = $lamp_dir.'/pasangan';
             $name = 'ktp.' . $file->getClientOriginalName();
 
-            
             $img = Image::make($file)->resize(320, 240);
             
-            
+            if(!File::isDirectory($path)){
+                File::makeDirectory($path, 0777, true, true);
+            }
             
             if(!empty($check->lamp_ktp))
             {
@@ -137,7 +138,6 @@ class PasanganController extends BaseController
             }
                 
             $img->save($path.'/'.$name);
-            // $file->move($path,$name);
 
             $ktpPass = $path.'/'.$name;
         }else{
@@ -148,10 +148,11 @@ class PasanganController extends BaseController
             $path = $lamp_dir.'/pasangan';
             $name = 'buku_nikah.' . $file->getClientOriginalName();
             
-            
             $img = Image::make($file)->resize(320, 240);
             
-            
+            if(!File::isDirectory($path)){
+                File::makeDirectory($path, 0777, true, true);
+            }
             
             if(!empty($check->lamp_buku_nikah))
             {
@@ -159,7 +160,6 @@ class PasanganController extends BaseController
             }
                 
             $img->save($path.'/'.$name);
-            // $file->move($path,$name);
 
             $bukuNikahPass = $path.'/'.$name;
         }else{

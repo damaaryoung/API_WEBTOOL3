@@ -154,10 +154,11 @@ class TanahController extends BaseController
 
             $name = 'bag_depan.' . $file->getClientOriginalName();
 
-            
             $img = Image::make($file)->resize(320, 240);
             
-            
+            if(!File::isDirectory($path)){
+                File::makeDirectory($path, 0777, true, true);
+            }
             
             if(!empty($check->agunan_bag_depan))
             {
@@ -165,7 +166,6 @@ class TanahController extends BaseController
             }
                 
             $img->save($path.'/'.$name);
-            // $file->move($path,$name);
 
             $agunan_bag_depan = $path.'/'.$name;
         }else{
@@ -176,10 +176,11 @@ class TanahController extends BaseController
 
             $name = 'bag_jalan.' . $file->getClientOriginalName();
 
-            
             $img = Image::make($file)->resize(320, 240);
             
-            
+            if(!File::isDirectory($path)){
+                File::makeDirectory($path, 0777, true, true);
+            }
             
             if(!empty($check->agunan_bag_jalan))
             {
@@ -187,7 +188,6 @@ class TanahController extends BaseController
             }
                 
             $img->save($path.'/'.$name);
-            // $file->move($path,$name);
 
             $agunan_bag_jalan = $path.'/'.$name;
         }else{
@@ -198,10 +198,11 @@ class TanahController extends BaseController
 
             $name = 'bag_ruangtamu.' . $file->getClientOriginalName();
 
-            
             $img = Image::make($file)->resize(320, 240);
             
-            
+            if(!File::isDirectory($path)){
+                File::makeDirectory($path, 0777, true, true);
+            }
             
             if(!empty($check->agunan_bag_ruangtamu))
             {
@@ -209,7 +210,6 @@ class TanahController extends BaseController
             }
                 
             $img->save($path.'/'.$name);
-            // $file->move($path,$name);
 
             $agunan_bag_ruangtamu = $path.'/'.$name;
         }else{
@@ -221,10 +221,11 @@ class TanahController extends BaseController
 
             $name = 'bag_kamarmandi.' . $file->getClientOriginalName();
 
-            
             $img = Image::make($file)->resize(320, 240);
             
-            
+            if(!File::isDirectory($path)){
+                File::makeDirectory($path, 0777, true, true);
+            }
             
             if(!empty($check->agunan_bag_kamarmandi))
             {
@@ -232,7 +233,6 @@ class TanahController extends BaseController
             }
                 
             $img->save($path.'/'.$name);
-            // $file->move($path,$name);
 
             $agunan_bag_kamarmandi = $path.'/'.$name;
         }else{
@@ -243,10 +243,11 @@ class TanahController extends BaseController
 
             $name = 'bag_dapur.' . $file->getClientOriginalName();
 
-            
             $img = Image::make($file)->resize(320, 240);
             
-            
+            if(!File::isDirectory($path)){
+                File::makeDirectory($path, 0777, true, true);
+            }
             
             if(!empty($check->agunan_bag_dapur))
             {
@@ -254,7 +255,6 @@ class TanahController extends BaseController
             }
                 
             $img->save($path.'/'.$name);
-            // $file->move($path,$name);
 
             $agunan_bag_dapur = $path.'/'.$name;
         }else{
@@ -266,10 +266,11 @@ class TanahController extends BaseController
 
             $name = 'lamp_imb.' . $file->getClientOriginalName();
 
-            
             $img = Image::make($file)->resize(320, 240);
             
-            
+            if(!File::isDirectory($path)){
+                File::makeDirectory($path, 0777, true, true);
+            }
             
             if(!empty($check->lamp_imb))
             {
@@ -277,7 +278,6 @@ class TanahController extends BaseController
             }
                 
             $img->save($path.'/'.$name);
-            // $file->move($path,$name);
 
             $lamp_imb = $path.'/'.$name;
         }else{
@@ -288,10 +288,11 @@ class TanahController extends BaseController
 
             $name = 'lamp_pbb.' . $file->getClientOriginalName();
 
-            
             $img = Image::make($file)->resize(320, 240);
             
-            
+            if(!File::isDirectory($path)){
+                File::makeDirectory($path, 0777, true, true);
+            }
             
             if(!empty($check->lamp_pbb))
             {
@@ -299,7 +300,6 @@ class TanahController extends BaseController
             }
             
             $img->save($path.'/'.$name);
-            // $file->move($path,$name);
 
             $lamp_pbb = $path.'/'.$name;
         }else {
@@ -310,10 +310,11 @@ class TanahController extends BaseController
 
             $name = 'lamp_sertifikat.' . $file->getClientOriginalName();
 
-            
             $img = Image::make($file)->resize(320, 240);
             
-            
+            if(!File::isDirectory($path)){
+                File::makeDirectory($path, 0777, true, true);
+            }
             
             if(!empty($check->lamp_sertifikat))
             {
@@ -321,7 +322,6 @@ class TanahController extends BaseController
             }
                 
             $img->save($path.'/'.$name);
-            // $file->move($path,$name);
 
             $lamp_sertifikat = $path.'/'.$name;
         }else {

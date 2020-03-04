@@ -135,10 +135,11 @@ class PenjaminController extends BaseController
 
             $name = 'ktp_penjamin.' . $file->getClientOriginalName();
 
-            
             $img = Image::make($file)->resize(320, 240);
             
-            
+            if(!File::isDirectory($path)){
+                File::makeDirectory($path, 0777, true, true);
+            }
             
             if(!empty($check->lamp_ktp))
             {
@@ -146,7 +147,6 @@ class PenjaminController extends BaseController
             }
                 
             $img->save($path.'/'.$name);
-            // $file->move($path,$name);
 
             $ktpPen = $path.'/'.$name;
         }else{
@@ -157,10 +157,11 @@ class PenjaminController extends BaseController
 
             $name = 'ktp_pasangan.' . $file->getClientOriginalName();
             
-            
             $img = Image::make($file)->resize(320, 240);
             
-            
+            if(!File::isDirectory($path)){
+                File::makeDirectory($path, 0777, true, true);
+            }
             
             if(!empty($check->lamp_ktp_pasangan))
             {
@@ -168,7 +169,6 @@ class PenjaminController extends BaseController
             }
                 
             $img->save($path.'/'.$name);
-            // $file->move($path,$name);
 
             $ktpPenPAS = $path.'/'.$name;
         }else{
@@ -179,10 +179,11 @@ class PenjaminController extends BaseController
 
             $name = 'kk_penjamin.' . $file->getClientOriginalName();
             
-            
             $img = Image::make($file)->resize(320, 240);
             
-            
+            if(!File::isDirectory($path)){
+                File::makeDirectory($path, 0777, true, true);
+            }
             
             if(!empty($check->lamp_kk))
             {
@@ -190,7 +191,6 @@ class PenjaminController extends BaseController
             }
                 
             $img->save($path.'/'.$name);
-            // $file->move($path,$name);
 
             $kkPen = $path.'/'.$name;
         }else{
@@ -201,10 +201,11 @@ class PenjaminController extends BaseController
 
             $name = 'buku_nikah_penjamin.' . $file->getClientOriginalName();
 
-            
             $img = Image::make($file)->resize(320, 240);
             
-            
+            if(!File::isDirectory($path)){
+                File::makeDirectory($path, 0777, true, true);
+            }
             
             if(!empty($check->lamp_buku_nikah))
             {
@@ -212,7 +213,6 @@ class PenjaminController extends BaseController
             }
                 
             $img->save($path.'/'.$name);
-            // $file->move($path,$name);
 
             $bukuNikahPen = $path.'/'.$name;
         }else{

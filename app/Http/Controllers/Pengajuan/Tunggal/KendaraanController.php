@@ -130,10 +130,11 @@ class KendaraanController extends BaseController
 
             $name = 'agunan_depan.' . $file->getClientOriginalName();
             
-            
             $img = Image::make($file)->resize(320, 240);
             
-            
+            if(!File::isDirectory($path)){
+                File::makeDirectory($path, 0777, true, true);
+            }
             
             if(!empty($check->lamp_agunan_depan))
             {
@@ -141,7 +142,6 @@ class KendaraanController extends BaseController
             }
                 
             $img->save($path.'/'.$name);
-            // $file->move($path,$name);
 
             $agunanDepan = $path.'/'.$name;
         }else{
@@ -151,11 +151,12 @@ class KendaraanController extends BaseController
         if($file = $req->file('lamp_agunan_kanan_ken')){
 
             $name = 'agunan_kanan.' . $file->getClientOriginalName();
-                        
             
             $img = Image::make($file)->resize(320, 240);
             
-            
+            if(!File::isDirectory($path)){
+                File::makeDirectory($path, 0777, true, true);
+            }
             
             if(!empty($check->lamp_agunan_kanan))
             {
@@ -163,7 +164,6 @@ class KendaraanController extends BaseController
             }
                 
             $img->save($path.'/'.$name);
-            // $file->move($path,$name);
 
             $agunanKanan = $path.'/'.$name;
         }else{
@@ -174,10 +174,11 @@ class KendaraanController extends BaseController
 
             $name = 'agunan_kiri.' . $file->getClientOriginalName();
             
-            
             $img = Image::make($file)->resize(320, 240);
             
-            
+            if(!File::isDirectory($path)){
+                File::makeDirectory($path, 0777, true, true);
+            }
             
             if(!empty($check->lamp_agunan_kiri))
             {
@@ -185,7 +186,6 @@ class KendaraanController extends BaseController
             }
                 
             $img->save($path.'/'.$name);
-            // $file->move($path,$name);
 
             $agunanKiri = $path.'/'.$name;
         }else{
@@ -197,10 +197,11 @@ class KendaraanController extends BaseController
 
             $name = 'agunan_belakang.' . $file->getClientOriginalName();
             
-            
             $img = Image::make($file)->resize(320, 240);
             
-            
+            if(!File::isDirectory($path)){
+                File::makeDirectory($path, 0777, true, true);
+            }
             
             if(!empty($check->lamp_agunan_belakang))
             {
@@ -208,7 +209,6 @@ class KendaraanController extends BaseController
             }
                 
             $img->save($path.'/'.$name);
-            // $file->move($path,$name);
 
             $agunanBelakang = $path.'/'.$name;
         }else{
@@ -218,11 +218,12 @@ class KendaraanController extends BaseController
         if($file = $req->file('lamp_agunan_dalam_ken')){
 
             $name = 'agunan_dalam.' . $file->getClientOriginalName();
-                        
             
             $img = Image::make($file)->resize(320, 240);
             
-            
+            if(!File::isDirectory($path)){
+                File::makeDirectory($path, 0777, true, true);
+            }
             
             if(!empty($check->lamp_agunan_dalam))
             {
@@ -230,7 +231,6 @@ class KendaraanController extends BaseController
             }
                 
             $img->save($path.'/'.$name);
-            // $file->move($path,$name);
 
             $agunanDalam = $path.'/'.$name;
         }else{

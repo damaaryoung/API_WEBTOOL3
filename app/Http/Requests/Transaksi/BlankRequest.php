@@ -262,9 +262,9 @@ class BlankRequest extends FormRequest
                 'kuantitatif_ttl_pengeluaran' => 'integer',
                 'kuantitatif_pendapatan'      => 'integer',
                 'kuantitatif_angsuran'        => 'integer',
-                'kuantitatif_ltv'             => 'integer',
-                'kuantitatif_dsr'             => 'integer',
-                'kuantitatif_idir'            => 'integer',
+                // 'kuantitatif_ltv'             => 'integer',
+                // 'kuantitatif_dsr'             => 'integer',
+                // 'kuantitatif_idir'            => 'integer',
                 // 'kuantitatif_hasil'           => 'integer',
 
                 // Rekomendasi Pinjaman pada CA
@@ -521,9 +521,9 @@ class BlankRequest extends FormRequest
                 'kuantitatif_ttl_pengeluaran' => 'integer',
                 'kuantitatif_pendapatan'      => 'integer',
                 'kuantitatif_angsuran'        => 'integer',
-                'kuantitatif_ltv'             => 'integer',
-                'kuantitatif_dsr'             => 'integer',
-                'kuantitatif_idir'            => 'integer',
+                // 'kuantitatif_ltv'             => 'integer',
+                // 'kuantitatif_dsr'             => 'integer',
+                // 'kuantitatif_idir'            => 'integer',
                 // 'kuantitatif_hasil'           => 'integer',
 
                 // Rekomendasi Pinjaman pada CA
@@ -865,9 +865,9 @@ class BlankRequest extends FormRequest
             'kuantitatif_ttl_pengeluaran.integer' => $integer,
             'kuantitatif_pendapatan.integer'      => $integer,
             'kuantitatif_angsuran.integer'        => $integer,
-            'kuantitatif_ltv.integer'             => $integer,
-            'kuantitatif_dsr.integer'             => $integer,
-            'kuantitatif_idir.integer'            => $integer,
+            // 'kuantitatif_ltv.integer'             => $integer,
+            // 'kuantitatif_dsr.integer'             => $integer,
+            // 'kuantitatif_idir.integer'            => $integer,
             // 'kuantitatif_hasil.integer'           => $integer,
 
             // Rekomendasi Pinjaman pada CA

@@ -326,10 +326,11 @@ class MasterAO_Controller extends BaseController
             $path = $lamp_dir.'/ideb';
             $name = 'form_persetujuan_ideb.' . $file->getClientOriginalName();
 
-            
             $img = Image::make($file)->resize(320, 240);
             
-            
+            if(!File::isDirectory($path)){
+                File::makeDirectory($path, 0777, true, true);
+            }
             
             if(!empty($check_ao->form_persetujuan_ideb))
             {
@@ -337,7 +338,6 @@ class MasterAO_Controller extends BaseController
             }
 
             $img->save($path.'/'.$name);
-            // $file->move($path,$name);
 
             $form_persetujuan_ideb = $path.'/'.$name;
         }else{
@@ -408,6 +408,10 @@ class MasterAO_Controller extends BaseController
                 
                 $img = Image::make($file)->resize(320, 240);
 
+                if(!File::isDirectory($path)){
+                    File::makeDirectory($path, 0777, true, true);
+                }
+
                 $img->save($path.'/'.$name);
                 // $file->move($path,$name);
 
@@ -422,6 +426,10 @@ class MasterAO_Controller extends BaseController
 
                 $img = Image::make($file)->resize(320, 240);
 
+                if(!File::isDirectory($path)){
+                    File::makeDirectory($path, 0777, true, true);
+                }
+                
                 $img->save($path.'/'.$name);
                 // $file->move($path,$name);
 
@@ -435,6 +443,10 @@ class MasterAO_Controller extends BaseController
                 $name = 'agunan_bag_ruangtamu.' . $file->getClientOriginalName();
 
                 $img = Image::make($file)->resize(320, 240);
+
+                if(!File::isDirectory($path)){
+                    File::makeDirectory($path, 0777, true, true);
+                }
 
                 $img->save($path.'/'.$name);
                 // $file->move($path,$name);
@@ -450,6 +462,10 @@ class MasterAO_Controller extends BaseController
 
                 $img = Image::make($file)->resize(320, 240);
 
+                if(!File::isDirectory($path)){
+                    File::makeDirectory($path, 0777, true, true);
+                }
+
                 $img->save($path.'/'.$name);
                 // $file->move($path,$name);
 
@@ -464,6 +480,10 @@ class MasterAO_Controller extends BaseController
 
                 $img = Image::make($file)->resize(320, 240);
 
+                if(!File::isDirectory($path)){
+                    File::makeDirectory($path, 0777, true, true);
+                }
+
                 $img->save($path.'/'.$name);
                 // $file->move($path,$name);
 
@@ -477,6 +497,10 @@ class MasterAO_Controller extends BaseController
                 $name = 'agunan_depan.' . $file->getClientOriginalName();
 
                 $img = Image::make($file)->resize(320, 240);
+
+                if(!File::isDirectory($path)){
+                    File::makeDirectory($path, 0777, true, true);
+                }
 
                 $img->save($path.'/'.$name);
                 // $file->move($path,$name);
@@ -493,6 +517,10 @@ class MasterAO_Controller extends BaseController
 
                 $img = Image::make($file)->resize(320, 240);
 
+                if(!File::isDirectory($path)){
+                    File::makeDirectory($path, 0777, true, true);
+                }
+
                 $img->save($path.'/'.$name);
                 // $file->move($path,$name);
 
@@ -507,6 +535,10 @@ class MasterAO_Controller extends BaseController
                 $name = 'agunan_kiri.' . $file->getClientOriginalName();
 
                 $img = Image::make($file)->resize(320, 240);
+
+                if(!File::isDirectory($path)){
+                    File::makeDirectory($path, 0777, true, true);
+                }
 
                 $img->save($path.'/'.$name);
                 // $file->move($path,$name);
@@ -523,6 +555,10 @@ class MasterAO_Controller extends BaseController
 
                 $img = Image::make($file)->resize(320, 240);
 
+                if(!File::isDirectory($path)){
+                    File::makeDirectory($path, 0777, true, true);
+                }
+
                 $img->save($path.'/'.$name);
                 // $file->move($path,$name);
 
@@ -536,6 +572,10 @@ class MasterAO_Controller extends BaseController
                 $name = 'agunan_dalam.' . $file->getClientOriginalName();
 
                 $img = Image::make($file)->resize(320, 240);
+
+                if(!File::isDirectory($path)){
+                    File::makeDirectory($path, 0777, true, true);
+                }
 
                 $img->save($path.'/'.$name);
                 // $file->move($path,$name);
@@ -552,6 +592,10 @@ class MasterAO_Controller extends BaseController
 
                 $img = Image::make($file)->resize(320, 240);
 
+                if(!File::isDirectory($path)){
+                    File::makeDirectory($path, 0777, true, true);
+                }
+
                 $img->save($path.'/'.$name);
                 // $file->move($path,$name);
 
@@ -566,6 +610,10 @@ class MasterAO_Controller extends BaseController
 
                 $img = Image::make($file)->resize(320, 240);
 
+                if(!File::isDirectory($path)){
+                    File::makeDirectory($path, 0777, true, true);
+                }
+
                 $img->save($path.'/'.$name);
                 // $file->move($path,$name);
                 $lamp_pbb[] = $path.'/'.$name;
@@ -578,6 +626,10 @@ class MasterAO_Controller extends BaseController
                 $name = 'lamp_sertifikat.' . $file->getClientOriginalName();
 
                 $img = Image::make($file)->resize(320, 240);
+
+                if(!File::isDirectory($path)){
+                    File::makeDirectory($path, 0777, true, true);
+                }
 
                 $img->save($path.'/'.$name);
                 // $file->move($path,$name);
@@ -992,6 +1044,10 @@ class MasterAO_Controller extends BaseController
 
                 $img = Image::make($file)->resize(320, 240);
 
+                if(!File::isDirectory($path)){
+                    File::makeDirectory($path, 0777, true, true);
+                }
+
                 $img->save($path.'/'.$name);
                 // $file->move($path,$name);
 
@@ -1009,10 +1065,11 @@ class MasterAO_Controller extends BaseController
             $path = $lamp_dir.'/debitur';
             $name = 'lamp_skk.'.$file->getClientOriginalName();
 
-            
             $img = Image::make($file)->resize(320, 240);
             
-            
+            if(!File::isDirectory($path)){
+                File::makeDirectory($path, 0777, true, true);
+            }
             
             if(!empty($check_ao->form_persetujuan_ideb))
             {
@@ -1033,6 +1090,10 @@ class MasterAO_Controller extends BaseController
                 $name = 'lamp_sku.'.$file->getClientOriginalName();
 
                 $img = Image::make($file)->resize(320, 240);
+
+                if(!File::isDirectory($path)){
+                    File::makeDirectory($path, 0777, true, true);
+                }
 
                 $img->save($path.'/'.$name);
                 // $file->move($path,$name);
@@ -1066,6 +1127,10 @@ class MasterAO_Controller extends BaseController
 
                 $img = Image::make($file)->resize(320, 240);
 
+                if(!File::isDirectory($path)){
+                    File::makeDirectory($path, 0777, true, true);
+                }
+                
                 $img->save($path.'/'.$name);
                 // $file->move($path,$name);
 
@@ -1085,8 +1150,11 @@ class MasterAO_Controller extends BaseController
 
                 $img = Image::make($file)->resize(320, 240);
 
+                if(!File::isDirectory($path)){
+                    File::makeDirectory($path, 0777, true, true);
+                }
+
                 $img->save($path.'/'.$name);
-                // $file->move($path,$name);
 
                 $pembukuan_usaha[] = $path.'/'.$name;
 
@@ -1103,7 +1171,14 @@ class MasterAO_Controller extends BaseController
                 $path = $lamp_dir.'/debitur';
                 $name = 'lamp_foto_usaha.'.$file->getClientOriginalName();
 
-                $file->move($path,$name);
+                $img = Image::make($file)->resize(320, 240);
+
+                if(!File::isDirectory($path)){
+                    File::makeDirectory($path, 0777, true, true);
+                }
+
+                $img->save($path.'/'.$name);
+                // $file->move($path,$name);
 
                 $foto_usaha[] = $path.'/'.$name;
             }
