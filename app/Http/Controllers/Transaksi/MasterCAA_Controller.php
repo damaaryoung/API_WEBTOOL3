@@ -280,9 +280,7 @@ class MasterCAA_Controller extends BaseController
             
             $img = Image::make($file)->resize(320, 240);
             
-            if (!file_exists($path)) {
-                mkdir($path, 666, true);
-            }
+            
             
             if(!empty($check_caa->file_report_mao))
             {
@@ -308,9 +306,7 @@ class MasterCAA_Controller extends BaseController
             
             $img = Image::make($file)->resize(320, 240);
             
-            if (!file_exists($path)) {
-                mkdir($path, 666, true);
-            }
+            
             
             if(!empty($check_caa->file_report_mca))
             {
@@ -450,9 +446,7 @@ class MasterCAA_Controller extends BaseController
             
             $img = Image::make($file)->resize(320, 240);
             
-            if (!file_exists($path)) {
-                mkdir($path, 666, true);
-            }
+            
             
             if(!empty($check_caa->file_tempat_tinggal))
             {
@@ -479,9 +473,7 @@ class MasterCAA_Controller extends BaseController
             
             $img = Image::make($file)->resize(320, 240);
             
-            if (!file_exists($path)) {
-                mkdir($path, 666, true);
-            }
+            
             
             if(!empty($check_caa->file_lain))
             {

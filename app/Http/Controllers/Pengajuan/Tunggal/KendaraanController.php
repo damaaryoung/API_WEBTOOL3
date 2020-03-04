@@ -133,9 +133,7 @@ class KendaraanController extends BaseController
             
             $img = Image::make($file)->resize(320, 240);
             
-            if (!file_exists($path)) {
-                mkdir($path, 666, true);
-            }
+            
             
             if(!empty($check->lamp_agunan_depan))
             {
@@ -157,9 +155,7 @@ class KendaraanController extends BaseController
             
             $img = Image::make($file)->resize(320, 240);
             
-            if (!file_exists($path)) {
-                mkdir($path, 666, true);
-            }
+            
             
             if(!empty($check->lamp_agunan_kanan))
             {
@@ -181,9 +177,7 @@ class KendaraanController extends BaseController
             
             $img = Image::make($file)->resize(320, 240);
             
-            if (!file_exists($path)) {
-                mkdir($path, 666, true);
-            }
+            
             
             if(!empty($check->lamp_agunan_kiri))
             {
@@ -206,9 +200,7 @@ class KendaraanController extends BaseController
             
             $img = Image::make($file)->resize(320, 240);
             
-            if (!file_exists($path)) {
-                mkdir($path, 666, true);
-            }
+            
             
             if(!empty($check->lamp_agunan_belakang))
             {
@@ -230,9 +222,7 @@ class KendaraanController extends BaseController
             
             $img = Image::make($file)->resize(320, 240);
             
-            if (!file_exists($path)) {
-                mkdir($path, 666, true);
-            }
+            
             
             if(!empty($check->lamp_agunan_dalam))
             {

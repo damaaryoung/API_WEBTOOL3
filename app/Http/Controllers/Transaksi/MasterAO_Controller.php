@@ -329,9 +329,7 @@ class MasterAO_Controller extends BaseController
             
             $img = Image::make($file)->resize(320, 240);
             
-            if (!file_exists($path)) {
-                mkdir($path, 666, true);
-            }
+            
             
             if(!empty($check_ao->form_persetujuan_ideb))
             {
@@ -1070,9 +1068,7 @@ class MasterAO_Controller extends BaseController
             
             $img = Image::make($file)->resize(320, 240);
             
-            if (!file_exists($path)) {
-                mkdir($path, 666, true);
-            }
+            
             
             if(!empty($check_ao->form_persetujuan_ideb))
             {

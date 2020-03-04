@@ -138,9 +138,7 @@ class PenjaminController extends BaseController
             
             $img = Image::make($file)->resize(320, 240);
             
-            if (!file_exists($path)) {
-                mkdir($path, 666, true);
-            }
+            
             
             if(!empty($check->lamp_ktp))
             {
@@ -162,9 +160,7 @@ class PenjaminController extends BaseController
             
             $img = Image::make($file)->resize(320, 240);
             
-            if (!file_exists($path)) {
-                mkdir($path, 666, true);
-            }
+            
             
             if(!empty($check->lamp_ktp_pasangan))
             {
@@ -186,9 +182,7 @@ class PenjaminController extends BaseController
             
             $img = Image::make($file)->resize(320, 240);
             
-            if (!file_exists($path)) {
-                mkdir($path, 666, true);
-            }
+            
             
             if(!empty($check->lamp_kk))
             {
@@ -210,9 +204,7 @@ class PenjaminController extends BaseController
             
             $img = Image::make($file)->resize(320, 240);
             
-            if (!file_exists($path)) {
-                mkdir($path, 666, true);
-            }
+            
             
             if(!empty($check->lamp_buku_nikah))
             {

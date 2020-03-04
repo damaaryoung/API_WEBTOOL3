@@ -157,9 +157,7 @@ class TanahController extends BaseController
             
             $img = Image::make($file)->resize(320, 240);
             
-            if (!file_exists($path)) {
-                mkdir($path, 666, true);
-            }
+            
             
             if(!empty($check->agunan_bag_depan))
             {
@@ -181,9 +179,7 @@ class TanahController extends BaseController
             
             $img = Image::make($file)->resize(320, 240);
             
-            if (!file_exists($path)) {
-                mkdir($path, 666, true);
-            }
+            
             
             if(!empty($check->agunan_bag_jalan))
             {
@@ -205,9 +201,7 @@ class TanahController extends BaseController
             
             $img = Image::make($file)->resize(320, 240);
             
-            if (!file_exists($path)) {
-                mkdir($path, 666, true);
-            }
+            
             
             if(!empty($check->agunan_bag_ruangtamu))
             {
@@ -230,9 +224,7 @@ class TanahController extends BaseController
             
             $img = Image::make($file)->resize(320, 240);
             
-            if (!file_exists($path)) {
-                mkdir($path, 666, true);
-            }
+            
             
             if(!empty($check->agunan_bag_kamarmandi))
             {
@@ -254,9 +246,7 @@ class TanahController extends BaseController
             
             $img = Image::make($file)->resize(320, 240);
             
-            if (!file_exists($path)) {
-                mkdir($path, 666, true);
-            }
+            
             
             if(!empty($check->agunan_bag_dapur))
             {
@@ -279,9 +269,7 @@ class TanahController extends BaseController
             
             $img = Image::make($file)->resize(320, 240);
             
-            if (!file_exists($path)) {
-                mkdir($path, 666, true);
-            }
+            
             
             if(!empty($check->lamp_imb))
             {
@@ -303,9 +291,7 @@ class TanahController extends BaseController
             
             $img = Image::make($file)->resize(320, 240);
             
-            if (!file_exists($path)) {
-                mkdir($path, 666, true);
-            }
+            
             
             if(!empty($check->lamp_pbb))
             {
@@ -327,9 +313,7 @@ class TanahController extends BaseController
             
             $img = Image::make($file)->resize(320, 240);
             
-            if (!file_exists($path)) {
-                mkdir($path, 666, true);
-            }
+            
             
             if(!empty($check->lamp_sertifikat))
             {

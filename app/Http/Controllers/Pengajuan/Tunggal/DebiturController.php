@@ -197,9 +197,7 @@ class DebiturController extends BaseController
 
             $img = Image::make($file)->resize(320, 240);
             
-            if (!file_exists($path)) {
-                mkdir($path, 666, true);
-            }
+            
             
             if(!empty($check->lamp_ktp))
             {
@@ -224,9 +222,7 @@ class DebiturController extends BaseController
             
             $img = Image::make($file)->resize(320, 240);
             
-            if (!file_exists($path)) {
-                mkdir($path, 666, true);
-            }
+            
             
             if(!empty($check->lamp_kk))
             {
@@ -251,9 +247,7 @@ class DebiturController extends BaseController
             
             $img = Image::make($file)->resize(320, 240);
             
-            if (!file_exists($path)) {
-                mkdir($path, 666, true);
-            }
+            
             
             if(!empty($check->lamp_sertifikat))
             {
@@ -277,9 +271,7 @@ class DebiturController extends BaseController
             
             $img = Image::make($file)->resize(320, 240);
             
-            if (!file_exists($path)) {
-                mkdir($path, 666, true);
-            }
+            
             
             if(!empty($check->lamp_sttp_pbb))
             {
@@ -303,9 +295,7 @@ class DebiturController extends BaseController
             
             $img = Image::make($file)->resize(320, 240);
             
-            if (!file_exists($path)) {
-                mkdir($path, 666, true);
-            }
+            
             
             if(!empty($check->lamp_imb))
             {
@@ -343,9 +333,7 @@ class DebiturController extends BaseController
             
             $img = Image::make($file)->resize(320, 240);
             
-            if (!file_exists($path)) {
-                mkdir($path, 666, true);
-            }
+            
             
             if(!empty($check->foto_agunan_rumah))
             {
@@ -399,9 +387,7 @@ class DebiturController extends BaseController
             
             $img = Image::make($file)->resize(320, 240);
             
-            if (!file_exists($path)) {
-                mkdir($path, 666, true);
-            }
+            
             
             if(!empty($check->lamp_skk))
             {
@@ -452,9 +438,7 @@ class DebiturController extends BaseController
             
             $img = Image::make($file)->resize(320, 240);
             
-            if (!file_exists($path)) {
-                mkdir($path, 666, true);
-            }
+            
             
             if(!empty($check->lamp_slip_gaji))
             {
