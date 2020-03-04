@@ -130,15 +130,16 @@ class KendaraanController extends BaseController
 
             $name = 'agunan_depan.' . $file->getClientOriginalName();
             
+            
+            $img = Image::make($file)->resize(320, 240);
+            
+            if (!file_exists($path)) {
+                mkdir($path, 666, true);
+            }
+            
             if(!empty($check->lamp_agunan_depan))
             {
                 File::delete($check->lamp_agunan_depan);
-            }
-            
-            $img = Image::make($file)->resize(320, 240);
-
-            if (!file_exists($path)) {
-                mkdir($path, 666, true);
             }
                 
             $img->save($path.'/'.$name);
@@ -153,15 +154,16 @@ class KendaraanController extends BaseController
 
             $name = 'agunan_kanan.' . $file->getClientOriginalName();
                         
+            
+            $img = Image::make($file)->resize(320, 240);
+            
+            if (!file_exists($path)) {
+                mkdir($path, 666, true);
+            }
+            
             if(!empty($check->lamp_agunan_kanan))
             {
                 File::delete($check->lamp_agunan_kanan);
-            }
-            
-            $img = Image::make($file)->resize(320, 240);
-
-            if (!file_exists($path)) {
-                mkdir($path, 666, true);
             }
                 
             $img->save($path.'/'.$name);
@@ -176,15 +178,16 @@ class KendaraanController extends BaseController
 
             $name = 'agunan_kiri.' . $file->getClientOriginalName();
             
+            
+            $img = Image::make($file)->resize(320, 240);
+            
+            if (!file_exists($path)) {
+                mkdir($path, 666, true);
+            }
+            
             if(!empty($check->lamp_agunan_kiri))
             {
                 File::delete($check->lamp_agunan_kiri);
-            }
-            
-            $img = Image::make($file)->resize(320, 240);
-
-            if (!file_exists($path)) {
-                mkdir($path, 666, true);
             }
                 
             $img->save($path.'/'.$name);
@@ -200,15 +203,16 @@ class KendaraanController extends BaseController
 
             $name = 'agunan_belakang.' . $file->getClientOriginalName();
             
+            
+            $img = Image::make($file)->resize(320, 240);
+            
+            if (!file_exists($path)) {
+                mkdir($path, 666, true);
+            }
+            
             if(!empty($check->lamp_agunan_belakang))
             {
                 File::delete($check->lamp_agunan_belakang);
-            }
-
-            $img = Image::make($file)->resize(320, 240);
-
-            if (!file_exists($path)) {
-                mkdir($path, 666, true);
             }
                 
             $img->save($path.'/'.$name);
@@ -223,15 +227,16 @@ class KendaraanController extends BaseController
 
             $name = 'agunan_dalam.' . $file->getClientOriginalName();
                         
+            
+            $img = Image::make($file)->resize(320, 240);
+            
+            if (!file_exists($path)) {
+                mkdir($path, 666, true);
+            }
+            
             if(!empty($check->lamp_agunan_dalam))
             {
                 File::delete($check->lamp_agunan_dalam);
-            }
-            
-            $img = Image::make($file)->resize(320, 240);
-
-            if (!file_exists($path)) {
-                mkdir($path, 666, true);
             }
                 
             $img->save($path.'/'.$name);

@@ -135,15 +135,16 @@ class PenjaminController extends BaseController
 
             $name = 'ktp_penjamin.' . $file->getClientOriginalName();
 
+            
+            $img = Image::make($file)->resize(320, 240);
+            
+            if (!file_exists($path)) {
+                mkdir($path, 666, true);
+            }
+            
             if(!empty($check->lamp_ktp))
             {
                 File::delete($check->lamp_ktp);
-            }
-
-            $img = Image::make($file)->resize(320, 240);
-
-            if (!file_exists($path)) {
-                mkdir($path, 666, true);
             }
                 
             $img->save($path.'/'.$name);
@@ -158,15 +159,16 @@ class PenjaminController extends BaseController
 
             $name = 'ktp_pasangan.' . $file->getClientOriginalName();
             
-            if(!empty($check->lamp_ktp_pasangan))
-            {
-                File::delete($check->lamp_ktp_pasangan);
-            }
             
             $img = Image::make($file)->resize(320, 240);
             
             if (!file_exists($path)) {
                 mkdir($path, 666, true);
+            }
+            
+            if(!empty($check->lamp_ktp_pasangan))
+            {
+                File::delete($check->lamp_ktp_pasangan);
             }
                 
             $img->save($path.'/'.$name);
@@ -181,19 +183,20 @@ class PenjaminController extends BaseController
 
             $name = 'kk_penjamin.' . $file->getClientOriginalName();
             
+            
+            $img = Image::make($file)->resize(320, 240);
+            
+            if (!file_exists($path)) {
+                mkdir($path, 666, true);
+            }
+            
             if(!empty($check->lamp_kk))
             {
                 File::delete($check->lamp_kk);
             }
-            
-            $img = Image::make($file)->resize(320, 240);
-
-            if (!file_exists($path)) {
-                mkdir($path, 666, true);
-            }
                 
             $img->save($path.'/'.$name);
-            $file->move($path,$name);
+            // $file->move($path,$name);
 
             $kkPen = $path.'/'.$name;
         }else{
@@ -204,15 +207,16 @@ class PenjaminController extends BaseController
 
             $name = 'buku_nikah_penjamin.' . $file->getClientOriginalName();
 
+            
+            $img = Image::make($file)->resize(320, 240);
+            
+            if (!file_exists($path)) {
+                mkdir($path, 666, true);
+            }
+            
             if(!empty($check->lamp_buku_nikah))
             {
                 File::delete($check->lamp_buku_nikah);
-            }
-
-            $img = Image::make($file)->resize(320, 240);
-
-            if (!file_exists($path)) {
-                mkdir($path, 666, true);
             }
                 
             $img->save($path.'/'.$name);

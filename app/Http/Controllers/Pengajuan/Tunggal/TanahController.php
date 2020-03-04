@@ -154,15 +154,16 @@ class TanahController extends BaseController
 
             $name = 'bag_depan.' . $file->getClientOriginalName();
 
+            
+            $img = Image::make($file)->resize(320, 240);
+            
+            if (!file_exists($path)) {
+                mkdir($path, 666, true);
+            }
+            
             if(!empty($check->agunan_bag_depan))
             {
                 File::delete($check->agunan_bag_depan);
-            }
-
-            $img = Image::make($file)->resize(320, 240);
-
-            if (!file_exists($path)) {
-                mkdir($path, 666, true);
             }
                 
             $img->save($path.'/'.$name);
@@ -177,15 +178,16 @@ class TanahController extends BaseController
 
             $name = 'bag_jalan.' . $file->getClientOriginalName();
 
+            
+            $img = Image::make($file)->resize(320, 240);
+            
+            if (!file_exists($path)) {
+                mkdir($path, 666, true);
+            }
+            
             if(!empty($check->agunan_bag_jalan))
             {
                 File::delete($check->agunan_bag_jalan);
-            }
-
-            $img = Image::make($file)->resize(320, 240);
-
-            if (!file_exists($path)) {
-                mkdir($path, 666, true);
             }
                 
             $img->save($path.'/'.$name);
@@ -200,15 +202,16 @@ class TanahController extends BaseController
 
             $name = 'bag_ruangtamu.' . $file->getClientOriginalName();
 
+            
+            $img = Image::make($file)->resize(320, 240);
+            
+            if (!file_exists($path)) {
+                mkdir($path, 666, true);
+            }
+            
             if(!empty($check->agunan_bag_ruangtamu))
             {
                 File::delete($check->agunan_bag_ruangtamu);
-            }
-
-            $img = Image::make($file)->resize(320, 240);
-
-            if (!file_exists($path)) {
-                mkdir($path, 666, true);
             }
                 
             $img->save($path.'/'.$name);
@@ -224,15 +227,16 @@ class TanahController extends BaseController
 
             $name = 'bag_kamarmandi.' . $file->getClientOriginalName();
 
+            
+            $img = Image::make($file)->resize(320, 240);
+            
+            if (!file_exists($path)) {
+                mkdir($path, 666, true);
+            }
+            
             if(!empty($check->agunan_bag_kamarmandi))
             {
                 File::delete($check->agunan_bag_kamarmandi);
-            }
-
-            $img = Image::make($file)->resize(320, 240);
-
-            if (!file_exists($path)) {
-                mkdir($path, 666, true);
             }
                 
             $img->save($path.'/'.$name);
@@ -247,15 +251,16 @@ class TanahController extends BaseController
 
             $name = 'bag_dapur.' . $file->getClientOriginalName();
 
+            
+            $img = Image::make($file)->resize(320, 240);
+            
+            if (!file_exists($path)) {
+                mkdir($path, 666, true);
+            }
+            
             if(!empty($check->agunan_bag_dapur))
             {
                 File::delete($check->agunan_bag_dapur);
-            }
-
-            $img = Image::make($file)->resize(320, 240);
-
-            if (!file_exists($path)) {
-                mkdir($path, 666, true);
             }
                 
             $img->save($path.'/'.$name);
@@ -271,15 +276,16 @@ class TanahController extends BaseController
 
             $name = 'lamp_imb.' . $file->getClientOriginalName();
 
+            
+            $img = Image::make($file)->resize(320, 240);
+            
+            if (!file_exists($path)) {
+                mkdir($path, 666, true);
+            }
+            
             if(!empty($check->lamp_imb))
             {
                 File::delete($check->lamp_imb);
-            }
-
-            $img = Image::make($file)->resize(320, 240);
-
-            if (!file_exists($path)) {
-                mkdir($path, 666, true);
             }
                 
             $img->save($path.'/'.$name);
@@ -294,17 +300,18 @@ class TanahController extends BaseController
 
             $name = 'lamp_pbb.' . $file->getClientOriginalName();
 
+            
+            $img = Image::make($file)->resize(320, 240);
+            
+            if (!file_exists($path)) {
+                mkdir($path, 666, true);
+            }
+            
             if(!empty($check->lamp_pbb))
             {
                 File::delete($check->lamp_pbb);
             }
-
-            $img = Image::make($file)->resize(320, 240);
-
-            if (!file_exists($path)) {
-                mkdir($path, 666, true);
-            }
-                
+            
             $img->save($path.'/'.$name);
             // $file->move($path,$name);
 
@@ -317,15 +324,16 @@ class TanahController extends BaseController
 
             $name = 'lamp_sertifikat.' . $file->getClientOriginalName();
 
+            
+            $img = Image::make($file)->resize(320, 240);
+            
+            if (!file_exists($path)) {
+                mkdir($path, 666, true);
+            }
+            
             if(!empty($check->lamp_sertifikat))
             {
                 File::delete($check->lamp_sertifikat);
-            }
-
-            $img = Image::make($file)->resize(320, 240);
-
-            if (!file_exists($path)) {
-                mkdir($path, 666, true);
             }
                 
             $img->save($path.'/'.$name);

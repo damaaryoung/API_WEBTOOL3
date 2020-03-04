@@ -126,15 +126,16 @@ class PasanganController extends BaseController
             $path = $lamp_dir.'/pasangan';
             $name = 'ktp.' . $file->getClientOriginalName();
 
-            if(!empty($check->lamp_ktp))
-            {
-                File::delete($check->lamp_ktp);
-            }
-
+            
             $img = Image::make($file)->resize(320, 240);
             
             if (!file_exists($path)) {
                 mkdir($path, 666, true);
+            }
+            
+            if(!empty($check->lamp_ktp))
+            {
+                File::delete($check->lamp_ktp);
             }
                 
             $img->save($path.'/'.$name);
@@ -149,15 +150,16 @@ class PasanganController extends BaseController
             $path = $lamp_dir.'/pasangan';
             $name = 'buku_nikah.' . $file->getClientOriginalName();
             
+            
+            $img = Image::make($file)->resize(320, 240);
+            
+            if (!file_exists($path)) {
+                mkdir($path, 666, true);
+            }
+            
             if(!empty($check->lamp_buku_nikah))
             {
                 File::delete($check->lamp_buku_nikah);
-            }
-            
-            $img = Image::make($file)->resize(320, 240);
-
-            if (!file_exists($path)) {
-                mkdir($path, 666, true);
             }
                 
             $img->save($path.'/'.$name);
