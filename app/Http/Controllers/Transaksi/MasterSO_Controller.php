@@ -442,10 +442,6 @@ class MasterSO_Controller extends BaseController
 
                 $img = Image::make($file)->resize(320, 240);
 
-                if (!file_exists($path)) {
-                    mkdir($path, 666, true);
-                }
-
                 $img->save($path.'/'.$name);
 
                 // $file->move($path,$name);
@@ -461,10 +457,6 @@ class MasterSO_Controller extends BaseController
 
                 $img = Image::make($file)->resize(320, 240);
 
-                if (!file_exists($path)) {
-                    mkdir($path, 666, true);
-                }
-
                 $img->save($path.'/'.$name);
                 // $file->move($path,$name);
 
@@ -478,10 +470,6 @@ class MasterSO_Controller extends BaseController
                 $name = 'sertifikat.' . $file->getClientOriginalName();
 
                 $img = Image::make($file)->resize(320, 240);
-
-                if (!file_exists($path)) {
-                    mkdir($path, 666, true);
-                }
 
                 $img->save($path.'/'.$name);
                 // $file->move($path,$name);
@@ -497,10 +485,6 @@ class MasterSO_Controller extends BaseController
 
                 $img = Image::make($file)->resize(320, 240);
 
-                if (!file_exists($path)) {
-                    mkdir($path, 666, true);
-                }
-
                 $img->save($path.'/'.$name);
                 // $file->move($path,$name);
 
@@ -515,10 +499,6 @@ class MasterSO_Controller extends BaseController
 
                 $img = Image::make($file)->resize(320, 240);
 
-                if (!file_exists($path)) {
-                    mkdir($path, 666, true);
-                }
-
                 $img->save($path.'/'.$name);
                 // $file->move($path,$name);
 
@@ -532,10 +512,6 @@ class MasterSO_Controller extends BaseController
                 $name = 'foto_agunan_rumah.' . $file->getClientOriginalName();
 
                 $img = Image::make($file)->resize(320, 240);
-
-                if (!file_exists($path)) {
-                    mkdir($path, 666, true);
-                }
 
                 $img->save($path.'/'.$name);
                 // $file->move($path,$name);
@@ -594,10 +570,6 @@ class MasterSO_Controller extends BaseController
 
                 $img = Image::make($file)->resize(320, 240);
 
-                if (!file_exists($path)) {
-                    mkdir($path, 666, true);
-                }
-
                 $img->save($path.'/'.$name);
                 // $file->move($path,$name);
 
@@ -611,10 +583,6 @@ class MasterSO_Controller extends BaseController
                 $name = 'buku_nikah.' . $file->getClientOriginalName();
 
                 $img = Image::make($file)->resize(320, 240);
-
-                if (!file_exists($path)) {
-                    mkdir($path, 666, true);
-                }
 
                 $img->save($path.'/'.$name);
                 // $file->move($path,$name);
@@ -658,10 +626,6 @@ class MasterSO_Controller extends BaseController
 
                     $img = Image::make($file)->resize(320, 240);
 
-                    if (!file_exists($path)) {
-                        mkdir($path, 666, true);
-                    }
-
                     $img->save($path.'/'.$name);
                     // $file->move($path,$name);
 
@@ -675,10 +639,6 @@ class MasterSO_Controller extends BaseController
                     $name = 'ktp_pasangan.' . $file->getClientOriginalName();
 
                     $img = Image::make($file)->resize(320, 240);
-
-                    if (!file_exists($path)) {
-                        mkdir($path, 666, true);
-                    }
 
                     $img->save($path.'/'.$name);
                     // $file->move($path,$name);
@@ -694,10 +654,6 @@ class MasterSO_Controller extends BaseController
 
                     $img = Image::make($file)->resize(320, 240);
 
-                    if (!file_exists($path)) {
-                        mkdir($path, 666, true);
-                    }
-
                     $img->save($path.'/'.$name);
 
                     // $file->move($path,$name);
@@ -712,10 +668,6 @@ class MasterSO_Controller extends BaseController
                     $name = 'buku_nikah_penjamin.' . $file->getClientOriginalName();
 
                     $img = Image::make($file)->resize(320, 240);
-
-                    if (!file_exists($path)) {
-                        mkdir($path, 666, true);
-                    }
 
                     $img->save($path.'/'.$name);
                     // $file->move($path,$name);

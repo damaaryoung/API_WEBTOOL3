@@ -356,12 +356,7 @@ class MasterCAA_Controller extends BaseController
                     $path = $lamp_dir.'/mcaa/file_agunan';
                     $name = $file->getClientOriginalName();
 
-                    
                     $img = Image::make($file)->resize(320, 240);
-                    
-                    if (!file_exists($path)) {
-                        mkdir($path, 666, true);
-                    }
                     
                     if(!empty($check_caa->file_agunan))
                     {
@@ -411,11 +406,6 @@ class MasterCAA_Controller extends BaseController
 
                     $path = $lamp_dir.'/mcaa/file_usaha';
                     $name = $file->getClientOriginalName();
-                    
-                    
-                    if (!file_exists($path)) {
-                        mkdir($path, 666, true);
-                    }
                     
                     if(!empty($check_caa->file_usaha))
                     {
