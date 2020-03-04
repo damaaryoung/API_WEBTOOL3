@@ -21,9 +21,9 @@ class ProvinsiController extends BaseController
             ], 404);
         }
 
-        $res = array();
+        $data = array();
         foreach ($query as $key => $val) {
-            $res[$key] = [
+            $data[$key] = [
                 "id"   => $val->id,
                 "nama" => $val->nama
             ];
@@ -33,8 +33,8 @@ class ProvinsiController extends BaseController
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'count'  => $query->count(),
-                'data'   => $res
+                'count'  => sizeof($data),
+                'data'   => $data
             ], 200);
         } catch (Exception $e) {
             return response()->json([
@@ -62,7 +62,8 @@ class ProvinsiController extends BaseController
             return response()->json([
                 'code'    => 200,
                 'status'  => 'success',
-                'message' => 'Data berhasil dibuat'
+                'message' => 'Data berhasil dibuat',
+                'data'    => array('nama' => $nama)
             ], 200);
         } catch (Exception $e) {
             return response()->json([
@@ -158,7 +159,8 @@ class ProvinsiController extends BaseController
             return response()->json([
                 'code'    => 200,
                 'status'  => 'success',
-                'message' => 'Data berhasil diupdate'
+                'message' => 'Data berhasil diupdate',
+                'data'    => $data
             ], 200);
         } catch (Exception $e) {
             return response()->json([

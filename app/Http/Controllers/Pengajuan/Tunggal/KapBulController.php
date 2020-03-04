@@ -137,7 +137,8 @@ class KapBulController extends BaseController
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'message'=> 'Update Kapasitas Bulanan Berhasil'
+                'message'=> 'Update Kapasitas Bulanan Berhasil',
+                'data'   => $KapBUl
             ], 200);
         } catch (Exception $e) {
 

@@ -17,6 +17,7 @@ use App\Models\AreaKantor\PIC;
 // use App\Models\KeuanganUsaha;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use Image;
 use DB;
 
 class MasterSO_Controller extends BaseController
@@ -438,7 +439,16 @@ class MasterSO_Controller extends BaseController
             if($file = $req->file('lamp_ktp')){
                 $path = $lamp_dir.'/debitur';
                 $name = 'ktp.' . $file->getClientOriginalName();
-                $file->move($path,$name);
+
+                $img = Image::make($file)->resize(320, 240);
+
+                if (!file_exists($path)) {
+                    mkdir($path, 666, true);
+                }
+
+                $img->save($path.'/'.$name);
+
+                // $file->move($path,$name);
 
                 $ktpDebt = $path.'/'.$name;
             }else{
@@ -448,7 +458,15 @@ class MasterSO_Controller extends BaseController
             if($file = $req->file('lamp_kk')){
                 $path = $lamp_dir.'/debitur';
                 $name = 'kk.' . $file->getClientOriginalName();
-                $file->move($path,$name);
+
+                $img = Image::make($file)->resize(320, 240);
+
+                if (!file_exists($path)) {
+                    mkdir($path, 666, true);
+                }
+
+                $img->save($path.'/'.$name);
+                // $file->move($path,$name);
 
                 $kkDebt = $path.'/'.$name;
             }else{
@@ -458,7 +476,15 @@ class MasterSO_Controller extends BaseController
             if($file = $req->file('lamp_sertifikat')){
                 $path = $lamp_dir.'/debitur';
                 $name = 'sertifikat.' . $file->getClientOriginalName();
-                $file->move($path,$name);
+
+                $img = Image::make($file)->resize(320, 240);
+
+                if (!file_exists($path)) {
+                    mkdir($path, 666, true);
+                }
+
+                $img->save($path.'/'.$name);
+                // $file->move($path,$name);
 
                 $sertifikatDebt = $path.'/'.$name;
             }else{
@@ -468,7 +494,15 @@ class MasterSO_Controller extends BaseController
             if($file = $req->file('lamp_pbb')){
                 $path = $lamp_dir.'/debitur';
                 $name = 'pbb.' . $file->getClientOriginalName();
-                $file->move($path,$name);
+
+                $img = Image::make($file)->resize(320, 240);
+
+                if (!file_exists($path)) {
+                    mkdir($path, 666, true);
+                }
+
+                $img->save($path.'/'.$name);
+                // $file->move($path,$name);
 
                 $pbbDebt = $path.'/'.$name;
             }else{
@@ -478,7 +512,15 @@ class MasterSO_Controller extends BaseController
             if($file = $req->file('lamp_imb')){
                 $path = $lamp_dir.'/debitur';
                 $name = 'imb.' . $file->getClientOriginalName();
-                $file->move($path,$name);
+
+                $img = Image::make($file)->resize(320, 240);
+
+                if (!file_exists($path)) {
+                    mkdir($path, 666, true);
+                }
+
+                $img->save($path.'/'.$name);
+                // $file->move($path,$name);
 
                 $imbDebt = $path.'/'.$name;
             }else{
@@ -488,7 +530,15 @@ class MasterSO_Controller extends BaseController
             if($file = $req->file('foto_agunan_rumah')){
                 $path = $lamp_dir.'/debitur';
                 $name = 'foto_agunan_rumah.' . $file->getClientOriginalName();
-                $file->move($path,$name);
+
+                $img = Image::make($file)->resize(320, 240);
+
+                if (!file_exists($path)) {
+                    mkdir($path, 666, true);
+                }
+
+                $img->save($path.'/'.$name);
+                // $file->move($path,$name);
 
                 $foto_agunan_rumah = $path.'/'.$name;
             }else{
@@ -541,7 +591,15 @@ class MasterSO_Controller extends BaseController
             if($file = $req->file('lamp_ktp_pas')){
                 $path = $lamp_dir.'/pasangan';
                 $name = 'ktp.' . $file->getClientOriginalName();
-                $file->move($path,$name);
+
+                $img = Image::make($file)->resize(320, 240);
+
+                if (!file_exists($path)) {
+                    mkdir($path, 666, true);
+                }
+
+                $img->save($path.'/'.$name);
+                // $file->move($path,$name);
 
                 $ktpPass = $path.'/'.$name;
             }else{
@@ -551,7 +609,15 @@ class MasterSO_Controller extends BaseController
             if($file = $req->file('lamp_buku_nikah_pas')){
                 $path = $lamp_dir.'/pasangan';
                 $name = 'buku_nikah.' . $file->getClientOriginalName();
-                $file->move($path,$name);
+
+                $img = Image::make($file)->resize(320, 240);
+
+                if (!file_exists($path)) {
+                    mkdir($path, 666, true);
+                }
+
+                $img->save($path.'/'.$name);
+                // $file->move($path,$name);
 
                 $bukuNikahPass = $path.'/'.$name;
             }else{
@@ -589,7 +655,15 @@ class MasterSO_Controller extends BaseController
                 foreach($files as $file){
                     $path = $lamp_dir.'/penjamin';
                     $name = 'ktp_penjamin.' . $file->getClientOriginalName();
-                    $file->move($path,$name);
+
+                    $img = Image::make($file)->resize(320, 240);
+
+                    if (!file_exists($path)) {
+                        mkdir($path, 666, true);
+                    }
+
+                    $img->save($path.'/'.$name);
+                    // $file->move($path,$name);
 
                     $ktpPen[] = $path.'/'.$name;
                 }
@@ -599,7 +673,15 @@ class MasterSO_Controller extends BaseController
                 foreach($files as $file){
                     $path = $lamp_dir.'/penjamin';
                     $name = 'ktp_pasangan.' . $file->getClientOriginalName();
-                    $file->move($path,$name);
+
+                    $img = Image::make($file)->resize(320, 240);
+
+                    if (!file_exists($path)) {
+                        mkdir($path, 666, true);
+                    }
+
+                    $img->save($path.'/'.$name);
+                    // $file->move($path,$name);
 
                     $ktpPenPAS[] = $path.'/'.$name;
                 }
@@ -609,7 +691,16 @@ class MasterSO_Controller extends BaseController
                 foreach($files as $file){
                     $path = $lamp_dir.'/penjamin';
                     $name = 'kk_penjamin.' . $file->getClientOriginalName();
-                    $file->move($path,$name);
+
+                    $img = Image::make($file)->resize(320, 240);
+
+                    if (!file_exists($path)) {
+                        mkdir($path, 666, true);
+                    }
+
+                    $img->save($path.'/'.$name);
+
+                    // $file->move($path,$name);
 
                     $kkPen[] = $path.'/'.$name;
                 }
@@ -619,7 +710,15 @@ class MasterSO_Controller extends BaseController
                 foreach($files as $file){
                     $path = $lamp_dir.'/penjamin';
                     $name = 'buku_nikah_penjamin.' . $file->getClientOriginalName();
-                    $file->move($path,$name);
+
+                    $img = Image::make($file)->resize(320, 240);
+
+                    if (!file_exists($path)) {
+                        mkdir($path, 666, true);
+                    }
+
+                    $img->save($path.'/'.$name);
+                    // $file->move($path,$name);
 
                     $bukuNikahPen[] = $path.'/'.$name;
                 }

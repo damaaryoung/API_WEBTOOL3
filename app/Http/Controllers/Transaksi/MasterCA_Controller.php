@@ -26,6 +26,7 @@ use App\Models\AreaKantor\JPIC;
 use App\Models\AreaKantor\PIC;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+// use Image;
 use DB;
 
 class MasterCA_Controller extends BaseController

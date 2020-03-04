@@ -63,7 +63,8 @@ class AreaController extends BaseController
             return response()->json([
                 'code'    => 200,
                 'status'  => 'success',
-                'message' => 'Data berhasil dibuat'
+                'message' => 'Data berhasil dibuat',
+                'data'    => $data
             ], 200);
         } catch (Exception $e) {
             return response()->json([
@@ -142,7 +143,8 @@ class AreaController extends BaseController
             return response()->json([
                 'code'    => 200,
                 'status'  => 'success',
-                'message' => 'Data berhasil diupdate'
+                'message' => 'Data berhasil diupdate',
+                'data'    => $data
             ], 200);
         } catch (Exception $e) {
             return response()->json([

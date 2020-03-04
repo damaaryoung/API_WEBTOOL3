@@ -28,7 +28,7 @@ class CodeController extends BaseController
         return response()->json([
             "code"   => 200,
             "status" => "success",
-            "count"  => $query->count(),
+            "count"  => sizeof($query),
             "data"   => $query
         ]);
     }
@@ -46,7 +46,7 @@ class CodeController extends BaseController
         return response()->json([
             "code"   => 200,
             "status" => "success",
-            "count"  => $query->count(),
+            "count"  => sizeof($query),
             "data"   => $query
         ]);
     }
@@ -68,7 +68,7 @@ class CodeController extends BaseController
         return response()->json([
             "code"   => 200,
             "status" => "success",
-            "count"  => $query->count(),
+            "count"  => sizeof($query),
             "data"   => $query
         ]);
     }
@@ -86,7 +86,7 @@ class CodeController extends BaseController
         return response()->json([
             "code"   => 200,
             "status" => "success",
-            "count"  => $query->count(),
+            "count"  => sizeof($query),
             "data"   => $query
         ]);
     }
@@ -103,7 +103,7 @@ class CodeController extends BaseController
         return response()->json([
             "code"   => 200,
             "status" => "success",
-            "count"  => $query->count(),
+            "count"  => sizeof($query),
             "data"   => $query
         ]);
     }
@@ -135,7 +135,7 @@ class CodeController extends BaseController
             return response()->json([
                 "code"   => 200,
                 "status" => "success",
-                "count"  => $query->count(),
+                "count"  => sizeof($query),
                 "data"   => $query
             ]);
         }
@@ -161,7 +161,7 @@ class CodeController extends BaseController
             return response()->json([
                 "code"   => 200,
                 "status" => "success",
-                "count"  => $query->count(),
+                "count"  => sizeof($query),
                 "data"   => $query
             ]);
         }
@@ -191,7 +191,7 @@ class CodeController extends BaseController
             return response()->json([
                 "code"   => 200,
                 "status" => "success",
-                "count"  => $query->count(),
+                "count"  => sizeof($query),
                 "data"   => $query
             ]);
         }
@@ -217,7 +217,7 @@ class CodeController extends BaseController
             return response()->json([
                 "code"   => 200,
                 "status" => "success",
-                "count"  => $query->count(),
+                "count"  => sizeof($query),
                 "data"   => $query
             ]);
         }
@@ -242,7 +242,7 @@ class CodeController extends BaseController
             return response()->json([
                 "code"   => 200,
                 "status" => "success",
-                "count"  => $query->count(),
+                "count"  => sizeof($query),
                 "data"   => $query
             ]);
         }
@@ -252,12 +252,12 @@ class CodeController extends BaseController
     // Produk CA
     public function produk(){
         $query = DB::connection('web')->select("SELECT kode_produk, `DESKRIPSI_PRODUK` AS nama_produk FROM view_produk");
-
+       
         try {
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                "count"  => $query->count(),
+                "count"  => sizeof($query),
                 'data'   => $query
             ], 200);
         } catch (Exception $e) {

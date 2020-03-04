@@ -3,6 +3,7 @@
 namespace App\Http\Requests\AreaKantor;
 
 use Illuminate\Http\Request;
+use App\Models\AreaKantor\PIC;
 use Illuminate\Http\JsonResponse;
 use Urameshibr\Requests\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
@@ -21,36 +22,55 @@ class PICRequest extends FormRequest
     {
         $method = $request->method();
 
+        $single = $request->segment(4);
+
+        $check = PIC::where('id', $single)->first();
+
         switch ($method) {
             case 'POST':
-                $value = 'integer';
+                $user_id      = 'required|integer|unique:web.m_pic,user_id';
+                $email        = 'email|unique:web.m_pic,email';
+                $nama         = 'required|unique:web.m_pic,nama';
+                $id_mk_area   = 'required|integer';
+                $id_mk_cabang = 'required|integer';
+                $id_mj_pic    = 'required|integer';
                 break;
 
             case 'PUT':
-                $value = 'integer';
+                $user_id = ($check==null ? 'integer|unique:web.m_pic,user_id' : 'integer|unique:web.m_pic,user_id,'.$check->id);
+                $email   = ($check==null ? 'email|unique:web.m_pic,email'     : 'email|unique:web.m_pic,email,'.$check->id);
+                $nama    = ($check==null ? 'unique:web.m_pic,nama'            : 'unique:web.m_pic,nama,'.$check->id);
+                $id_mk_area   = 'integer';
+                $id_mk_cabang = 'integer';
+                $id_mj_pic    = 'integer';
                 break;
         }
 
         return [
-            'user_id'      => $value,
-            'email'        => 'email|unique:dpm.user,email',
-            'id_mk_area'   => $value,
-            'id_mk_cabang' => $value,
-            'id_mj_pic'    => $value,
-            'flg_aktif'    => 'in:false,true'
+            'user_id'      => $user_id,
+            'email'        => $email,
+            'id_mk_area'   => $id_mk_area,
+            'id_mk_cabang' => $id_mk_cabang,
+            'id_mj_pic'    => $id_mj_pic,
+            'nama'         => $nama
        ];
     }
 
     public function messages(){
         return [
-            // 'user_id.required'      => ':attribute wajib diisi',
-            'user_id.integer'       => ':attribute harus berupa angka',
-            'email.email'           => ':attribute harus berupa email',
-            'email.unique'          => ':attribute telah ada yang menggunakan',
+            'user_id.required'      => ':attribute wajib diisi',
             'id_mk_area.required'   => ':attribute wajib diisi',
             'id_mk_cabang.required' => ':attribute wajib diisi',
             'id_mj_pic.required'    => ':attribute wajib diisi',
-            'flg_aktif.in'          => ':attribute harus salah satu dari jenis berikut :values'
+            'nama.required'         => ':attribute wajib diisi',
+            'user_id.integer'       => ':attribute harus berupa angka',
+            'id_mk_area.integer'    => ':attribute harus berupa angka',
+            'id_mk_cabang.integer'  => ':attribute harus berupa angka',
+            'id_mj_pic.integer'     => ':attribute harus berupa angka',
+            'email.email'           => ':attribute harus berupa email',
+            'user_id.unique'        => ':attribute telah ada yang menggunakan',
+            'email.unique'          => ':attribute telah ada yang menggunakan',
+            'nama.unique'           => ':attribute telah ada yang menggunakan'
         ];
     }
 

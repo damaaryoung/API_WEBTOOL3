@@ -72,17 +72,20 @@ class MenuMasterController extends BaseController
             ], 422);
         }
 
-        $query = MenuMaster::create([
+        $query = array(
             'nama' => $nama,
             'url'  => $url,
             'icon' => $icon
-        ]);
+        );
+        
+        MenuMaster::create($query);
 
         try {
             return response()->json([
-                'code'   => 200,
-                'status' => 'success',
-                'data'   => 'data berhasil dibuat'
+                'code'    => 200,
+                'status'  => 'success',
+                'messahe' => 'data berhasil dibuat',
+                'data'    => $query
             ], 200);
         } catch (Exception $e) {
             return response()->json([
@@ -151,7 +154,8 @@ class MenuMasterController extends BaseController
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'message'=> 'Data berhasil diupdate'
+                'message'=> 'Data berhasil diupdate',
+                'data'   => $data
             ], 200);
         } catch (Exception $e) {
             return response()->json([

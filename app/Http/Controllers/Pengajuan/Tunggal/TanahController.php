@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Http\Request;
 use App\Http\Requests;
 use Carbon\Carbon;
+use Image;
 use DB;
 
 class TanahController extends BaseController
@@ -158,7 +159,14 @@ class TanahController extends BaseController
                 File::delete($check->agunan_bag_depan);
             }
 
-            $file->move($path,$name);
+            $img = Image::make($file)->resize(320, 240);
+
+            if (!file_exists($path)) {
+                mkdir($path, 666, true);
+            }
+                
+            $img->save($path.'/'.$name);
+            // $file->move($path,$name);
 
             $agunan_bag_depan = $path.'/'.$name;
         }else{
@@ -174,7 +182,14 @@ class TanahController extends BaseController
                 File::delete($check->agunan_bag_jalan);
             }
 
-            $file->move($path,$name);
+            $img = Image::make($file)->resize(320, 240);
+
+            if (!file_exists($path)) {
+                mkdir($path, 666, true);
+            }
+                
+            $img->save($path.'/'.$name);
+            // $file->move($path,$name);
 
             $agunan_bag_jalan = $path.'/'.$name;
         }else{
@@ -190,7 +205,14 @@ class TanahController extends BaseController
                 File::delete($check->agunan_bag_ruangtamu);
             }
 
-            $file->move($path,$name);
+            $img = Image::make($file)->resize(320, 240);
+
+            if (!file_exists($path)) {
+                mkdir($path, 666, true);
+            }
+                
+            $img->save($path.'/'.$name);
+            // $file->move($path,$name);
 
             $agunan_bag_ruangtamu = $path.'/'.$name;
         }else{
@@ -207,7 +229,14 @@ class TanahController extends BaseController
                 File::delete($check->agunan_bag_kamarmandi);
             }
 
-            $file->move($path,$name);
+            $img = Image::make($file)->resize(320, 240);
+
+            if (!file_exists($path)) {
+                mkdir($path, 666, true);
+            }
+                
+            $img->save($path.'/'.$name);
+            // $file->move($path,$name);
 
             $agunan_bag_kamarmandi = $path.'/'.$name;
         }else{
@@ -223,7 +252,14 @@ class TanahController extends BaseController
                 File::delete($check->agunan_bag_dapur);
             }
 
-            $file->move($path,$name);
+            $img = Image::make($file)->resize(320, 240);
+
+            if (!file_exists($path)) {
+                mkdir($path, 666, true);
+            }
+                
+            $img->save($path.'/'.$name);
+            // $file->move($path,$name);
 
             $agunan_bag_dapur = $path.'/'.$name;
         }else{
@@ -240,7 +276,14 @@ class TanahController extends BaseController
                 File::delete($check->lamp_imb);
             }
 
-            $file->move($path,$name);
+            $img = Image::make($file)->resize(320, 240);
+
+            if (!file_exists($path)) {
+                mkdir($path, 666, true);
+            }
+                
+            $img->save($path.'/'.$name);
+            // $file->move($path,$name);
 
             $lamp_imb = $path.'/'.$name;
         }else{
@@ -256,7 +299,14 @@ class TanahController extends BaseController
                 File::delete($check->lamp_pbb);
             }
 
-            $file->move($path,$name);
+            $img = Image::make($file)->resize(320, 240);
+
+            if (!file_exists($path)) {
+                mkdir($path, 666, true);
+            }
+                
+            $img->save($path.'/'.$name);
+            // $file->move($path,$name);
 
             $lamp_pbb = $path.'/'.$name;
         }else {
@@ -272,7 +322,14 @@ class TanahController extends BaseController
                 File::delete($check->lamp_sertifikat);
             }
 
-            $file->move($path,$name);
+            $img = Image::make($file)->resize(320, 240);
+
+            if (!file_exists($path)) {
+                mkdir($path, 666, true);
+            }
+                
+            $img->save($path.'/'.$name);
+            // $file->move($path,$name);
 
             $lamp_sertifikat = $path.'/'.$name;
         }else {
@@ -320,7 +377,8 @@ class TanahController extends BaseController
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'message'=> 'Update Agunan Tanah Berhasil'
+                'message'=> 'Update Agunan Tanah Berhasil',
+                'data'   => $dataAgunanTanah
             ], 200);
         } catch (Exception $e) {
 

@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Http\Request;
 use App\Http\Requests;
 use Carbon\Carbon;
+use Image;
 use DB;
 
 class KendaraanController extends BaseController
@@ -128,13 +129,20 @@ class KendaraanController extends BaseController
         if($file = $req->file('lamp_agunan_depan_ken')){
 
             $name = 'agunan_depan.' . $file->getClientOriginalName();
-
+            
             if(!empty($check->lamp_agunan_depan))
             {
                 File::delete($check->lamp_agunan_depan);
             }
+            
+            $img = Image::make($file)->resize(320, 240);
 
-            $file->move($path,$name);
+            if (!file_exists($path)) {
+                mkdir($path, 666, true);
+            }
+                
+            $img->save($path.'/'.$name);
+            // $file->move($path,$name);
 
             $agunanDepan = $path.'/'.$name;
         }else{
@@ -144,13 +152,20 @@ class KendaraanController extends BaseController
         if($file = $req->file('lamp_agunan_kanan_ken')){
 
             $name = 'agunan_kanan.' . $file->getClientOriginalName();
-
+                        
             if(!empty($check->lamp_agunan_kanan))
             {
                 File::delete($check->lamp_agunan_kanan);
             }
+            
+            $img = Image::make($file)->resize(320, 240);
 
-            $file->move($path,$name);
+            if (!file_exists($path)) {
+                mkdir($path, 666, true);
+            }
+                
+            $img->save($path.'/'.$name);
+            // $file->move($path,$name);
 
             $agunanKanan = $path.'/'.$name;
         }else{
@@ -160,13 +175,20 @@ class KendaraanController extends BaseController
         if($file = $req->file('lamp_agunan_kiri_ken')){
 
             $name = 'agunan_kiri.' . $file->getClientOriginalName();
-
+            
             if(!empty($check->lamp_agunan_kiri))
             {
                 File::delete($check->lamp_agunan_kiri);
             }
+            
+            $img = Image::make($file)->resize(320, 240);
 
-            $file->move($path,$name);
+            if (!file_exists($path)) {
+                mkdir($path, 666, true);
+            }
+                
+            $img->save($path.'/'.$name);
+            // $file->move($path,$name);
 
             $agunanKiri = $path.'/'.$name;
         }else{
@@ -177,13 +199,20 @@ class KendaraanController extends BaseController
         if($file = $req->file('lamp_agunan_belakang_ken')){
 
             $name = 'agunan_belakang.' . $file->getClientOriginalName();
-
+            
             if(!empty($check->lamp_agunan_belakang))
             {
                 File::delete($check->lamp_agunan_belakang);
             }
 
-            $file->move($path,$name);
+            $img = Image::make($file)->resize(320, 240);
+
+            if (!file_exists($path)) {
+                mkdir($path, 666, true);
+            }
+                
+            $img->save($path.'/'.$name);
+            // $file->move($path,$name);
 
             $agunanBelakang = $path.'/'.$name;
         }else{
@@ -193,13 +222,20 @@ class KendaraanController extends BaseController
         if($file = $req->file('lamp_agunan_dalam_ken')){
 
             $name = 'agunan_dalam.' . $file->getClientOriginalName();
-
+                        
             if(!empty($check->lamp_agunan_dalam))
             {
                 File::delete($check->lamp_agunan_dalam);
             }
+            
+            $img = Image::make($file)->resize(320, 240);
 
-            $file->move($path,$name);
+            if (!file_exists($path)) {
+                mkdir($path, 666, true);
+            }
+                
+            $img->save($path.'/'.$name);
+            // $file->move($path,$name);
 
             $agunanDalam = $path.'/'.$name;
         }else{
@@ -239,7 +275,8 @@ class KendaraanController extends BaseController
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'message'=> 'Update Agunan Kendaraan Berhasil'
+                'message'=> 'Update Agunan Kendaraan Berhasil',
+                'data'   => $dataAgunanKendaraan
             ], 200);
         } catch (Exception $e) {
 

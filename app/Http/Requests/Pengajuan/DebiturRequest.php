@@ -27,13 +27,13 @@ class DebiturRequest extends FormRequest
         $check = Debitur::where('id', $single)->first();
 
         if ($check != null) {
-            if ($check->id_calon_debt != null) {
-                $rules['no_ktp']    = 'digits:16|unique:web.calon_debitur,no_ktp,'.$check->id_calon_debt;
-                $rules['no_ktp_kk'] = 'digits:16|unique:web.calon_debitur,no_ktp_kk,'.$check->id_calon_debt;
-                $rules['no_kk']     = 'digits:16|unique:web.calon_debitur,no_kk,'.$check->id_calon_debt;
-                $rules['no_npwp']   = 'digits:15|unique:web.calon_debitur,no_npwp,'.$check->id_calon_debt;
-                $rules['no_telp']   = 'between:11,13|unique:web.calon_debitur,no_telp,'.$check->id_calon_debt;
-                $rules['no_hp']     = 'between:11,13|unique:web.calon_debitur,no_hp,'.$check->id_calon_debt;
+            if ($check->id != null) {
+                $rules['no_ktp']    = 'digits:16|unique:web.calon_debitur,no_ktp,'.$check->id;
+                $rules['no_ktp_kk'] = 'digits:16|unique:web.calon_debitur,no_ktp_kk,'.$check->id;
+                $rules['no_kk']     = 'digits:16|unique:web.calon_debitur,no_kk,'.$check->id;
+                $rules['no_npwp']   = 'digits:15|unique:web.calon_debitur,no_npwp,'.$check->id;
+                $rules['no_telp']   = 'between:11,13|unique:web.calon_debitur,no_telp,'.$check->id;
+                $rules['no_hp']     = 'between:11,13|unique:web.calon_debitur,no_hp,'.$check->id;
             }
         }
 
@@ -75,12 +75,14 @@ class DebiturRequest extends FormRequest
             'lamp_sttp_pbb'         => 'mimes:jpg,jpeg,png,pdf',
             'lamp_sertifikat'       => 'mimes:jpg,jpeg,png,pdf',
             'lamp_imb'              => 'mimes:jpg,jpeg,png,pdf',
+            'lamp_pbb'              => 'image|mimes:jpg,jpeg,png,pdf',
             'lamp_buku_tabungan.*'  => 'mimes:jpg,jpeg,png,pdf',
             'lamp_sku.*'            => 'mimes:jpg,jpeg,png,pdf',
             'lamp_slip_gaji'        => 'mimes:jpg,jpeg,png,pdf',
             'lamp_foto_usaha.*'     => 'mimes:jpg,jpeg,png,pdf',
             'lamp_skk'              => 'mimes:jpg,jpeg,png,pdf',
-            'foto_pembukuan_usaha.*'=> 'mimes:jpg,jpeg,png,pdf',
+            'lamp_pembukuan_usaha.*'=> 'mimes:jpg,jpeg,png,pdf',
+            'foto_agunan_rumah'     => 'mimes:jpg,jpeg,png,pdf'
         ];
 
         return $rules;
@@ -157,19 +159,20 @@ class DebiturRequest extends FormRequest
             // 'tgl_mulai_kerja.date_format'    => ':attribute harus berupa angka dengan format :format',
             'no_telp_tempat_kerja.numeric'   => ':attribute harus berupa angka',
             'lamp_surat_cerai.mimes'         => ':attribute harus bertipe :values',
-            'lamp_buku_tabungan.mimes'       => ':attribute harus bertipe :values',
+            'lamp_buku_tabungan.*.mimes'     => ':attribute harus bertipe :values',
             'lamp_ktp.mimes'                 => ':attribute harus bertipe :values',
             'lamp_kk.mimes'                  => ':attribute harus bertipe :values',
-            'lamp_sku.mimes'                 => ':attribute harus bertipe :values',
             'lamp_slip_gaji.mimes'           => ':attribute harus bertipe :values',
-            'lamp_foto_usaha.mimes'          => ':attribute harus bertipe :values',
-            // 'lamp_surat_cerai.max'           => 'ukuran :attribute max :values',
-            // 'lamp_buku_tabungan.max'         => 'ukuran :attribute max :max kb',
-            // 'lamp_ktp.max'                   => 'ukuran :attribute max :max kb',
-            // 'lamp_kk.max'                    => 'ukuran :attribute max :max kb',
-            // 'lamp_sku.max'                   => 'ukuran :attribute max :max kb',
-            // 'lamp_slip_gaji.max'             => 'ukuran :attribute max :max kb',
-            // 'lamp_foto_usaha.max'            => 'ukuran :attribute max :max kb'
+            'lamp_foto_usaha.*.mimes'        => ':attribute harus bertipe :values',
+            
+            'lamp_sertifikat.mimes'          => ':attribute harus bertipe :values',
+            'lamp_pbb.mimes'                 => ':attribute harus bertipe :values',
+            'lamp_imb.mimes'                 => ':attribute harus bertipe :values',
+            'lamp_sku.*.mimes'               => ':attribute harus bertipe :values',
+            'lamp_skk.mimes'                 => ':attribute harus bertipe :values',
+            'lamp_slip_gaji.mimes'           => ':attribute harus bertipe :values',
+            'lamp_pembukuan_usaha.*.mimes'   => ':attribute harus bertipe :values',
+            'foto_agunan_rumah.mimes'        => ':attribute harus bertipe :values'
         ];
     }
 

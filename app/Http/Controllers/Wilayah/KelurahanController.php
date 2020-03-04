@@ -21,9 +21,9 @@ class KelurahanController extends BaseController
             ], 404);
         }
 
-        $res = array();
+        $data = array();
         foreach ($query as $key => $val) {
-            $res[$key] = [
+            $data[$key] = [
                 "id"             => $val->id,
                 "nama"           => $val->nama,
                 "nama_kecamatan" => $val->kec['nama'],
@@ -35,8 +35,8 @@ class KelurahanController extends BaseController
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'count'  => $query->count(),
-                'data'   => $res
+                'count'  => sizeof($data),
+                'data'   => $data
             ], 200);
         } catch (Exception $e) {
             return response()->json([
@@ -100,17 +100,20 @@ class KelurahanController extends BaseController
             ], 422);
         }
 
+        $query = array(
+            'nama'         => $nama,
+            'kode_pos'     => $kode_pos,
+            'id_kecamatan' => $kecamatan
+        );
+
         try {
-            $query = Kelurahan::create([
-                'nama'         => $nama,
-                'kode_pos'     => $kode_pos,
-                'id_kecamatan' => $kecamatan
-            ]);
+            Kelurahan::create($query);
 
             return response()->json([
                 'code'    => 200,
                 'status'  => 'success',
-                'message' => 'Data berhasil dibuat'
+                'message' => 'Data berhasil dibuat',
+                'data'    => $query
             ], 200);
         } catch (Exception $e) {
             return response()->json([
@@ -225,13 +228,15 @@ class KelurahanController extends BaseController
             ], 422);
         }
 
+        $query = array(
+            'nama'         => $nama,
+            'kode_pos'     => $kode_pos,
+            'id_kecamatan' => $kecamatan,
+            'flg_aktif'    => $flg_aktif
+        );
+
         try {
-            $query = Kelurahan::where('id', $id)->update([
-                'nama'         => $nama,
-                'kode_pos'     => $kode_pos,
-                'id_kecamatan' => $kecamatan,
-                'flg_aktif'    => $flg_aktif
-            ]);
+            Kelurahan::where('id', $id)->update($query);
 
             return response()->json([
                 'code'    => 200,

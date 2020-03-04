@@ -14,6 +14,7 @@ use App\Models\Transaksi\TransSO;
 
 use Illuminate\Support\Facades\File;
 use Carbon\Carbon;
+use Image;
 use DB;
 
 class DebiturController extends BaseController
@@ -199,7 +200,14 @@ class DebiturController extends BaseController
                 File::delete($check->lamp_ktp);
             }
 
-            $file->move($path,$name);
+            $img = Image::make($file)->resize(320, 240);
+
+            if (!file_exists($path)) {
+                mkdir($path, 666, true);
+            }
+            
+            $img->save($path.'/'.$name);
+            // $file->move($path,$name);
 
             $ktpDebt = $path.'/'.$name;
         }else{
@@ -218,7 +226,15 @@ class DebiturController extends BaseController
                 File::delete($check->lamp_kk);
             }
 
-            $file->move($path,$name);
+            $img = Image::make($file)->resize(320, 240);
+
+            if (!file_exists($path)) {
+                mkdir($path, 666, true);
+            }
+            
+            $img->save($path.'/'.$name);
+
+            // $file->move($path,$name);
 
             $kkDebt = $path.'/'.$name;
         }else{
@@ -236,7 +252,14 @@ class DebiturController extends BaseController
                 File::delete($check->lamp_sertifikat);
             }
 
-            $file->move($path,$name);
+            $img = Image::make($file)->resize(320, 240);
+
+            if (!file_exists($path)) {
+                mkdir($path, 666, true);
+            }
+            
+            $img->save($path.'/'.$name);
+            // $file->move($path,$name);
 
             $sertifikatDebt = $path.'/'.$name;
         }else{
@@ -254,7 +277,14 @@ class DebiturController extends BaseController
                 File::delete($check->lamp_sttp_pbb);
             }
 
-            $file->move($path,$name);
+            $img = Image::make($file)->resize(320, 240);
+
+            if (!file_exists($path)) {
+                mkdir($path, 666, true);
+            }
+            
+            $img->save($path.'/'.$name);
+            // $file->move($path,$name);
 
             $pbbDebt = $path.'/'.$name;
         }else{
@@ -272,7 +302,14 @@ class DebiturController extends BaseController
                 File::delete($check->lamp_imb);
             }
 
-            $file->move($path,$name);
+            $img = Image::make($file)->resize(320, 240);
+
+            if (!file_exists($path)) {
+                mkdir($path, 666, true);
+            }
+            
+            $img->save($path.'/'.$name);
+            // $file->move($path,$name);
 
             $imbDebt = $path.'/'.$name;
         }else{
@@ -304,7 +341,14 @@ class DebiturController extends BaseController
                 File::delete($check->foto_agunan_rumah);
             }
 
-            $file->move($path,$name);
+            $img = Image::make($file)->resize(320, 240);
+
+            if (!file_exists($path)) {
+                mkdir($path, 666, true);
+            }
+            
+            $img->save($path.'/'.$name);
+            // $file->move($path,$name);
 
             $foto_agunan_rumah = $path.'/'.$name;
         }else{
@@ -322,7 +366,14 @@ class DebiturController extends BaseController
                 $path = $lamp_dir.'/lamp_buku_tabungan';
                 $name = 'lamp_buku_tabungan.' . $file->getClientOriginalName();
 
-                $file->move($path,$name);
+                $img = Image::make($file)->resize(320, 240);
+
+                if (!file_exists($path)) {
+                    mkdir($path, 666, true);
+                }
+            
+                $img->save($path.'/'.$name);
+                // $file->move($path,$name);
 
                 $buku_tabungan[] = $path.'/'.$name;
 
@@ -340,7 +391,19 @@ class DebiturController extends BaseController
             $path = $lamp_dir.'/debitur';
             $name = 'lamp_skk.'.$file->getClientOriginalName();
 
-            $file->move($path,$name);
+            if(!empty($check->lamp_skk))
+            {
+                File::delete($check->lamp_skk);
+            }
+
+            $img = Image::make($file)->resize(320, 240);
+
+            if (!file_exists($path)) {
+                mkdir($path, 666, true);
+            }
+            
+            $img->save($path.'/'.$name);
+            // $file->move($path,$name);
 
             $lamp_skk = $path.'/'.$name;
         }else{
@@ -355,7 +418,14 @@ class DebiturController extends BaseController
                 $path = $lamp_dir.'/debitur';
                 $name = 'lamp_sku.'.$file->getClientOriginalName();
 
-                $file->move($path,$name);
+                $img = Image::make($file)->resize(320, 240);
+
+                if (!file_exists($path)) {
+                    mkdir($path, 666, true);
+                }
+                
+                $img->save($path.'/'.$name);
+                // $file->move($path,$name);
 
                 $sku[] = $path.'/'.$name;
 
@@ -373,7 +443,19 @@ class DebiturController extends BaseController
             $path = $lamp_dir.'/debitur';
             $name = 'lamp_slip_gaji.'.$file->getClientOriginalName(); //->getClientOriginalExtension();
 
-            $file->move($path, $name);
+            if(!empty($check->lamp_slip_gaji))
+            {
+                File::delete($check->lamp_slip_gaji);
+            }
+
+            $img = Image::make($file)->resize(320, 240);
+
+            if (!file_exists($path)) {
+                mkdir($path, 666, true);
+            }
+                
+            $img->save($path.'/'.$name);
+            // $file->move($path, $name);
 
             $lamp_slip_gaji = $path.'/'.$name;
 
@@ -390,7 +472,14 @@ class DebiturController extends BaseController
                 $path = $lamp_dir.'/debitur';
                 $name = 'foto_pembukuan_usaha.'.$file->getClientOriginalName();
 
-                $file->move($path,$name);
+                $img = Image::make($file)->resize(320, 240);
+
+                if (!file_exists($path)) {
+                    mkdir($path, 666, true);
+                }
+                    
+                $img->save($path.'/'.$name);
+                // $file->move($path,$name);
 
                 $pembukuan_usaha[] = $path.'/'.$name;
             }
@@ -409,7 +498,14 @@ class DebiturController extends BaseController
                 $path = $lamp_dir.'/debitur';
                 $name = 'lamp_foto_usaha.'.$file->getClientOriginalName();
 
-                $file->move($path,$name);
+                $img = Image::make($file)->resize(320, 240);
+
+                if (!file_exists($path)) {
+                    mkdir($path, 666, true);
+                }
+                    
+                $img->save($path.'/'.$name);
+                // $file->move($path,$name);
 
                 $foto_usaha[] = $path.'/'.$name;
             }
@@ -489,7 +585,8 @@ class DebiturController extends BaseController
             'lamp_sku'              => $lamp_sku,
             'lamp_slip_gaji'        => $lamp_slip_gaji,
             'foto_pembukuan_usaha'  => $foto_pembukuan_usaha,
-            'lamp_foto_usaha'       => $lamp_foto_usaha
+            'lamp_foto_usaha'       => $lamp_foto_usaha,
+            'foto_agunan_rumah'     => $foto_agunan_rumah
         );
 
         DB::connection('web')->beginTransaction();
@@ -503,7 +600,8 @@ class DebiturController extends BaseController
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'message'=> 'Update Debitur Berhasil'
+                'message'=> 'Update Debitur Berhasil',
+                'data'   => $dataDebitur
             ], 200);
         } catch (Exception $e) {
 

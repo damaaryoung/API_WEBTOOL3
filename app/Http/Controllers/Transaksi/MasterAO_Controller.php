@@ -23,6 +23,7 @@ use App\Models\AreaKantor\JPIC;
 use App\Models\AreaKantor\PIC;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use Image;
 use DB;
 
 class MasterAO_Controller extends BaseController
@@ -324,13 +325,25 @@ class MasterAO_Controller extends BaseController
         if($file = $req->file('form_persetujuan_ideb')){
             $path = $lamp_dir.'/ideb';
             $name = 'form_persetujuan_ideb.' . $file->getClientOriginalName();
-            $file->move($path,$name);
+
+            if(!empty($check_ao->form_persetujuan_ideb))
+            {
+                File::delete($check_ao->form_persetujuan_ideb);
+            }
+
+            $img = Image::make($file)->resize(320, 240);
+
+            if (!file_exists($path)) {
+                mkdir($path, 666, true);
+            }
+
+            $img->save($path.'/'.$name);
+            // $file->move($path,$name);
 
             $form_persetujuan_ideb = $path.'/'.$name;
         }else{
             $form_persetujuan_ideb = $check->form_persetujuan_ideb;
         }
-
 
         $id_penj = explode (",",$check->id_penjamin);
 
@@ -393,7 +406,15 @@ class MasterAO_Controller extends BaseController
             foreach($files as $file){
                 $path = $lamp_dir.'/agunan_tanah';
                 $name = 'agunan_bag_depan.' . $file->getClientOriginalName();
-                $file->move($path,$name);
+                
+                $img = Image::make($file)->resize(320, 240);
+
+                if (!file_exists($path)) {
+                    mkdir($path, 666, true);
+                }
+
+                $img->save($path.'/'.$name);
+                // $file->move($path,$name);
 
                 $agunan_bag_depan[] = $path.'/'.$name;
             }
@@ -403,7 +424,15 @@ class MasterAO_Controller extends BaseController
             foreach($files as $file){
                 $path = $lamp_dir.'/agunan_tanah';
                 $name = 'agunan_bag_jalan.' . $file->getClientOriginalName();
-                $file->move($path,$name);
+
+                $img = Image::make($file)->resize(320, 240);
+
+                if (!file_exists($path)) {
+                    mkdir($path, 666, true);
+                }
+
+                $img->save($path.'/'.$name);
+                // $file->move($path,$name);
 
                 $agunan_bag_jalan[] = $path.'/'.$name;
             }
@@ -413,7 +442,15 @@ class MasterAO_Controller extends BaseController
             foreach($files as $file){
                 $path = $lamp_dir.'/agunan_tanah';
                 $name = 'agunan_bag_ruangtamu.' . $file->getClientOriginalName();
-                $file->move($path,$name);
+
+                $img = Image::make($file)->resize(320, 240);
+
+                if (!file_exists($path)) {
+                    mkdir($path, 666, true);
+                }
+
+                $img->save($path.'/'.$name);
+                // $file->move($path,$name);
 
                 $agunan_bag_ruangtamu[] = $path.'/'.$name;
             }
@@ -423,7 +460,15 @@ class MasterAO_Controller extends BaseController
             foreach($files as $file){
                 $path = $lamp_dir.'/agunan_tanah';
                 $name = 'agunan_bag_kamarmandi.' . $file->getClientOriginalName();
-                $file->move($path,$name);
+
+                $img = Image::make($file)->resize(320, 240);
+
+                if (!file_exists($path)) {
+                    mkdir($path, 666, true);
+                }
+
+                $img->save($path.'/'.$name);
+                // $file->move($path,$name);
 
                 $agunan_bag_kamarmandi[] = $path.'/'.$name;
             }
@@ -433,7 +478,15 @@ class MasterAO_Controller extends BaseController
             foreach($files as $file){
                 $path = $lamp_dir.'/agunan_tanah';
                 $name = 'agunan_bag_dapur.' . $file->getClientOriginalName();
-                $file->move($path,$name);
+
+                $img = Image::make($file)->resize(320, 240);
+
+                if (!file_exists($path)) {
+                    mkdir($path, 666, true);
+                }
+
+                $img->save($path.'/'.$name);
+                // $file->move($path,$name);
 
                 $agunan_bag_dapur[] = $path.'/'.$name;
             }
@@ -443,7 +496,15 @@ class MasterAO_Controller extends BaseController
             foreach($files as $file){
                 $path = $lamp_dir.'/agunan_kendaraan';
                 $name = 'agunan_depan.' . $file->getClientOriginalName();
-                $file->move($path,$name);
+
+                $img = Image::make($file)->resize(320, 240);
+
+                if (!file_exists($path)) {
+                    mkdir($path, 666, true);
+                }
+
+                $img->save($path.'/'.$name);
+                // $file->move($path,$name);
 
                 $agunanDepanKen[] = $path.'/'.$name;
             }
@@ -454,7 +515,15 @@ class MasterAO_Controller extends BaseController
             foreach($files as $file){
                 $path = $lamp_dir.'/agunan_kendaraan';
                 $name = 'agunan_kanan.' . $file->getClientOriginalName();
-                $file->move($path,$name);
+
+                $img = Image::make($file)->resize(320, 240);
+
+                if (!file_exists($path)) {
+                    mkdir($path, 666, true);
+                }
+
+                $img->save($path.'/'.$name);
+                // $file->move($path,$name);
 
                 $agunanKananKen[] = $path.'/'.$name;
             }
@@ -465,7 +534,15 @@ class MasterAO_Controller extends BaseController
             foreach($files as $file){
                 $path = $lamp_dir.'/agunan_kendaraan';
                 $name = 'agunan_kiri.' . $file->getClientOriginalName();
-                $file->move($path,$name);
+
+                $img = Image::make($file)->resize(320, 240);
+
+                if (!file_exists($path)) {
+                    mkdir($path, 666, true);
+                }
+
+                $img->save($path.'/'.$name);
+                // $file->move($path,$name);
 
                 $agunanKiriKen[] = $path.'/'.$name;
             }
@@ -476,7 +553,15 @@ class MasterAO_Controller extends BaseController
             foreach($files as $file){
                 $path = $lamp_dir.'/agunan_kendaraan';
                 $name = 'agunan_belakang.' . $file->getClientOriginalName();
-                $file->move($path,$name);
+
+                $img = Image::make($file)->resize(320, 240);
+
+                if (!file_exists($path)) {
+                    mkdir($path, 666, true);
+                }
+
+                $img->save($path.'/'.$name);
+                // $file->move($path,$name);
 
                 $agunanBelakangKen[] = $path.'/'.$name;
             }
@@ -486,7 +571,15 @@ class MasterAO_Controller extends BaseController
             foreach($files as $file){
                 $path = $lamp_dir.'/agunan_kendaraan';
                 $name = 'agunan_dalam.' . $file->getClientOriginalName();
-                $file->move($path,$name);
+
+                $img = Image::make($file)->resize(320, 240);
+
+                if (!file_exists($path)) {
+                    mkdir($path, 666, true);
+                }
+
+                $img->save($path.'/'.$name);
+                // $file->move($path,$name);
 
                 $agunanDalamKen[] = $path.'/'.$name;
             }
@@ -497,7 +590,15 @@ class MasterAO_Controller extends BaseController
             foreach($files as $file){
                 $path = $lamp_dir.'/agunan_tanah';
                 $name = 'lamp_imb.' . $file->getClientOriginalName();
-                $file->move($path,$name);
+
+                $img = Image::make($file)->resize(320, 240);
+
+                if (!file_exists($path)) {
+                    mkdir($path, 666, true);
+                }
+
+                $img->save($path.'/'.$name);
+                // $file->move($path,$name);
 
                 $lamp_imb[] = $path.'/'.$name;
             }
@@ -507,7 +608,15 @@ class MasterAO_Controller extends BaseController
             foreach($files as $file){
                 $path = $lamp_dir.'/agunan_tanah';
                 $name = 'lamp_pbb.' . $file->getClientOriginalName();
-                $file->move($path,$name);
+
+                $img = Image::make($file)->resize(320, 240);
+
+                if (!file_exists($path)) {
+                    mkdir($path, 666, true);
+                }
+
+                $img->save($path.'/'.$name);
+                // $file->move($path,$name);
                 $lamp_pbb[] = $path.'/'.$name;
             }
         }
@@ -516,7 +625,15 @@ class MasterAO_Controller extends BaseController
             foreach($files as $file){
                 $path = $lamp_dir.'/agunan_tanah';
                 $name = 'lamp_sertifikat.' . $file->getClientOriginalName();
-                $file->move($path,$name);
+
+                $img = Image::make($file)->resize(320, 240);
+
+                if (!file_exists($path)) {
+                    mkdir($path, 666, true);
+                }
+
+                $img->save($path.'/'.$name);
+                // $file->move($path,$name);
 
                 $lamp_sertifikat[] = $path.'/'.$name;
             }
@@ -925,7 +1042,15 @@ class MasterAO_Controller extends BaseController
             foreach($files as $file){
                 $path = $lamp_dir.'/lamp_buku_tabungan';
                 $name = 'lamp_buku_tabungan.' . $file->getClientOriginalName();
-                $file->move($path,$name);
+
+                $img = Image::make($file)->resize(320, 240);
+
+                if (!file_exists($path)) {
+                    mkdir($path, 666, true);
+                }
+
+                $img->save($path.'/'.$name);
+                // $file->move($path,$name);
 
                 $buku_tabungan[] = $path.'/'.$name;
 
@@ -941,7 +1066,19 @@ class MasterAO_Controller extends BaseController
             $path = $lamp_dir.'/debitur';
             $name = 'lamp_skk.'.$file->getClientOriginalName();
 
-            $file->move($path,$name);
+            if(!empty($check_ao->form_persetujuan_ideb))
+            {
+                File::delete($check_ao->form_persetujuan_ideb);
+            }
+            
+            $img = Image::make($file)->resize(320, 240);
+
+            if (!file_exists($path)) {
+                mkdir($path, 666, true);
+            }
+
+            $img->save($path.'/'.$name);
+            // $file->move($path,$name);
 
             $lamp_skk = $path.'/'.$name;
         }else{
@@ -953,10 +1090,16 @@ class MasterAO_Controller extends BaseController
                 $path = $lamp_dir.'/debitur';
                 $name = 'lamp_sku.'.$file->getClientOriginalName();
 
-                $file->move($path,$name);
+                $img = Image::make($file)->resize(320, 240);
+
+                if (!file_exists($path)) {
+                    mkdir($path, 666, true);
+                }
+
+                $img->save($path.'/'.$name);
+                // $file->move($path,$name);
 
                 $sku[] = $path.'/'.$name;
-
             }
 
             $lamp_sku = implode(";",$sku);
@@ -983,7 +1126,14 @@ class MasterAO_Controller extends BaseController
 
                 $name = 'lamp_slip_gaji.'.$file->getClientOriginalName();
 
-                $file->move($path,$name);
+                $img = Image::make($file)->resize(320, 240);
+
+                if (!file_exists($path)) {
+                    mkdir($path, 666, true);
+                }
+
+                $img->save($path.'/'.$name);
+                // $file->move($path,$name);
 
                 $slip_gaji[] = $path.'/'.$name;
 
@@ -999,7 +1149,14 @@ class MasterAO_Controller extends BaseController
                 $path = $lamp_dir.'/debitur';
                 $name = 'foto_pembukuan_usaha.'.$file->getClientOriginalName();
 
-                $file->move($path,$name);
+                $img = Image::make($file)->resize(320, 240);
+
+                if (!file_exists($path)) {
+                    mkdir($path, 666, true);
+                }
+
+                $img->save($path.'/'.$name);
+                // $file->move($path,$name);
 
                 $pembukuan_usaha[] = $path.'/'.$name;
 

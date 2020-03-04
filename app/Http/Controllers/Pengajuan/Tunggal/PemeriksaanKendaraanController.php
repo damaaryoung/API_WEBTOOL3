@@ -108,7 +108,8 @@ class PemeriksaanKendaraanController extends BaseController
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'message'=> 'Update Pemeriksaaan Agunan Kendaraan Berhasil'
+                'message'=> 'Update Pemeriksaaan Agunan Kendaraan Berhasil',
+                'data'   => $dataPemeriksaanAgunKen
             ], 200);
         } catch (Exception $e) {
 

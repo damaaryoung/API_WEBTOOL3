@@ -114,7 +114,8 @@ class FaspinController extends BaseController
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'message'=> 'Update Fasilitas Pinjaman Berhasil'
+                'message'=> 'Update Fasilitas Pinjaman Berhasil',
+                'data'   => $dataFasilitasPinjaman
             ], 200);
         } catch (Exception $e) {
 

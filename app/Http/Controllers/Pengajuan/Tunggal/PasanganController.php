@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Http\Request;
 use App\Http\Requests;
 use Carbon\Carbon;
+use Image;
 use DB;
 
 class PasanganController extends BaseController
@@ -130,7 +131,14 @@ class PasanganController extends BaseController
                 File::delete($check->lamp_ktp);
             }
 
-            $file->move($path,$name);
+            $img = Image::make($file)->resize(320, 240);
+            
+            if (!file_exists($path)) {
+                mkdir($path, 666, true);
+            }
+                
+            $img->save($path.'/'.$name);
+            // $file->move($path,$name);
 
             $ktpPass = $path.'/'.$name;
         }else{
@@ -140,13 +148,20 @@ class PasanganController extends BaseController
         if($file = $req->file('lamp_buku_nikah_pas')){
             $path = $lamp_dir.'/pasangan';
             $name = 'buku_nikah.' . $file->getClientOriginalName();
-
+            
             if(!empty($check->lamp_buku_nikah))
             {
                 File::delete($check->lamp_buku_nikah);
             }
+            
+            $img = Image::make($file)->resize(320, 240);
 
-            $file->move($path,$name);
+            if (!file_exists($path)) {
+                mkdir($path, 666, true);
+            }
+                
+            $img->save($path.'/'.$name);
+            // $file->move($path,$name);
 
             $bukuNikahPass = $path.'/'.$name;
         }else{
@@ -196,7 +211,8 @@ class PasanganController extends BaseController
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'message'=> 'Update Pasangan Berhasil'
+                'message'=> 'Update Pasangan Berhasil',
+                'data'   => $dataPasangan
             ], 200);
         } catch (Exception $e) {
 

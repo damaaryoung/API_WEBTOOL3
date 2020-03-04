@@ -85,7 +85,8 @@ class AreaPICController extends BaseController
             return response()->json([
                 'code'    => 200,
                 'status'  => 'success',
-                'message' => 'Data berhasil dibuat'
+                'message' => 'Data berhasil dibuat',
+                'data'    => $data
             ], 200);
         } catch (Exception $e) {
             return response()->json([
@@ -174,7 +175,8 @@ class AreaPICController extends BaseController
             return response()->json([
                 'code'    => 200,
                 'status'  => 'success',
-                'message' => 'Data berhasil diubah'
+                'message' => 'Data berhasil diubah',
+                'data'    => $data
             ], 200);
         } catch (Exception $e) {
             return response()->json([

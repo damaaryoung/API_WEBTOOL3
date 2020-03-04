@@ -25,8 +25,6 @@ class UsahaCadebtController extends BaseController
     public function show($id){
         $check = PendapatanUsaha::where('id', $id)->first();
 
-        dd($check->toArray());
-
         if ($check == null) {
             return response()->json([
                 'code'    => 404,
@@ -146,7 +144,8 @@ class UsahaCadebtController extends BaseController
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'message'=> 'Update Pendapatan Usaha Calon Debitur Berhasil'
+                'message'=> 'Update Pendapatan Usaha Calon Debitur Berhasil',
+                'data'   => $Pendapatan
             ], 200);
         } catch (Exception $e) {
 

@@ -112,7 +112,8 @@ class PemeriksaanTanahController extends BaseController
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'message'=> 'Update Pemeriksaaan Agunan Tanah Berhasil'
+                'message'=> 'Update Pemeriksaaan Agunan Tanah Berhasil',
+                'data'   => $dataPemeriksaanAgunTan
             ], 200);
         } catch (Exception $e) {
 

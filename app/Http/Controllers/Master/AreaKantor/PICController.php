@@ -39,6 +39,7 @@ class PICController extends BaseController
                 "id"          => $val->id,
                 "nama"        => $val->nama,
                 "email"       => $val->email,
+                "user_id"     => $val->user_id,
                 "jenis_pic"   => $val->jpic['nama_jenis'],
                 "id_area"     => $val->id_area,
                 "nama_area"   => $val->area['nama'],
@@ -64,16 +65,15 @@ class PICController extends BaseController
         }
     }
 
-    public function store(Request $request, PICRequest $req) {
-        $username = $request->auth->user;
-        $email    = $request->auth->email;
+    public function store(Request $request, PICRequest $req)
+    {
         $data = array(
             'user_id'       => $req->input('user_id'),
             'id_area'       => $req->input('id_mk_area'),
-            'id_cabang'     => empty($req->input('id_mk_cabang')) ? 0 : $req->input('id_mk_cabang'),
+            'id_cabang'     => $req->input('id_mk_cabang'),
             'id_mj_pic'     => $req->input('id_mj_pic'),
-            'nama'          => empty($req->input('nama')) ? $username : $req->input('nama'),
-            'email'         => empty($req->input('email')) ? $email : $req->input('email')
+            'nama'          => $req->input('nama'),
+            'email'         => $req->input('email')
         );
 
         PIC::create($data);
@@ -82,7 +82,8 @@ class PICController extends BaseController
             return response()->json([
                 'code'    => 200,
                 'status'  => 'success',
-                'message' => 'Data berhasil dibuat'
+                'message' => 'Data berhasil dibuat',
+                'data'    => $data
             ], 200);
         } catch (Exception $e) {
             return response()->json([
@@ -108,7 +109,7 @@ class PICController extends BaseController
                 "nama"           => $query->nama,
                 "email"          => $query->email,
                 "user_id"        => $query->user_id,
-                "email_user"     => $query->user['email'],
+                // "email_user"     => $query->user['email'],
                 "id_jenis_pic"   => $query->id_mj_pic,
                 "nama_jenis_pic" => $query->jpic['nama_jenis'],
                 "id_area"        => $query->id_area,
@@ -163,7 +164,8 @@ class PICController extends BaseController
             return response()->json([
                 'code'    => 200,
                 'status'  => 'success',
-                'message' => 'Data berhasil diupdate'
+                'message' => 'Data berhasil diupdate',
+                'data'    => $data
             ], 200);
         } catch (Exception $e) {
             return response()->json([

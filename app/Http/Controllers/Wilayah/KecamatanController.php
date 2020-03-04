@@ -21,9 +21,9 @@ class KecamatanController extends BaseController
             ], 404);
         }
 
-        $res = array();
+        $data = array();
         foreach ($query as $key => $val) {
-            $res[$key] = [
+            $data[$key] = [
                 "id"             => $val->id,
                 "nama"           => $val->nama,
                 "nama_kabupaten" => $val->kab['nama']
@@ -34,8 +34,8 @@ class KecamatanController extends BaseController
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'count'  => $query->count(),
-                'data'   => $res
+                'count'  => sizeof($data),
+                'data'   => $data
             ], 200);
         } catch (Exception $e) {
             return response()->json([
@@ -74,16 +74,19 @@ class KecamatanController extends BaseController
             ], 422);
         }
 
+        $KQuery = array(
+            'nama'         => $nama,
+            'id_kabupaten' => $kabupaten
+        );
+
         try {
-            Kecamatan::create([
-                'nama'         => $nama,
-                'id_kabupaten' => $kabupaten
-            ]);
+            Kecamatan::create($KQuery);
 
             return response()->json([
                 'code'    => 200,
                 'status'  => 'success',
-                'message' => 'Data berhasil dibuat'
+                'message' => 'Data berhasil dibuat',
+                'data'    => $KQuery
             ], 200);
         } catch (Exception $e) {
             return response()->json([
@@ -181,17 +184,20 @@ class KecamatanController extends BaseController
             ], 422);
         }
 
+        $query = array(
+            'nama'         => $nama,
+            'id_kabupaten' => $kabupaten,
+            'flg_aktif'    => $flg_aktif
+        );
+
         try {
-            $query = DB::connection('web')->table('master_kecamatan')->where('id', $id)->update([
-                'nama'         => $nama,
-                'id_kabupaten' => $kabupaten,
-                'flg_aktif'    => $flg_aktif
-            ]);
+            DB::connection('web')->table('master_kecamatan')->where('id', $id)->update($query);
 
             return response()->json([
                 'code'    => 200,
                 'status'  => 'success',
-                'message' => 'Data berhasil diupdate'
+                'message' => 'Data berhasil diupdate',
+                'data'    => $query
             ], 200);
         } catch (Exception $e) {
             return response()->json([

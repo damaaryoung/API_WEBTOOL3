@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Http\Request;
 use App\Http\Requests;
 use Carbon\Carbon;
+use Image;
 use DB;
 
 class PenjaminController extends BaseController
@@ -139,7 +140,14 @@ class PenjaminController extends BaseController
                 File::delete($check->lamp_ktp);
             }
 
-            $file->move($path,$name);
+            $img = Image::make($file)->resize(320, 240);
+
+            if (!file_exists($path)) {
+                mkdir($path, 666, true);
+            }
+                
+            $img->save($path.'/'.$name);
+            // $file->move($path,$name);
 
             $ktpPen = $path.'/'.$name;
         }else{
@@ -149,13 +157,20 @@ class PenjaminController extends BaseController
         if($file = $req->file('lamp_ktp_pasangan_pen')){
 
             $name = 'ktp_pasangan.' . $file->getClientOriginalName();
-
+            
             if(!empty($check->lamp_ktp_pasangan))
             {
                 File::delete($check->lamp_ktp_pasangan);
             }
-
-            $file->move($path,$name);
+            
+            $img = Image::make($file)->resize(320, 240);
+            
+            if (!file_exists($path)) {
+                mkdir($path, 666, true);
+            }
+                
+            $img->save($path.'/'.$name);
+            // $file->move($path,$name);
 
             $ktpPenPAS = $path.'/'.$name;
         }else{
@@ -165,12 +180,19 @@ class PenjaminController extends BaseController
         if($file = $req->file('lamp_kk_pen')){
 
             $name = 'kk_penjamin.' . $file->getClientOriginalName();
-
+            
             if(!empty($check->lamp_kk))
             {
                 File::delete($check->lamp_kk);
             }
+            
+            $img = Image::make($file)->resize(320, 240);
 
+            if (!file_exists($path)) {
+                mkdir($path, 666, true);
+            }
+                
+            $img->save($path.'/'.$name);
             $file->move($path,$name);
 
             $kkPen = $path.'/'.$name;
@@ -187,7 +209,14 @@ class PenjaminController extends BaseController
                 File::delete($check->lamp_buku_nikah);
             }
 
-            $file->move($path,$name);
+            $img = Image::make($file)->resize(320, 240);
+
+            if (!file_exists($path)) {
+                mkdir($path, 666, true);
+            }
+                
+            $img->save($path.'/'.$name);
+            // $file->move($path,$name);
 
             $bukuNikahPen = $path.'/'.$name;
         }else{
@@ -239,7 +268,8 @@ class PenjaminController extends BaseController
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'message'=> 'Update Penjamin Berhasil'
+                'message'=> 'Update Penjamin Berhasil',
+                'data'   => $dataPenjamin
             ], 200);
         } catch (Exception $e) {
 

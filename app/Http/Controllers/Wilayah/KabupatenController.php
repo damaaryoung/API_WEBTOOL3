@@ -21,9 +21,9 @@ class KabupatenController extends BaseController
             ], 404);
         }
 
-        $res = array();
+        $data = array();
         foreach ($query as $key => $val) {
-            $res[$key] = [
+            $data[$key] = [
                 "id"            => $val->id,
                 "nama"          => $val->nama,
                 "nama_provinsi" => $val->prov['nama']
@@ -35,8 +35,8 @@ class KabupatenController extends BaseController
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'count'  => $query->count(),
-                'data'   => $res
+                'count'  => sizeof($data),
+                'data'   => $data
             ], 200);
         } catch (Exception $e) {
             return response()->json([
@@ -83,7 +83,8 @@ class KabupatenController extends BaseController
             return response()->json([
                 'code'    => 200,
                 'status'  => 'success',
-                'message' => 'Data berhasil dibuat'
+                'message' => 'Data berhasil dibuat',
+                'data'    => $data
             ], 200);
         } catch (Exception $e) {
             return response()->json([
@@ -181,17 +182,20 @@ class KabupatenController extends BaseController
             ], 422);
         }
 
+        $query = array(
+            'nama'        => $nama,
+            'id_provinsi' => $provinsi,
+            'flg_aktif'   => $flg_aktif
+        );
+
         try {
-            $query = Kabupaten::where('id', $id)->update([
-                'nama'        => $nama,
-                'id_provinsi' => $provinsi,
-                'flg_aktif'   => $flg_aktif
-            ]);
+            Kabupaten::where('id', $id)->update($query);
 
             return response()->json([
                 'code'    => 200,
                 'status'  => 'success',
-                'message' => 'Data berhasil diupdate'
+                'message' => 'Data berhasil diupdate',
+                'data'    => $query
             ], 200);
         } catch (Exception $e) {
             return response()->json([

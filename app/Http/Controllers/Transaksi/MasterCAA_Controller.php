@@ -19,6 +19,7 @@ use App\Models\AreaKantor\JPIC;
 use App\Models\AreaKantor\PIC;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use Image;
 use DB;
 
 class MasterCAA_Controller extends BaseController
@@ -280,8 +281,15 @@ class MasterCAA_Controller extends BaseController
             {
                 File::delete($check_caa->file_report_mao);
             }
+            
+            $img = Image::make($file)->resize(320, 240);
+            
+            if (!file_exists($path)) {
+                mkdir($path, 666, true);
+            }
 
-            $file->move($path,$name);
+            $img->save($path.'/'.$name);
+            // $file->move($path,$name);
 
             $file_report_mao = $path.'/'.$name;
 
@@ -295,13 +303,21 @@ class MasterCAA_Controller extends BaseController
             $path = $lamp_dir.'/mcaa/file_report_mca';
 
             $name = $file->getClientOriginalName();
-
+            
             if(!empty($check_caa->file_report_mca))
             {
                 File::delete($check_caa->file_report_mca);
             }
+            
+            $img = Image::make($file)->resize(320, 240);
+            
+            if (!file_exists($path)) {
+                mkdir($path, 666, true);
+            }
 
-            $file->move($path,$name);
+            $img->save($path.'/'.$name);
+
+            // $file->move($path,$name);
 
             $file_report_mca = $path.'/'.$name;
 
@@ -341,7 +357,21 @@ class MasterCAA_Controller extends BaseController
 
                     $path = $lamp_dir.'/mcaa/file_agunan';
                     $name = $file->getClientOriginalName();
-                    $file->move($path,$name);
+
+                    if(!empty($check_caa->file_agunan))
+                    {
+                        File::delete($check_caa->file_agunan);
+                    }
+                    
+                    $img = Image::make($file)->resize(320, 240);
+                        
+                    if (!file_exists($path)) {
+                        mkdir($path, 666, true);
+                    }
+        
+                    $img->save($path.'/'.$name);
+
+                    // $file->move($path,$name);
 
                     $listAgunan['agunan'][] = $path.'/'.$name;
                 }
@@ -382,7 +412,20 @@ class MasterCAA_Controller extends BaseController
 
                     $path = $lamp_dir.'/mcaa/file_usaha';
                     $name = $file->getClientOriginalName();
-                    $file->move($path,$name);
+                    
+                    if(!empty($check_caa->file_usaha))
+                    {
+                        File::delete($check_caa->file_usaha);
+                    }
+                    
+                    if (!file_exists($path)) {
+                        mkdir($path, 666, true);
+                    }
+
+                    $img = Image::make($file)->resize(320, 240);
+        
+                    $img->save($path.'/'.$name);
+                    // $file->move($path,$name);
 
                     $listUsaha['usaha'][] = $path.'/'.$name;
                 }
@@ -405,7 +448,15 @@ class MasterCAA_Controller extends BaseController
                 File::delete($check_caa->file_tempat_tinggal);
             }
 
-            $file->move($path,$name);
+            $img = Image::make($file)->resize(320, 240);
+            
+            if (!file_exists($path)) {
+                mkdir($path, 666, true);
+            }
+
+            $img->save($path.'/'.$name);
+
+            // $file->move($path,$name);
 
             $file_tempat_tinggal = $path.'/'.$name;
 
@@ -420,12 +471,20 @@ class MasterCAA_Controller extends BaseController
 
             $name = $file->getClientOriginalName();
 
+            if (!file_exists($path)) {
+                mkdir($path, 666, true);
+            }
+
+            $img = Image::make($file)->resize(320, 240);
+
             if(!empty($check_caa->file_lain))
             {
                 File::delete($check_caa->file_lain);
             }
 
-            $file->move($path,$name);
+            $img->save($path.'/'.$name);
+
+            // $file->move($path,$name);
 
             $file_lain = $path.'/'.$name;
 
