@@ -25,6 +25,14 @@ class CodeController extends BaseController
                 'flg_aktif'
             )->get();
 
+        if ($query == '[]') {
+            return response()->json([
+                'code'    => 404,
+                'status'  => 'not found',
+                'message' => 'Data Kosong'
+            ], 404);
+        }
+
         return response()->json([
             "code"   => 200,
             "status" => "success",
@@ -35,13 +43,15 @@ class CodeController extends BaseController
 
     public function so() {
         $query = DB::connection('dpm')->table('kre_kode_so')
-            ->select(
-                'id as kode',
-                'kode_kantor',
-                'nik',
-                'nama_so',
-                'flg_aktif',
-            )->get();
+            ->select('id as kode', 'kode_kantor', 'nik', 'nama_so', 'flg_aktif')->get();
+
+        if ($query == '[]') {
+            return response()->json([
+                'code'    => 404,
+                'status'  => 'not found',
+                'message' => 'Data Kosong'
+            ], 404);
+        }
 
         return response()->json([
             "code"   => 200,
@@ -65,6 +75,13 @@ class CodeController extends BaseController
                 'flg_aktif'
             )->get();
 
+        if ($query == '[]') {
+            return response()->json([
+                'code'    => 404,
+                'status'  => 'not found',
+                'message' => 'Data Kosong'
+            ], 404);
+        }
         return response()->json([
             "code"   => 200,
             "status" => "success",
@@ -82,7 +99,14 @@ class CodeController extends BaseController
                 'no_id_group5 as ktp',
                 'flg_aktif',
             )->get();
-
+        
+        if ($query == '[]') {
+            return response()->json([
+                'code'    => 404,
+                'status'  => 'not found',
+                'message' => 'Data Kosong'
+            ], 404);
+        }
         return response()->json([
             "code"   => 200,
             "status" => "success",
@@ -99,7 +123,14 @@ class CodeController extends BaseController
                 'deskripsi_group6 as nama',
                 'flg_aktif'
             )->get();
-
+        
+        if ($query == '[]') {
+            return response()->json([
+                'code'    => 404,
+                'status'  => 'not found',
+                'message' => 'Data Kosong'
+            ], 404);
+        }
         return response()->json([
             "code"   => 200,
             "status" => "success",
@@ -252,7 +283,15 @@ class CodeController extends BaseController
     // Produk CA
     public function produk(){
         $query = DB::connection('web')->select("SELECT kode_produk, `DESKRIPSI_PRODUK` AS nama_produk FROM view_produk");
-       
+        
+        if ($query == '[]') {
+            return response()->json([
+                'code'    => 404,
+                'status'  => 'not found',
+                'message' => 'Data Kosong'
+            ], 404);
+        }
+
         try {
             return response()->json([
                 'code'   => 200,
