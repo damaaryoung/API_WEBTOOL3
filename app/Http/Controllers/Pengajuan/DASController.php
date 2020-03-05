@@ -4,35 +4,44 @@ namespace App\Http\Controllers\Pengajuan;
 
 use Laravel\Lumen\Routing\Controller as BaseController;
 use App\Http\Controllers\Controller as Helper;
-use Illuminate\Support\Facades\File;
 use App\Models\Pengajuan\SO\Penjamin;
 use App\Models\Transaksi\TransSO;
-use App\Models\Wilayah\Kabupaten;
-use App\Models\Wilayah\Kecamatan;
-use App\Models\Wilayah\Kelurahan;
-use App\Models\Wilayah\Provinsi;
+use App\Models\AreaKantor\PIC;
 use Illuminate\Http\Request;
-use App\Http\Requests;
-use App\Models\User;
-use Carbon\Carbon;
-use DB;
 
 class DASController extends BaseController
 {
     public function index(Request $req){
-        $user_id = $req->auth->user_id;
-        $query = TransSO::with('pic', 'cabang', 'asaldata','debt', 'faspin')->orderBy('created_at', 'desc')->get();
+        $user_id  = $req->auth->user_id;
 
-        if ($query == '[]') {
+        $pic = PIC::where('user_id', $user_id)->first();
+
+        if ($pic == null) {
+            return response()->json([
+                "code"    => 404,
+                "status"  => "not found",
+                "message" => "User_ID anda adalah '".$user_id."' dengan username '".$req->auth->user."' . Namun anda belum terdaftar sebagai PIC(AO). Harap daftarkan diri sebagai PIC(AO) pada form PIC atau hubungi bagian IT"
+            ], 404);
+        }
+
+        $id_area   = $pic->id_area;
+        $id_cabang = $pic->id_cabang;
+        $scope     = $pic->jpic['cakupan'];
+
+        $query_dir = TransSO::with('pic', 'cabang', 'asaldata', 'debt', 'pas', 'faspin', 'ao', 'ca')->orderBy('created_at', 'desc');
+
+        $query = Helper::checkDir($scope, $query_dir, $id_area, $id_cabang);
+
+        if ($query->get() == '[]') {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
-                'message' => 'Data kosong'
+                'message' => 'Data di SO cabang anda masih kosong'
             ], 404);
         }
 
         $data = array();
-        foreach ($query as $key => $val) {
+        foreach ($query->get() as $key => $val) {
 
             if ($val->status_das == 1) {
                 $status = 'complete';
@@ -63,6 +72,7 @@ class DASController extends BaseController
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
+                'count'  => sizeof($data),
                 'data'   => $data
             ], 200);
         } catch (Exception $e) {
@@ -74,9 +84,9 @@ class DASController extends BaseController
         }
     }
 
-    public function show($id, Request $req){
+    public function show($id){
         $val = TransSO::with('asaldata','debt', 'pic')->where('id', $id)->first();
-        if (!$val) {
+        if ($val == null) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
@@ -89,6 +99,7 @@ class DASController extends BaseController
         $pen = Penjamin::whereIn('id', $id_penj)->get();
 
         if ($pen != '[]') {
+            $penjamin = array();
             foreach ($pen as $key => $value) {
                 $penjamin[$key] = [
                     "id"               => $value->id == null ? null : (int) $value->id,
@@ -278,42 +289,45 @@ class DASController extends BaseController
         $lamp_dir = 'public/lamp_trans.'.$check->nomor_so;
 
         if($files = $req->file('lamp_ideb')){
-            foreach($files as $key => $file){
-                $path = $lamp_dir.'/ideb';
-                $exIdeb = $file->getClientOriginalExtension();
+            
+            $path = $lamp_dir.'/ideb';
+            $exIdeb = $file->getClientOriginalExtension();
 
-                // $exIdeb = $file->getClientMimeType();
-
-                if ($exIdeb != 'ideb' && $exIdeb != 'pdf') {
-                    return response()->json([
-                        "code"    => 422,
-                        "status"  => "not valid request",
-                        "message" => "file ideb harus berupa format ideb / pdf"
-                    ], 422);
-                }
-
-                $name = $file->getClientOriginalName(); //'ktp.'.$file->getClientOriginalExtension();
-
-                $file->move($path,$name);
-
-                $ideb[] = $path.'/'.$name;
-
-                $im_ideb = implode(";", $ideb);
+            if ($exIdeb != 'ideb' && $exIdeb != 'pdf')
+            {
+                return response()->json([
+                    "code"    => 422,
+                    "status"  => "not valid request",
+                    "message" => "file ideb harus berupa format ideb / pdf"
+                ], 422);
             }
+
+            $check = $check->lamp_ideb;
+            $name = '';
+
+            $arrayPath = array();
+            foreach($files as $file)
+            {
+                $arrayPath[] = Helper::uploadImg($check, $file, $path, $name);
+            }
+
+            $im_ideb = implode(";", $arrayPath);
         }else{
             $im_ideb = null;
         }
 
         if($files = $req->file('lamp_pefindo')){
+            
+            $check = $check->lamp_pefindo;
+            $path = $lamp_dir.'/pefindo';
+            $name = '';
+
+            $arrayPath = array();
             foreach($files as $file){
-                $path = $lamp_dir.'/pefindo';
-
-                $name = $file->getClientOriginalName(); //'ktp.'.$file->getClientOriginalExtension();
-                $file->move($path,$name);
-
-                $pefindo[] = $path.'/'.$name;
-                $im_pef = implode(";", $pefindo);
+                $arrayPath[] = Helper::uploadImg($check, $file, $path, $name);
             }
+
+            $im_pef = implode(";", $arrayPath);
         }else{
             $im_pef = null;
         }
@@ -351,6 +365,18 @@ class DASController extends BaseController
     }
 
     public function search($param, $key, $value, $status, $orderVal, $orderBy, $limit){
+        $user_id  = $req->auth->user_id;
+
+        $pic = PIC::where('user_id', $user_id)->first();
+
+        if ($pic == null) {
+            return response()->json([
+                "code"    => 404,
+                "status"  => "not found",
+                "message" => "User_ID anda adalah '".$user_id."' dengan username '".$req->auth->user."' . Namun anda belum terdaftar sebagai PIC(AO). Harap daftarkan diri sebagai PIC(AO) pada form PIC atau hubungi bagian IT"
+            ], 404);
+        }
+
         $column = array(
             'id', 'nomor_so', 'user_id', 'id_pic', 'id_area', 'id_cabang', 'id_asal_data', 'nama_marketing', 'nama_so', 'id_fasilitas_pinjaman', 'id_calon_debitur', 'id_pasangan', 'id_penjamin', 'id_trans_ao', 'id_trans_ca', 'id_trans_caa', 'catatan_das', 'catatan_hm', 'status_das', 'status_hm', 'lamp_ideb', 'lamp_pefindo'
         );
@@ -389,9 +415,23 @@ class DASController extends BaseController
             $func_value = "{$value}";
         }
 
-        $query = TransSO::with('pic', 'cabang', 'asaldata','debt', 'faspin')
+        $id_area   = $pic->id_area;
+        $id_cabang = $pic->id_cabang;
+        $scope     = $pic->jpic['cakupan'];
+
+        $query_dir = TransSO::with('pic', 'cabang', 'asaldata','debt', 'faspin')
         ->where('flg_aktif', $status)
         ->orderBy($orderBy, $orderVal);
+
+        $query = Helper::checkDir($scope, $query_dir, $id_area, $id_cabang);
+
+        if ($query->get() == '[]') {
+            return response()->json([
+                'code'    => 404,
+                'status'  => 'not found',
+                'message' => 'Data di SO cabang anda masih kosong'
+            ], 404);
+        }
 
         if($value == 'default'){
             $res = $query;

@@ -4,24 +4,36 @@ namespace App\Http\Controllers\Pengajuan;
 
 use Laravel\Lumen\Routing\Controller as BaseController;
 use App\Http\Controllers\Controller as Helper;
-use App\Http\Requests\Transaksi\BlankRequest;
 use App\Models\Pengajuan\SO\Penjamin;
 use App\Models\Transaksi\TransSO;
-use App\Models\Wilayah\Kabupaten;
-use App\Models\Wilayah\Kecamatan;
-use App\Models\Wilayah\Kelurahan;
-use App\Models\Wilayah\Provinsi;
+use App\Models\AreaKantor\PIC;
 use Illuminate\Http\Request;
-use App\Http\Requests;
-use App\Models\User;
 use Carbon\Carbon;
 
 class HMController extends BaseController
 {
     public function index(Request $req){
-        $query = TransSO::with('asaldata','debt', 'pic')->orderBy('created_at', 'desc')->get();
+        $user_id  = $req->auth->user_id;
 
-        if ($query == '[]') {
+        $pic = PIC::where('user_id', $user_id)->first();
+
+        if ($pic == null) {
+            return response()->json([
+                "code"    => 404,
+                "status"  => "not found",
+                "message" => "User_ID anda adalah '".$user_id."' dengan username '".$req->auth->user."' . Namun anda belum terdaftar sebagai PIC(AO). Harap daftarkan diri sebagai PIC(AO) pada form PIC atau hubungi bagian IT"
+            ], 404);
+        }
+
+        $id_area   = $pic->id_area;
+        $id_cabang = $pic->id_cabang;
+        $scope     = $pic->jpic['cakupan'];
+
+        $query_dir = TransSO::with('pic', 'cabang', 'asaldata', 'debt', 'pas', 'faspin', 'ao', 'ca')->orderBy('created_at', 'desc');
+
+        $query = Helper::checkDir($scope, $query_dir, $id_area, $id_cabang);
+
+        if ($query->get() == '[]') {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
@@ -30,7 +42,7 @@ class HMController extends BaseController
         }
 
         $data = array();
-        foreach ($query as $key => $val) {
+        foreach ($query->get() as $key => $val) {
 
             if ($val->status_das == 1) {
                 $status_das = 'complete';
@@ -80,6 +92,7 @@ class HMController extends BaseController
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
+                'count'  => sizeof($data),
                 'data'   => $data
             ], 200);
         } catch (Exception $e) {
@@ -93,7 +106,7 @@ class HMController extends BaseController
 
     public function show($id, Request $req){
         $val = TransSO::with('asaldata','debt', 'pic')->where('id', $id)->first();
-        if (!$val) {
+        if ($val == null) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
@@ -266,7 +279,7 @@ class HMController extends BaseController
     public function update($id, Request $req){
         $check = TransSO::where('id', $id)->first();
 
-        if (!$check) {
+        if ($check == null) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
@@ -330,6 +343,18 @@ class HMController extends BaseController
 
     public function search($param, $key, $value, $status, $orderVal, $orderBy, $limit)
     {
+        $user_id  = $req->auth->user_id;
+
+        $pic = PIC::where('user_id', $user_id)->first();
+
+        if ($pic == null) {
+            return response()->json([
+                "code"    => 404,
+                "status"  => "not found",
+                "message" => "User_ID anda adalah '".$user_id."' dengan username '".$req->auth->user."' . Namun anda belum terdaftar sebagai PIC(AO). Harap daftarkan diri sebagai PIC(AO) pada form PIC atau hubungi bagian IT"
+            ], 404);
+        }
+
         $column = array(
             'id', 'nomor_so', 'user_id', 'id_pic', 'id_area', 'id_cabang', 'id_asal_data', 'nama_marketing', 'nama_so', 'id_fasilitas_pinjaman', 'id_calon_debitur', 'id_pasangan', 'id_penjamin', 'id_trans_ao', 'id_trans_ca', 'id_trans_caa', 'catatan_das', 'catatan_hm', 'status_das', 'status_hm', 'lamp_ideb', 'lamp_pefindo'
         );

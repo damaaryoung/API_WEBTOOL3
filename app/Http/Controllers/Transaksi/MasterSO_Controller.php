@@ -9,15 +9,11 @@ use App\Http\Requests\Transaksi\BlankRequest;
 use App\Models\Pengajuan\SO\Penjamin;
 use App\Models\Pengajuan\SO\Pasangan;
 use App\Models\Pengajuan\SO\Debitur;
-// use Illuminate\Support\Facades\File;
-use App\Models\AreaKantor\Cabang;
 use App\Models\Transaksi\TransSO;
 use App\Models\AreaKantor\JPIC;
 use App\Models\AreaKantor\PIC;
-// use App\Models\KeuanganUsaha;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
-use Image;
 use DB;
 
 class MasterSO_Controller extends BaseController
@@ -438,124 +434,77 @@ class MasterSO_Controller extends BaseController
 
             if($file = $req->file('lamp_ktp')){
                 $path = $lamp_dir.'/debitur';
-                $name = 'ktp.' . $file->getClientOriginalName();
+                $name = 'ktp.';
 
-                $img = Image::make($file)->resize(320, 240);
+                $check = 'null';
 
-                if(!File::isDirectory($path)){
-                    File::makeDirectory($path, 0777, true, true);
-                }
-
-                $img->save($path.'/'.$name);
-
-                $ktpDebt = $path.'/'.$name;
+                $lamp_ktp = Helper::uploadImg($check, $file, $path, $name);
             }else{
-                $ktpDebt = null;
+                $lamp_ktp = null;
             }
 
             if($file = $req->file('lamp_kk')){
                 $path = $lamp_dir.'/debitur';
-                $name = 'kk.' . $file->getClientOriginalName();
+                $name = 'kk.';
 
-                $img = Image::make($file)->resize(320, 240);
-
-                if(!File::isDirectory($path)){
-                    File::makeDirectory($path, 0777, true, true);
-                }
-
-                $img->save($path.'/'.$name);
-                // $file->move($path,$name);
-
-                $kkDebt = $path.'/'.$name;
+                $check = 'null';
+            
+                $lamp_kk = Helper::uploadImg($check, $file, $path, $name);
             }else{
-                $kkDebt = null;
+                $lamp_kk = null;
             }
 
             if($file = $req->file('lamp_sertifikat')){
                 $path = $lamp_dir.'/debitur';
-                $name = 'sertifikat.' . $file->getClientOriginalName();
+                $name = 'sertifikat.';
 
-                $img = Image::make($file)->resize(320, 240);
-
-                if(!File::isDirectory($path)){
-                    File::makeDirectory($path, 0777, true, true);
-                }
-
-                $img->save($path.'/'.$name);
-                // $file->move($path,$name);
-
-                $sertifikatDebt = $path.'/'.$name;
+                $check = 'null';
+            
+                $lamp_sertifikat = Helper::uploadImg($check, $file, $path, $name);
             }else{
-                $sertifikatDebt = null;
+                $lamp_sertifikat = null;
             }
 
             if($file = $req->file('lamp_pbb')){
                 $path = $lamp_dir.'/debitur';
-                $name = 'pbb.' . $file->getClientOriginalName();
+                $name = 'pbb.';
 
-                $img = Image::make($file)->resize(320, 240);
-
-                if(!File::isDirectory($path)){
-                    File::makeDirectory($path, 0777, true, true);
-                }
-
-                $img->save($path.'/'.$name);
-                // $file->move($path,$name);
-
-                $pbbDebt = $path.'/'.$name;
+                $check = 'null';
+            
+                $lamp_sttp_pbb = Helper::uploadImg($check, $file, $path, $name);
             }else{
-                $pbbDebt = null;
+                $lamp_sttp_pbb = null;
             }
 
             if($file = $req->file('lamp_imb')){
                 $path = $lamp_dir.'/debitur';
-                $name = 'imb.' . $file->getClientOriginalName();
+                $name = 'imb.';
 
-                $img = Image::make($file)->resize(320, 240);
-
-                if(!File::isDirectory($path)){
-                    File::makeDirectory($path, 0777, true, true);
-                }
-
-                $img->save($path.'/'.$name);
-                // $file->move($path,$name);
-
-                $imbDebt = $path.'/'.$name;
+                $check = 'null';
+            
+                $lamp_imb = Helper::uploadImg($check, $file, $path, $name);
             }else{
-                $imbDebt = null;
+                $lamp_imb = null;
             }
 
             if($file = $req->file('foto_agunan_rumah')){
                 $path = $lamp_dir.'/debitur';
-                $name = 'foto_agunan_rumah.' . $file->getClientOriginalName();
+                $name = 'foto_agunan_rumah.';
 
-                $img = Image::make($file)->resize(320, 240);
-
-                if(!File::isDirectory($path)){
-                    File::makeDirectory($path, 0777, true, true);
-                }
-
-                $img->save($path.'/'.$name);
-                // $file->move($path,$name);
-
-                $foto_agunan_rumah = $path.'/'.$name;
+                $check = 'null';
+            
+                $foto_agunan_rumah = Helper::uploadImg($check, $file, $path, $name);
             }else{
                 $foto_agunan_rumah = null;
             }
 
             if ($file = $req->file('lamp_surat_cerai')) {
                 $path = $lamp_dir.'/debitur';
-                $name = 'lamp_surat_cerai.' . $file->getClientOriginalName();
+                $name = 'lamp_surat_cerai.';
 
-                $img = Image::make($file)->resize(320, 240);
-
-                if(!File::isDirectory($path)){
-                    File::makeDirectory($path, 0777, true, true);
-                }
-
-                $img->save($path.'/'.$name);
-
-                $lamp_surat_cerai = $path.'/'.$name;
+                $check = 'null';
+            
+                $lamp_surat_cerai = Helper::uploadImg($check, $file, $path, $name);
             }else{
                 $lamp_surat_cerai = null;
             }
@@ -594,11 +543,11 @@ class MasterSO_Controller extends BaseController
                 'no_telp'               => $req->input('no_telp'),
                 'no_hp'                 => $req->input('no_hp'),
                 'alamat_surat'          => $req->input('alamat_surat'),
-                'lamp_ktp'              => $ktpDebt,
-                'lamp_kk'               => $kkDebt,
-                'lamp_sertifikat'       => $sertifikatDebt,
-                'lamp_sttp_pbb'         => $pbbDebt,
-                'lamp_imb'              => $imbDebt,
+                'lamp_ktp'              => $lamp_ktp,
+                'lamp_kk'               => $lamp_kk,
+                'lamp_sertifikat'       => $lamp_sertifikat,
+                'lamp_sttp_pbb'         => $lamp_sttp_pbb,
+                'lamp_imb'              => $lamp_imb,
                 'lamp_surat_cerai'      => $lamp_surat_cerai,
                 'foto_agunan_rumah'     => $foto_agunan_rumah,
                 'NASABAH_ID'            => $NASABAH_ID
@@ -606,38 +555,24 @@ class MasterSO_Controller extends BaseController
 
             if($file = $req->file('lamp_ktp_pas')){
                 $path = $lamp_dir.'/pasangan';
-                $name = 'ktp.' . $file->getClientOriginalName();
+                $name = 'ktp.';
 
-                $img = Image::make($file)->resize(320, 240);
-
-                if(!File::isDirectory($path)){
-                    File::makeDirectory($path, 0777, true, true);
-                }
-
-                $img->save($path.'/'.$name);
-                // $file->move($path,$name);
-
-                $ktpPass = $path.'/'.$name;
+                $check = 'null';
+            
+                $lamp_ktp_pas = Helper::uploadImg($check, $file, $path, $name);
             }else{
-                $ktpPass = null;
+                $lamp_ktp_pas = null;
             }
 
             if($file = $req->file('lamp_buku_nikah_pas')){
                 $path = $lamp_dir.'/pasangan';
-                $name = 'buku_nikah.' . $file->getClientOriginalName();
+                $name = 'buku_nikah.';
 
-                $img = Image::make($file)->resize(320, 240);
-
-                if(!File::isDirectory($path)){
-                    File::makeDirectory($path, 0777, true, true);
-                }
-
-                $img->save($path.'/'.$name);
-                // $file->move($path,$name);
-
-                $bukuNikahPass = $path.'/'.$name;
+                $check = 'null';
+            
+                $lamp_buku_nikah_pas = Helper::uploadImg($check, $file, $path, $name);
             }else{
-                $bukuNikahPass = null;
+                $lamp_buku_nikah_pas = null;
             }
 
             if (!empty($req->input('nama_lengkap_pas'))) {
@@ -660,84 +595,77 @@ class MasterSO_Controller extends BaseController
                 'tgl_lahir'        => empty($req->input('tgl_lahir_pas')) ? null : Carbon::parse($req->input('tgl_lahir_pas'))->format('Y-m-d'),
                 'alamat_ktp'       => $alamat_ktp_pas,
                 'no_telp'          => $req->input('no_telp_pas'),
-                'lamp_ktp'         => $ktpPass,
-                'lamp_buku_nikah'  => $bukuNikahPass
+                'lamp_ktp'         => $lamp_ktp_pas,
+                'lamp_buku_nikah'  => $lamp_buku_nikah_pas
             );
 
             // Data Penjamin
-            // $a = 1; $b = 1; $c = 1; $d = 1;
-
             if($files = $req->file('lamp_ktp_pen')){
-                foreach($files as $file){
-                    $path = $lamp_dir.'/penjamin';
-                    $name = 'ktp_penjamin.' . $file->getClientOriginalName();
+                $path = $lamp_dir.'/penjamin';
+                $name = 'ktp_penjamin.';
 
-                    $img = Image::make($file)->resize(320, 240);
+                $check = 'null';
 
-                    if(!File::isDirectory($path)){
-                        File::makeDirectory($path, 0777, true, true);
-                    }
-
-                    $img->save($path.'/'.$name);
-                    // $file->move($path,$name);
-
-                    $ktpPen[] = $path.'/'.$name;
+                $arrayPath = array();
+                foreach($files as $file)
+                {
+                    $arrayPath[] = Helper::uploadImg($check, $file, $path, $name);
                 }
+
+                $lamp_ktp_pen = $arrayPath;
+            }else{
+                $lamp_ktp_pen = null;
             }
 
             if($files = $req->file('lamp_ktp_pasangan_pen')){
-                foreach($files as $file){
-                    $path = $lamp_dir.'/penjamin';
-                    $name = 'ktp_pasangan.' . $file->getClientOriginalName();
+                $path = $lamp_dir.'/penjamin';
+                $name = 'ktp_pasangan.';
 
-                    $img = Image::make($file)->resize(320, 240);
+                $check = 'null';
 
-                    if(!File::isDirectory($path)){
-                        File::makeDirectory($path, 0777, true, true);
-                    }
-
-                    $img->save($path.'/'.$name);
-                    // $file->move($path,$name);
-
-                    $ktpPenPAS[] = $path.'/'.$name;
+                $arrayPath = array();
+                foreach($files as $file)
+                {
+                    $arrayPath[] = Helper::uploadImg($check, $file, $path, $name);
                 }
+
+                $lamp_ktp_pasangan_pen = $arrayPath;
+            }else{
+                $lamp_ktp_pasangan_pen = null;
             }
 
             if($files = $req->file('lamp_kk_pen')){
-                foreach($files as $file){
-                    $path = $lamp_dir.'/penjamin';
-                    $name = 'kk_penjamin.' . $file->getClientOriginalName();
+                $path = $lamp_dir.'/penjamin';
+                $name = 'kk_penjamin.';
 
-                    $img = Image::make($file)->resize(320, 240);
+                $check = 'null';
 
-                    if(!File::isDirectory($path)){
-                        File::makeDirectory($path, 0777, true, true);
-                    }
-
-                    $img->save($path.'/'.$name);
-
-                    // $file->move($path,$name);
-
-                    $kkPen[] = $path.'/'.$name;
+                $arrayPath = array();
+                foreach($files as $file)
+                {
+                    $arrayPath[] = Helper::uploadImg($check, $file, $path, $name);
                 }
+
+                $lamp_kk_pen = $arrayPath;
+            }else{
+                $lamp_kk_pen = null;
             }
 
             if($files = $req->file('lamp_buku_nikah_pen')){
-                foreach($files as $file){
-                    $path = $lamp_dir.'/penjamin';
-                    $name = 'buku_nikah_penjamin.' . $file->getClientOriginalName();
+                $path = $lamp_dir.'/penjamin';
+                $name = 'buku_nikah_penjamin.';
 
-                    $img = Image::make($file)->resize(320, 240);
+                $check = 'null';
 
-                    if(!File::isDirectory($path)){
-                        File::makeDirectory($path, 0777, true, true);
-                    }
-                    
-                    $img->save($path.'/'.$name);
-                    // $file->move($path,$name);
-
-                    $bukuNikahPen[] = $path.'/'.$name;
+                $arrayPath = array();
+                foreach($files as $file)
+                {
+                    $arrayPath[] = Helper::uploadImg($check, $file, $path, $name);
                 }
+
+                $lamp_buku_nikah_pen = $arrayPath;
+            }else{
+                $lamp_buku_nikah_pen = null;
             }
 
             if (!empty($req->input('nama_ktp_pen'))) {
@@ -754,10 +682,10 @@ class MasterSO_Controller extends BaseController
                         'alamat_ktp'       => empty($req->alamat_ktp_pen[$i])       ? null : $req->alamat_ktp_pen[$i],
                         'no_telp'          => empty($req->no_telp_pen[$i])          ? null : $req->no_telp_pen[$i],
                         'hubungan_debitur' => empty($req->hubungan_debitur_pen[$i]) ? null : $req->hubungan_debitur_pen[$i],
-                        'lamp_ktp'         => empty($ktpPen[$i])                    ? null : $ktpPen[$i],
-                        'lamp_ktp_pasangan'=> empty($ktpPenPAS[$i])                 ? null : $ktpPenPAS[$i],
-                        'lamp_kk'          => empty($kkPen[$i])                     ? null : $kkPen[$i],
-                        'lamp_buku_nikah'  => empty($bukuNikahPen[$i])              ? null : $bukuNikahPen[$i]
+                        'lamp_ktp'         => empty($lamp_ktp_pen[$i])              ? null : $lamp_ktp_pen[$i],
+                        'lamp_ktp_pasangan'=> empty($lamp_ktp_pasangan_pen[$i])     ? null : $lamp_ktp_pasangan_pen[$i],
+                        'lamp_kk'          => empty($lamp_kk_pen[$i])               ? null : $lamp_kk_pen[$i],
+                        'lamp_buku_nikah'  => empty($lamp_buku_nikah_pen[$i])       ? null : $lamp_buku_nikah_pen[$i]
                     ];
                 }
             }

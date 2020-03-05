@@ -299,15 +299,56 @@ class MasterAO_Controller extends BaseController
         //  ID-Cabang - AO / CA / SO - Bulan - Tahun - NO. Urut
         $nomor_ao = $PIC->id_cabang.'-'.$JPIC->nama_jenis.'-'.$month.'-'.$year.'-'.$lastNumb;
 
-        $check = TransSO::where('id',$id)->where('status_das', 1)->where('status_hm', 1)->first();
+        $check_so = TransSO::where('id',$id)->where('status_das', 1)->where('status_hm', 1)->first();
 
-        if (!$check) {
+        if (!$check_so) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
                 'message' => 'Transaksi dengan id '.$id.' belum ada di SO atau belum komplit saat pemeriksaaan DAS dan HM'
             ], 404);
         }
+
+        /** Start Check Lampiran */
+        $check_form_persetujuan_ideb = $check_so->ao['form_persetujuan_ideb'];
+        
+        // Agunan Tanah
+        $check_agunan_bag_depan = $check_so->ao['tan']['agunan_bag_depan'];
+        $check_agunan_bag_jalan = $check_so->ao['tan']['agunan_bag_jalan'];
+        $check_agunan_bag_ruangtamu = $check_so->ao['tan']['agunan_bag_ruangtamu'];
+        $check_agunan_bag_kamarmandi = $check_so->ao['tan']['agunan_bag_kamarmandi'];
+        $check_agunan_bag_dapur = $check_so->ao['tan']['agunan_bag_dapur'];
+
+        $check_lamp_imb_tan = $check_so->ao['tan']['lamp_imb'];
+        $check_lamp_pbb_tan = $check_so->ao['tan']['lamp_pbb'];
+        $check_lamp_sertifikat_tan = $check_so->ao['tan']['lamp_sertifikat'];
+        
+        // Agunan Kendaraan
+        $check_lamp_agunan_depan_ken = $check_so->ao['tan']['lamp_agunan_depan_ken'];
+        $check_lamp_agunan_kanan_ken = $check_so->ao['tan']['lamp_agunan_kanan_ken'];
+        $check_lamp_agunan_kiri_ken = $check_so->ao['tan']['lamp_agunan_kiri_ken'];
+        $check_lamp_agunan_belakang_ken = $check_so->ao['tan']['lamp_agunan_belakang_ken'];
+        $check_lamp_agunan_dalam_ken = $check_so->ao['tan']['lamp_agunan_dalam_ken'];
+
+        // Debitur
+        $check_lamp_ktp             = $check_so->debt['lamp_ktp']; 
+        $check_lamp_kk              = $check_so->debt['lamp_kk'];
+        $check_lamp_sertifikat      = $check_so->debt['lamp_sertifikat'];
+        $check_lamp_sttp_pbb        = $check_so->debt['lamp_sttp_pbb'];
+        $check_lamp_imb             = $check_so->debt['lamp_imb'];
+        $check_foto_agunan_rumah    = $check_so->debt['foto_agunan_rumah'];
+        $check_lamp_buku_tabungan   = $check_so->debt['lamp_buku_tabungan'];
+        $check_lamp_skk             = $check_so->debt['lamp_skk'];
+        $check_lamp_sku             = $check_so->debt['lamp_sku'];
+        $check_lamp_slip_gaji       = $check_so->debt['lamp_slip_gaji'];
+        $check_foto_pembukuan_usaha = $check_so->debt['foto_pembukuan_usaha'];
+        $check_lamp_foto_usaha      = $check_so->debt['lamp_foto_usaha'];
+        $check_lamp_surat_cerai     = $check_so->debt['lamp_surat_cerai']; 
+        $check_lamp_tempat_tinggal  = $check_so->debt['lamp_tempat_tinggal'];
+
+        // dd($check_agunan_bag_depan, $check_agunan_bag_jalan, $check_agunan_bag_ruangtamu, $check_agunan_bag_kamarmandi, $check_agunan_bag_dapur);
+
+        /** End Check Lampiran */
 
         $check_ao = TransAO::where('id_trans_so', $id)->first();
 
@@ -319,32 +360,21 @@ class MasterAO_Controller extends BaseController
             ], 404);
         }
 
-        $lamp_dir = 'public/'.$check->debt['no_ktp'];
+        $lamp_dir = 'public/'.$check_so->debt['no_ktp'];
 
         // Form Persetujuan Ideb
         if($file = $req->file('form_persetujuan_ideb')){
             $path = $lamp_dir.'/ideb';
-            $name = 'form_persetujuan_ideb.' . $file->getClientOriginalName();
+            $name = 'form_persetujuan_ideb.';
 
-            $img = Image::make($file)->resize(320, 240);
-            
-            if(!File::isDirectory($path)){
-                File::makeDirectory($path, 0777, true, true);
-            }
-            
-            if(!empty($check_ao->form_persetujuan_ideb))
-            {
-                File::delete($check_ao->form_persetujuan_ideb);
-            }
+            $check = $check_form_persetujuan_ideb;
 
-            $img->save($path.'/'.$name);
-
-            $form_persetujuan_ideb = $path.'/'.$name;
+            $form_persetujuan_ideb = Helper::uploadImg($check, $file, $path, $name);
         }else{
-            $form_persetujuan_ideb = $check->form_persetujuan_ideb;
+            $form_persetujuan_ideb = $check_form_persetujuan_ideb;
         }
 
-        $id_penj = explode (",",$check->id_penjamin);
+        // $id_penj = explode (",",$check_so->id_penjamin);
 
         $TransAO = array(
             'nomor_ao'              => $nomor_ao,
@@ -360,7 +390,7 @@ class MasterAO_Controller extends BaseController
 
         $recom_AO = array(
             'produk'                => $req->input('produk'),
-            'plafon_kredit'         => empty($req->input('plafon_kredit')) ? $check->faspin['plafon'] : $req->input('plafon_kredit'),
+            'plafon_kredit'         => empty($req->input('plafon_kredit')) ? $check_so->faspin['plafon'] : $req->input('plafon_kredit'),
             'jangka_waktu'          => $req->input('jangka_waktu'),
             'suku_bunga'            => $req->input('suku_bunga'),
             'pembayaran_bunga'      => $req->input('pembayaran_bunga'),
@@ -401,241 +431,231 @@ class MasterAO_Controller extends BaseController
             'catatan'             => $req->input('catatan_validasi')
         );
 
+        /** Lampiran Agunan Tanah */
         if($files = $req->file('agunan_bag_depan')){
-            foreach($files as $file){
-                $path = $lamp_dir.'/agunan_tanah';
-                $name = 'agunan_bag_depan.' . $file->getClientOriginalName();
-                
-                $img = Image::make($file)->resize(320, 240);
+            $path = $lamp_dir.'/agunan_tanah';
+            $name = 'agunan_bag_depan.';
 
-                if(!File::isDirectory($path)){
-                    File::makeDirectory($path, 0777, true, true);
-                }
+            $check = $check_agunan_bag_depan;
 
-                $img->save($path.'/'.$name);
-                // $file->move($path,$name);
-
-                $agunan_bag_depan[] = $path.'/'.$name;
+            $arrayPath = array();
+            foreach($files as $file)
+            {
+                $arrayPath[] = Helper::uploadImg($check, $file, $path, $name);
             }
+
+            $agunan_bag_depan = $arrayPath;
+        }else{
+            $agunan_bag_depan = $check_agunan_bag_depan;
         }
 
         if($files = $req->file('agunan_bag_jalan')){
-            foreach($files as $file){
-                $path = $lamp_dir.'/agunan_tanah';
-                $name = 'agunan_bag_jalan.' . $file->getClientOriginalName();
+            $path = $lamp_dir.'/agunan_tanah';
+            $name = 'agunan_bag_jalan.';
 
-                $img = Image::make($file)->resize(320, 240);
+            $check = $check_agunan_bag_jalan;
 
-                if(!File::isDirectory($path)){
-                    File::makeDirectory($path, 0777, true, true);
-                }
-                
-                $img->save($path.'/'.$name);
-                // $file->move($path,$name);
-
-                $agunan_bag_jalan[] = $path.'/'.$name;
+            $arrayPath = array();
+            foreach($files as $file)
+            {
+                $arrayPath[] = Helper::uploadImg($check, $file, $path, $name);
             }
+
+            $agunan_bag_jalan = $arrayPath;
+        }else{
+            $agunan_bag_jalan = $check_agunan_bag_jalan;
         }
 
         if($files = $req->file('agunan_bag_ruangtamu')){
-            foreach($files as $file){
-                $path = $lamp_dir.'/agunan_tanah';
-                $name = 'agunan_bag_ruangtamu.' . $file->getClientOriginalName();
+            $path = $lamp_dir.'/agunan_tanah';
+            $name = 'agunan_bag_ruangtamu.';
 
-                $img = Image::make($file)->resize(320, 240);
+            $check = $check_agunan_bag_ruangtamu;
 
-                if(!File::isDirectory($path)){
-                    File::makeDirectory($path, 0777, true, true);
-                }
-
-                $img->save($path.'/'.$name);
-                // $file->move($path,$name);
-
-                $agunan_bag_ruangtamu[] = $path.'/'.$name;
+            $arrayPath = array();
+            foreach($files as $file)
+            {
+                $arrayPath[] = Helper::uploadImg($check, $file, $path, $name);
             }
+
+            $agunan_bag_ruangtamu = $arrayPath;
+        }else{
+            $agunan_bag_ruangtamu = $check_agunan_bag_ruangtamu;
         }
 
         if($files = $req->file('agunan_bag_kamarmandi')){
-            foreach($files as $file){
-                $path = $lamp_dir.'/agunan_tanah';
-                $name = 'agunan_bag_kamarmandi.' . $file->getClientOriginalName();
+            $path = $lamp_dir.'/agunan_tanah';
+            $name = 'agunan_bag_kamarmandi.';
 
-                $img = Image::make($file)->resize(320, 240);
+            $check = $check_agunan_bag_kamarmandi;
 
-                if(!File::isDirectory($path)){
-                    File::makeDirectory($path, 0777, true, true);
-                }
-
-                $img->save($path.'/'.$name);
-                // $file->move($path,$name);
-
-                $agunan_bag_kamarmandi[] = $path.'/'.$name;
+            $arrayPath = array();
+            foreach($files as $file)
+            {
+                $arrayPath[] = Helper::uploadImg($check, $file, $path, $name);
             }
+
+            $agunan_bag_ruangtamu = $arrayPath;
+        }else{
+            $agunan_bag_kamarmandi = $check_agunan_bag_kamarmandi;
         }
 
         if($files = $req->file('agunan_bag_dapur')){
-            foreach($files as $file){
-                $path = $lamp_dir.'/agunan_tanah';
-                $name = 'agunan_bag_dapur.' . $file->getClientOriginalName();
+            $path = $lamp_dir.'/agunan_tanah';
+            $name = 'agunan_bag_dapur.';
 
-                $img = Image::make($file)->resize(320, 240);
+            $check = $check_agunan_bag_dapur;
 
-                if(!File::isDirectory($path)){
-                    File::makeDirectory($path, 0777, true, true);
-                }
-
-                $img->save($path.'/'.$name);
-                // $file->move($path,$name);
-
-                $agunan_bag_dapur[] = $path.'/'.$name;
+            $arrayPath = array();
+            foreach($files as $file)
+            {
+                $arrayPath[] = Helper::uploadImg($check, $file, $path, $name);
             }
+
+            $agunan_bag_dapur = $arrayPath;
+        }else{
+            $agunan_bag_dapur = $check_agunan_bag_dapur;
         }
 
+        /** Lampiran Agunan Kendaraan */
         if ($files = $req->file('lamp_agunan_depan_ken')) {
-            foreach($files as $file){
-                $path = $lamp_dir.'/agunan_kendaraan';
-                $name = 'agunan_depan.' . $file->getClientOriginalName();
+            $path = $lamp_dir.'/agunan_kendaraan';
+            $name = 'agunan_depan.';
 
-                $img = Image::make($file)->resize(320, 240);
+            $check = $check_lamp_agunan_depan_ken;
 
-                if(!File::isDirectory($path)){
-                    File::makeDirectory($path, 0777, true, true);
-                }
-
-                $img->save($path.'/'.$name);
-                // $file->move($path,$name);
-
-                $agunanDepanKen[] = $path.'/'.$name;
+            $arrayPath = array();
+            foreach($files as $file)
+            {
+                $arrayPath[] = Helper::uploadImg($check, $file, $path, $name);
             }
+
+            $lamp_agunan_depan_ken = $arrayPath;
+        }else{
+            $lamp_agunan_depan_ken = $check_lamp_agunan_depan_ken;
         }
 
 
         if ($files = $req->file('lamp_agunan_kanan_ken')) {
-            foreach($files as $file){
-                $path = $lamp_dir.'/agunan_kendaraan';
-                $name = 'agunan_kanan.' . $file->getClientOriginalName();
+            $path = $lamp_dir.'/agunan_kendaraan';
+            $name = 'agunan_kanan.';
 
-                $img = Image::make($file)->resize(320, 240);
+            $check = $check_lamp_agunan_kanan_ken;
 
-                if(!File::isDirectory($path)){
-                    File::makeDirectory($path, 0777, true, true);
-                }
-
-                $img->save($path.'/'.$name);
-                // $file->move($path,$name);
-
-                $agunanKananKen[] = $path.'/'.$name;
+            $arrayPath = array();
+            foreach($files as $file)
+            {
+                $arrayPath[] = Helper::uploadImg($check, $file, $path, $name);
             }
+
+            $lamp_agunan_kanan_ken = $arrayPath;
+        }else{
+            $lamp_agunan_kanan_ken = $check_lamp_agunan_kanan_ken;
         }
 
 
         if ($files = $req->file('lamp_agunan_kiri_ken')) {
-            foreach($files as $file){
-                $path = $lamp_dir.'/agunan_kendaraan';
-                $name = 'agunan_kiri.' . $file->getClientOriginalName();
+            $path = $lamp_dir.'/agunan_kendaraan';
+            $name = 'agunan_kiri.';
 
-                $img = Image::make($file)->resize(320, 240);
+            $check = $check_lamp_agunan_kiri_ken;
 
-                if(!File::isDirectory($path)){
-                    File::makeDirectory($path, 0777, true, true);
-                }
-
-                $img->save($path.'/'.$name);
-                // $file->move($path,$name);
-
-                $agunanKiriKen[] = $path.'/'.$name;
+            $arrayPath = array();
+            foreach($files as $file)
+            {
+                $arrayPath[] = Helper::uploadImg($check, $file, $path, $name);
             }
+
+            $lamp_agunan_kiri_ken = $arrayPath;
+        }else{
+            $lamp_agunan_kiri_ken = $check_lamp_agunan_kiri_ken;
         }
 
 
         if ($files = $req->file('lamp_agunan_belakang_ken')) {
-            foreach($files as $file){
-                $path = $lamp_dir.'/agunan_kendaraan';
-                $name = 'agunan_belakang.' . $file->getClientOriginalName();
+            $path = $lamp_dir.'/agunan_kendaraan';
+            $name = 'agunan_belakang.';
 
-                $img = Image::make($file)->resize(320, 240);
+            $check = $check_lamp_agunan_belakang_ken;
 
-                if(!File::isDirectory($path)){
-                    File::makeDirectory($path, 0777, true, true);
-                }
-
-                $img->save($path.'/'.$name);
-                // $file->move($path,$name);
-
-                $agunanBelakangKen[] = $path.'/'.$name;
+            $arrayPath = array();
+            foreach($files as $file)
+            {
+                $arrayPath[] = Helper::uploadImg($check, $file, $path, $name);
             }
+
+            $lamp_agunan_belakang_ken = $arrayPath;
+        }else{
+            $lamp_agunan_belakang_ken = $check_lamp_agunan_belakang_ken;
         }
 
         if ($files = $req->file('lamp_agunan_dalam_ken')) {
-            foreach($files as $file){
-                $path = $lamp_dir.'/agunan_kendaraan';
-                $name = 'agunan_dalam.' . $file->getClientOriginalName();
+            $path = $lamp_dir.'/agunan_kendaraan';
+            $name = 'agunan_dalam.';
 
-                $img = Image::make($file)->resize(320, 240);
+            $check = $check_lamp_agunan_dalam_ken;
 
-                if(!File::isDirectory($path)){
-                    File::makeDirectory($path, 0777, true, true);
-                }
-
-                $img->save($path.'/'.$name);
-                // $file->move($path,$name);
-
-                $agunanDalamKen[] = $path.'/'.$name;
+            $arrayPath = array();
+            foreach($files as $file)
+            {
+                $arrayPath[] = Helper::uploadImg($check, $file, $path, $name);
             }
+
+            $lamp_agunan_dalam_ken = $arrayPath;
+        }else{
+            $lamp_agunan_dalam_ken = $check_lamp_agunan_dalam_ken;
         }
 
         // Tambahan Agunan Tanah
         if ($files = $req->file('lamp_imb')) {
-            foreach($files as $file){
-                $path = $lamp_dir.'/agunan_tanah';
-                $name = 'lamp_imb.' . $file->getClientOriginalName();
+            $path = $lamp_dir.'/agunan_tanah';
+            $name = 'lamp_imb.';
 
-                $img = Image::make($file)->resize(320, 240);
+            $check = $check_lamp_imb_tan;
 
-                if(!File::isDirectory($path)){
-                    File::makeDirectory($path, 0777, true, true);
-                }
-
-                $img->save($path.'/'.$name);
-                // $file->move($path,$name);
-
-                $lamp_imb[] = $path.'/'.$name;
+            $arrayPath = array();
+            foreach($files as $file)
+            {
+                $arrayPath[] = Helper::uploadImg($check, $file, $path, $name);
             }
+
+            $lamp_imb_tan = $arrayPath;
+        }else{
+            $lamp_imb_tan = $check_lamp_imb_tan;
         }
 
         if ($files = $req->file('lamp_pbb')) {
-            foreach($files as $file){
-                $path = $lamp_dir.'/agunan_tanah';
-                $name = 'lamp_pbb.' . $file->getClientOriginalName();
+            $path = $lamp_dir.'/agunan_tanah';
+            $name = 'lamp_pbb.';
 
-                $img = Image::make($file)->resize(320, 240);
+            $check = $check_lamp_pbb_tan;
 
-                if(!File::isDirectory($path)){
-                    File::makeDirectory($path, 0777, true, true);
-                }
-
-                $img->save($path.'/'.$name);
-                // $file->move($path,$name);
-                $lamp_pbb[] = $path.'/'.$name;
+            $arrayPath = array();
+            foreach($files as $file)
+            {
+                $arrayPath[] = Helper::uploadImg($check, $file, $path, $name);
             }
+
+            $lamp_pbb_tan = $arrayPath;
+        }else{
+            $lamp_pbb_tan = $check_lamp_pbb_tan;
         }
 
         if ($files = $req->file('lamp_sertifikat')) {
-            foreach($files as $file){
-                $path = $lamp_dir.'/agunan_tanah';
-                $name = 'lamp_sertifikat.' . $file->getClientOriginalName();
+            $path = $lamp_dir.'/agunan_tanah';
+            $name = 'lamp_sertifikat.';
 
-                $img = Image::make($file)->resize(320, 240);
+            $check = $check_lamp_sertifikat_tan;
 
-                if(!File::isDirectory($path)){
-                    File::makeDirectory($path, 0777, true, true);
-                }
-
-                $img->save($path.'/'.$name);
-                // $file->move($path,$name);
-
-                $lamp_sertifikat[] = $path.'/'.$name;
+            $arrayPath = array();
+            foreach($files as $file)
+            {
+                $arrayPath[] = Helper::uploadImg($check, $file, $path, $name);
             }
+
+            $lamp_sertifikat = $arrayPath;
+        }else{
+            $lamp_sertifikat = $check_lamp_sertifikat_tan;
         }
 
 
@@ -1036,166 +1056,210 @@ class MasterAO_Controller extends BaseController
             $dataKeUsaha = array_merge($inputKeUsaha, $total_KeUsaha);
         }
 
-        // Lampiran Untuk Debitur
+        // Lampiran Debitur
+        if($file = $req->file('lamp_ktp')){
+            $path = $lamp_dir.'/debitur';
+            $name = 'ktp.';
+
+            $check = $check_lamp_ktp;
+            
+            $lamp_ktp = Helper::uploadImg($check, $file, $path, $name);
+        }else{
+            $lamp_ktp = $check_lamp_ktp;
+        }
+        
+        if($file = $req->file('lamp_kk')){
+            $path = $lamp_dir.'/debitur';
+            $name = 'kk.';
+            
+            $check = $check_lamp_kk;
+            
+            $lamp_kk = Helper::uploadImg($check, $file, $path, $name);
+        }else{
+            $lamp_kk = $check_lamp_kk;
+        }
+
+        if($req->file('lamp_sertifikat') != null){
+            $file = $req->file('lamp_sertifikat');
+
+            $path = $lamp_dir.'/debitur';
+            $name = 'sertifikat.';
+
+            $check = $check_lamp_sertifikat;
+
+            $lamp_sertifikat = Helper::uploadImg($check, $file, $path, $name);
+        }else{
+            $lamp_sertifikat = $check_lamp_sertifikat;
+        }
+
+        if($req->file('lamp_pbb') != null){
+            $file = $req->file('lamp_pbb');
+
+            $path = $lamp_dir.'/debitur';
+            $name = 'pbb.';
+
+            $check = $check_lamp_sttp_pbb;
+
+            $lamp_sttp_pbb = Helper::uploadImg($check, $file, $path, $name);
+        }else{
+            $lamp_sttp_pbb = $check_lamp_sttp_pbb;
+        }
+
+        if($req->file('lamp_imb') != null){
+            $file = $req->file('lamp_imb');
+
+            $path = $lamp_dir.'/debitur';
+            $name = 'imb.';
+            
+            $check = $check_lamp_imb;
+
+            $lamp_imb = Helper::uploadImg($check, $file, $path, $name);
+        }else{
+            $lamp_imb = $check_lamp_imb;
+        }
+
+        if($req->file('foto_agunan_rumah') != null){
+            $file = $req->file('foto_agunan_rumah');
+
+            $path = $lamp_dir.'/debitur';
+            $name = 'foto_agunan_rumah.';
+
+            $check = $check_foto_agunan_rumah;
+
+            $foto_agunan_rumah = Helper::uploadImg($check, $file, $path, $name);
+        }else{
+            $foto_agunan_rumah = $check_foto_agunan_rumah;
+        }
+
+        // New UIT 2
+        // Lampiran Untuk Debitur - array
         if ($files = $req->file('lamp_buku_tabungan')) {
+
+            $path = $lamp_dir.'/lamp_buku_tabungan';
+            $name = 'lamp_buku_tabungan.';
+
+            $check = $check_lamp_buku_tabungan;
+
+            $arrayPath = array();
             foreach($files as $file){
-                $path = $lamp_dir.'/lamp_buku_tabungan';
-                $name = 'lamp_buku_tabungan.' . $file->getClientOriginalName();
-
-                $img = Image::make($file)->resize(320, 240);
-
-                if(!File::isDirectory($path)){
-                    File::makeDirectory($path, 0777, true, true);
-                }
-
-                $img->save($path.'/'.$name);
-                // $file->move($path,$name);
-
-                $buku_tabungan[] = $path.'/'.$name;
-
+                $arrayPath[] = Helper::uploadImg($check, $file, $path, $name);
             }
 
-            $lamp_buku_tabungan = implode(";",$buku_tabungan);
-
+            $lamp_buku_tabungan = implode(";", $arrayPath);
         }else{
-            $lamp_buku_tabungan = $check->debt['lamp_buku_tabungan'];
+            $lamp_buku_tabungan = $check_lamp_buku_tabungan;
         }
 
         if($file = $req->file('lamp_skk')){
             $path = $lamp_dir.'/debitur';
-            $name = 'lamp_skk.'.$file->getClientOriginalName();
+            $name = 'lamp_skk.';
 
-            $img = Image::make($file)->resize(320, 240);
+            $check = $check_lamp_skk;
+
+            $lamp_skk = Helper::uploadImg($check, $file, $path, $name);
+        }else{
+            $lamp_skk = $check_lamp_skk;
+        }
+
+        if($file = $req->file('lamp_sku')){
+            $path = $lamp_dir.'/debitur';
+            $name = 'lamp_sku.';
+
+            $check = $check_lamp_sku;
+            $arrayPath = array();
+            foreach($files as $file){
+                $arrayPath[] = Helper::uploadImg($check, $file, $path, $name);
+            }
+
+            $lamp_sku = implode(";", $arrayPath);
+
+        }else{
+            $lamp_sku = $check_lamp_sku;
+        }
+
+        if($req->file('lamp_slip_gaji') != null){
+            $file = $req->file('lamp_slip_gaji');
+
+            $path = $lamp_dir.'/debitur';
+            $name = 'lamp_slip_gaji.'; //->getClientOriginalExtension();
+
+            $check = $check_lamp_slip_gaji;
+
+            $lamp_slip_gaji = Helper::uploadImg($check, $file, $path, $name);
+
+        }else{
+            $lamp_slip_gaji = $check_lamp_slip_gaji;
+        }
+
+
+        if($file = $req->file('foto_pembukuan_usaha')){
+            $path = $lamp_dir.'/debitur';
+            $name = 'foto_pembukuan_usaha.';
             
-            if(!File::isDirectory($path)){
-                File::makeDirectory($path, 0777, true, true);
-            }
-            
-            if(!empty($check_ao->form_persetujuan_ideb))
-            {
-                File::delete($check_ao->form_persetujuan_ideb);
+            $check = $check_foto_pembukuan_usaha;
+            $arrayPath = array();
+            foreach($files as $file){
+                $arrayPath[] = Helper::uploadImg($check, $file, $path, $name);
             }
 
-            $img->save($path.'/'.$name);
-            // $file->move($path,$name);
-
-            $lamp_skk = $path.'/'.$name;
+            $foto_pembukuan_usaha = implode(";", $arrayPath);
         }else{
-            $lamp_skk = $check->debt['lamp_skk'];
+            $foto_pembukuan_usaha = $check_foto_pembukuan_usaha;
         }
 
-        if($files = $req->file('lamp_sku')){
-            foreach ($files as $file) {
-                $path = $lamp_dir.'/debitur';
-                $name = 'lamp_sku.'.$file->getClientOriginalName();
+        if($file = $req->file('lamp_foto_usaha')){
+            $path = $lamp_dir.'/debitur';
+            $name = 'lamp_foto_usaha.';
 
-                $img = Image::make($file)->resize(320, 240);
-
-                if(!File::isDirectory($path)){
-                    File::makeDirectory($path, 0777, true, true);
-                }
-
-                $img->save($path.'/'.$name);
-                // $file->move($path,$name);
-
-                $sku[] = $path.'/'.$name;
+            $check = $check_lamp_foto_usaha;
+            $arrayPath = array();
+            foreach($files as $file){
+                $arrayPath[] = Helper::uploadImg($check, $file, $path, $name);
             }
 
-            $lamp_sku = implode(";",$sku);
+            $lamp_foto_usaha = implode(";", $arrayPath);
 
         }else{
-            $lamp_sku = $check->debt['lamp_sku'];
+            $lamp_foto_usaha = $check_lamp_foto_usaha;
         }
 
-        if($file = $req->file('lamp_slip_gaji')){
-            // foreach ($files as $file) {
-                $path = $lamp_dir.'/debitur';
+        if ($file = $req->file('lamp_surat_cerai')) {
+            $path = $lamp_dir.'/debitur';
+            $name = 'lamp_surat_cerai.';
 
-                $extention = $file->getClientOriginalExtension();
+            $check = $check_lamp_surat_cerai;
 
-                // $exIdeb = $file->getClientMimeType();
-
-                if ($extention != 'jpg' && $extention != 'jpeg' && $extention != 'png' && $extention != 'pdf') {
-                    return response()->json([
-                        "code"    => 422,
-                        "status"  => "not valid request",
-                        "message" => "file harus berupa format berikut: jpg, jpeg, png, pdf"
-                    ], 422);
-                }
-
-                $name = 'lamp_slip_gaji.'.$file->getClientOriginalName();
-
-                $img = Image::make($file)->resize(320, 240);
-
-                if(!File::isDirectory($path)){
-                    File::makeDirectory($path, 0777, true, true);
-                }
-                
-                $img->save($path.'/'.$name);
-                // $file->move($path,$name);
-
-                $slip_gaji[] = $path.'/'.$name;
-
-                $lamp_slip_gaji = implode(";",$slip_gaji);
-            // }
+            $lamp_surat_cerai = Helper::uploadImg($check, $file, $path, $name);
         }else{
-            $lamp_slip_gaji = $check->debt['lamp_slip_gaji'];
+            $lamp_surat_cerai = $check_lamp_surat_cerai;
         }
 
+        if ($file = $req->file('lamp_tempat_tinggal')) {
+            $path = $lamp_dir.'/debitur';
+            $name = 'lamp_tempat_tinggal.';
 
-        if($files = $req->file('foto_pembukuan_usaha')){
-            foreach ($files as $file) {
-                $path = $lamp_dir.'/debitur';
-                $name = 'foto_pembukuan_usaha.'.$file->getClientOriginalName();
+            $check = $check_lamp_tempat_tinggal;
 
-                $img = Image::make($file)->resize(320, 240);
-
-                if(!File::isDirectory($path)){
-                    File::makeDirectory($path, 0777, true, true);
-                }
-
-                $img->save($path.'/'.$name);
-
-                $pembukuan_usaha[] = $path.'/'.$name;
-
-            }
-
-            $foto_pembukuan_usaha = implode(";",$pembukuan_usaha);
-
+            $lamp_tempat_tinggal = Helper::uploadImg($check, $file, $path, $name);
         }else{
-            $foto_pembukuan_usaha = $check->debt['foto_pembukuan_usaha'];
-        }
-
-        if($files = $req->file('lamp_foto_usaha')){
-            foreach ($files as $file) {
-                $path = $lamp_dir.'/debitur';
-                $name = 'lamp_foto_usaha.'.$file->getClientOriginalName();
-
-                $img = Image::make($file)->resize(320, 240);
-
-                if(!File::isDirectory($path)){
-                    File::makeDirectory($path, 0777, true, true);
-                }
-
-                $img->save($path.'/'.$name);
-                // $file->move($path,$name);
-
-                $foto_usaha[] = $path.'/'.$name;
-            }
-
-            $lamp_foto_usaha = implode(";",$foto_usaha);
-
-        }else{
-            $lamp_foto_usaha = $check->debt['lamp_foto_usaha'];
+            $lamp_tempat_tinggal = $check_lamp_tempat_tinggal;
         }
 
         $cadebt = array(
+            'lamp_ktp'              => $lamp_ktp,
+            'lamp_kk'               => $lamp_kk,
+            'lamp_sertifikat'       => $lamp_sertifikat,
+            'lamp_sttp_pbb'         => $lamp_sttp_pbb,
+            'lamp_imb'              => $lamp_imb,
             'lamp_buku_tabungan'    => $lamp_buku_tabungan,
             'lamp_skk'              => $lamp_skk,
             'lamp_sku'              => $lamp_sku,
             'lamp_slip_gaji'        => $lamp_slip_gaji,
             'foto_pembukuan_usaha'  => $foto_pembukuan_usaha,
-            'lamp_foto_usaha'       => $lamp_foto_usaha
+            'lamp_foto_usaha'       => $lamp_foto_usaha,
+            'foto_agunan_rumah'     => $foto_agunan_rumah,
+            'lamp_surat_cerai'      => $lamp_surat_cerai,
+            'lamp_tempat_tinggal'   => $lamp_tempat_tinggal
         );
 
         DB::connection('web')->beginTransaction();
@@ -1223,7 +1287,6 @@ class MasterAO_Controller extends BaseController
                 $tanID   = null;
                 $p_tanID = null;
             }
-
 
             if (!empty($daAguKe)) {
                 for ($i = 0; $i < count($daAguKe); $i++) {
@@ -1289,7 +1352,7 @@ class MasterAO_Controller extends BaseController
 
             TransSO::where('id', $id)->update(['id_trans_ao' => $new_TransAO->id]);
 
-            Debitur::where('id', $check->id_calon_debitur)->update($cadebt);
+            Debitur::where('id', $check_so->id_calon_debitur)->update($cadebt);
 
             DB::connection('web')->commit();
 

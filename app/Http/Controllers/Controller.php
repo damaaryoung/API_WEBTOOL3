@@ -3,7 +3,8 @@
 namespace App\Http\Controllers;
 
 use Laravel\Lumen\Routing\Controller as BaseController;
-
+use Illuminate\Support\Facades\File;
+use Image;
 class Controller extends BaseController
 {
     public static function push_notif($fcm_token, $title, $msg)
@@ -228,5 +229,29 @@ class Controller extends BaseController
         }
 
         return $out;
+    }
+
+    public static function uploadImg($check, $file, $path, $name)
+    {;
+        // cut size image
+        $img = Image::make($file)->resize(320, 240);
+            
+        // Check Directory
+        if(!File::isDirectory($path)){
+            File::makeDirectory($path, 0777, true, true);
+        }
+            
+        // Delete File is Exists
+        if(!empty($check))
+        {
+            File::delete($check);
+        }
+
+        $fullPath = $path.'/'.$name.$file->getClientOriginalName();
+
+        // Save Image to Directory
+        $img->save($fullPath);
+        
+        return $fullPath;
     }
 }

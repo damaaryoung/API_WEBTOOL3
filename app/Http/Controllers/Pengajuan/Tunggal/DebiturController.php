@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Pengajuan\Tunggal;
 
 use Laravel\Lumen\Routing\Controller as BaseController;
-// use App\Http\Controllers\Controller as Helper;
+use App\Http\Controllers\Controller as Helper;
 
 // Form Request
 use App\Http\Requests\Pengajuan\DebiturRequest;
@@ -176,139 +176,83 @@ class DebiturController extends BaseController
             ], 404);
         }
 
-        $so = TransSO::where('id_calon_debitur', $id)->first();
+        $lamp_dir = 'public/' . $check->no_ktp;
 
-        if ($so == null) {
-            return response()->json([
-                'code'    => 404,
-                'status'  => 'not found',
-                'message' => 'Data Transaksi SO Kosong'
-            ], 404);
-        }
-
-        $lamp_dir = 'public/' . $so->debt['no_ktp'];
+        $check_lamp_ktp             = $check->lamp_ktp; 
+        $check_lamp_kk              = $check->lamp_kk;
+        $check_lamp_sertifikat      = $check->lamp_sertifikat;
+        $check_lamp_sttp_pbb        = $check->lamp_sttp_pbb;
+        $check_lamp_imb             = $check->lamp_imb;
+        $check_foto_agunan_rumah    = $check->foto_agunan_rumah;
+        $check_lamp_buku_tabungan   = $check->lamp_buku_tabungan;
+        $check_lamp_skk             = $check->lamp_skk;
+        $check_lamp_sku             = $check->lamp_sku;
+        $check_lamp_slip_gaji       = $check->lamp_slip_gaji;
+        $check_foto_pembukuan_usaha = $check->foto_pembukuan_usaha;
+        $check_lamp_foto_usaha      = $check->lamp_foto_usaha;
+        $check_lamp_surat_cerai     = $check->lamp_surat_cerai; 
+        $check_lamp_tempat_tinggal  = $check->lamp_tempat_tinggal;
 
         // Lampiran Debitur
-        if($req->file('lamp_ktp') != null){
-            $file = $req->file('lamp_ktp');
-
+        if($file = $req->file('lamp_ktp')){
             $path = $lamp_dir.'/debitur';
-            $name = 'ktp.'.$file->getClientOriginalName();
+            $name = 'ktp.';
 
-            $img = Image::make($file)->resize(320, 240);
-
-            if(!File::isDirectory($path)){
-                File::makeDirectory($path, 0777, true, true);
-            }
+            $check = $check_lamp_ktp;
             
-            if(!empty($check->lamp_ktp))
-            {
-                File::delete($check->lamp_ktp);
-            }
-            
-            $img->save($path.'/'.$name);
-
-            $ktpDebt = $path.'/'.$name;
+            $lamp_ktp = Helper::uploadImg($check, $file, $path, $name);
         }else{
-            $ktpDebt = $check->lamp_ktp;
+            $lamp_ktp = $check_lamp_ktp;
         }
-
-
-        if($req->file('lamp_kk') != null){
-            $file = $req->file('lamp_kk');
-
+        
+        if($file = $req->file('lamp_kk')){
             $path = $lamp_dir.'/debitur';
-            $name = 'kk.'.$file->getClientOriginalName();
+            $name = 'kk.';
             
-            $img = Image::make($file)->resize(320, 240);
+            $check = $check_lamp_kk;
             
-            if(!File::isDirectory($path)){
-                File::makeDirectory($path, 0777, true, true);
-            }
-            
-            if(!empty($check->lamp_kk))
-            {
-                File::delete($check->lamp_kk);
-            }
-            
-            $img->save($path.'/'.$name);
-
-            $kkDebt = $path.'/'.$name;
+            $lamp_kk = Helper::uploadImg($check, $file, $path, $name);
         }else{
-            $kkDebt = $check->lamp_kk;
+            $lamp_kk = $check_lamp_kk;
         }
 
         if($req->file('lamp_sertifikat') != null){
             $file = $req->file('lamp_sertifikat');
 
             $path = $lamp_dir.'/debitur';
-            $name = 'sertifikat.'.$file->getClientOriginalName();
+            $name = 'sertifikat.';
 
-            
-            $img = Image::make($file)->resize(320, 240);
-            
-            if(!File::isDirectory($path)){
-                File::makeDirectory($path, 0777, true, true);
-            }
-            
-            if(!empty($check->lamp_sertifikat))
-            {
-                File::delete($check->lamp_sertifikat);
-            }
-            
-            $img->save($path.'/'.$name);
+            $check = $check_lamp_sertifikat;
 
-            $sertifikatDebt = $path.'/'.$name;
+            $lamp_sertifikat = Helper::uploadImg($check, $file, $path, $name);
         }else{
-            $sertifikatDebt = $check->lamp_sertifikat;
+            $lamp_sertifikat = $check_lamp_sertifikat;
         }
 
         if($req->file('lamp_pbb') != null){
             $file = $req->file('lamp_pbb');
 
             $path = $lamp_dir.'/debitur';
-            $name = 'pbb.'.$file->getClientOriginalName();
+            $name = 'pbb.';
 
-            $img = Image::make($file)->resize(320, 240);
-            
-            if(!File::isDirectory($path)){
-                File::makeDirectory($path, 0777, true, true);
-            }            
-            
-            if(!empty($check->lamp_sttp_pbb))
-            {
-                File::delete($check->lamp_sttp_pbb);
-            }
-            
-            $img->save($path.'/'.$name);
+            $check = $check_lamp_sttp_pbb;
 
-            $pbbDebt = $path.'/'.$name;
+            $lamp_sttp_pbb = Helper::uploadImg($check, $file, $path, $name);
         }else{
-            $pbbDebt = $check->lamp_sttp_pbb;
+            $lamp_sttp_pbb = $check_lamp_sttp_pbb;
         }
 
         if($req->file('lamp_imb') != null){
             $file = $req->file('lamp_imb');
 
             $path = $lamp_dir.'/debitur';
-            $name = 'imb.'.$file->getClientOriginalName();
+            $name = 'imb.';
             
-            $img = Image::make($file)->resize(320, 240);
-            
-            if(!File::isDirectory($path)){
-                File::makeDirectory($path, 0777, true, true);
-            }
-            
-            if(!empty($check->lamp_imb))
-            {
-                File::delete($check->lamp_imb);
-            }
-            
-            $img->save($path.'/'.$name);
+            $check = $check_lamp_imb;
 
-            $imbDebt = $path.'/'.$name;
+            $lamp_imb = Helper::uploadImg($check, $file, $path, $name);
         }else{
-            $imbDebt = $check->lamp_imb;
+            $lamp_imb = $check_lamp_imb;
         }
 
         if(empty($req->input('nama_anak'))){
@@ -329,197 +273,128 @@ class DebiturController extends BaseController
             $file = $req->file('foto_agunan_rumah');
 
             $path = $lamp_dir.'/debitur';
-            $name = 'foto_agunan_rumah.'.$file->getClientOriginalName();
+            $name = 'foto_agunan_rumah.';
 
-            $img = Image::make($file)->resize(320, 240);
-            
-            if(!File::isDirectory($path)){
-                File::makeDirectory($path, 0777, true, true);
-            }
-            
-            if(!empty($check->foto_agunan_rumah))
-            {
-                File::delete($check->foto_agunan_rumah);
-            }
-            
-            $img->save($path.'/'.$name);
+            $check = $check_foto_agunan_rumah;
 
-            $foto_agunan_rumah = $path.'/'.$name;
+            $foto_agunan_rumah = Helper::uploadImg($check, $file, $path, $name);
         }else{
-            $foto_agunan_rumah = null;
+            $foto_agunan_rumah = $check_foto_agunan_rumah;
         }
 
         // New UIT 2
-        // Lampiran Untuk Debitur
-        if ($req->file('lamp_buku_tabungan') != null) {
+        // Lampiran Untuk Debitur - array
+        if ($files = $req->file('lamp_buku_tabungan')) {
 
-            $files = $req->file('lamp_buku_tabungan');
+            $path = $lamp_dir.'/lamp_buku_tabungan';
+            $name = 'lamp_buku_tabungan.';
 
-            $buku_tabungan = array();
+            $check = $check_lamp_buku_tabungan;
+
+            $arrayPath = array();
             foreach($files as $file){
-                $path = $lamp_dir.'/lamp_buku_tabungan';
-                $name = 'lamp_buku_tabungan.' . $file->getClientOriginalName();
-
-                $img = Image::make($file)->resize(320, 240);
-                
-                if(!File::isDirectory($path)){
-                    File::makeDirectory($path, 0777, true, true);
-                }
-                
-                $img->save($path.'/'.$name);
-
-                $buku_tabungan[] = $path.'/'.$name;
-
+                $arrayPath[] = Helper::uploadImg($check, $file, $path, $name);
             }
 
-            $lamp_buku_tabungan = implode(";",$buku_tabungan);
-
+            $lamp_buku_tabungan = implode(";", $arrayPath);
         }else{
-            $lamp_buku_tabungan = $check->lamp_buku_tabungan;
+            $lamp_buku_tabungan = $check_lamp_buku_tabungan;
         }
 
-        if($req->file('lamp_skk') != null){
-            $file = $req->file('lamp_skk');
-
+        if($file = $req->file('lamp_skk')){
             $path = $lamp_dir.'/debitur';
-            $name = 'lamp_skk.'.$file->getClientOriginalName();
+            $name = 'lamp_skk.';
 
-            $img = Image::make($file)->resize(320, 240);
-            
-            if(!File::isDirectory($path)){
-                File::makeDirectory($path, 0777, true, true);
-            }
+            $check = $check_lamp_skk;
 
-            if(!empty($check->lamp_skk))
-            {
-                File::delete($check->lamp_skk);
-            }
-            
-            $img->save($path.'/'.$name);
-
-            $lamp_skk = $path.'/'.$name;
+            $lamp_skk = Helper::uploadImg($check, $file, $path, $name);
         }else{
-            $lamp_skk = $check->lamp_skk;
+            $lamp_skk = $check_lamp_skk;
         }
 
-        if($req->file('lamp_sku') != null){
-            $files = $req->file('lamp_sku');
+        if($file = $req->file('lamp_sku')){
+            $path = $lamp_dir.'/debitur';
+            $name = 'lamp_sku.';
 
-            $sku = array();
-            foreach ($files as $file) {
-                $path = $lamp_dir.'/debitur';
-                $name = 'lamp_sku.'.$file->getClientOriginalName();
-
-                $img = Image::make($file)->resize(320, 240);
-                
-                if(!File::isDirectory($path)){
-                    File::makeDirectory($path, 0777, true, true);
-                }
-
-                $img->save($path.'/'.$name);
-
-                $sku[] = $path.'/'.$name;
+            $check = $check_lamp_sku;
+            $arrayPath = array();
+            foreach($files as $file){
+                $arrayPath[] = Helper::uploadImg($check, $file, $path, $name);
             }
 
-            $lamp_sku = implode(";",$sku);
+            $lamp_sku = implode(";", $arrayPath);
 
         }else{
-            $lamp_sku = $check->lamp_sku;
+            $lamp_sku = $check_lamp_sku;
         }
 
         if($req->file('lamp_slip_gaji') != null){
             $file = $req->file('lamp_slip_gaji');
 
             $path = $lamp_dir.'/debitur';
-            $name = 'lamp_slip_gaji.'.$file->getClientOriginalName(); //->getClientOriginalExtension();
+            $name = 'lamp_slip_gaji.'; //->getClientOriginalExtension();
 
-            $img = Image::make($file)->resize(320, 240);
-            
-            if(!File::isDirectory($path)){
-                File::makeDirectory($path, 0777, true, true);
-            }
+            $check = $check_lamp_slip_gaji;
 
-            if(!empty($check->lamp_slip_gaji))
-            {
-                File::delete($check->lamp_slip_gaji);
-            }
-            
-            $img->save($path.'/'.$name);
-
-            $lamp_slip_gaji = $path.'/'.$name;
+            $lamp_slip_gaji = Helper::uploadImg($check, $file, $path, $name);
 
         }else{
-            $lamp_slip_gaji = $check->lamp_slip_gaji;
+            $lamp_slip_gaji = $check_lamp_slip_gaji;
         }
 
 
-        if($req->file('foto_pembukuan_usaha') != null){
-            $files = $req->file('foto_pembukuan_usaha');
-
-            $pembukuan_usaha = array();
-            foreach ($files as $file) {
-                $path = $lamp_dir.'/debitur';
-                $name = 'foto_pembukuan_usaha.'.$file->getClientOriginalName();
-
-                $img = Image::make($file)->resize(320, 240);
-                
-                if(!File::isDirectory($path)){
-                    File::makeDirectory($path, 0777, true, true);
-                }
-
-                $img->save($path.'/'.$name);
-
-                $pembukuan_usaha[] = $path.'/'.$name;
+        if($file = $req->file('foto_pembukuan_usaha')){
+            $path = $lamp_dir.'/debitur';
+            $name = 'foto_pembukuan_usaha.';
+            
+            $check = $check_foto_pembukuan_usaha;
+            $arrayPath = array();
+            foreach($files as $file){
+                $arrayPath[] = Helper::uploadImg($check, $file, $path, $name);
             }
 
-            $foto_pembukuan_usaha = implode(";",$pembukuan_usaha);
-
+            $foto_pembukuan_usaha = implode(";", $arrayPath);
         }else{
-            $foto_pembukuan_usaha = $check->foto_pembukuan_usaha;
+            $foto_pembukuan_usaha = $check_foto_pembukuan_usaha;
         }
 
-        if($req->file('lamp_foto_usaha') != null){
-            $files = $req->file('lamp_foto_usaha');
+        if($file = $req->file('lamp_foto_usaha')){
+            $path = $lamp_dir.'/debitur';
+            $name = 'lamp_foto_usaha.';
 
-            $foto_usaha = array();
-            foreach ($files as $file) {
-                $path = $lamp_dir.'/debitur';
-                $name = 'lamp_foto_usaha.'.$file->getClientOriginalName();
-
-                $img = Image::make($file)->resize(320, 240);
-                
-                if(!File::isDirectory($path)){
-                    File::makeDirectory($path, 0777, true, true);
-                }
-
-                $img->save($path.'/'.$name);
-
-                $foto_usaha[] = $path.'/'.$name;
+            $check = $check_lamp_foto_usaha;
+            $arrayPath = array();
+            foreach($files as $file){
+                $arrayPath[] = Helper::uploadImg($check, $file, $path, $name);
             }
 
-            $lamp_foto_usaha = implode(";",$foto_usaha);
+            $lamp_foto_usaha = implode(";", $arrayPath);
 
         }else{
-            $lamp_foto_usaha = $check->lamp_foto_usaha;
+            $lamp_foto_usaha = $check_lamp_foto_usaha;
         }
 
         if ($file = $req->file('lamp_surat_cerai')) {
             $path = $lamp_dir.'/debitur';
-            $name = 'lamp_surat_cerai.' . $file->getClientOriginalName();
+            $name = 'lamp_surat_cerai.';
 
-            $img = Image::make($file)->resize(320, 240);
+            $check = $check_lamp_surat_cerai;
 
-            if(!File::isDirectory($path)){
-                File::makeDirectory($path, 0777, true, true);
-            }
-
-            $img->save($path.'/'.$name);
-
-            $lamp_surat_cerai = $path.'/'.$name;
+            $lamp_surat_cerai = Helper::uploadImg($check, $file, $path, $name);
         }else{
-            $lamp_surat_cerai = $check->lamp_surat_cerai;
+            $lamp_surat_cerai = $check_lamp_surat_cerai;
         }
 
+        if ($file = $req->file('lamp_tempat_tinggal')) {
+            $path = $lamp_dir.'/debitur';
+            $name = 'lamp_tempat_tinggal.';
+
+            $check = $check_lamp_tempat_tinggal;
+
+            $lamp_tempat_tinggal = Helper::uploadImg($check, $file, $path, $name);
+        }else{
+            $lamp_tempat_tinggal = $check_lamp_tempat_tinggal;
+        }
 
         // Data Debitur
         $dataDebitur = array(
@@ -577,13 +452,11 @@ class DebiturController extends BaseController
             'tgl_mulai_kerja'       => empty($req->input('tgl_mulai_kerja')) ? $check->tgl_mulai_kerja : Carbon::parse($req->input('tgl_mulai_kerja'))->format('Y-m-d'),
             'no_telp_tempat_kerja'  => empty($req->input('no_telp_tempat_kerja')) ? $check->no_telp_tempat_kerja : $req->input('no_telp_tempat_kerja'),
 
-            'lamp_ktp'              => $ktpDebt,
-            'lamp_kk'               => $kkDebt,
-            'lamp_sertifikat'       => $sertifikatDebt,
-            'lamp_sttp_pbb'         => $pbbDebt,
-            'lamp_imb'              => $imbDebt,
-
-            // New UIT 2
+            'lamp_ktp'              => $lamp_ktp,
+            'lamp_kk'               => $lamp_kk,
+            'lamp_sertifikat'       => $lamp_sertifikat,
+            'lamp_sttp_pbb'         => $lamp_sttp_pbb,
+            'lamp_imb'              => $lamp_imb,
             'lamp_buku_tabungan'    => $lamp_buku_tabungan,
             'lamp_skk'              => $lamp_skk,
             'lamp_sku'              => $lamp_sku,
@@ -591,8 +464,8 @@ class DebiturController extends BaseController
             'foto_pembukuan_usaha'  => $foto_pembukuan_usaha,
             'lamp_foto_usaha'       => $lamp_foto_usaha,
             'foto_agunan_rumah'     => $foto_agunan_rumah,
-
-            'lamp_surat_cerai'      => $lamp_surat_cerai
+            'lamp_surat_cerai'      => $lamp_surat_cerai,
+            'lamp_tempat_tinggal'   => $lamp_tempat_tinggal
         );
 
         DB::connection('web')->beginTransaction();
