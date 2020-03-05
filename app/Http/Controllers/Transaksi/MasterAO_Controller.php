@@ -757,16 +757,16 @@ class MasterAO_Controller extends BaseController
                         ? null : $agunan_bag_dapur[$i],
 
                     'lamp_imb'
-                        => empty($lamp_imb[$i])
-                        ? null : $lamp_imb[$i],
+                        => empty($lamp_imb_tan[$i])
+                        ? null : $lamp_imb_tan[$i],
 
                     'lamp_pbb'
-                        => empty($lamp_pbb[$i])
-                        ? null : $lamp_pbb[$i],
+                        => empty($lamp_pbb_tan[$i])
+                        ? null : $lamp_pbb_tan[$i],
 
                     'lamp_sertifikat'
-                        => empty($lamp_sertifikat[$i])
-                        ? null : $lamp_sertifikat[$i]
+                        => empty($lamp_sertifikat_tan[$i])
+                        ? null : $lamp_sertifikat_tan[$i]
                 ];
 
                 $pemAguTa[] = [
@@ -885,24 +885,24 @@ class MasterAO_Controller extends BaseController
                         ? null : $req->no_faktur_ken[$i],
 
                     'lamp_agunan_depan'
-                        => empty($agunanDepanKen[$i])
-                        ? null : $agunanDepanKen[$i],
+                        => empty($lamp_agunan_depan_ken[$i])
+                        ? null : $lamp_agunan_depan_ken[$i],
 
                     'lamp_agunan_kanan'
-                        => empty($agunanKananKen[$i])
-                        ? null : $agunanKananKen[$i],
+                        => empty($lamp_agunan_kanan_ken[$i])
+                        ? null : $lamp_agunan_kanan_ken[$i],
 
                     'lamp_agunan_kiri'
-                        => empty($agunanKiriKen[$i])
-                        ? null : $agunanKiriKen[$i],
+                        => empty($lamp_agunan_kiri_ken[$i])
+                        ? null : $lamp_agunan_kiri_ken[$i],
 
                     'lamp_agunan_belakang'
-                        => empty($agunanBelakangKen[$i])
-                        ? null : $agunanBelakangKen[$i],
+                        => empty($lamp_agunan_belakang_ken[$i])
+                        ? null : $lamp_agunan_belakang_ken[$i],
 
                     'lamp_agunan_dalam'
-                        => empty($agunanDalamKen[$i])
-                        ? null : $agunanDalamKen[$i]
+                        => empty($lamp_agunan_dalam_ken[$i])
+                        ? null : $lamp_agunan_dalam_ken[$i]
                 ];
 
                 $pemAguKe[] = [
@@ -1131,8 +1131,6 @@ class MasterAO_Controller extends BaseController
             $foto_agunan_rumah = $check_foto_agunan_rumah;
         }
 
-        // New UIT 2
-        // Lampiran Untuk Debitur - array
         if ($files = $req->file('lamp_buku_tabungan')) {
 
             $path = $lamp_dir.'/lamp_buku_tabungan';

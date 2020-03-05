@@ -332,7 +332,7 @@ class DebiturController extends BaseController
             $file = $req->file('lamp_slip_gaji');
 
             $path = $lamp_dir.'/debitur';
-            $name = 'lamp_slip_gaji.'; //->getClientOriginalExtension();
+            $name = 'lamp_slip_gaji.';
 
             $check = $check_lamp_slip_gaji;
 
