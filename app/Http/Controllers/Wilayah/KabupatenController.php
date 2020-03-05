@@ -114,7 +114,7 @@ class KabupatenController extends BaseController
                 'nama'           => $query->nama,
                 'id_provinsi'    => $query->id_provinsi,
                 'nama_provinsi'  => $query->prov['nama'],
-                'flg_aktif'      => $query->flg_aktif == 0 ? "false" : "true"
+                'flg_aktif'      => $query->flg_aktif
             ];
         }else{
             $query = Kabupaten::with('prov')->select('id', 'nama', 'id_provinsi', 'flg_aktif')->where('nama','like','%'.$IdOrName.'%')->get();
@@ -164,6 +164,7 @@ class KabupatenController extends BaseController
 
         $nama      = empty($req->input('nama')) ? $check->nama : $req->input('nama');
         $provinsi  = empty($req->input('id_provinsi')) ? $check->id_provinsi : $req->input('id_provinsi');
+        // $flg_aktif = empty($req->input('flg_aktif')) ? $check->flg_aktif : ($req->input('flg_aktif') == 'false' ? 0 : 1);
         $flg_aktif = empty($req->input('flg_aktif')) ? $check->flg_aktif : ($req->input('flg_aktif') == 'false' ? 0 : 1);
 
         if(!empty($provinsi) && !preg_match("/^[0-9]{1,}$/", $provinsi)){
@@ -185,7 +186,7 @@ class KabupatenController extends BaseController
         $query = array(
             'nama'        => $nama,
             'id_provinsi' => $provinsi,
-            'flg_aktif'   => $flg_aktif
+            'flg_aktif'   => (bool) $flg_aktif
         );
 
         try {
@@ -309,6 +310,82 @@ class KabupatenController extends BaseController
                 'status'  => 'success',
                 'count'   => $query->count(),
                 'data'    => $query
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                "code"    => 501,
+                "status"  => "error",
+                "message" => $e
+            ], 501);
+        }
+    }
+
+    public function search($param, $key, $value, $status, $orderVal, $orderBy, $limit)
+    {
+        $column = array('id', 'nama', 'id_provinsi');
+
+        if($param != 'filter' && $param != 'search'){
+            return response()->json([
+                'code'    => 412,
+                'status'  => 'not valid',
+                'message' => 'gunakan parameter yang valid diantara berikut: filter, search'
+            ], 412);
+        }
+
+        if (in_array($key, $column) == false)
+        {
+            return response()->json([
+                'code'    => 412,
+                'status'  => 'not valid',
+                'message' => 'gunakan key yang valid diantara berikut: '.implode(",", $column)
+            ], 412);
+        }
+
+        if (in_array($orderBy, $column) == false)
+        {
+            return response()->json([
+                'code'    => 412,
+                'status'  => 'not valid',
+                'message' => 'gunakan order by yang valid diantara berikut: '.implode(",", $column)
+            ], 412);
+        }
+
+        if($param == 'search'){
+            $operator   = "like";
+            $func_value = "%{$value}%";
+        }else{
+            $operator   = "=";
+            $func_value = "{$value}";
+        }
+
+        $query = Kabupaten::where('flg_aktif', $status)->orderBy($orderBy, $orderVal);
+
+        if($value == 'default'){
+            $res = $query;
+        }else{
+            $res = $query->where($key, $operator, $func_value);
+        }
+
+        if($limit == 'default'){
+            $result = $res;
+        }else{
+            $result = $res->limit($limit);
+        }
+
+        if ($result->get() == '[]') {
+            return response()->json([
+                'code'    => 404,
+                'status'  => 'not found',
+                'message' => 'Data tidak ditemukan'
+            ], 404);
+        }
+
+        try {
+            return response()->json([
+                'code'   => 200,
+                'status' => 'success',
+                'count'  => $query->count(),
+                'data'   => $query->get()
             ], 200);
         } catch (Exception $e) {
             return response()->json([

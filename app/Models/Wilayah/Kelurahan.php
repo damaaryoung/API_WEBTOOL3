@@ -27,6 +27,10 @@ class Kelurahan extends Model implements AuthenticatableContract, AuthorizableCo
        'nama', 'kode_pos', 'id_kecamatan', 'flg_aktif'
     ];
 
+    protected $casts = [
+        'flg_aktif' => 'boolean'
+    ];
+
     public $timestamps = false;
 
     public function kec(){

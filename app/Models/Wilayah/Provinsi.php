@@ -27,6 +27,10 @@ class Provinsi extends Model implements AuthenticatableContract, AuthorizableCon
        'nama', 'flg_aktif'
     ];
 
+    protected $casts = [
+        'flg_aktif' => 'boolean'
+    ];
+
     public $timestamps = false;
 
     public function kab(){

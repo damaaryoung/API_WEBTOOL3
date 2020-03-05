@@ -32,6 +32,10 @@ class Cabang extends Model implements AuthenticatableContract, AuthorizableContr
         'id_area', 'nama', 'id_provinsi', 'id_kabupaten', 'id_kecamatan', 'id_kelurahan', 'jenis_kantor', 'flg_aktif'
     ];
 
+    protected $casts = [
+        'flg_aktif' => 'boolean'
+    ];
+
     public function area(){
         return $this->belongsTo(Area::class, 'id_area')->select('id', 'nama')
             ->withDefault(function () {

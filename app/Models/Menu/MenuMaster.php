@@ -26,5 +26,9 @@ class MenuMaster extends Model implements AuthenticatableContract, AuthorizableC
        'nama', 'url', 'icon', 'flg_aktif'
     ];
 
+    protected $casts = [
+        'flg_aktif' => 'boolean'
+    ];
+
     public $timestamps = false;
 }

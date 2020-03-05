@@ -143,7 +143,7 @@ class KelurahanController extends BaseController
                 'id_kecamatan'   => $query->id_kecamatan,
                 'nama_kecamatan' => $query->kec['nama'],
                 'kode_pos'       => $query->kode_pos,
-                'flg_aktif'      => $query->flg_aktif == 0 ? "false" : "true"
+                'flg_aktif'      => $query->flg_aktif
             ];
         }else{
             $query = Kelurahan::with('kec')->select('id', 'nama', 'id_kecamatan', 'flg_aktif')->where('nama','like','%'.$IdOrName.'%')->get();
@@ -232,7 +232,7 @@ class KelurahanController extends BaseController
             'nama'         => $nama,
             'kode_pos'     => $kode_pos,
             'id_kecamatan' => $kecamatan,
-            'flg_aktif'    => $flg_aktif
+            'flg_aktif'    => (bool) $flg_aktif
         );
 
         try {
@@ -353,6 +353,82 @@ class KelurahanController extends BaseController
                 'status'  => 'success',
                 'count'   => $query->count(),
                 'data'    => $query
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                "code"    => 501,
+                "status"  => "error",
+                "message" => $e
+            ], 501);
+        }
+    }
+
+    public function search($param, $key, $value, $status, $orderVal, $orderBy, $limit)
+    {
+        $column = array('id', 'nama', 'kode_pos', 'id_kecamatan');
+
+        if($param != 'filter' && $param != 'search'){
+            return response()->json([
+                'code'    => 412,
+                'status'  => 'not valid',
+                'message' => 'gunakan parameter yang valid diantara berikut: filter, search'
+            ], 412);
+        }
+
+        if (in_array($key, $column) == false)
+        {
+            return response()->json([
+                'code'    => 412,
+                'status'  => 'not valid',
+                'message' => 'gunakan key yang valid diantara berikut: '.implode(",", $column)
+            ], 412);
+        }
+
+        if (in_array($orderBy, $column) == false)
+        {
+            return response()->json([
+                'code'    => 412,
+                'status'  => 'not valid',
+                'message' => 'gunakan order by yang valid diantara berikut: '.implode(",", $column)
+            ], 412);
+        }
+
+        if($param == 'search'){
+            $operator   = "like";
+            $func_value = "%{$value}%";
+        }else{
+            $operator   = "=";
+            $func_value = "{$value}";
+        }
+
+        $query = Kelurahan::where('flg_aktif', $status)->orderBy($orderBy, $orderVal);
+
+        if($value == 'default'){
+            $res = $query;
+        }else{
+            $res = $query->where($key, $operator, $func_value);
+        }
+
+        if($limit == 'default'){
+            $result = $res;
+        }else{
+            $result = $res->limit($limit);
+        }
+
+        if ($result->get() == '[]') {
+            return response()->json([
+                'code'    => 404,
+                'status'  => 'not found',
+                'message' => 'Data tidak ditemukan'
+            ], 404);
+        }
+
+        try {
+            return response()->json([
+                'code'   => 200,
+                'status' => 'success',
+                'count'  => $query->count(),
+                'data'   => $query->get()
             ], 200);
         } catch (Exception $e) {
             return response()->json([

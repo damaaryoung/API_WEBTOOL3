@@ -23,6 +23,10 @@ class MenuSub extends Model implements AuthenticatableContract, AuthorizableCont
        'id_menu_master', 'nama', 'url', 'flg_aktif'
     ];
 
+    protected $casts = [
+        'flg_aktif' => 'boolean'
+    ];
+
     public function menu_master()
     {
         return $this->belongsTo(MenuMaster::class, 'id_menu_master')->select(['id', 'nama'])

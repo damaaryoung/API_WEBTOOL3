@@ -21,20 +21,12 @@ class ProvinsiController extends BaseController
             ], 404);
         }
 
-        $data = array();
-        foreach ($query as $key => $val) {
-            $data[$key] = [
-                "id"   => $val->id,
-                "nama" => $val->nama
-            ];
-        }
-
         try {
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'count'  => sizeof($data),
-                'data'   => $data
+                'count'  => $query->count(),
+                'data'   => $query
             ], 200);
         } catch (Exception $e) {
             return response()->json([
@@ -91,7 +83,7 @@ class ProvinsiController extends BaseController
             $res = array(
                 "id"            => $query->id,
                 "nama_provinsi" => $query->nama,
-                "flg_aktif"     => $query->flg_aktif == 0 ? "false" : "true"
+                "flg_aktif"     => (bool) $query->flg_aktif
             );
         }else{
             $query = Provinsi::select('id','nama','flg_aktif')->where('nama','like','%'.$IdOrName.'%')->get();
@@ -210,20 +202,12 @@ class ProvinsiController extends BaseController
             ], 404);
         }
 
-        $res = array();
-        foreach ($query as $key => $val) {
-            $res[$key] = [
-                "id"   => $val->id,
-                "nama" => $val->nama
-            ];
-        }
-
         try {
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
                 'count'  => $query->count(),
-                'data'   => $res
+                'data'   => $query
             ], 200);
         } catch (Exception $e) {
             return response()->json([
@@ -243,6 +227,82 @@ class ProvinsiController extends BaseController
                 'code'    => 200,
                 'status'  => 'success',
                 'message' => 'data berhasil dikembalikan'
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                "code"    => 501,
+                "status"  => "error",
+                "message" => $e
+            ], 501);
+        }
+    }
+
+    public function search($param, $key, $value, $status, $orderVal, $orderBy, $limit)
+    {
+        $column = array('id', 'nama');
+
+        if($param != 'filter' && $param != 'search'){
+            return response()->json([
+                'code'    => 412,
+                'status'  => 'not valid',
+                'message' => 'gunakan parameter yang valid diantara berikut: filter, search'
+            ], 412);
+        }
+
+        if (in_array($key, $column) == false)
+        {
+            return response()->json([
+                'code'    => 412,
+                'status'  => 'not valid',
+                'message' => 'gunakan key yang valid diantara berikut: '.implode(",", $column)
+            ], 412);
+        }
+
+        if (in_array($orderBy, $column) == false)
+        {
+            return response()->json([
+                'code'    => 412,
+                'status'  => 'not valid',
+                'message' => 'gunakan order by yang valid diantara berikut: '.implode(",", $column)
+            ], 412);
+        }
+
+        if($param == 'search'){
+            $operator   = "like";
+            $func_value = "%{$value}%";
+        }else{
+            $operator   = "=";
+            $func_value = "{$value}";
+        }
+
+        $query = Provinsi::where('flg_aktif', $status)->orderBy($orderBy, $orderVal);
+
+        if($value == 'default'){
+            $res = $query;
+        }else{
+            $res = $query->where($key, $operator, $func_value);
+        }
+
+        if($limit == 'default'){
+            $result = $res;
+        }else{
+            $result = $res->limit($limit);
+        }
+
+        if ($result->get() == '[]') {
+            return response()->json([
+                'code'    => 404,
+                'status'  => 'not found',
+                'message' => 'Data tidak ditemukan'
+            ], 404);
+        }
+
+        try {
+            return response()->json([
+                'code'   => 200,
+                'status' => 'success',
+                'count'  => $query->count(),
+                'data'   => $query->get()
             ], 200);
         } catch (Exception $e) {
             return response()->json([

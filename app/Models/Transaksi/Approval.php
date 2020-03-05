@@ -36,6 +36,10 @@ class Approval extends Model implements AuthenticatableContract, AuthorizableCon
     ];
 
     protected $casts = [
+        'flg_aktif' => 'boolean'
+    ];
+
+    protected $casts = [
         'id'            => 'integer',
         'user_id'       => 'integer',
         'id_trans_so'   => 'integer',

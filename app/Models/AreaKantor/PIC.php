@@ -31,6 +31,10 @@ class PIC extends Model implements AuthenticatableContract, AuthorizableContract
         'user_id', 'id_area', 'id_cabang', 'id_mj_pic', 'nama', 'email', 'plafon_caa', 'flg_aktif'
     ];
 
+    protected $casts = [
+        'flg_aktif' => 'boolean'
+    ];
+
     public function user(){
         return $this->belongsTo(User::class, 'user_id')
             ->withDefault(function () {

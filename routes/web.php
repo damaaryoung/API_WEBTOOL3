@@ -40,6 +40,10 @@ $router->group(['prefix' => '/wilayah'], function () use ($router) {
             // Trash
             $router->get('/trash/check',        'ProvinsiController@trash');
             $router->get('/trash/restore/{id}', 'ProvinsiController@restore');
+
+            /** Search, Filter, Order By, Limit */
+            $router->get('/{param}/{key}={value}/status={status}/{orderVal}={orderBy}/limit={limit}', 
+            ['subject' => 'Search Provinsi', 'uses' => 'ProvinsiController@search']);
         });
 
         // Kabupaten
@@ -54,6 +58,10 @@ $router->group(['prefix' => '/wilayah'], function () use ($router) {
             //Trash
             $router->get('/trash/check',        'KabupatenController@trash');
             $router->get('/trash/restore/{id}', 'KabupatenController@restore');
+
+            /** Search, Filter, Order By, Limit */
+            $router->get('/{param}/{key}={value}/status={status}/{orderVal}={orderBy}/limit={limit}', 
+            ['subject' => 'Search Kabupaten', 'uses' => 'KabupatenController@search']);
         });
 
         // Kecamatan
@@ -68,6 +76,10 @@ $router->group(['prefix' => '/wilayah'], function () use ($router) {
             // Trash
             $router->get('/trash/check',        'KecamatanController@trash');
             $router->get('/trash/restore/{id}', 'KecamatanController@restore');
+
+            /** Search, Filter, Order By, Limit */
+            $router->get('/{param}/{key}={value}/status={status}/{orderVal}={orderBy}/limit={limit}', 
+            ['subject' => 'Search Kecamatan', 'uses' => 'KecamatanController@search']);
         });
 
         // Kelurahan
@@ -82,6 +94,10 @@ $router->group(['prefix' => '/wilayah'], function () use ($router) {
             // Trash
             $router->get('/trash/check',        'KelurahanController@trash');
             $router->get('/trash/restore/{id}', 'KelurahanController@restore');
+
+            /** Search, Filter, Order By, Limit */
+            $router->get('/{param}/{key}={value}/status={status}/{orderVal}={orderBy}/limit={limit}', 
+            ['subject' => 'Search Kelurahan', 'uses' => 'KelurahanController@search']);
         });
     });
 });

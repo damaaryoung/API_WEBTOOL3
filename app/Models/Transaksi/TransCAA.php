@@ -34,6 +34,10 @@ class TransCAA extends Model implements AuthenticatableContract, AuthorizableCon
         'nomor_caa', 'user_id', 'id_trans_so', 'id_pic', 'id_area', 'id_cabang', 'pic_team_caa', 'penyimpangan', 'file_report_mao', 'file_report_mca', 'status_file_agunan', 'file_agunan', 'status_file_usaha', 'file_usaha', 'file_tempat_tinggal', 'file_lain', 'rincian', 'status_caa', 'status_team_caa', 'flg_aktif'
     ];
 
+    protected $casts = [
+        'flg_aktif' => 'boolean'
+    ];
+
     public function so(){
         return $this->belongsTo(TransSO::class, 'id_trans_so')
             ->withDefault(function () {

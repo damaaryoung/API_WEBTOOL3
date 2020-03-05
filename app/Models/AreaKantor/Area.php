@@ -31,6 +31,10 @@ class Area extends Model implements AuthenticatableContract, AuthorizableContrac
         'nama', 'id_provinsi', 'id_kabupaten', 'flg_aktif'
     ];
 
+    protected $casts = [
+        'flg_aktif' => 'boolean'
+    ];
+
     public function prov(){
         return $this->belongsTo(Provinsi::class, 'id_provinsi')->select(['id', 'nama'])
             ->withDefault(function () {

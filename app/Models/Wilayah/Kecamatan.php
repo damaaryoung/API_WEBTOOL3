@@ -28,6 +28,10 @@ class Kecamatan extends Model implements AuthenticatableContract, AuthorizableCo
        'nama', 'id_kabupaten', 'flg_aktif'
     ];
 
+    protected $casts = [
+        'flg_aktif' => 'boolean'
+    ];
+
     public $timestamps = false;
 
     public function kab(){

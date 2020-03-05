@@ -36,6 +36,10 @@ class AreaPIC extends Model implements AuthenticatableContract, AuthorizableCont
         'id_area', 'id_cabang', 'nama_area_pic', 'id_provinsi', 'id_kabupaten', 'id_kecamatan', 'id_kelurahan', 'id_pic', 'flg_aktif'
     ];
 
+    protected $casts = [
+        'flg_aktif' => 'boolean'
+    ];
+
     public function area(){
         return $this->belongsTo(Area::class, 'id_area')->select(['id', 'nama'])
             ->withDefault(function () {

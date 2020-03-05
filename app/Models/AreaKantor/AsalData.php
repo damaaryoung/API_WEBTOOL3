@@ -26,5 +26,9 @@ class AsalData extends Model implements AuthenticatableContract, AuthorizableCon
         'nama', 'info', 'flg_aktif'
     ];
 
+    protected $casts = [
+        'flg_aktif' => 'boolean'
+    ];
+
     public $timestamps = false;
 }

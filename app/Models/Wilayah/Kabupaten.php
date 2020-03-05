@@ -28,6 +28,10 @@ class Kabupaten extends Model implements AuthenticatableContract, AuthorizableCo
        'nama', 'id_provinsi', 'flg_aktif'
     ];
 
+    protected $casts = [
+        'flg_aktif' => 'boolean'
+    ];
+
     public $timestamps = false;
 
     public function prov(){
