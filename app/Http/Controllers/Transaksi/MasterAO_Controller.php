@@ -108,7 +108,8 @@ class MasterAO_Controller extends BaseController
                 'ao'            => [
                     'status'  => $status_ao,
                     'catatan' => $val->ao['catatan_ao']
-                ]
+                ],
+                'tgl_transaksi' => Carbon::parse($val->created_at)->format("d-m-Y H:i:s")
             ];
         }
 
@@ -244,7 +245,8 @@ class MasterAO_Controller extends BaseController
             'lampiran'  => [
                 "ideb"      => explode(";", $val->lamp_ideb),
                 "pefindo"   => explode(";", $val->lamp_pefindo)
-            ]
+            ],
+            'tgl_transaksi' => Carbon::parse($val->created_at)->format("d-m-Y H:i:s")
         );
 
         try {
@@ -1506,7 +1508,8 @@ class MasterAO_Controller extends BaseController
                 'ao'            => [
                     'status'  => $status_ao,
                     'catatan' => $val->ao['catatan_ao']
-                ]
+                ],
+                'tgl_transaksi' => Carbon::parse($val->created_at)->format("d-m-Y H:i:s")
             ];
         }
 
@@ -1621,7 +1624,7 @@ class MasterAO_Controller extends BaseController
                     'status'  => $status_ao,
                     'catatan' => $val->ao['catatan_ao']
                 ],
-                'created_at'  => Carbon::parse($val->created_at)->format("D, d-M-Y")
+                'tgl_transaksi' => Carbon::parse($val->created_at)->format("d-m-Y H:i:s")
             ];
         }
 

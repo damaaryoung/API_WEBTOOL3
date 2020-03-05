@@ -84,7 +84,7 @@ class HMController extends BaseController
                 'das_note'       => $val->catatan_das,
                 'hm_status'      => $status_hm,
                 'hm_note'        => $val->catatan_hm,
-                // 'status_ao'      => $status_ao
+                'tgl_transaksi'  => Carbon::parse($val->created_at)->format("d-m-Y H:i:s")
             ];
         }
 
@@ -258,7 +258,8 @@ class HMController extends BaseController
             'lampiran'  => [
                 'ideb'    => explode(";", $val->lamp_ideb),
                 'pefindo' => explode(";", $val->lamp_pefindo)
-            ]
+            ],
+            'tgl_transaksi' => Carbon::parse($val->created_at)->format("d-m-Y H:i:s")
         ];
 
         try {
@@ -451,7 +452,8 @@ class HMController extends BaseController
                 'das_status'     => $status_das,
                 'das_note'       => $val->catatan_das,
                 'hm_status'      => $status_hm,
-                'hm_note'        => $val->catatan_hm
+                'hm_note'        => $val->catatan_hm,
+                'tgl_transaksi'  => Carbon::parse($val->created_at)->format("d-m-Y H:i:s")
             ];
         }
 

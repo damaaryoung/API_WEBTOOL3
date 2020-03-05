@@ -843,7 +843,8 @@ class MasterCAA_Controller extends BaseController
                 'kuantitatif_idir'              => $check_ca->ringkasan['kuantitatif_idir'],
                 'kuantitatif_hasil'             => $check_ca->ringkasan['kuantitatif_hasil']
             ],
-            'status_ca'  => $status_ca
+            'status_ca'     => $status_ca,
+            'tgl_transaksi' => Carbon::parse($val->created_at)->format("d-m-Y H:i:s")
         );
 
         try {
@@ -1164,8 +1165,9 @@ class MasterCAA_Controller extends BaseController
                 'file_tempat_tinggal' => $check_caa->file_tempat_tinggal,
                 'file_lain'           => empty($check_caa->file_lain) ? null : explode(";", $check_caa->file_lain)
             ],
-            'rincian'    => $check_caa->rincian,
-            'status_caa' => $status_caa
+            'rincian'       => $check_caa->rincian,
+            'status_caa'    => $status_caa,
+            'tgl_transaksi' => Carbon::parse($val->created_at)->format("d-m-Y H:i:s")
         );
 
         try {
@@ -1295,7 +1297,8 @@ class MasterCAA_Controller extends BaseController
                     'tenor'  => (int) $val->so['faspin']['tenor']
                 ],
                 'nama_debitur'   => $val->so['debt']['nama_lengkap'],
-                'status_ca'      => $status_ca
+                'status_ca'      => $status_ca,
+                'tgl_transaksi'  => Carbon::parse($val->created_at)->format("d-m-Y H:i:s")
             ];
         }
 

@@ -8,6 +8,7 @@ use App\Models\Pengajuan\SO\Penjamin;
 use App\Models\Transaksi\TransSO;
 use App\Models\AreaKantor\PIC;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class DASController extends BaseController
 {
@@ -64,7 +65,8 @@ class DASController extends BaseController
                 'plafon'          => (int) $val->faspin['plafon'],
                 'tenor'           => (int) $val->faspin['tenor'],
                 'status'          => $status,
-                'note'            => $val->catatan_das
+                'note'            => $val->catatan_das,
+                'tgl_transaksi'   => Carbon::parse($val->created_at)->format("d-m-Y H:i:s")
             ];
         }
 
@@ -221,7 +223,8 @@ class DASController extends BaseController
             'lampiran'  => [
                 'ideb'    => explode(";", $val->lamp_ideb),
                 'pefindo' => explode(";", $val->lamp_pefindo)
-            ]
+            ],
+            'tgl_transaksi' => Carbon::parse($val->created_at)->format("d-m-Y H:i:s")
         ];
 
         try {
@@ -478,7 +481,8 @@ class DASController extends BaseController
                 'plafon'          => $val->faspin['plafon'],
                 'tenor'           => $val->faspin['tenor'],
                 'status'          => $status,
-                'note'            => $val->catatan_das
+                'note'            => $val->catatan_das,
+                'tgl_transaksi'   => Carbon::parse($val->created_at)->format("d-m-Y H:i:s")
             ];
         }
 
