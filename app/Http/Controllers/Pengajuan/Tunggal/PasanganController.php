@@ -96,9 +96,9 @@ class PasanganController extends BaseController
     }
 
     public function update($id, PasanganRequest $req){
-        $check = Pasangan::where('id', $id)->first();
+        $check_pas = Pasangan::where('id', $id)->first();
 
-        if ($check == null) {
+        if ($check_pas == null) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
@@ -106,7 +106,7 @@ class PasanganController extends BaseController
             ], 404);
         }
 
-        $so = TransSO::where('id_pasangan', $check->id)->first();
+        $so = TransSO::where('id_pasangan', $id)->first();
 
         if ($so == null) {
             return response()->json([
@@ -116,66 +116,65 @@ class PasanganController extends BaseController
             ], 404);
         }
 
-        $lamp_dir = 'public/' . $so->debt['no_ktp'];
+        
+        /** Check Lampiran */
+        $check_lamp_ktp_pas        = $check_pas->lamp_ktp;
+        $check_lamp_buku_nikah_pas = $check_pas->lamp_buku_nikah;
+        /** */
+        $path  = 'public/' . $so->debt['no_ktp'] . '/penjamin';
 
         // Lampiran Pasangan
         if($file = $req->file('lamp_ktp_pas')){
-            $path = $lamp_dir.'/pasangan';
-            $name = 'ktp.' . $file->getClientOriginalName();
-
-            $img = Image::make($file)->resize(320, 240);
+            $name = 'ktp.';
+            $check = $check_lamp_ktp_pas;
             
-            if(!File::isDirectory($path)){
-                File::makeDirectory($path, 0777, true, true);
-            }
-            
-            if(!empty($check->lamp_ktp))
-            {
-                File::delete($check->lamp_ktp);
-            }
-                
-            $img->save($path.'/'.$name);
-
-            $ktpPass = $path.'/'.$name;
+            $ktpPass = Helper::uploadImg($check, $file, $path, $name);
         }else{
-            $ktpPass = $check->lamp_ktp;
+            $ktpPass = $check_lamp_ktp_pas;
         }
 
         if($file = $req->file('lamp_buku_nikah_pas')){
-            $path = $lamp_dir.'/pasangan';
-            $name = 'buku_nikah.' . $file->getClientOriginalName();
+            $name = 'buku_nikah.';
+            $check = $check_lamp_buku_nikah_pas;
             
-            $img = Image::make($file)->resize(320, 240);
-            
-            if(!File::isDirectory($path)){
-                File::makeDirectory($path, 0777, true, true);
-            }
-            
-            if(!empty($check->lamp_buku_nikah))
-            {
-                File::delete($check->lamp_buku_nikah);
-            }
-                
-            $img->save($path.'/'.$name);
-
-            $bukuNikahPass = $path.'/'.$name;
+            $bukuNikahPass = Helper::uploadImg($check, $file, $path, $name);
         }else{
-            $bukuNikahPass = $check->lamp_buku_nikah;
+            $bukuNikahPass = $check_lamp_buku_nikah_pas;
         }
 
         // Data Usaha Calon Debitur
         // Pasangan Lama
         $dataPasangan = array(
-            'nama_lengkap'     => empty($req->input('nama_lengkap_pas')) ? $check->nama_lengkap : $req->input('nama_lengkap_pas'),
-            'nama_ibu_kandung' => empty($req->input('nama_ibu_kandung_pas')) ? $check->nama_ibu_kandung : $req->input('nama_ibu_kandung_pas'),
-            'jenis_kelamin'    => empty($req->input('jenis_kelamin_pas')) ? strtoupper($check->jenis_kelamin) : strtoupper($req->input('jenis_kelamin_pas')),
-            'no_ktp'           => empty($req->input('no_ktp_pas')) ? $check->no_ktp : $req->input('no_ktp_pas'),
-            'no_ktp_kk'        => empty($req->input('no_ktp_kk_pas')) ? $check->no_ktp_kk : $req->input('no_ktp_kk_pas'),
-            'no_npwp'          => empty($req->input('no_npwp_pas')) ? $check->no_npwp : $req->input('no_npwp_pas'),
-            'tempat_lahir'     => empty($req->input('tempat_lahir_pas')) ? $check->tempat_lahir : $req->input('tempat_lahir_pas'),
-            'tgl_lahir'        => empty($req->input('tgl_lahir_pas')) ? $check->tgl_lahir : Carbon::parse($req->input('tgl_lahir_pas'))->format('Y-m-d'),
-            'alamat_ktp'       => empty($req->input('alamat_ktp_pas')) ? $check->alamat_ktp : $req->input('alamat_ktp_pas'),
-            'no_telp'          => empty($req->input('no_telp_pas')) ? $check->no_telp : $req->input('no_telp_pas'),
+            'nama_lengkap'     => empty($req->input('nama_lengkap_pas')) 
+                ? $check_pas->nama_lengkap : $req->input('nama_lengkap_pas'),
+
+            'nama_ibu_kandung' => empty($req->input('nama_ibu_kandung_pas')) 
+                ? $check_pas->nama_ibu_kandung : $req->input('nama_ibu_kandung_pas'),
+
+            'jenis_kelamin'    => empty($req->input('jenis_kelamin_pas')) 
+                ? strtoupper($check_pas->jenis_kelamin) : strtoupper($req->input('jenis_kelamin_pas')),
+
+            'no_ktp'           => empty($req->input('no_ktp_pas')) 
+                ? $check_pas->no_ktp : $req->input('no_ktp_pas'),
+
+            'no_ktp_kk'        => empty($req->input('no_ktp_kk_pas')) 
+                ? $check_pas->no_ktp_kk : $req->input('no_ktp_kk_pas'),
+
+            'no_npwp'          => empty($req->input('no_npwp_pas')) 
+                ? $check_pas->no_npwp : $req->input('no_npwp_pas'),
+
+            'tempat_lahir'     => empty($req->input('tempat_lahir_pas')) 
+                ? $check_pas->tempat_lahir : $req->input('tempat_lahir_pas'),
+
+            'tgl_lahir'        => empty($req->input('tgl_lahir_pas')) 
+                ? $check_pas->tgl_lahir : Carbon::parse($req->input('tgl_lahir_pas'))->format('Y-m-d'),
+
+            'alamat_ktp'       => empty($req->input('alamat_ktp_pas')) 
+                ? $check_pas->alamat_ktp : $req->input('alamat_ktp_pas'),
+
+            'no_telp'          => empty($req->input('no_telp_pas')) 
+                ? $check_pas->no_telp : $req->input('no_telp_pas'),
+                
             'lamp_ktp'         => $ktpPass,
             'lamp_buku_nikah'  => $bukuNikahPass,
 

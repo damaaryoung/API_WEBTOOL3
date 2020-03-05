@@ -86,7 +86,7 @@ class KendaraanController extends BaseController
             ], 404);
         }
 
-        $ao = TransAO::where('id_agunan_kendaraan', 'like', '%'.$id.'%')->first();
+        $ao = TransAO::where('id_agunan_tanah', $id)->first();
 
         if ($ao == null) {
             return response()->json([
@@ -106,135 +106,60 @@ class KendaraanController extends BaseController
             ], 404);
         }
 
-        if (!empty($check->lamp_agunan_depan)) {
-            $lamp_path = $check->lamp_agunan_depan;
-        }elseif (!empty($check->lamp_agunan_kanan)) {
-            $lamp_path = $check->lamp_agunan_kanan;
-        }elseif (!empty($check->lamp_agunan_kiri)) {
-            $lamp_path = $check->lamp_agunan_kiri;
-        }elseif (!empty($check->lamp_agunan_belakang)) {
-            $lamp_path = $check->lamp_agunan_belakang;
-        }elseif (!empty($check->lamp_agunan_dalam)) {
-            $lamp_path = $check->lamp_agunan_dalam;
-        }else{
-            $lamp_path = 'public/lamp_trans.2-AO-1-2020-13/agunan_kendaraan/agunan_depan.1.png';
-        }
+        /** Check Lampiran */
+        $check_lamp_agunan_depan    = $check_tan->lamp_agunan_depan;
+        $check_lamp_agunan_kanan    = $check_tan->lamp_agunan_kanan;
+        $check_lamp_agunan_kiri     = $check_tan->lamp_agunan_kiri;
+        $check_lamp_agunan_belakang = $check_tan->lamp_agunan_belakang;
+        $check_lamp_agunan_dalam    = $check_tan->lamp_agunan_dalam;
+        /** */
 
-        $ktp_debt = $so->debt['no_ktp'];
-
-        $arrPath = explode("/", $lamp_path, 4);
-
-        $path = $arrPath[0].'/'.$ktp_debt.'/'.$arrPath[2];
+        $path = 'public/' . $so->debt['no_ktp'] . '/agunan_kendaraan';
 
         if($file = $req->file('lamp_agunan_depan_ken')){
+            $check_file = $check_lamp_agunan_depan;
+            $name       = 'agunan_depan.';
 
-            $name = 'agunan_depan.' . $file->getClientOriginalName();
-            
-            $img = Image::make($file)->resize(320, 240);
-            
-            if(!File::isDirectory($path)){
-                File::makeDirectory($path, 0777, true, true);
-            }
-            
-            if(!empty($check->lamp_agunan_depan))
-            {
-                File::delete($check->lamp_agunan_depan);
-            }
-                
-            $img->save($path.'/'.$name);
-
-            $agunanDepan = $path.'/'.$name;
+            $lamp_agunan_depan =  Helper::uploadImg($check_file, $file, $path, $name);
         }else{
-            $agunanDepan = $check->lamp_agunan_depan;
+            $lamp_agunan_depan = $check_lamp_agunan_depan;
         }
 
         if($file = $req->file('lamp_agunan_kanan_ken')){
+            $check_file = $check_lamp_agunan_kanan;
+            $name       = 'agunan_kanan.';
 
-            $name = 'agunan_kanan.' . $file->getClientOriginalName();
-            
-            $img = Image::make($file)->resize(320, 240);
-            
-            if(!File::isDirectory($path)){
-                File::makeDirectory($path, 0777, true, true);
-            }
-            
-            if(!empty($check->lamp_agunan_kanan))
-            {
-                File::delete($check->lamp_agunan_kanan);
-            }
-                
-            $img->save($path.'/'.$name);
-
-            $agunanKanan = $path.'/'.$name;
+            $lamp_agunan_kanan = Helper::uploadImg($check_file, $file, $path, $name);
         }else{
-            $agunanKanan = $check->lamp_agunan_kanan;
+            $lamp_agunan_kanan = $check_lamp_agunan_kanan;
         }
 
         if($file = $req->file('lamp_agunan_kiri_ken')){
-
-            $name = 'agunan_kiri.' . $file->getClientOriginalName();
-            
-            $img = Image::make($file)->resize(320, 240);
-            
-            if(!File::isDirectory($path)){
-                File::makeDirectory($path, 0777, true, true);
-            }
-            
-            if(!empty($check->lamp_agunan_kiri))
-            {
-                File::delete($check->lamp_agunan_kiri);
-            }
-                
-            $img->save($path.'/'.$name);
-
-            $agunanKiri = $path.'/'.$name;
+            $check_file = $check_lamp_agunan_kiri;
+            $name       = 'agunan_kiri.';
+           
+            $lamp_agunan_kiri = Helper::uploadImg($check_file, $file, $path, $name);
         }else{
-            $agunanKiri = $check->lamp_agunan_kiri;
+            $lamp_agunan_kiri = $check_lamp_agunan_kiri;
         }
 
 
         if($file = $req->file('lamp_agunan_belakang_ken')){
+            $check_file = $check_lamp_agunan_belakang;
+            $name       = 'agunan_belakang.';
 
-            $name = 'agunan_belakang.' . $file->getClientOriginalName();
-            
-            $img = Image::make($file)->resize(320, 240);
-            
-            if(!File::isDirectory($path)){
-                File::makeDirectory($path, 0777, true, true);
-            }
-            
-            if(!empty($check->lamp_agunan_belakang))
-            {
-                File::delete($check->lamp_agunan_belakang);
-            }
-                
-            $img->save($path.'/'.$name);
-
-            $agunanBelakang = $path.'/'.$name;
+            $lamp_agunan_belakang = Helper::uploadImg($check_file, $file, $path, $name);
         }else{
-            $agunanBelakang = $check->lamp_agunan_belakang;
+            $lamp_agunan_belakang = $check_lamp_agunan_belakang;
         }
 
         if($file = $req->file('lamp_agunan_dalam_ken')){
+            $check_file = $check_lamp_agunan_dalam;
+            $name = 'agunan_dalam.';
 
-            $name = 'agunan_dalam.' . $file->getClientOriginalName();
-            
-            $img = Image::make($file)->resize(320, 240);
-            
-            if(!File::isDirectory($path)){
-                File::makeDirectory($path, 0777, true, true);
-            }
-            
-            if(!empty($check->lamp_agunan_dalam))
-            {
-                File::delete($check->lamp_agunan_dalam);
-            }
-                
-            $img->save($path.'/'.$name);
-
-            $agunanDalam = $path.'/'.$name;
+            $lamp_agunan_dalam = Helper::uploadImg($check_file, $file, $path, $name);
         }else{
-            $agunanDalam = $check->lamp_agunan_dalam;
+            $lamp_agunan_dalam = $check_lamp_agunan_dalam;
         }
 
         $dataAgunanKendaraan = array(
@@ -252,11 +177,11 @@ class KendaraanController extends BaseController
             'tgl_kadaluarsa_pajak'  => empty($req->input('tgl_exp_pajak_ken')) ? $check->tgl_kadaluarsa_pajak : Carbon::parse($req->input('tgl_exp_pajak_ken'))->format('Y-m-d'),
             'tgl_kadaluarsa_stnk'   => empty($req->input('tgl_exp_stnk_ken')) ? $check->tgl_kadaluarsa_stnk : Carbon::parse($req->input('tgl_exp_stnk_ken'))->format('Y-m-d'),
             'no_faktur'             => empty($req->input('no_faktur_ken')) ? $check->no_faktur : $req->input('no_faktur_ken'),
-            'lamp_agunan_depan'     => $agunanDepan,
-            'lamp_agunan_kanan'     => $agunanKanan,
-            'lamp_agunan_kiri'      => $agunanKiri,
-            'lamp_agunan_belakang'  => $agunanBelakang,
-            'lamp_agunan_dalam'     => $agunanDalam,
+            'lamp_agunan_depan'     => $lamp_agunan_depan,
+            'lamp_agunan_kanan'     => $lamp_agunan_kanan,
+            'lamp_agunan_kiri'      => $lamp_agunan_kiri,
+            'lamp_agunan_belakang'  => $lamp_agunan_belakang,
+            'lamp_agunan_dalam'     => $lamp_agunan_dalam
         );
 
         DB::connection('web')->beginTransaction();

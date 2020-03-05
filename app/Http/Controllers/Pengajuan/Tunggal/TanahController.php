@@ -100,9 +100,9 @@ class TanahController extends BaseController
     }
 
     public function update($id, A_TanahRequest $req){
-        $check = AgunanTanah::where('id', $id)->first();
+        $check_tan = AgunanTanah::where('id', $id)->first();
 
-        if ($check == null) {
+        if ($check_tan == null) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
@@ -110,7 +110,7 @@ class TanahController extends BaseController
             ], 404);
         }
 
-        $ao = TransAO::where('id_agunan_tanah', 'like', '%'.$id.'%')->first();
+        $ao = TransAO::where('id_agunan_tanah', $id)->first();
 
         if ($ao == null) {
             return response()->json([
@@ -130,232 +130,151 @@ class TanahController extends BaseController
             ], 404);
         }
 
-        if (!empty($check->agunan_bag_depan)) {
-            $lamp_path = $check->agunan_bag_depan;
-        }elseif (!empty($check->agunan_bag_jalan)) {
-            $lamp_path = $check->agunan_bag_jalan;
-        }elseif (!empty($check->agunan_bag_ruangtamu)) {
-            $lamp_path = $check->agunan_bag_ruangtamu;
-        }elseif (!empty($check->agunan_bag_kamarmandi)) {
-            $lamp_path = $check->agunan_bag_kamarmandi;
-        }elseif (!empty($check->agunan_bag_dapur)) {
-            $lamp_path = $check->agunan_bag_dapur;
-        }else{
-            $lamp_path = 'public/lamp_trans.2-AO-1-2020-13/agunan_tanah/agunan_bag_depan.1.png';
-        }
+        /** Check Lampiran */
+        $check_agunan_bag_depan     = $check_tan->agunan_bag_depan;
+        $check_agunan_bag_jalan     = $check_tan->agunan_bag_jalan;
+        $check_agunan_bag_ruangtamu = $check_tan->agunan_bag_ruangtamu;
+        $check_agunan_bag_kamarmandi= $check_tan->agunan_bag_kamarmandi;
+        $check_agunan_bag_dapur     = $check_tan->agunan_bag_dapur;
+        $check_lamp_sertifikat      = $check_tan->lamp_sertifikat;
+        $check_lamp_imb             = $check_tan->lamp_imb;
+        $check_lamp_pbb             = $check_tan->lamp_pbb;
+        /** */
 
-        $ktp_debt = $so->debt['no_ktp'];
-
-        $arrPath = explode("/", $lamp_path, 4);
-
-        $path = $arrPath[0].'/'.$ktp_debt.'/'.$arrPath[2];
+        $path = 'public/' . $so->debt['no_ktp'] . '/agunan_tanah';
 
         if($file = $req->file('agunan_bag_depan')){
-
-            $name = 'bag_depan.' . $file->getClientOriginalName();
-
-            $img = Image::make($file)->resize(320, 240);
+            $name = 'bag_depan.';
+            $check = $check_agunan_bag_depan;
             
-            if(!File::isDirectory($path)){
-                File::makeDirectory($path, 0777, true, true);
-            }
-            
-            if(!empty($check->agunan_bag_depan))
-            {
-                File::delete($check->agunan_bag_depan);
-            }
-                
-            $img->save($path.'/'.$name);
-
-            $agunan_bag_depan = $path.'/'.$name;
+            $agunan_bag_depan = Helper::uploadImg($check, $file, $path, $name);
         }else{
-            $agunan_bag_depan = $check->agunan_bag_depan;
+            $agunan_bag_depan = $check_agunan_bag_depan;
         }
 
         if($file = $req->file('agunan_bag_jalan')){
+            $check = $check_agunan_bag_jalan;
+            $name  = 'bag_jalan.';
 
-            $name = 'bag_jalan.' . $file->getClientOriginalName();
-
-            $img = Image::make($file)->resize(320, 240);
-            
-            if(!File::isDirectory($path)){
-                File::makeDirectory($path, 0777, true, true);
-            }
-            
-            if(!empty($check->agunan_bag_jalan))
-            {
-                File::delete($check->agunan_bag_jalan);
-            }
-                
-            $img->save($path.'/'.$name);
-
-            $agunan_bag_jalan = $path.'/'.$name;
+            $agunan_bag_jalan = Helper::uploadImg($check, $file, $path, $name);
         }else{
-            $agunan_bag_jalan = $check->agunan_bag_jalan;
+            $agunan_bag_jalan = $check_agunan_bag_jalan;
         }
 
         if($file = $req->file('agunan_bag_ruangtamu')){
+            $check = $check_agunan_bag_ruangtamu;
+            $name = 'bag_ruangtamu.';
 
-            $name = 'bag_ruangtamu.' . $file->getClientOriginalName();
-
-            $img = Image::make($file)->resize(320, 240);
-            
-            if(!File::isDirectory($path)){
-                File::makeDirectory($path, 0777, true, true);
-            }
-            
-            if(!empty($check->agunan_bag_ruangtamu))
-            {
-                File::delete($check->agunan_bag_ruangtamu);
-            }
-                
-            $img->save($path.'/'.$name);
-
-            $agunan_bag_ruangtamu = $path.'/'.$name;
+            $agunan_bag_ruangtamu = Helper::uploadImg($check, $file, $path, $name);
         }else{
-            $agunan_bag_ruangtamu = $check->agunan_bag_ruangtamu;
+            $agunan_bag_ruangtamu = $check_agunan_bag_ruangtamu;
         }
 
 
         if($file = $req->file('agunan_bag_kamarmandi')){
+            $check = $check_agunan_bag_kamarmandi;
+            $name = 'bag_kamarmandi.';
 
-            $name = 'bag_kamarmandi.' . $file->getClientOriginalName();
-
-            $img = Image::make($file)->resize(320, 240);
-            
-            if(!File::isDirectory($path)){
-                File::makeDirectory($path, 0777, true, true);
-            }
-            
-            if(!empty($check->agunan_bag_kamarmandi))
-            {
-                File::delete($check->agunan_bag_kamarmandi);
-            }
-                
-            $img->save($path.'/'.$name);
-
-            $agunan_bag_kamarmandi = $path.'/'.$name;
+            $agunan_bag_kamarmandi = Helper::uploadImg($check, $file, $path, $name);
         }else{
-            $agunan_bag_kamarmandi = $check->agunan_bag_kamarmandi;
+            $agunan_bag_kamarmandi = $check_agunan_bag_kamarmandi;
         }
 
         if($file = $req->file('agunan_bag_dapur')){
+            $check = $check_agunan_bag_dapur;
+            $name = 'bag_dapur.';
 
-            $name = 'bag_dapur.' . $file->getClientOriginalName();
-
-            $img = Image::make($file)->resize(320, 240);
-            
-            if(!File::isDirectory($path)){
-                File::makeDirectory($path, 0777, true, true);
-            }
-            
-            if(!empty($check->agunan_bag_dapur))
-            {
-                File::delete($check->agunan_bag_dapur);
-            }
-                
-            $img->save($path.'/'.$name);
-
-            $agunan_bag_dapur = $path.'/'.$name;
+            $agunan_bag_dapur = Helper::uploadImg($check, $file, $path, $name);
         }else{
-            $agunan_bag_dapur = $check->agunan_bag_dapur;
+            $agunan_bag_dapur = $check_agunan_bag_dapur;
+        }
+
+        if ($file = $req->file('lamp_sertifikat')) {
+            $check = $check_lamp_sertifikat;
+            $name = 'lamp_sertifikat.';
+
+            $lamp_sertifikat = Helper::uploadImg($check, $file, $path, $name);
+        }else {
+            $lamp_sertifikat = $check_lamp_sertifikat;
         }
 
         // Tambahan Agunan Tanah
         if ($file = $req->file('lamp_imb')) {
+            $check = $check_lamp_imb;
+            $name = 'lamp_imb.';
 
-            $name = 'lamp_imb.' . $file->getClientOriginalName();
-
-            $img = Image::make($file)->resize(320, 240);
-            
-            if(!File::isDirectory($path)){
-                File::makeDirectory($path, 0777, true, true);
-            }
-            
-            if(!empty($check->lamp_imb))
-            {
-                File::delete($check->lamp_imb);
-            }
-                
-            $img->save($path.'/'.$name);
-
-            $lamp_imb = $path.'/'.$name;
+            $lamp_imb = Helper::uploadImg($check, $file, $path, $name);
         }else{
-            $lamp_imb = $check->lamp_imb;
+            $lamp_imb = $check_lamp_imb;
         }
 
         if ($file = $req->file('lamp_pbb')) {
+            $check = $check_lamp_pbb;
+            $name = 'lamp_pbb.';
 
-            $name = 'lamp_pbb.' . $file->getClientOriginalName();
-
-            $img = Image::make($file)->resize(320, 240);
-            
-            if(!File::isDirectory($path)){
-                File::makeDirectory($path, 0777, true, true);
-            }
-            
-            if(!empty($check->lamp_pbb))
-            {
-                File::delete($check->lamp_pbb);
-            }
-            
-            $img->save($path.'/'.$name);
-
-            $lamp_pbb = $path.'/'.$name;
+            $lamp_pbb = Helper::uploadImg($check, $file, $path, $name);
         }else {
-            $lamp_pbb = $check->lamp_pbb;
-        }
-
-        if ($file = $req->file('lamp_sertifikat')) {
-
-            $name = 'lamp_sertifikat.' . $file->getClientOriginalName();
-
-            $img = Image::make($file)->resize(320, 240);
-            
-            if(!File::isDirectory($path)){
-                File::makeDirectory($path, 0777, true, true);
-            }
-            
-            if(!empty($check->lamp_sertifikat))
-            {
-                File::delete($check->lamp_sertifikat);
-            }
-                
-            $img->save($path.'/'.$name);
-
-            $lamp_sertifikat = $path.'/'.$name;
-        }else {
-            $lamp_sertifikat = $check->lamp_sertifikat;
+            $lamp_pbb = $check_lamp_pbb;
         }
 
         // AgunanTanah
         $dataAgunanTanah = array(
-            'tipe_lokasi'             => empty($req->input('tipe_lokasi_agunan')) ? $check->tipe_lokasi : strtoupper($req->input('tipe_lokasi_agunan')),
-            'alamat'                  => empty($req->input('alamat_agunan')) ? $check->alamat : $req->input('alamat_agunan'),
-            'id_provinsi'             => empty($req->input('id_prov_agunan')) ? $check->id_provinsi : $req->input('id_prov_agunan'),
-            'id_kabupaten'            => empty($req->input('id_kab_agunan')) ? $check->id_kabupaten : $req->input('id_kab_agunan'),
-            'id_kecamatan'            => empty($req->input('id_kec_agunan')) ? $check->id_kecamatan : $req->input('id_kec_agunan'),
-            'id_kelurahan'            => empty($req->input('id_kel_agunan')) ? $check->id_kelurahan : $req->input('id_kel_agunan'),
-            'rt'                      => empty($req->input('rt_agunan')) ? $check->rt : $req->input('rt_agunan'),
-            'rw'                      => empty($req->input('rw_agunan')) ? $check->rw : $req->input('rw_agunan'),
-            'luas_tanah'              => empty($req->input('luas_tanah')) ? $check->luas_tanah : $req->input('luas_tanah'),
-            'luas_bangunan'           => empty($req->input('luas_bangunan')) ? $check->luas_bangunan : $req->input('luas_bangunan'),
-            'nama_pemilik_sertifikat' => empty($req->input('nama_pemilik_sertifikat')) ? $check->nama_pemilik_sertifikat : $req->input('nama_pemilik_sertifikat'),
-            'jenis_sertifikat'        => empty($req->input('jenis_sertifikat')) ? $check->jenis_sertifikat : strtoupper($req->input('jenis_sertifikat')),
-            'no_sertifikat'           => empty($req->input('no_sertifikat')) ? $check->no_sertifikat : $req->input('no_sertifikat'),
-            'tgl_ukur_sertifikat'     => empty($req->input('tgl_ukur_sertifikat')) ? $check->tgl_ukur_sertifikat : $req->input('tgl_ukur_sertifikat'),
-            'tgl_berlaku_shgb'        => empty($req->input('tgl_berlaku_shgb')) ? $check->tgl_berlaku_shgb : Carbon::parse($req->input('tgl_berlaku_shgb'))->format('Y-m-d'),
-            'no_imb'                  => empty($req->input('no_imb')) ? $check->no_imb : $req->input('no_imb'),
-            'njop'                    => empty($req->input('njop')) ? $check->njop : $req->input('njop'),
-            'nop'                     => empty($req->input('nop')) ? $check->nop : $req->input('nop'),
-            'agunan_bag_depan'        => empty($agunan_bag_depan) ? $check->agunan_bag_depan : $agunan_bag_depan,
-            'agunan_bag_jalan'        => empty($agunan_bag_jalan) ? $check->agunan_bag_jalan : $agunan_bag_jalan,
-            'agunan_bag_ruangtamu'    => empty($agunan_bag_ruangtamu) ? $check->agunan_bag_ruangtamu : $agunan_bag_ruangtamu,
-            'agunan_bag_kamarmandi'   => empty($agunan_bag_kamarmandi) ? $check->agunan_bag_kamarmandi : $agunan_bag_kamarmandi,
-            'agunan_bag_dapur'        => empty($agunan_bag_dapur) ? $check->agunan_bag_dapur : $agunan_bag_dapur,
-            'lamp_imb'                => empty($lamp_imb) ? $check->lamp_imb : $lamp_imb,
-            'lamp_pbb'                => empty($lamp_pbb) ? $check->lamp_pbb : $lamp_pbb,
-            'lamp_sertifikat'         => empty($lamp_sertifikat) ? $check->lamp_sertifikat : $lamp_sertifikat,
+            'tipe_lokasi'             => empty($req->input('tipe_lokasi_agunan')) 
+                ? $check_tan->tipe_lokasi : strtoupper($req->input('tipe_lokasi_agunan')),
+
+            'alamat'                  => empty($req->input('alamat_agunan')) 
+                ? $check_tan->alamat : $req->input('alamat_agunan'),
+
+            'id_provinsi'             => empty($req->input('id_prov_agunan')) 
+                ? $check_tan->id_provinsi : $req->input('id_prov_agunan'),
+
+            'id_kabupaten'            => empty($req->input('id_kab_agunan')) 
+                ? $check_tan->id_kabupaten : $req->input('id_kab_agunan'),
+
+            'id_kecamatan'            => empty($req->input('id_kec_agunan')) 
+                ? $check_tan->id_kecamatan : $req->input('id_kec_agunan'),
+
+            'id_kelurahan'            => empty($req->input('id_kel_agunan')) 
+                ? $check_tan->id_kelurahan : $req->input('id_kel_agunan'),
+
+            'rt'                      => empty($req->input('rt_agunan')) 
+                ? $check_tan->rt : $req->input('rt_agunan'),
+
+            'rw'                      => empty($req->input('rw_agunan')) 
+                ? $check_tan->rw : $req->input('rw_agunan'),
+
+            'luas_tanah'              => empty($req->input('luas_tanah')) 
+                ? $check_tan->luas_tanah : $req->input('luas_tanah'),
+
+            'luas_bangunan'           => empty($req->input('luas_bangunan')) 
+                ? $check_tan->luas_bangunan : $req->input('luas_bangunan'),
+
+            'nama_pemilik_sertifikat' => empty($req->input('nama_pemilik_sertifikat')) 
+                ? $check_tan->nama_pemilik_sertifikat : $req->input('nama_pemilik_sertifikat'),
+
+            'jenis_sertifikat'        => empty($req->input('jenis_sertifikat')) 
+                ? $check_tan->jenis_sertifikat : strtoupper($req->input('jenis_sertifikat')),
+
+            'no_sertifikat'           => empty($req->input('no_sertifikat')) 
+                ? $check_tan->no_sertifikat : $req->input('no_sertifikat'),
+
+            'tgl_ukur_sertifikat'     => empty($req->input('tgl_ukur_sertifikat')) 
+                ? $check_tan->tgl_ukur_sertifikat : $req->input('tgl_ukur_sertifikat'),
+
+            'tgl_berlaku_shgb'        => empty($req->input('tgl_berlaku_shgb')) 
+                ? $check_tan->tgl_berlaku_shgb : Carbon::parse($req->input('tgl_berlaku_shgb'))->format('Y-m-d'),
+
+            'no_imb'                  => empty($req->input('no_imb'))   ? $check_tan->no_imb : $req->input('no_imb'),
+            'njop'                    => empty($req->input('njop'))     ? $check_tan->njop : $req->input('njop'),
+            'nop'                     => empty($req->input('nop'))      ? $check_tan->nop : $req->input('nop'),
+            'agunan_bag_depan'        => empty($agunan_bag_depan)       ? $check_tan->agunan_bag_depan : $agunan_bag_depan,
+            'agunan_bag_jalan'        => empty($agunan_bag_jalan)       ? $check_tan->agunan_bag_jalan : $agunan_bag_jalan,
+            'agunan_bag_ruangtamu'    => empty($agunan_bag_ruangtamu)   ? $check_tan->agunan_bag_ruangtamu : $agunan_bag_ruangtamu,
+            'agunan_bag_kamarmandi'   => empty($agunan_bag_kamarmandi)  ? $check_tan->agunan_bag_kamarmandi : $agunan_bag_kamarmandi,
+            'agunan_bag_dapur'        => empty($agunan_bag_dapur)       ? $check_tan->agunan_bag_dapur : $agunan_bag_dapur,
+            'lamp_imb'                => empty($lamp_imb)               ? $check_tan->lamp_imb : $lamp_imb,
+            'lamp_pbb'                => empty($lamp_pbb)               ? $check_tan->lamp_pbb : $lamp_pbb,
+            'lamp_sertifikat'         => empty($lamp_sertifikat)        ? $check_tan->lamp_sertifikat : $lamp_sertifikat,
         );
 
         DB::connection('web')->beginTransaction();

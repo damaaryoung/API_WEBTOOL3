@@ -101,9 +101,9 @@ class PenjaminController extends BaseController
     }
 
     public function update($id, PenjaminRequest $req){
-        $check = Penjamin::where('id', $id)->first();
+        $check_penj = Penjamin::where('id', $id)->first();
 
-        if ($check == null) {
+        if ($check_penj == null) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
@@ -121,132 +121,124 @@ class PenjaminController extends BaseController
             ], 404);
         }
 
-        $lamp_path = $check->lamp_ktp;
+        /** Check Lampiran */
+        $check_lamp_ktp_pen          = $check_penj->lamp_ktp;
+        $check_lamp_ktp_pasangan_pen = $check_penj->lamp_ktp_pasangan;
+        $check_lamp_kk_pen           = $check_penj->lamp_kk;
+        $check_lamp_buku_nikah_pen   = $check_penj->lamp_buku_nikah;
+        /** */
 
-        $ktp_debt = $so->debt['no_ktp'];
-
-        $arrPath = explode("/", $lamp_path, 4);
-
-        $path = $arrPath[0].'/'.$ktp_debt.'/'.$arrPath[2];
-
-        // $no = substr($arrPath[3], 12, 1);
+        $path = 'public/' . $so->debt['no_ktp'] . '/penjamin';
 
         if($file = $req->file('lamp_ktp_pen')){
-
-            $name = 'ktp_penjamin.' . $file->getClientOriginalName();
-
-            $img = Image::make($file)->resize(320, 240);
+            $check = $check_lamp_ktp_pen;
+            $name = 'ktp_penjamin.';
             
-            if(!File::isDirectory($path)){
-                File::makeDirectory($path, 0777, true, true);
-            }
-            
-            if(!empty($check->lamp_ktp))
-            {
-                File::delete($check->lamp_ktp);
-            }
-                
-            $img->save($path.'/'.$name);
-
-            $ktpPen = $path.'/'.$name;
+            $ktpPen = Helper::uploadImg($check, $file, $path, $name);
         }else{
-            $ktpPen = $check->lamp_ktp;
+            $ktpPen = $check_lamp_ktp_pen;
         }
 
         if($file = $req->file('lamp_ktp_pasangan_pen')){
+            $check = $check_lamp_ktp_pasangan_pen;
+            $name = 'ktp_pasangan.';
 
-            $name = 'ktp_pasangan.' . $file->getClientOriginalName();
-            
-            $img = Image::make($file)->resize(320, 240);
-            
-            if(!File::isDirectory($path)){
-                File::makeDirectory($path, 0777, true, true);
-            }
-            
-            if(!empty($check->lamp_ktp_pasangan))
-            {
-                File::delete($check->lamp_ktp_pasangan);
-            }
-                
-            $img->save($path.'/'.$name);
-
-            $ktpPenPAS = $path.'/'.$name;
+            $ktpPenPAS = Helper::uploadImg($check, $file, $path, $name);
         }else{
-            $ktpPenPAS = $check->lamp_ktp_pasangan;
+            $ktpPenPAS = $check_lamp_ktp_pasangan_pen;
         }
 
         if($file = $req->file('lamp_kk_pen')){
+            $check = $check_lamp_kk_pen;
+            $name = 'kk_penjamin.';
 
-            $name = 'kk_penjamin.' . $file->getClientOriginalName();
-            
-            $img = Image::make($file)->resize(320, 240);
-            
-            if(!File::isDirectory($path)){
-                File::makeDirectory($path, 0777, true, true);
-            }
-            
-            if(!empty($check->lamp_kk))
-            {
-                File::delete($check->lamp_kk);
-            }
-                
-            $img->save($path.'/'.$name);
-
-            $kkPen = $path.'/'.$name;
+            $kkPen = Helper::uploadImg($check, $file, $path, $name);
         }else{
-            $kkPen = $check->lamp_kk;
+            $kkPen = $check_lamp_kk_pen;
         }
 
         if($file = $req->file('lamp_buku_nikah_pen')){
+            $check = $check_lamp_buku_nikah_pen;
+            $name = 'buku_nikah_penjamin.';
 
-            $name = 'buku_nikah_penjamin.' . $file->getClientOriginalName();
-
-            $img = Image::make($file)->resize(320, 240);
-            
-            if(!File::isDirectory($path)){
-                File::makeDirectory($path, 0777, true, true);
-            }
-            
-            if(!empty($check->lamp_buku_nikah))
-            {
-                File::delete($check->lamp_buku_nikah);
-            }
-                
-            $img->save($path.'/'.$name);
-
-            $bukuNikahPen = $path.'/'.$name;
+            $bukuNikahPen = Helper::uploadImg($check, $file, $path, $name);
         }else{
-            $bukuNikahPen = $check->lamp_buku_nikah;
+            $bukuNikahPen = $check_lamp_buku_nikah_pen;
         }
 
         // Data Usaha Calon Debitur
         // Penjamin Lama
         $dataPenjamin = array(
-            // 'id_calon_debitur' => $check->id_calon_debitur,
-            'nama_ktp'         => empty($req->input('nama_ktp_pen')) ? $check->nama_ktp : $req->input('nama_ktp_pen'),
-            'nama_ibu_kandung' => empty($req->input('nama_ibu_kandung_pen')) ? $check->nama_ibu_kandung : $req->input('nama_ibu_kandung_pen'),
-            'no_ktp'           => empty($req->input('no_ktp_pen')) ? $check->no_ktp : $req->input('no_ktp_pen'),
-            'no_npwp'          => empty($req->input('no_npwp_pen')) ? $check->no_npwp : $req->input('no_npwp_pen'),
-            'tempat_lahir'     => empty($req->input('tempat_lahir_pen')) ? $check->tempat_lahir : $req->input('tempat_lahir_pen'),
-            'tgl_lahir'        => empty($req->input('tgl_lahir_pen')) ? $check->tgl_lahir : Carbon::parse($req->input('tgl_lahir_pen'))->format('Y-m-d'),
-            'jenis_kelamin'    => empty($req->input('jenis_kelamin_pen')) ? $check->jenis_kelamin : strtoupper($req->input('jenis_kelamin_pen')),
-            'alamat_ktp'       => empty($req->input('alamat_ktp_pen')) ? $check->alamat_ktp : $req->input('alamat_ktp_pen'),
-            'no_telp'          => empty($req->input('no_telp_pen')) ? $check->no_telp : $req->input('no_telp_pen'),
-            'hubungan_debitur' => empty($req->input('hubungan_debitur_pen')) ? $check->hubungan_debitur : $req->input('hubungan_debitur_pen'),
+            // 'id_calon_debitur' => $check_penj->id_calon_debitur,
+            'nama_ktp'         => empty($req->input('nama_ktp_pen')) 
+                ? $check_penj->nama_ktp : $req->input('nama_ktp_pen'),
 
-            'pekerjaan'             => empty($req->input('pekerjaan_pen')) ? $check->pekerjaan : $req->input('pekerjaan_pen'),
-            'nama_tempat_kerja'     => empty($req->input('nama_tempat_kerja_pen')) ? $check->nama_tempat_kerja : $req->input('nama_tempat_kerja_pen'),
-            'posisi_pekerjaan'      => empty($req->input('posisi_pekerjaan_pen')) ? $check->posisi_pekerjaan : $req->input('posisi_pekerjaan_pen'),
-            'jenis_pekerjaan'       => empty($req->input('jenis_pekerjaan_pen')) ? $check->jenis_pekerjaan : $req->input('jenis_pekerjaan_pen'),
-            'alamat_tempat_kerja'   => empty($req->input('alamat_tempat_kerja_pen')) ? $check->alamat_tempat_kerja : $req->input('alamat_tempat_kerja_pen'),
-            'id_prov_tempat_kerja'  => empty($req->input('id_prov_tempat_kerja_pen')) ? $check->id_prov_tempat_kerja : $req->input('id_prov_tempat_kerja_pen'),
-            'id_kab_tempat_kerja'   => empty($req->input('id_kab_tempat_kerja_pen')) ? $check->id_kab_tempat_kerja : $req->input('id_kab_tempat_kerja_pen'),
-            'id_kec_tempat_kerja'   => empty($req->input('id_kec_tempat_kerja_pen')) ? $check->id_kec_tempat_kerja : $req->input('id_kec_tempat_kerja_pen'),
-            'id_kel_tempat_kerja'   => empty($req->input('id_kel_tempat_kerja_pen')) ? $check->id_kel_tempat_kerja : $req->input('id_kel_tempat_kerja_pen'),
-            'rt_tempat_kerja'       => empty($req->input('rt_tempat_kerja_pen')) ? $check->rt_tempat_kerja : $req->input('rt_tempat_kerja_pen'),
-            'rw_tempat_kerja'       => empty($req->input('rw_tempat_kerja_pen')) ? $check->rw_tempat_kerja : $req->input('rw_tempat_kerja_pen'),
-            'tgl_mulai_kerja'       => empty($req->input('tgl_mulai_kerja_pen')) ? $check->tgl_mulai_kerja : $req->input('tgl_mulai_kerja_pen'),
-            'no_telp_tempat_kerja'  => empty($req->input('no_telp_tempat_kerja_pen')) ? $check->no_telp_tempat_kerja : $req->input('no_telp_tempat_kerja_pen'),
+            'nama_ibu_kandung' => empty($req->input('nama_ibu_kandung_pen')) 
+                ? $check_penj->nama_ibu_kandung : $req->input('nama_ibu_kandung_pen'),
+
+            'no_ktp'           => empty($req->input('no_ktp_pen')) 
+                ? $check_penj->no_ktp : $req->input('no_ktp_pen'),
+
+            'no_npwp'          => empty($req->input('no_npwp_pen')) 
+                ? $check_penj->no_npwp : $req->input('no_npwp_pen'),
+
+            'tempat_lahir'     => empty($req->input('tempat_lahir_pen')) 
+                ? $check_penj->tempat_lahir : $req->input('tempat_lahir_pen'),
+
+            'tgl_lahir'        => empty($req->input('tgl_lahir_pen')) 
+                ? $check_penj->tgl_lahir : Carbon::parse($req->input('tgl_lahir_pen'))->format('Y-m-d'),
+
+            'jenis_kelamin'    => empty($req->input('jenis_kelamin_pen')) 
+                ? $check_penj->jenis_kelamin : strtoupper($req->input('jenis_kelamin_pen')),
+
+            'alamat_ktp'       => empty($req->input('alamat_ktp_pen')) 
+                ? $check_penj->alamat_ktp : $req->input('alamat_ktp_pen'),
+
+            'no_telp'          => empty($req->input('no_telp_pen')) 
+                ? $check_penj->no_telp : $req->input('no_telp_pen'),
+
+            'hubungan_debitur' => empty($req->input('hubungan_debitur_pen')) 
+                ? $check_penj->hubungan_debitur : $req->input('hubungan_debitur_pen'),
+
+            'pekerjaan'             => empty($req->input('pekerjaan_pen')) 
+                ? $check_penj->pekerjaan : $req->input('pekerjaan_pen'),
+
+            'nama_tempat_kerja'     => empty($req->input('nama_tempat_kerja_pen')) 
+                ? $check_penj->nama_tempat_kerja : $req->input('nama_tempat_kerja_pen'),
+
+            'posisi_pekerjaan'      => empty($req->input('posisi_pekerjaan_pen')) 
+                ? $check_penj->posisi_pekerjaan : $req->input('posisi_pekerjaan_pen'),
+
+            'jenis_pekerjaan'       => empty($req->input('jenis_pekerjaan_pen')) 
+                ? $check_penj->jenis_pekerjaan : $req->input('jenis_pekerjaan_pen'),
+
+            'alamat_tempat_kerja'   => empty($req->input('alamat_tempat_kerja_pen')) 
+                ? $check_penj->alamat_tempat_kerja : $req->input('alamat_tempat_kerja_pen'),
+
+            'id_prov_tempat_kerja'  => empty($req->input('id_prov_tempat_kerja_pen')) 
+                ? $check_penj->id_prov_tempat_kerja : $req->input('id_prov_tempat_kerja_pen'),
+
+            'id_kab_tempat_kerja'   => empty($req->input('id_kab_tempat_kerja_pen')) 
+                ? $check_penj->id_kab_tempat_kerja : $req->input('id_kab_tempat_kerja_pen'),
+
+            'id_kec_tempat_kerja'   => empty($req->input('id_kec_tempat_kerja_pen')) 
+                ? $check_penj->id_kec_tempat_kerja : $req->input('id_kec_tempat_kerja_pen'),
+
+            'id_kel_tempat_kerja'   => empty($req->input('id_kel_tempat_kerja_pen')) 
+                ? $check_penj->id_kel_tempat_kerja : $req->input('id_kel_tempat_kerja_pen'),
+
+            'rt_tempat_kerja'       => empty($req->input('rt_tempat_kerja_pen')) 
+                ? $check_penj->rt_tempat_kerja : $req->input('rt_tempat_kerja_pen'),
+
+            'rw_tempat_kerja'       => empty($req->input('rw_tempat_kerja_pen')) 
+                ? $check_penj->rw_tempat_kerja : $req->input('rw_tempat_kerja_pen'),
+
+            'tgl_mulai_kerja'       => empty($req->input('tgl_mulai_kerja_pen')) 
+                ? $check_penj->tgl_mulai_kerja : $req->input('tgl_mulai_kerja_pen'),
+
+            'no_telp_tempat_kerja'  => empty($req->input('no_telp_tempat_kerja_pen')) 
+                ? $check_penj->no_telp_tempat_kerja : $req->input('no_telp_tempat_kerja_pen'),
+
             'lamp_ktp'         => $ktpPen,
             'lamp_ktp_pasangan'=> $ktpPenPAS,
             'lamp_kk'          => $kkPen,

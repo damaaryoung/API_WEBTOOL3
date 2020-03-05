@@ -318,7 +318,7 @@ class MasterSO_Controller extends BaseController
         $dateExpires   = strtotime($now); // time to integer
         $day_in_second = 60 * 60 * 24 * 30;
 
-        $ktp        = $req->input('no_ktp'); // 3216190107670001;
+        $ktp        = $req->input('no_ktp');
         // $no_ktp_kk  = $req->input('no_ktp_kk');
         $no_ktp_pas = $req->input('no_ktp_pas');
         // $no_ktp_pen = $req->input('no_ktp_pen');
@@ -431,82 +431,70 @@ class MasterSO_Controller extends BaseController
                 ], 422);
             }
 
-
-            $lamp_dir = 'public/'.$ktp;
+            $lamp_dir  = 'public/' . $ktp;
+            $path_debt = $lamp_dir . '/debitur';
+            $path_pas  = $lamp_dir . '/pasangan';
+            $path_penj = $lamp_dir . '/penjamin';
 
             if($file = $req->file('lamp_ktp')){
-                $path = $lamp_dir.'/debitur';
-                $name = 'ktp.';
+                $name       = 'ktp.';
+                $check_file = 'null';
 
-                $check = 'null';
-
-                $lamp_ktp = Helper::uploadImg($check, $file, $path, $name);
+                $lamp_ktp = Helper::uploadImg($check_file, $file, $path_debt, $name);
             }else{
                 $lamp_ktp = null;
             }
 
             if($file = $req->file('lamp_kk')){
-                $path = $lamp_dir.'/debitur';
-                $name = 'kk.';
-
-                $check = 'null';
+                $name       = 'kk.';
+                $check_file = 'null';
             
-                $lamp_kk = Helper::uploadImg($check, $file, $path, $name);
+                $lamp_kk = Helper::uploadImg($check_file, $file, $path_debt, $name);
             }else{
                 $lamp_kk = null;
             }
 
             if($file = $req->file('lamp_sertifikat')){
-                $path = $lamp_dir.'/debitur';
-                $name = 'sertifikat.';
-
-                $check = 'null';
+                $name       = 'sertifikat.';
+                $check_file = 'null';
             
-                $lamp_sertifikat = Helper::uploadImg($check, $file, $path, $name);
+                $lamp_sertifikat = Helper::uploadImg($check_file, $file, $path_debt, $name);
             }else{
                 $lamp_sertifikat = null;
             }
 
             if($file = $req->file('lamp_pbb')){
-                $path = $lamp_dir.'/debitur';
-                $name = 'pbb.';
-
-                $check = 'null';
+                $name       = 'pbb.';
+                $check_file = 'null';
             
-                $lamp_sttp_pbb = Helper::uploadImg($check, $file, $path, $name);
+                $lamp_sttp_pbb = Helper::uploadImg($check_file, $file, $path_debt, $name);
             }else{
                 $lamp_sttp_pbb = null;
             }
 
             if($file = $req->file('lamp_imb')){
-                $path = $lamp_dir.'/debitur';
-                $name = 'imb.';
-
-                $check = 'null';
+                $name       = 'imb.';
+                $check_file = 'null';
             
-                $lamp_imb = Helper::uploadImg($check, $file, $path, $name);
+                $lamp_imb = Helper::uploadImg($check_file, $file, $path_debt, $name);
             }else{
                 $lamp_imb = null;
             }
 
             if($file = $req->file('foto_agunan_rumah')){
-                $path = $lamp_dir.'/debitur';
                 $name = 'foto_agunan_rumah.';
-
-                $check = 'null';
+                $check_file = 'null';
             
-                $foto_agunan_rumah = Helper::uploadImg($check, $file, $path, $name);
+                $foto_agunan_rumah = Helper::uploadImg($check_file, $file, $path_debt, $name);
             }else{
                 $foto_agunan_rumah = null;
             }
 
             if ($file = $req->file('lamp_surat_cerai')) {
-                $path = $lamp_dir.'/debitur';
-                $name = 'lamp_surat_cerai.';
-
-                $check = 'null';
+                $name       = 'lamp_surat_cerai.';
+                $check_file = 'null';
             
-                $lamp_surat_cerai = Helper::uploadImg($check, $file, $path, $name);
+                $lamp_surat_cerai = Helper::uploadImg($check_file, $file, $path_debt, $name);
             }else{
                 $lamp_surat_cerai = null;
             }
@@ -556,23 +544,19 @@ class MasterSO_Controller extends BaseController
             );
 
             if($file = $req->file('lamp_ktp_pas')){
-                $path = $lamp_dir.'/pasangan';
-                $name = 'ktp.';
-
-                $check = 'null';
+                $name       = 'ktp.';
+                $check_file = 'null';
             
-                $lamp_ktp_pas = Helper::uploadImg($check, $file, $path, $name);
+                $lamp_ktp_pas = Helper::uploadImg($check_file, $file, $path_pas, $name);
             }else{
                 $lamp_ktp_pas = null;
             }
 
             if($file = $req->file('lamp_buku_nikah_pas')){
-                $path = $lamp_dir.'/pasangan';
-                $name = 'buku_nikah.';
-
-                $check = 'null';
+                $name       = 'buku_nikah.';
+                $check_file = 'null';
             
-                $lamp_buku_nikah_pas = Helper::uploadImg($check, $file, $path, $name);
+                $lamp_buku_nikah_pas = Helper::uploadImg($check_file, $file, $path_pas, $name);
             }else{
                 $lamp_buku_nikah_pas = null;
             }
@@ -603,15 +587,13 @@ class MasterSO_Controller extends BaseController
 
             // Data Penjamin
             if($files = $req->file('lamp_ktp_pen')){
-                $path = $lamp_dir.'/penjamin';
-                $name = 'ktp_penjamin.';
-
-                $check = 'null';
+                $name       = 'ktp_penjamin.';
+                $check_file = 'null';
 
                 $arrayPath = array();
                 foreach($files as $file)
                 {
-                    $arrayPath[] = Helper::uploadImg($check, $file, $path, $name);
+                    $arrayPath[] = Helper::uploadImg($check_file, $file, $path_penj, $name);
                 }
 
                 $lamp_ktp_pen = $arrayPath;
@@ -620,15 +602,13 @@ class MasterSO_Controller extends BaseController
             }
 
             if($files = $req->file('lamp_ktp_pasangan_pen')){
-                $path = $lamp_dir.'/penjamin';
-                $name = 'ktp_pasangan.';
-
-                $check = 'null';
+                $name       = 'ktp_pasangan.';
+                $check_file = 'null';
 
                 $arrayPath = array();
                 foreach($files as $file)
                 {
-                    $arrayPath[] = Helper::uploadImg($check, $file, $path, $name);
+                    $arrayPath[] = Helper::uploadImg($check_file, $file, $path_penj, $name);
                 }
 
                 $lamp_ktp_pasangan_pen = $arrayPath;
@@ -637,15 +617,13 @@ class MasterSO_Controller extends BaseController
             }
 
             if($files = $req->file('lamp_kk_pen')){
-                $path = $lamp_dir.'/penjamin';
-                $name = 'kk_penjamin.';
-
-                $check = 'null';
+                $name       = 'kk_penjamin.';
+                $check_file = 'null';
 
                 $arrayPath = array();
                 foreach($files as $file)
                 {
-                    $arrayPath[] = Helper::uploadImg($check, $file, $path, $name);
+                    $arrayPath[] = Helper::uploadImg($check_file, $file, $path_penj, $name);
                 }
 
                 $lamp_kk_pen = $arrayPath;
@@ -654,15 +632,13 @@ class MasterSO_Controller extends BaseController
             }
 
             if($files = $req->file('lamp_buku_nikah_pen')){
-                $path = $lamp_dir.'/penjamin';
-                $name = 'buku_nikah_penjamin.';
-
-                $check = 'null';
+                $name       = 'buku_nikah_penjamin.';
+                $check_file = 'null';
 
                 $arrayPath = array();
                 foreach($files as $file)
                 {
-                    $arrayPath[] = Helper::uploadImg($check, $file, $path, $name);
+                    $arrayPath[] = Helper::uploadImg($check_file, $file, $path_penj, $name);
                 }
 
                 $lamp_buku_nikah_pen = $arrayPath;
@@ -758,7 +734,7 @@ class MasterSO_Controller extends BaseController
 
         $check = TransSO::where('id', $id)->first();
 
-        if (!$check) {
+        if ($check == null) {
             return response()->json([
                 "code"    => 404,
                 "status"  => "not found",
@@ -768,7 +744,7 @@ class MasterSO_Controller extends BaseController
 
         $PIC = PIC::where('user_id', $user_id)->first();
 
-        if (!$PIC) {
+        if ($PIC == null) {
             return response()->json([
                 "code"    => 404,
                 "status"  => "not found",

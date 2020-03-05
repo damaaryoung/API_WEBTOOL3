@@ -303,7 +303,7 @@ class MasterAO_Controller extends BaseController
 
         $check_so = TransSO::where('id',$id)->where('status_das', 1)->where('status_hm', 1)->first();
 
-        if (!$check_so) {
+        if ($check_so == null) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
@@ -315,20 +315,20 @@ class MasterAO_Controller extends BaseController
         $check_form_persetujuan_ideb = $check_so->ao['form_persetujuan_ideb'];
         
         // Agunan Tanah
-        $check_agunan_bag_depan = $check_so->ao['tan']['agunan_bag_depan'];
-        $check_agunan_bag_jalan = $check_so->ao['tan']['agunan_bag_jalan'];
-        $check_agunan_bag_ruangtamu = $check_so->ao['tan']['agunan_bag_ruangtamu'];
+        $check_agunan_bag_depan      = $check_so->ao['tan']['agunan_bag_depan'];
+        $check_agunan_bag_jalan      = $check_so->ao['tan']['agunan_bag_jalan'];
+        $check_agunan_bag_ruangtamu  = $check_so->ao['tan']['agunan_bag_ruangtamu'];
         $check_agunan_bag_kamarmandi = $check_so->ao['tan']['agunan_bag_kamarmandi'];
-        $check_agunan_bag_dapur = $check_so->ao['tan']['agunan_bag_dapur'];
+        $check_agunan_bag_dapur      = $check_so->ao['tan']['agunan_bag_dapur'];
 
-        $check_lamp_imb_tan = $check_so->ao['tan']['lamp_imb'];
-        $check_lamp_pbb_tan = $check_so->ao['tan']['lamp_pbb'];
-        $check_lamp_sertifikat_tan = $check_so->ao['tan']['lamp_sertifikat'];
+        $check_lamp_imb_tan          = $check_so->ao['tan']['lamp_imb'];
+        $check_lamp_pbb_tan          = $check_so->ao['tan']['lamp_pbb'];
+        $check_lamp_sertifikat_tan   = $check_so->ao['tan']['lamp_sertifikat'];
         
         // Agunan Kendaraan
         $check_lamp_agunan_depan_ken = $check_so->ao['tan']['lamp_agunan_depan_ken'];
         $check_lamp_agunan_kanan_ken = $check_so->ao['tan']['lamp_agunan_kanan_ken'];
-        $check_lamp_agunan_kiri_ken = $check_so->ao['tan']['lamp_agunan_kiri_ken'];
+        $check_lamp_agunan_kiri_ken  = $check_so->ao['tan']['lamp_agunan_kiri_ken'];
         $check_lamp_agunan_belakang_ken = $check_so->ao['tan']['lamp_agunan_belakang_ken'];
         $check_lamp_agunan_dalam_ken = $check_so->ao['tan']['lamp_agunan_dalam_ken'];
 
@@ -369,9 +369,9 @@ class MasterAO_Controller extends BaseController
             $path = $lamp_dir.'/ideb';
             $name = 'form_persetujuan_ideb.';
 
-            $check = $check_form_persetujuan_ideb;
+            $check_file = $check_form_persetujuan_ideb;
 
-            $form_persetujuan_ideb = Helper::uploadImg($check, $file, $path, $name);
+            $form_persetujuan_ideb = Helper::uploadImg($check_file, $file, $path, $name);
         }else{
             $form_persetujuan_ideb = $check_form_persetujuan_ideb;
         }
@@ -438,12 +438,12 @@ class MasterAO_Controller extends BaseController
             $path = $lamp_dir.'/agunan_tanah';
             $name = 'agunan_bag_depan.';
 
-            $check = $check_agunan_bag_depan;
+            $check_file = $check_agunan_bag_depan;
 
             $arrayPath = array();
             foreach($files as $file)
             {
-                $arrayPath[] = Helper::uploadImg($check, $file, $path, $name);
+                $arrayPath[] = Helper::uploadImg($check_file, $file, $path, $name);
             }
 
             $agunan_bag_depan = $arrayPath;
@@ -455,12 +455,12 @@ class MasterAO_Controller extends BaseController
             $path = $lamp_dir.'/agunan_tanah';
             $name = 'agunan_bag_jalan.';
 
-            $check = $check_agunan_bag_jalan;
+            $check_file = $check_agunan_bag_jalan;
 
             $arrayPath = array();
             foreach($files as $file)
             {
-                $arrayPath[] = Helper::uploadImg($check, $file, $path, $name);
+                $arrayPath[] = Helper::uploadImg($check_file, $file, $path, $name);
             }
 
             $agunan_bag_jalan = $arrayPath;
@@ -472,12 +472,12 @@ class MasterAO_Controller extends BaseController
             $path = $lamp_dir.'/agunan_tanah';
             $name = 'agunan_bag_ruangtamu.';
 
-            $check = $check_agunan_bag_ruangtamu;
+            $check_file = $check_agunan_bag_ruangtamu;
 
             $arrayPath = array();
             foreach($files as $file)
             {
-                $arrayPath[] = Helper::uploadImg($check, $file, $path, $name);
+                $arrayPath[] = Helper::uploadImg($check_file, $file, $path, $name);
             }
 
             $agunan_bag_ruangtamu = $arrayPath;
@@ -489,12 +489,12 @@ class MasterAO_Controller extends BaseController
             $path = $lamp_dir.'/agunan_tanah';
             $name = 'agunan_bag_kamarmandi.';
 
-            $check = $check_agunan_bag_kamarmandi;
+            $check_file = $check_agunan_bag_kamarmandi;
 
             $arrayPath = array();
             foreach($files as $file)
             {
-                $arrayPath[] = Helper::uploadImg($check, $file, $path, $name);
+                $arrayPath[] = Helper::uploadImg($check_file, $file, $path, $name);
             }
 
             $agunan_bag_ruangtamu = $arrayPath;
@@ -506,12 +506,12 @@ class MasterAO_Controller extends BaseController
             $path = $lamp_dir.'/agunan_tanah';
             $name = 'agunan_bag_dapur.';
 
-            $check = $check_agunan_bag_dapur;
+            $check_file = $check_agunan_bag_dapur;
 
             $arrayPath = array();
             foreach($files as $file)
             {
-                $arrayPath[] = Helper::uploadImg($check, $file, $path, $name);
+                $arrayPath[] = Helper::uploadImg($check_file, $file, $path, $name);
             }
 
             $agunan_bag_dapur = $arrayPath;
@@ -524,12 +524,12 @@ class MasterAO_Controller extends BaseController
             $path = $lamp_dir.'/agunan_kendaraan';
             $name = 'agunan_depan.';
 
-            $check = $check_lamp_agunan_depan_ken;
+            $check_file = $check_lamp_agunan_depan_ken;
 
             $arrayPath = array();
             foreach($files as $file)
             {
-                $arrayPath[] = Helper::uploadImg($check, $file, $path, $name);
+                $arrayPath[] = Helper::uploadImg($check_file, $file, $path, $name);
             }
 
             $lamp_agunan_depan_ken = $arrayPath;
@@ -542,12 +542,12 @@ class MasterAO_Controller extends BaseController
             $path = $lamp_dir.'/agunan_kendaraan';
             $name = 'agunan_kanan.';
 
-            $check = $check_lamp_agunan_kanan_ken;
+            $check_file = $check_lamp_agunan_kanan_ken;
 
             $arrayPath = array();
             foreach($files as $file)
             {
-                $arrayPath[] = Helper::uploadImg($check, $file, $path, $name);
+                $arrayPath[] = Helper::uploadImg($check_file, $file, $path, $name);
             }
 
             $lamp_agunan_kanan_ken = $arrayPath;
@@ -560,12 +560,12 @@ class MasterAO_Controller extends BaseController
             $path = $lamp_dir.'/agunan_kendaraan';
             $name = 'agunan_kiri.';
 
-            $check = $check_lamp_agunan_kiri_ken;
+            $check_file = $check_lamp_agunan_kiri_ken;
 
             $arrayPath = array();
             foreach($files as $file)
             {
-                $arrayPath[] = Helper::uploadImg($check, $file, $path, $name);
+                $arrayPath[] = Helper::uploadImg($check_file, $file, $path, $name);
             }
 
             $lamp_agunan_kiri_ken = $arrayPath;
@@ -578,12 +578,12 @@ class MasterAO_Controller extends BaseController
             $path = $lamp_dir.'/agunan_kendaraan';
             $name = 'agunan_belakang.';
 
-            $check = $check_lamp_agunan_belakang_ken;
+            $check_file = $check_lamp_agunan_belakang_ken;
 
             $arrayPath = array();
             foreach($files as $file)
             {
-                $arrayPath[] = Helper::uploadImg($check, $file, $path, $name);
+                $arrayPath[] = Helper::uploadImg($check_file, $file, $path, $name);
             }
 
             $lamp_agunan_belakang_ken = $arrayPath;
@@ -595,12 +595,12 @@ class MasterAO_Controller extends BaseController
             $path = $lamp_dir.'/agunan_kendaraan';
             $name = 'agunan_dalam.';
 
-            $check = $check_lamp_agunan_dalam_ken;
+            $check_file = $check_lamp_agunan_dalam_ken;
 
             $arrayPath = array();
             foreach($files as $file)
             {
-                $arrayPath[] = Helper::uploadImg($check, $file, $path, $name);
+                $arrayPath[] = Helper::uploadImg($check_file, $file, $path, $name);
             }
 
             $lamp_agunan_dalam_ken = $arrayPath;
@@ -613,12 +613,12 @@ class MasterAO_Controller extends BaseController
             $path = $lamp_dir.'/agunan_tanah';
             $name = 'lamp_imb.';
 
-            $check = $check_lamp_imb_tan;
+            $check_file = $check_lamp_imb_tan;
 
             $arrayPath = array();
             foreach($files as $file)
             {
-                $arrayPath[] = Helper::uploadImg($check, $file, $path, $name);
+                $arrayPath[] = Helper::uploadImg($check_file, $file, $path, $name);
             }
 
             $lamp_imb_tan = $arrayPath;
@@ -630,12 +630,12 @@ class MasterAO_Controller extends BaseController
             $path = $lamp_dir.'/agunan_tanah';
             $name = 'lamp_pbb.';
 
-            $check = $check_lamp_pbb_tan;
+            $check_file = $check_lamp_pbb_tan;
 
             $arrayPath = array();
             foreach($files as $file)
             {
-                $arrayPath[] = Helper::uploadImg($check, $file, $path, $name);
+                $arrayPath[] = Helper::uploadImg($check_file, $file, $path, $name);
             }
 
             $lamp_pbb_tan = $arrayPath;
@@ -647,17 +647,17 @@ class MasterAO_Controller extends BaseController
             $path = $lamp_dir.'/agunan_tanah';
             $name = 'lamp_sertifikat.';
 
-            $check = $check_lamp_sertifikat_tan;
+            $check_file = $check_lamp_sertifikat_tan;
 
             $arrayPath = array();
             foreach($files as $file)
             {
-                $arrayPath[] = Helper::uploadImg($check, $file, $path, $name);
+                $arrayPath[] = Helper::uploadImg($check_file, $file, $path, $name);
             }
 
-            $lamp_sertifikat = $arrayPath;
+            $lamp_sertifikat_tan = $arrayPath;
         }else{
-            $lamp_sertifikat = $check_lamp_sertifikat_tan;
+            $lamp_sertifikat_tan = $check_lamp_sertifikat_tan;
         }
 
 
@@ -1063,9 +1063,9 @@ class MasterAO_Controller extends BaseController
             $path = $lamp_dir.'/debitur';
             $name = 'ktp.';
 
-            $check = $check_lamp_ktp;
+            $check_file = $check_lamp_ktp;
             
-            $lamp_ktp = Helper::uploadImg($check, $file, $path, $name);
+            $lamp_ktp = Helper::uploadImg($check_file, $file, $path, $name);
         }else{
             $lamp_ktp = $check_lamp_ktp;
         }
@@ -1074,75 +1074,66 @@ class MasterAO_Controller extends BaseController
             $path = $lamp_dir.'/debitur';
             $name = 'kk.';
             
-            $check = $check_lamp_kk;
+            $check_file = $check_lamp_kk;
             
-            $lamp_kk = Helper::uploadImg($check, $file, $path, $name);
+            $lamp_kk = Helper::uploadImg($check_file, $file, $path, $name);
         }else{
             $lamp_kk = $check_lamp_kk;
         }
 
-        if($req->file('lamp_sertifikat') != null){
-            $file = $req->file('lamp_sertifikat');
-
+        if($file = $req->file('lamp_sertifikat')){
             $path = $lamp_dir.'/debitur';
             $name = 'sertifikat.';
 
-            $check = $check_lamp_sertifikat;
+            $check_file = $check_lamp_sertifikat;
 
-            $lamp_sertifikat = Helper::uploadImg($check, $file, $path, $name);
+            $lamp_sertifikat = Helper::uploadImg($check_file, $file, $path, $name);
         }else{
             $lamp_sertifikat = $check_lamp_sertifikat;
         }
 
-        if($req->file('lamp_pbb') != null){
-            $file = $req->file('lamp_pbb');
-
+        if($file = $req->file('lamp_pbb')){
             $path = $lamp_dir.'/debitur';
             $name = 'pbb.';
 
-            $check = $check_lamp_sttp_pbb;
+            $check_file = $check_lamp_sttp_pbb;
 
-            $lamp_sttp_pbb = Helper::uploadImg($check, $file, $path, $name);
+            $lamp_sttp_pbb = Helper::uploadImg($check_file, $file, $path, $name);
         }else{
             $lamp_sttp_pbb = $check_lamp_sttp_pbb;
         }
 
-        if($req->file('lamp_imb') != null){
-            $file = $req->file('lamp_imb');
-
+        if($file = $req->file('lamp_imb')){
             $path = $lamp_dir.'/debitur';
             $name = 'imb.';
             
-            $check = $check_lamp_imb;
+            $check_file = $check_lamp_imb;
 
-            $lamp_imb = Helper::uploadImg($check, $file, $path, $name);
+            $lamp_imb = Helper::uploadImg($check_file, $file, $path, $name);
         }else{
             $lamp_imb = $check_lamp_imb;
         }
 
-        if($req->file('foto_agunan_rumah') != null){
-            $file = $req->file('foto_agunan_rumah');
-
+        if($file = $req->file('foto_agunan_rumah')){
             $path = $lamp_dir.'/debitur';
             $name = 'foto_agunan_rumah.';
 
-            $check = $check_foto_agunan_rumah;
+            $check_file = $check_foto_agunan_rumah;
 
-            $foto_agunan_rumah = Helper::uploadImg($check, $file, $path, $name);
+            $foto_agunan_rumah = Helper::uploadImg($check_file, $file, $path, $name);
         }else{
             $foto_agunan_rumah = $check_foto_agunan_rumah;
         }
 
         if ($files = $req->file('lamp_buku_tabungan')) {
-
             $path = $lamp_dir.'/lamp_buku_tabungan';
             $name = 'lamp_buku_tabungan.';
 
-            $check = $check_lamp_buku_tabungan;
+            $check_file = $check_lamp_buku_tabungan;
 
             $arrayPath = array();
             foreach($files as $file){
-                $arrayPath[] = Helper::uploadImg($check, $file, $path, $name);
+                $arrayPath[] = Helper::uploadImg($check_file, $file, $path, $name);
             }
 
             $lamp_buku_tabungan = implode(";", $arrayPath);
@@ -1154,9 +1145,9 @@ class MasterAO_Controller extends BaseController
             $path = $lamp_dir.'/debitur';
             $name = 'lamp_skk.';
 
-            $check = $check_lamp_skk;
+            $check_file = $check_lamp_skk;
 
-            $lamp_skk = Helper::uploadImg($check, $file, $path, $name);
+            $lamp_skk = Helper::uploadImg($check_file, $file, $path, $name);
         }else{
             $lamp_skk = $check_lamp_skk;
         }
@@ -1165,10 +1156,10 @@ class MasterAO_Controller extends BaseController
             $path = $lamp_dir.'/debitur';
             $name = 'lamp_sku.';
 
-            $check = $check_lamp_sku;
+            $check_file = $check_lamp_sku;
             $arrayPath = array();
             foreach($files as $file){
-                $arrayPath[] = Helper::uploadImg($check, $file, $path, $name);
+                $arrayPath[] = Helper::uploadImg($check_file, $file, $path, $name);
             }
 
             $lamp_sku = implode(";", $arrayPath);
@@ -1183,9 +1174,9 @@ class MasterAO_Controller extends BaseController
             $path = $lamp_dir.'/debitur';
             $name = 'lamp_slip_gaji.'; //->getClientOriginalExtension();
 
-            $check = $check_lamp_slip_gaji;
+            $check_file = $check_lamp_slip_gaji;
 
-            $lamp_slip_gaji = Helper::uploadImg($check, $file, $path, $name);
+            $lamp_slip_gaji = Helper::uploadImg($check_file, $file, $path, $name);
 
         }else{
             $lamp_slip_gaji = $check_lamp_slip_gaji;
@@ -1196,10 +1187,10 @@ class MasterAO_Controller extends BaseController
             $path = $lamp_dir.'/debitur';
             $name = 'foto_pembukuan_usaha.';
             
-            $check = $check_foto_pembukuan_usaha;
+            $check_file = $check_foto_pembukuan_usaha;
             $arrayPath = array();
             foreach($files as $file){
-                $arrayPath[] = Helper::uploadImg($check, $file, $path, $name);
+                $arrayPath[] = Helper::uploadImg($check_file, $file, $path, $name);
             }
 
             $foto_pembukuan_usaha = implode(";", $arrayPath);
@@ -1211,10 +1202,10 @@ class MasterAO_Controller extends BaseController
             $path = $lamp_dir.'/debitur';
             $name = 'lamp_foto_usaha.';
 
-            $check = $check_lamp_foto_usaha;
+            $check_file = $check_lamp_foto_usaha;
             $arrayPath = array();
             foreach($files as $file){
-                $arrayPath[] = Helper::uploadImg($check, $file, $path, $name);
+                $arrayPath[] = Helper::uploadImg($check_file, $file, $path, $name);
             }
 
             $lamp_foto_usaha = implode(";", $arrayPath);
@@ -1227,9 +1218,9 @@ class MasterAO_Controller extends BaseController
             $path = $lamp_dir.'/debitur';
             $name = 'lamp_surat_cerai.';
 
-            $check = $check_lamp_surat_cerai;
+            $check_file = $check_lamp_surat_cerai;
 
-            $lamp_surat_cerai = Helper::uploadImg($check, $file, $path, $name);
+            $lamp_surat_cerai = Helper::uploadImg($check_file, $file, $path, $name);
         }else{
             $lamp_surat_cerai = $check_lamp_surat_cerai;
         }
@@ -1238,9 +1229,9 @@ class MasterAO_Controller extends BaseController
             $path = $lamp_dir.'/debitur';
             $name = 'lamp_tempat_tinggal.';
 
-            $check = $check_lamp_tempat_tinggal;
+            $check_file = $check_lamp_tempat_tinggal;
 
-            $lamp_tempat_tinggal = Helper::uploadImg($check, $file, $path, $name);
+            $lamp_tempat_tinggal = Helper::uploadImg($check_file, $file, $path, $name);
         }else{
             $lamp_tempat_tinggal = $check_lamp_tempat_tinggal;
         }

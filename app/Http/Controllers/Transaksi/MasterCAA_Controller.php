@@ -268,6 +268,15 @@ class MasterCAA_Controller extends BaseController
             ], 404);
         }
 
+        /** Check Lampiran CAA */
+        $check_file_report_mao      = $check_caa->file_report_mao;
+        $check_file_report_mca      = $check_caa->file_report_mca;
+        $check_file_tempat_tinggal  = $check_caa->file_tempat_tinggal;
+        $check_file_lain            = $check_caa->file_lain;
+        $check_file_usaha           = $check_caa->file_usaha;
+        $check_file_agunan          = $check_caa->file_agunan;
+        /** */
+
         $lamp_dir = 'public/'.$check->debt['no_ktp'];
 
         // file_report_mao
@@ -275,25 +284,14 @@ class MasterCAA_Controller extends BaseController
 
             $path = $lamp_dir.'/mcaa/file_report_mao';
 
-            $name = $file->getClientOriginalName();
+            $name = ''; //$file->getClientOriginalName();
 
-            $img = Image::make($file)->resize(320, 240);
+            $check_file = $check_file_report_mao;
             
-            if(!File::isDirectory($path)){
-                File::makeDirectory($path, 0777, true, true);
-            }
-            
-            if(!empty($check_caa->file_report_mao))
-            {
-                File::delete($check_caa->file_report_mao);
-            }
-
-            $img->save($path.'/'.$name);
-
-            $file_report_mao = $path.'/'.$name;
+            $file_report_mao = Helper::uploadImg($check_file, $file, $path, $name);
 
         }else{
-            $file_report_mao = null;
+            $file_report_mao = $check_file_report_mao;
         }
 
         // file_report_mca
@@ -301,25 +299,14 @@ class MasterCAA_Controller extends BaseController
 
             $path = $lamp_dir.'/mcaa/file_report_mca';
 
-            $name = $file->getClientOriginalName();
+            $name = '';
             
-            $img = Image::make($file)->resize(320, 240);
+            $check_file = $check_file_report_mca;
             
-            if(!File::isDirectory($path)){
-                File::makeDirectory($path, 0777, true, true);
-            }
-            
-            if(!empty($check_caa->file_report_mca))
-            {
-                File::delete($check_caa->file_report_mca);
-            }
-
-            $img->save($path.'/'.$name);
-
-            $file_report_mca = $path.'/'.$name;
+            $file_report_mao = Helper::uploadImg($check_file, $file, $path, $name);
 
         }else{
-            $file_report_mca = null;
+            $file_report_mca = $check_file_report_mca;
         }
 
         // Agunan Files Condition
@@ -327,66 +314,23 @@ class MasterCAA_Controller extends BaseController
 
         if ($statusFileAgunan == 'ORIGINAL') {
             for ($i = 0; $i < count($req->file_agunan); $i++){
-                $listAgunan['agunan'] = $req->file_agunan;
+                $listAgunan[] = $req->file_agunan;
             }
 
-            $file_agunan = implode(";", $listAgunan['agunan']);
-        }else{
+            $file_agunan = implode(";", $listAgunan);
+        }elseif($statusFileAgunan == 'CUSTOM'){
 
             if($files = $req->file('file_agunan')){
 
+                $check_file = $check_file_agunan;
+                $path = $lamp_dir.'/mcaa/file_agunan';
                 $i = 0;
-                foreach($files as $file){
+                
+                $name = '';
 
-                    if (
-                        $file->getClientOriginalExtension() != 'pdf'  &&
-                        $file->getClientOriginalExtension() != 'jpg'  &&
-                        $file->getClientOriginalExtension() != 'jpeg' &&
-                        $file->getClientOriginalExtension() != 'png'  &&
-                        $file->getClientOriginalExtension() != 'gif'
-                    ){
-                        return response()->json([
-                            "code"    => 422,
-                            "status"  => "not valid request",
-                            "message" => ["file_agunan.".$i => ["file_agunan.".$i." harus bertipe jpg, jpeg, png, pdf"]]
-                        ], 422);
-                    }
-
-                    $path = $lamp_dir.'/mcaa/file_agunan';
-                    $name = $file->getClientOriginalName();
-
-                    $img = Image::make($file)->resize(320, 240);
-                    
-                    if(!empty($check_caa->file_agunan))
-                    {
-                        File::delete($check_caa->file_agunan);
-                    }
-        
-                    $img->save($path.'/'.$name);
-
-                    $listAgunan['agunan'][] = $path.'/'.$name;
-                }
-
-                $file_agunan = implode(";", $listAgunan['agunan']);
-            }else{
-                $file_agunan = null;
-            }
-        }
-
-        // Usaha Files Condition
-        $statusFileUsaha = $req->input('status_file_usaha');
-        if ($statusFileUsaha == 'ORIGINAL') {
-            for ($i = 0; $i < count($req->input('file_usaha')); $i++){
-                $listUsaha['usaha'] = $req->input('file_usaha');
-            }
-
-            $file_usaha = implode(";", $listUsaha['usaha']);
-        }elseif ($statusFileUsaha == 'CUSTOM') {
-
-            if($files = $req->file('file_usaha')){
-                $i = 0;
-                foreach($files as $file){
-
+                $arrayPath = array();
+                foreach($files as $file)
+                {
                     if (
                         $file->getClientOriginalExtension() != 'pdf'  &&
                         $file->getClientOriginalExtension() != 'jpg'  &&
@@ -401,27 +345,58 @@ class MasterCAA_Controller extends BaseController
                         ], 422);
                     }
 
-                    $path = $lamp_dir.'/mcaa/file_usaha';
-                    $name = $file->getClientOriginalName();
-                     
-                    $img = Image::make($file)->resize(320, 240);
-                    
-                    if(!File::isDirectory($path)){
-                        File::makeDirectory($path, 0777, true, true);
-                    }
-                    
-                    if(!empty($check_caa->file_usaha))
-                    {
-                        File::delete($check_caa->file_usaha);
-                    }
-
-                    $img->save($path.'/'.$name);
-                    // $file->move($path,$name);
-
-                    $listUsaha['usaha'][] = $path.'/'.$name;
+                    $arrayPath[] = Helper::uploadImg($check_file, $file, $path, $name);
                 }
 
-                $file_usaha = implode(";", $listUsaha['usaha']);
+                $file_agunan = implode(";", $arrayPath);
+            }else{
+                $file_agunan = $check_file_agunan;
+            }
+        }else{
+            $file_agunan = null;
+        }
+
+        // Usaha Files Condition
+        $statusFileUsaha = $req->input('status_file_usaha');
+        if ($statusFileUsaha == 'ORIGINAL') {
+            for ($i = 0; $i < count($req->input('file_usaha')); $i++){
+                $listUsaha[] = $req->input('file_usaha');
+            }
+
+            $file_usaha = implode(";", $listUsaha);
+
+        }elseif ($statusFileUsaha == 'CUSTOM') {
+
+            if($files = $req->file('file_usaha')){
+                $i = 0;
+                $path = $lamp_dir.'/mcaa/file_usaha';
+                $name = '';
+                
+                $check_file = $check_file_usaha;
+
+                $arrayPath = array();
+                foreach($files as $file)
+                {
+                    if (
+                        $file->getClientOriginalExtension() != 'pdf'  &&
+                        $file->getClientOriginalExtension() != 'jpg'  &&
+                        $file->getClientOriginalExtension() != 'jpeg' &&
+                        $file->getClientOriginalExtension() != 'png'  &&
+                        $file->getClientOriginalExtension() != 'gif'
+                    ){
+                        return response()->json([
+                            "code"    => 422,
+                            "status"  => "not valid request",
+                            "message" => ["file_usaha.".$i => ["file_usaha.".$i." harus bertipe jpg, jpeg, png, pdf"]]
+                        ], 422);
+                    }
+
+                    $arrayPath[] = Helper::uploadImg($check_file, $file, $path, $name);
+                }
+
+                $file_usaha = implode(";", $arrayPath);
+            }else{
+                $file_usaha = $check_file_usaha;
             }
         }else{
             $file_usaha = null;
@@ -432,27 +407,14 @@ class MasterCAA_Controller extends BaseController
 
             $path = $lamp_dir.'/mcaa/file_tempat_tinggal';
 
-            $name = $file->getClientOriginalName();
-
-            $img = Image::make($file)->resize(320, 240);
+            $name = '';
             
-            if(!File::isDirectory($path)){
-                File::makeDirectory($path, 0777, true, true);
-            }
+            $check_file = $check_file_tempat_tinggal;
             
-            if(!empty($check_caa->file_tempat_tinggal))
-            {
-                File::delete($check_caa->file_tempat_tinggal);
-            }
-
-            $img->save($path.'/'.$name);
-
-            // $file->move($path,$name);
-
-            $file_tempat_tinggal = $path.'/'.$name;
+            $file_report_mao = Helper::uploadImg($check_file, $file, $path, $name);
 
         }else{
-            $file_tempat_tinggal = $check->debt['lamp_tempat_tinggal'];
+            $file_tempat_tinggal = $check_file_tempat_tinggal;
         }
 
         // Othe File
@@ -460,25 +422,14 @@ class MasterCAA_Controller extends BaseController
 
             $path = $lamp_dir.'/mcaa/file_lain';
 
-            $name = $file->getClientOriginalName();
-
-            $img = Image::make($file)->resize(320, 240);
+            $name = '';
             
-            if(!File::isDirectory($path)){
-                File::makeDirectory($path, 0777, true, true);
-            }
+            $check_file = $check_file_lain;
             
-            if(!empty($check_caa->file_lain))
-            {
-                File::delete($check_caa->file_lain);
-            }
-
-            $img->save($path.'/'.$name);
-
-            $file_lain = $path.'/'.$name;
+            $file_report_mao = Helper::uploadImg($check_file, $file, $path, $name);
 
         }else{
-            $file_lain = null;
+            $file_lain = $check_file_lain;
         }
 
         // Email Team CAA
