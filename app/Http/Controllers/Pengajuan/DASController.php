@@ -240,9 +240,9 @@ class DASController extends BaseController
     }
 
     public function update($id, Request $req){
-        $check = TransSO::where('id', $id)->first();
+        $check_so = TransSO::where('id', $id)->first();
 
-        if (!$check) {
+        if ($check_so == null) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
@@ -286,28 +286,29 @@ class DASController extends BaseController
         //     ], 422);
         // }
 
-        $lamp_dir = 'public/lamp_trans.'.$check->nomor_so;
+        $lamp_dir = 'public/lamp_trans.'.$check_so->nomor_so;
 
         if($files = $req->file('lamp_ideb')){
             
             $path = $lamp_dir.'/ideb';
-            $exIdeb = $file->getClientOriginalExtension();
 
-            if ($exIdeb != 'ideb' && $exIdeb != 'pdf')
-            {
-                return response()->json([
-                    "code"    => 422,
-                    "status"  => "not valid request",
-                    "message" => "file ideb harus berupa format ideb / pdf"
-                ], 422);
-            }
-
-            $check = $check->lamp_ideb;
+            $check = $check_so->lamp_ideb;
             $name = '';
 
             $arrayPath = array();
             foreach($files as $file)
             {
+                $exIdeb = $file->getClientOriginalExtension();
+
+                if ($exIdeb != 'ideb' && $exIdeb != 'pdf')
+                {
+                    return response()->json([
+                        "code"    => 422,
+                        "status"  => "not valid request",
+                        "message" => "file ideb harus berupa format ideb / pdf"
+                    ], 422);
+                }
+
                 $arrayPath[] = Helper::uploadImg($check, $file, $path, $name);
             }
 
@@ -318,7 +319,7 @@ class DASController extends BaseController
 
         if($files = $req->file('lamp_pefindo')){
             
-            $check = $check->lamp_pefindo;
+            $check = $check_so->lamp_pefindo;
             $path = $lamp_dir.'/pefindo';
             $name = '';
 
