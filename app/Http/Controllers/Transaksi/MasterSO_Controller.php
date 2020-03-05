@@ -319,9 +319,9 @@ class MasterSO_Controller extends BaseController
         $day_in_second = 60 * 60 * 24 * 30;
 
         $ktp        = $req->input('no_ktp'); // 3216190107670001;
-        $no_ktp_kk  = $req->input('no_ktp_kk');
+        // $no_ktp_kk  = $req->input('no_ktp_kk');
         $no_ktp_pas = $req->input('no_ktp_pas');
-        $no_ktp_pen = $req->input('no_ktp_pen');
+        // $no_ktp_pen = $req->input('no_ktp_pen');
 
 
         $check_ktp_dpm = DB::connection("web")->table("view_nasabah")->where("NO_ID", $ktp)->first();
@@ -332,7 +332,7 @@ class MasterSO_Controller extends BaseController
             $NASABAH_ID = $check_ktp_dpm->NASABAH_ID;
         }
 
-        $check_ktp_web = Debitur::select('id', 'no_ktp', 'created_at')->where('no_ktp', $ktp)->first();
+        $check_ktp_web = Debitur::select('id', 'no_ktp', 'nama_lengkap', 'created_at')->where('no_ktp', $ktp)->first();
 
         if($check_ktp_web != null){
 
@@ -344,7 +344,7 @@ class MasterSO_Controller extends BaseController
                 return response()->json([
                     "code"    => 403,
                     "status"  => "Expired",
-                    'message' => "Akun belum aktif kembali, belum ada 1 bulan yang lalu, tepatnya pada tanggal ".Carbon::parse($check_ktp_web->created_at)->format("d-m-Y")." debitur dengan id {$check_ktp_web->id} telah melakukan pengajuan"
+                    'message' => "Akun belum aktif kembali, belum ada 1 bulan yang lalu, tepatnya pada tanggal '".Carbon::parse($check_ktp_web->created_at)->format("d-m-Y")."' debitur dengan nama '{$check_ktp_web->nama_lengkap}' telah melakukan pengajuan"
                 ], 403);
             }else{
                 return response()->json([
