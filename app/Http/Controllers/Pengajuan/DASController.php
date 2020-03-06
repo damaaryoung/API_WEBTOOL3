@@ -296,7 +296,6 @@ class DASController extends BaseController
             $path = $lamp_dir.'/ideb';
 
             $check = $check_so->lamp_ideb;
-            $name = '';
 
             $arrayPath = array();
             foreach($files as $file)
@@ -312,7 +311,22 @@ class DASController extends BaseController
                     ], 422);
                 }
 
-                $arrayPath[] = Helper::uploadImg($check, $file, $path, $name);
+                // Check Directory
+                if(!File::isDirectory($path)){
+                    File::makeDirectory($path, 0777, true, true);
+                }
+                    
+                // Delete File is Exists
+                if(!empty($check))
+                {
+                    File::delete($check);
+                }
+
+                $name = $file->getClientOriginalName();
+
+                // Save Image to Directory
+                $file->move($path, $name);
+                $arrayPath[] = $path . '/' . $name;
             }
 
             $im_ideb = implode(";", $arrayPath);
