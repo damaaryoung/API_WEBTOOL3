@@ -36,10 +36,6 @@ class Approval extends Model implements AuthenticatableContract, AuthorizableCon
     ];
 
     protected $casts = [
-        'flg_aktif' => 'boolean'
-    ];
-
-    protected $casts = [
         'id'            => 'integer',
         'user_id'       => 'integer',
         'id_trans_so'   => 'integer',
@@ -48,7 +44,8 @@ class Approval extends Model implements AuthenticatableContract, AuthorizableCon
         'id_area'       => 'integer',
         'id_cabang'     => 'integer',
         'plafon'        => 'integer',
-        'tenor'         => 'integer'
+        'tenor'         => 'integer',
+        'flg_aktif'     => 'boolean'
     ];
 
     // public $timestamps = false;
