@@ -795,7 +795,7 @@ class MasterCAA_Controller extends BaseController
                 'kuantitatif_hasil'             => $check_ca->ringkasan['kuantitatif_hasil']
             ],
             'status_ca'     => $status_ca,
-            'tgl_transaksi' => Carbon::parse($val->created_at)->format("d-m-Y H:i:s")
+            'tgl_transaksi' => Carbon::parse($check_ca->created_at)->format("d-m-Y H:i:s")
         );
 
         try {
@@ -1118,7 +1118,7 @@ class MasterCAA_Controller extends BaseController
             ],
             'rincian'       => $check_caa->rincian,
             'status_caa'    => $status_caa,
-            'tgl_transaksi' => Carbon::parse($val->created_at)->format("d-m-Y H:i:s")
+            'tgl_transaksi' => Carbon::parse($check_caa->created_at)->format("d-m-Y H:i:s")
         );
 
         try {
