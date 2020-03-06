@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Pengajuan;
 use Laravel\Lumen\Routing\Controller as BaseController;
 use App\Http\Controllers\Controller as Helper;
 use App\Models\Pengajuan\SO\Penjamin;
+use Illuminate\Support\Facades\File;
 use App\Models\Transaksi\TransSO;
 use App\Models\AreaKantor\PIC;
 use Illuminate\Http\Request;
