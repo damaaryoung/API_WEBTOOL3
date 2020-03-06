@@ -245,11 +245,11 @@ class Controller extends BaseController
         }
 
         $namefile = $file->getClientOriginalName();
+        $fullPath = $path.'/'.$namefile;
         
         if($file->getClientMimeType() == "application/pdf"){
             $file->move($path, $namefile);
         }else{
-            $fullPath = $path.'/'.$namefile;
             // cut size image
             $img = Image::make(realpath($file))->resize(320, 240);
     
