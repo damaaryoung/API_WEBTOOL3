@@ -232,15 +232,12 @@ class Controller extends BaseController
     }
 
     public static function uploadImg($check, $file, $path, $name)
-    {;
-        // cut size image
-        $img = Image::make($file)->resize(320, 240);
-            
+    {;  
         // Check Directory
         if(!File::isDirectory($path)){
             File::makeDirectory($path, 0777, true, true);
         }
-            
+        
         // Delete File is Exists
         if(!empty($check))
         {
@@ -249,6 +246,8 @@ class Controller extends BaseController
 
         $fullPath = $path.'/'.$name.$file->getClientOriginalName();
 
+        // cut size image
+        $img = Image::make($file)->resize(320, 240);
         // Save Image to Directory
         $img->save($fullPath);
         
