@@ -325,6 +325,8 @@ class DASController extends BaseController
 
                 $name = $file->getClientOriginalName();
 
+                // dd($path . '/' . $name);
+
                 // Save Image to Directory
                 $file->move($path, $name);
                 $arrayPath[] = $path . '/' . $name;

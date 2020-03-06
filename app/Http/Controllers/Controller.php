@@ -244,11 +244,12 @@ class Controller extends BaseController
             File::delete($check);
         }
 
-        $fullPath = $path.'/'.$name.$file->getClientOriginalName();
-
+        $namefile = $file->getClientOriginalName();
+        
         if($file->getClientMimeType() == "application/pdf"){
-            $file->move($fullPath);
+            $file->move($path, $namefile);
         }else{
+            $fullPath = $path.'/'.$namefile;
             // cut size image
             $img = Image::make(realpath($file))->resize(320, 240);
     
