@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Pengajuan\Tunggal;
 
 use Laravel\Lumen\Routing\Controller as BaseController;
-// use App\Http\Controllers\Controller as Helper;
+use App\Http\Controllers\Controller as Helper;
 
 // Form Request
 use App\Http\Requests\Pengajuan\PasanganRequest;
