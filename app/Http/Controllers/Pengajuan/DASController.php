@@ -342,7 +342,28 @@ class DASController extends BaseController
             $name = '';
 
             $arrayPath = array();
-            foreach($files as $file){
+            foreach($files as $file)
+            {
+                $exIdeb = $file->getClientOriginalExtension();
+
+                if (
+                    $exIdeb != 'png' && 
+                    $exIdeb != 'jpg' &&
+                    $exIdeb != 'jpeg'&&
+                    $exIdeb != 'PNG' &&
+                    $exIdeb != 'JPG' &&
+                    $exIdeb != 'JPEG'&&
+                    $exIdeb != 'pdf' &&
+                    $exIdeb != 'PDF'
+                    )
+                {
+                    return response()->json([
+                        "code"    => 422,
+                        "status"  => "not valid request",
+                        "message" => "file pefindo harus berformat: png, jpg, jpeg, pdf"
+                    ], 422);
+                }
+
                 $arrayPath[] = Helper::uploadImg($check, $file, $path, $name);
             }
 
