@@ -232,7 +232,7 @@ class Controller extends BaseController
     }
 
     public static function uploadImg($check, $file, $path, $name)
-    {;  
+    {
         // Check Directory
         if(!File::isDirectory($path)){
             File::makeDirectory($path, 0777, true, true);
@@ -246,10 +246,15 @@ class Controller extends BaseController
 
         $fullPath = $path.'/'.$name.$file->getClientOriginalName();
 
-        // cut size image
-        $img = Image::make($file)->resize(320, 240);
-        // Save Image to Directory
-        $img->save($fullPath);
+        if($file->getClientMimeType() == "application/pdf"){
+            $file->move($fullPath);
+        }else{
+            // cut size image
+            $img = Image::make(realpath($file))->resize(320, 240);
+    
+            // Save Image to Directory
+            $img->save($fullPath);
+        }
         
         return $fullPath;
     }
