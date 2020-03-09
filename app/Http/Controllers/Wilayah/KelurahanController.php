@@ -407,6 +407,7 @@ class KelurahanController extends BaseController
             $res = $query->where($key, $operator, $func_value);
         }
 
+        
         if($limit == 'default'){
             $result = $res->get();
         }else{
@@ -425,8 +426,8 @@ class KelurahanController extends BaseController
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'count'  => $query->count(),
-                'data'   => $query
+                'count'  => $result->count(),
+                'data'   => $result
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
