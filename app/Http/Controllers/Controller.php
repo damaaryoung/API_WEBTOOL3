@@ -244,21 +244,26 @@ class Controller extends BaseController
             File::delete($check);
         }
 
-        $namefile = $file->getClientOriginalName();
+        if($name != ''){
+            $namefile = $name . '.' . $file->getClientOriginalName();
+        }else{
+            $namefile = $file->getClientOriginalName();
+        }
+
         $fullPath = $path.'/'.$namefile;
         
         if($file->getClientMimeType() == "application/pdf"){
             $file->move($path, $namefile);
         }else{
             // cut size image
-            // $img = Image::make(realpath($file))->resize(320, 240);
+            $img = Image::make(realpath($file))->resize(480, 360);
     
             // Save Image to Directory
-            // $img->save($fullPath);
+            $img->save($fullPath);
 
-            Image::cache(function($image) use ($file, $fullPath) {
-                $image->make($file)->resize(480, 360)->save($fullPath);
-             });
+            // $quick = Image::cache(function($image) use ($file, $fullPath) {
+            //     return $image->make($file)->resize(480, 360)->save($fullPath);
+            // });
         }
         
         return $fullPath;
