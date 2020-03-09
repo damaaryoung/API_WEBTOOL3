@@ -3,6 +3,7 @@
 $host = $_SERVER['HTTP_HOST'];
 
 $production = '103.31.232.146';
+$office     = '103.234.254.186';
 
 $url_production = $production.':4100';
 
