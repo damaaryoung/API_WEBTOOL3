@@ -269,12 +269,12 @@ class MasterCAA_Controller extends BaseController
         }
 
         /** Check Lampiran CAA */
-        $check_file_report_mao      = $check_caa->file_report_mao;
-        $check_file_report_mca      = $check_caa->file_report_mca;
-        $check_file_tempat_tinggal  = $check_caa->file_tempat_tinggal;
-        $check_file_lain            = $check_caa->file_lain;
-        $check_file_usaha           = $check_caa->file_usaha;
-        $check_file_agunan          = $check_caa->file_agunan;
+        $check_file_report_mao      = $check->caa['file_report_mao'];
+        $check_file_report_mca      = $check->caa['file_report_mca'];
+        $check_file_tempat_tinggal  = $check->caa['file_tempat_tinggal'];
+        $check_file_lain            = $check->caa['file_lain'];
+        $check_file_usaha           = $check->caa['file_usaha'];
+        $check_file_agunan          = $check->caa['file_agunan'];
         /** */
 
         $lamp_dir = 'public/'.$check->debt['no_ktp'];
