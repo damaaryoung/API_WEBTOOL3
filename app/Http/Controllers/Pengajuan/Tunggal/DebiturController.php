@@ -38,7 +38,7 @@ class DebiturController extends BaseController
         for ($i = 0; $i < count($nama_anak); $i++) {
             $anak[] = array(
                 'nama'      => $nama_anak[$i],
-                'tgl_lahir' => Carbon::parse($tgl_anak[$i])->format("d-m-Y")
+                'tgl_lahir' => empty($tgl_anak[$i]) ? null : Carbon::parse($tgl_anak[$i])->format("d-m-Y")
             );
         }
 
