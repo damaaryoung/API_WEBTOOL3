@@ -11,7 +11,8 @@ use Illuminate\Http\Request;
 
 class MenuMasterController extends BaseController
 {
-    public function index() {
+    public function index() 
+    {
 
         $query = MenuMaster::select('id','nama','url')->where('flg_aktif', 1)->orderBy('nama', 'asc')->get();
 

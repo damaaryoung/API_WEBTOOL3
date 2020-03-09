@@ -6,14 +6,22 @@ use Laravel\Lumen\Routing\Controller as BaseController;
 use App\Models\AreaKantor\AsalData;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use Cache;
 use DB;
 
 class AsalDataController extends BaseController
 {
-    public function index() {
-        $query = AsalData::select('id', 'nama', 'info')->where('flg_aktif', 1)->orderBy('nama', 'asc')->get();
+    public function __construct() {
+        $this->time_cache = config('app.cache_exp');
+    }
 
-        if ($query == '[]') {
+    public function index() 
+    {
+        $query = Cache::remember('asalData.index', $this->time_cache, function () {
+            return AsalData::select('id', 'nama', 'info')->where('flg_aktif', 1)->orderBy('nama', 'asc')->get();
+        });
+
+        if (empty($query)) {
             return response()->json([
                 "code"    => 404,
                 "status"  => "not found",
@@ -22,14 +30,13 @@ class AsalDataController extends BaseController
         }
 
         try {
-
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
                 'count'  => $query->count(),
                 'data'   => $query
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 "code"    => 501,
                 "status"  => "error",
@@ -53,7 +60,7 @@ class AsalDataController extends BaseController
                 'message' => 'Data berhasil dibuat',
                 'data'    => $data
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 "code"    => 501,
                 "status"  => "error",
@@ -63,31 +70,23 @@ class AsalDataController extends BaseController
     }
 
     public function show($id) {
+        $query = AsalData::select('nama', 'info', 'flg_aktif', 'created_at', 'updated_at')->where('id', $id)->first();
+        
+        if (empty($query)) {
+            return response()->json([
+                "code"    => 404,
+                "status"  => "not found",
+                "message" => "Data kosong"
+            ], 404);
+        }
+        
         try {
-            $query = AsalData::where('id', $id)->first();
-
-            if ($query == null) {
-                return response()->json([
-                    "code"    => 404,
-                    "status"  => "not found",
-                    "message" => "Data kosong"
-                ], 404);
-            }
-
-            $data[] = array(
-                'nama'      => $query->nama,
-                'info'      => $query->info,
-                'flg_aktif' => (bool) $query->flg_aktif,
-                'created_at'=> Carbon::parse($query->created_at)->format('d-m-Y H:i:s'),
-                'updated_at'=> Carbon::parse($query->updated_at)->format('d-m-Y H:i:s')
-            );
-
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'data'   => $data
+                'data'   => $query
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 "code"    => 501,
                 "status"  => "error",
@@ -99,7 +98,7 @@ class AsalDataController extends BaseController
     public function update($id, Request $req) {
         $check = AsalData::where('id', $id)->first();
 
-        if (!$check) {
+        if (empty($check)) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
@@ -122,7 +121,7 @@ class AsalDataController extends BaseController
                 'message' => 'Data berhasil diupdate',
                 'data'    => $data
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 "code"    => 501,
                 "status"  => "error",
@@ -131,26 +130,17 @@ class AsalDataController extends BaseController
         }
     }
 
-    public function delete($id) {
+    public function delete($id) 
+    {
+        AsalData::where('id', $id)->update(['flg_aktif' => 0]);
+
         try {
-            $check = AsalData::where('id', $id)->first();
-
-            if (!$check) {
-                return response()->json([
-                    'code'    => 404,
-                    'status'  => 'not found',
-                    'message' => 'Data Tidak Ada!!'
-                ], 404);
-            }
-
-            AsalData::where('id', $id)->update(['flg_aktif' => 0]);
-
             return response()->json([
                 'code'    => 200,
                 'status'  => 'success',
                 'message' => 'Data dengan id '.$id.' berhasil dihapus'
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 "code"    => 501,
                 "status"  => "error",
@@ -162,7 +152,7 @@ class AsalDataController extends BaseController
     public function trash(){
         $query = AsalData::select('id', 'nama', 'info')->where('flg_aktif', 0)->orderBy('nama', 'asc')->get();
 
-        if ($query == '[]') {
+        if (empty($query)) {
             return response()->json([
                 "code"    => 404,
                 "status"  => "not found",
@@ -171,14 +161,13 @@ class AsalDataController extends BaseController
         }
 
         try {
-
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
                 'count'  => $query->count(),
                 'data'   => $query
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 "code"    => 501,
                 "status"  => "error",
@@ -187,17 +176,17 @@ class AsalDataController extends BaseController
         }
     }
 
-    public function restore($id){
-        $query = AsalData::where('id', $id)->update(['flg_aktif', 1]);
+    public function restore($id)
+    {
+        AsalData::where('id', $id)->update(['flg_aktif', 1]);
 
         try {
-
             return response()->json([
                 'code'    => 200,
                 'status'  => 'success',
                 'message' => 'data berhasil dikembalikan'
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 "code"    => 501,
                 "status"  => "error",
@@ -253,12 +242,12 @@ class AsalDataController extends BaseController
         }
 
         if($limit == 'default'){
-            $result = $res;
+            $result = $res->get();
         }else{
-            $result = $res->limit($limit);
+            $result = $res->limit($limit)->get();
         }
 
-        if ($result->get() == '[]') {
+        if (empty($result)) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
@@ -271,9 +260,9 @@ class AsalDataController extends BaseController
                 'code'   => 200,
                 'status' => 'success',
                 'count'  => $result->count(),
-                'data'   => $result->get()
+                'data'   => $result
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 "code"    => 501,
                 "status"  => "error",

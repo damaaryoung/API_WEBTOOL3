@@ -5,28 +5,41 @@ namespace App\Http\Controllers\Master\AreaKantor;
 use Laravel\Lumen\Routing\Controller as BaseController;
 use App\Http\Requests\AreaKantor\AreaRequest;
 use App\Models\AreaKantor\Area;
+use App\Models\Wilayah\Provinsi;
+use App\Models\Wilayah\Kabupaten;
 use Carbon\Carbon;
-// use DB;
+use Cache;
+use DB;
 
 class AreaController extends BaseController
 {
-    public function index() {
-        // $query = Area::where('flg_aktif', 1)->orderBy('nama', 'asc')->get();
+    public function __construct() {
+        $this->time_cache = config('app.cache_exp');
+    }
 
-        $query = Area::select('id', 'nama as nama_area')->addSelect([
-            'nama_provinsi' => function ($q) {
-                $q->select('nama')
-                ->from('master_provinsi')
-                ->whereColumn('id_provinsi', 'master_provinsi.id');
-            },
-            'nama_kabupaten' => function ($q) {
-                $q->select('nama')
-                ->from('master_kabupaten')
-                ->whereColumn('id_kabupaten', 'master_kabupaten.id');
-            }
-        ])->get();
+    public function index() 
+    {
+        $data = array();
 
-        if ($query == '[]') {
+        $query = Cache::remember('area.index', $this->time_cache, function () use ($data) {
+
+            Area::select('id', 'nama as nama_area')
+                ->addSelect([
+                    'nama_provinsi'  => Provinsi::select('nama')->whereColumn('id_provinsi', 'master_provinsi.id'),
+                    'nama_kabupaten' => Kabupaten::select('nama')->whereColumn('id_kabupaten', 'master_kabupaten.id')
+                ])
+                ->where('flg_aktif', 1)
+                ->orderBy('nama', 'asc')
+                ->chunk(50, function($chunks) use (&$data) {
+                    foreach($chunks as $chunk) {
+                        $data[] = $chunk;
+                    }
+                });
+
+            return $data;
+        });
+
+        if (empty($query)) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
@@ -38,10 +51,10 @@ class AreaController extends BaseController
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'count'  => $query->count(),
+                'count'  => sizeof($query),
                 'data'   => $query
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 "code"    => 501,
                 "status"  => "error",
@@ -66,7 +79,7 @@ class AreaController extends BaseController
                 'message' => 'Data berhasil dibuat',
                 'data'    => $data
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 "code"    => 501,
                 "status"  => "error",
@@ -76,9 +89,16 @@ class AreaController extends BaseController
     }
 
     public function show($id) {
-        $val = Area::where('id', $id)->first();
+        $query = Area::select(
+            'id', 'nama as nama_area', 'id_provinsi', 'id_kabupaten', 'flg_aktif', 'created_at'
+        )
+        ->addSelect([
+            'nama_provinsi'  => Provinsi::select('nama')->whereColumn('id_provinsi', 'master_provinsi.id'),
+            'nama_kabupaten' => Kabupaten::select('nama')->whereColumn('id_kabupaten', 'master_kabupaten.id')
+        ])
+        ->where('id', $id)->first();
 
-        if ($val == null) {
+        if (empty($query)) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
@@ -86,24 +106,13 @@ class AreaController extends BaseController
             ], 404);
         }
 
-        $res = array(
-            "id"             => $val->id,
-            "nama_area"      => $val->nama,
-            "id_provinsi"    => $val->id_provinsi,
-            "nama_provinsi"  => $val->prov['nama'],
-            "id_kabupaten"   => $val->id_kabupaten,
-            "nama_kabupaten" => $val->kab['nama'],
-            "flg_aktif"      => (bool) $val->flg_aktif,
-            "created_at"     => Carbon::parse($val->created_at)->format('d-m-Y H:i:s')
-        );
-
         try {
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'data'   => $res
+                'data'   => $query
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 'code'   => 501,
                 'status' => 'error',
@@ -112,10 +121,11 @@ class AreaController extends BaseController
         }
     }
 
-    public function update($id, AreaRequest $req) {
+    public function update($id, AreaRequest $req) 
+    {
         $check = Area::where('id', $id)->first();
 
-        if (!$check) {
+        if (empty($check)) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
@@ -146,7 +156,7 @@ class AreaController extends BaseController
                 'message' => 'Data berhasil diupdate',
                 'data'    => $data
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 'code'   => 501,
                 'status' => 'error',
@@ -155,26 +165,17 @@ class AreaController extends BaseController
         }
     }
 
-    public function delete($id) {
-        $check = Area::where('id', $id)->first();
-
-        if (!$check) {
-            return response()->json([
-                'code'    => 404,
-                'status'  => 'not found',
-                'message' => 'Data tidak ada'
-            ], 404);
-        }
-
+    public function delete($id) 
+    {
         Area::where('id', $id)->update(['flg_aktif' => 0]);
-
+    
         try {
             return response()->json([
                 'code'    => 200,
                 'status'  => 'success',
                 'message' => 'Data dengan id '.$id.' berhasil dihapus'
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 'code'   => 501,
                 'status' => 'error',
@@ -183,26 +184,29 @@ class AreaController extends BaseController
         }
     }
 
-    public function trash() {
-        $query = Area::where('flg_aktif', 0)->orderBy('nama', 'asc')->get();
+    public function trash() 
+    {
+        $data = array();
 
-        if ($query == '[]') {
+        Area::select('id', 'nama as nama_area')
+        ->addSelect([
+            'nama_provinsi'  => Provinsi::select('nama')->whereColumn('id_provinsi', 'master_provinsi.id'),
+            'nama_kabupaten' => Kabupaten::select('nama')->whereColumn('id_kabupaten', 'master_kabupaten.id')
+        ])
+        ->where('flg_aktif', 0)
+        ->orderBy('nama', 'asc')
+        ->chunk(50, function($chunks) use (&$data) {
+            foreach($chunks as $chunk) {
+                $data[] = $chunk;
+            }
+        });
+
+        if (empty($data)) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
                 'message' => 'Data kosong'
             ], 404);
-        }
-
-        $data = array();
-        foreach ($query as $key => $val) {
-            $data[$key] = [
-                "id"             => $val->id,
-                "nama_area"      => $val->nama,
-                "nama_provinsi"  => $val->prov['nama'],
-                "nama_kabupaten" => $val->kab['nama'],
-                "flg_aktif"      => $val->flg_aktif == 1 ? "true" : "false"
-            ];
         }
 
         try {
@@ -212,7 +216,7 @@ class AreaController extends BaseController
                 'count'   => sizeof($data),
                 'data'    => $data
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 'code'   => 501,
                 'status' => 'error',
@@ -221,8 +225,9 @@ class AreaController extends BaseController
         }
     }
 
-    public function restore($id) {
-        $query = Area::where('id', $id)->update(['flg_aktif' => 1]);
+    public function restore($id) 
+    {
+        Area::where('id', $id)->update(['flg_aktif' => 1]);
 
         try {
             return response()->json([
@@ -230,7 +235,7 @@ class AreaController extends BaseController
                 'status'  => 'success',
                 'message' => 'Data berhasil dikembalikan'
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 'code'   => 501,
                 'status' => 'error',
@@ -316,7 +321,7 @@ class AreaController extends BaseController
                 'count'  => sizeof($data),
                 'data'   => $data
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 "code"    => 501,
                 "status"  => "error",

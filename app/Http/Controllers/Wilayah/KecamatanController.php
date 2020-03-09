@@ -6,14 +6,37 @@ use Laravel\Lumen\Routing\Controller as BaseController;
 use App\Http\Controllers\Controller as Helper;
 use App\Models\Wilayah\Kecamatan;
 use Illuminate\Http\Request;
+use Cache;
 use DB;
 
 class KecamatanController extends BaseController
 {
-    public function index() {
-        $query = Kecamatan::with('kab')->select('id', 'nama', 'id_kabupaten')->where('flg_aktif', 1)->orderBy('nama', 'asc')->get();
+    public function __construct() {
+        $this->time_cache = config('app.cache_exp');
+    }
+    
+    public function index()
+    {
+        $data = array();
+        $query = Cache::rememberForever("kec.index", function () use ($data)
+        {
+            foreach(
+                Kecamatan::withCount(['kab as nama_kabupaten' => function($sub)
+                {
+                    $sub->select('nama');
+                }])
+                ->where('flg_aktif', 1)
+                ->orderBy('nama', 'asc')
+                ->cursor() as $cursor
+            )
+            {
+                $data[] = $cursor;                
+            }
 
-        if ($query == '[]') {
+            return $data;
+        });
+
+        if (empty($query)) {
             return response()->json([
                 "code"    => 404,
                 "status"  => "not found",
@@ -21,23 +44,14 @@ class KecamatanController extends BaseController
             ], 404);
         }
 
-        $data = array();
-        foreach ($query as $key => $val) {
-            $data[$key] = [
-                "id"             => $val->id,
-                "nama"           => $val->nama,
-                "nama_kabupaten" => $val->kab['nama']
-            ];
-        }
-
         try {
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'count'  => sizeof($data),
-                'data'   => $data
+                'count'  => sizeof($query),
+                'data'   => $query
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 "code"    => 501,
                 "status"  => "error",
@@ -74,21 +88,21 @@ class KecamatanController extends BaseController
             ], 422);
         }
 
-        $KQuery = array(
+        $form = array(
             'nama'         => $nama,
             'id_kabupaten' => $kabupaten
         );
 
+        Kecamatan::create($form); //703ms
+        
         try {
-            Kecamatan::create($KQuery);
-
             return response()->json([
                 'code'    => 200,
                 'status'  => 'success',
                 'message' => 'Data berhasil dibuat',
-                'data'    => $KQuery
+                'data'    => $form
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 "code"    => 501,
                 "status"  => "error",
@@ -98,53 +112,32 @@ class KecamatanController extends BaseController
     }
 
     public function show($IdOrName) {
-        $res = array();
-        if(preg_match("/^[0-9]{1,}$/", $IdOrName)){
-            $query = Kecamatan::with('kab')->select('id', 'nama', 'id_kabupaten', 'flg_aktif')->where('id', $IdOrName)->first();
+        // if(preg_match("/^[0-9]{1,}$/", $IdOrName)){
+            
+            $query = Kecamatan::withCount(['kab as nama_kabupaten' => function($sub){
+                $sub->select('nama');
+            }])->where('id', $IdOrName)->first()->makeHidden(['id_kabupaten', 'flg_aktif']);
+        // }else{
+        //     $query = Kecamatan::withCount(['kab as nama_kabupaten' => function($sub){
+        //         $sub->select('nama');
+        //     }])->select('id', 'nama', 'id_kabupaten', 'flg_aktif')->where('nama','like','%'.$IdOrName.'%')->get();
+        // }
 
-            if ($query == null) {
-                return response()->json([
-                    'code'    => 404,
-                    'status'  => 'not found',
-                    'message' => 'Data kosong!!'
-                ], 404);
-            }
-
-            $res = [
-                'id'             => $query->id,
-                'nama'           => $query->nama,
-                'id_kabupaten'   => $query->id_kabupaten,
-                'nama_kabupaten' => $query->kab['nama'],
-                'flg_aktif'      => $query->flg_aktif
-            ];
-        }else{
-            $query = Kecamatan::with('kab')->select('id', 'nama', 'id_kabupaten', 'flg_aktif')->where('nama','like','%'.$IdOrName.'%')->get();
-
-            if ($query == '[]') {
-                return response()->json([
-                    'code'    => 404,
-                    'status'  => 'not found',
-                    'message' => 'Data kosong!!'
-                ], 404);
-            }
-
-            foreach ($query as $key => $val) {
-                $res[$key] = [
-                    'id'            => $val->id,
-                    'nama_kecamatan'=> $val->nama,
-                    'id_kabupaten'  => $val->id_kabupaten,
-                    'nama_kabupaten'=> $val->kab['nama']
-                ];
-            }
+        if (empty($query)) {
+            return response()->json([
+                'code'    => 404,
+                'status'  => 'not found',
+                'message' => 'Data kosong!!'
+            ], 404);
         }
 
         try {
             return response()->json([
                 'code'    => 200,
                 'status'  => 'success',
-                'data'    => $res
+                'data'    => $query
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 "code"    => 501,
                 "status"  => "error",
@@ -156,7 +149,7 @@ class KecamatanController extends BaseController
     public function update($id, Request $req) {
         $check = Kecamatan::where('id', $id)->first();
 
-        if ($check == null) {
+        if (empty($check)) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
@@ -164,9 +157,9 @@ class KecamatanController extends BaseController
             ], 404);
         }
 
-        $nama      = empty($req->input('nama')) ? $check->nama : $req->input('nama');
+        $nama      = empty($req->input('nama'))         ? $check->nama : $req->input('nama');
         $kabupaten = empty($req->input('id_kabupaten')) ? $check->id_kabupaten : $req->input('id_kabupaten');
-        $flg_aktif = empty($req->input('flg_aktif')) ? $check->flg_aktif : ($req->input('flg_aktif') == 'false' ? 0 : 1);
+        $flg_aktif = empty($req->input('flg_aktif'))    ? $check->flg_aktif : ($req->input('flg_aktif') == 'false' ? 0 : 1);
 
         if(!empty($kabupaten) && !preg_match("/^[0-9]{1,}$/", $kabupaten)){
             return response()->json([
@@ -184,22 +177,22 @@ class KecamatanController extends BaseController
             ], 422);
         }
 
-        $query = array(
+        $data = array(
             'nama'         => $nama,
             'id_kabupaten' => $kabupaten,
             'flg_aktif'    => (bool) $flg_aktif
         );
 
-        try {
-            DB::connection('web')->table('master_kecamatan')->where('id', $id)->update($query);
+        Kecamatan::where('id', $id)->update($data);
 
+        try {
             return response()->json([
                 'code'    => 200,
                 'status'  => 'success',
                 'message' => 'Data berhasil diupdate',
-                'data'    => $query
+                'data'    => $data
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 "code"    => 501,
                 "status"  => "error",
@@ -208,26 +201,17 @@ class KecamatanController extends BaseController
         }
     }
 
-    public function delete($id) {
-        $check = Kecamatan::where('id', $id)->first();
-
-        if ($check == null) {
-            return response()->json([
-                'code'    => 404,
-                'status'  => 'not found',
-                'message' => 'Data kosong!!'
-            ], 404);
-        }
-
+    public function delete($id) 
+    {
+        Kecamatan::where('id', $id)->update(['flg_aktif' => 0]);
+        
         try {
-            Kecamatan::where('id', $id)->update(['flg_aktif' => 0]);
-
             return response()->json([
                 'code'    => 200,
                 'status'  => 'success',
                 'message' => 'Data dengan ID '.$id.', berhasil dihapus'
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 "code"    => 501,
                 "status"  => "error",
@@ -236,10 +220,17 @@ class KecamatanController extends BaseController
         }
     }
 
-    public function trash(){
-        $query = Kecamatan::with('kab')->select('id', 'nama', 'id_kabupaten')->where('flg_aktif', 0)->orderBy('nama', 'asc')->get();
+    public function trash()
+    {
+        $query = Kecamatan::withCount(['kab as nama_kabupaten' => function($sub)
+        {
+            $sub->select('nama_kabupaten');
+        }])
+        ->where('flg_aktif', 0)
+        ->orderBy('nama', 'asc')
+        ->get();
 
-        if ($query == '[]') {
+        if (empty($query)) {
             return response()->json([
                 "code"    => 404,
                 "status"  => "not found",
@@ -247,23 +238,14 @@ class KecamatanController extends BaseController
             ], 404);
         }
 
-        $res = array();
-        foreach ($query as $key => $val) {
-            $res[$key] = [
-                "id"             => $val->id,
-                "nama"           => $val->nama,
-                "nama_kabupaten" => $val->kab['nama']
-            ];
-        }
-
         try {
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
                 'count'  => $query->count(),
-                'data'   => $res
+                'data'   => $query
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 "code"    => 501,
                 "status"  => "error",
@@ -272,17 +254,17 @@ class KecamatanController extends BaseController
         }
     }
 
-    public function restore($id){
-        Kecamatan::where('id', $id)->update(['flg_aktif' => 1]);
+    public function restore($id)
+    {
+        return Kecamatan::where('id', $id)->update(['flg_aktif' => 1]);
 
         try {
-
             return response()->json([
                 'code'    => 200,
                 'status'  => 'success',
                 'message' => 'data berhasil dikembalikan'
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 "code"    => 501,
                 "status"  => "error",
@@ -291,10 +273,19 @@ class KecamatanController extends BaseController
         }
     }
 
-    public function sector($id_kab) {
-        $query = Kecamatan::select('id', 'nama', 'id_kabupaten')->where('id_kabupaten', $id_kab)->orderBy('nama', 'asc')->get();
+    public function sector($id_kab)
+    {
+        $data = array();
 
-        if ($query == '[]') {
+        foreach
+        (
+            Kecamatan::select('id', 'nama', 'id_kabupaten')->where('id_kabupaten', $id_kab)->orderBy('nama', 'asc')->cursor() as $cursor
+        )
+        {
+            $data[] = $cursor;
+        }
+
+        if (empty($data)) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
@@ -306,10 +297,10 @@ class KecamatanController extends BaseController
             return response()->json([
                 'code'    => 200,
                 'status'  => 'success',
-                'count'   => $query->count(),
-                'data'    => $query
+                'count'   => count($data),
+                'data'    => $data
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 "code"    => 501,
                 "status"  => "error",
@@ -365,12 +356,12 @@ class KecamatanController extends BaseController
         }
 
         if($limit == 'default'){
-            $result = $res;
+            $result = $res->get();
         }else{
-            $result = $res->limit($limit);
+            $result = $res->limit($limit)->get();
         }
 
-        if ($result->get() == '[]') {
+        if (empty($result)) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
@@ -382,10 +373,10 @@ class KecamatanController extends BaseController
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'count'  => $query->count(),
-                'data'   => $query->get()
+                'count'  => $result->count(),
+                'data'   => $result
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 "code"    => 501,
                 "status"  => "error",

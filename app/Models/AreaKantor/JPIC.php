@@ -22,6 +22,11 @@ class JPIC extends Model implements AuthenticatableContract, AuthorizableContrac
         'nama_jenis', 'cakupan', 'urutan_jabatan', 'keterangan', 'bagian'
     ];
 
+    protected $casts = [
+        'created_at' => 'date:m-d-Y H:i:s',
+        'updated_at' => 'date:m-d-Y H:i:s'
+    ];
+
     protected $dates = ['deleted_at'];
 
 }

@@ -251,10 +251,14 @@ class Controller extends BaseController
             $file->move($path, $namefile);
         }else{
             // cut size image
-            $img = Image::make(realpath($file))->resize(320, 240);
+            // $img = Image::make(realpath($file))->resize(320, 240);
     
             // Save Image to Directory
-            $img->save($fullPath);
+            // $img->save($fullPath);
+
+            Image::cache(function($image) use ($file, $fullPath) {
+                return $image->make(realpath($file))->resize(320, 240)->save($fullPath);
+             });
         }
         
         return $fullPath;

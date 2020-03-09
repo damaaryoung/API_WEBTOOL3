@@ -6,6 +6,7 @@ require_once __DIR__.'/../vendor/autoload.php';
     dirname(__DIR__)
 ))->bootstrap();
 
+
 /*
 |--------------------------------------------------------------------------
 | Create The Application
@@ -21,7 +22,6 @@ $app = new Laravel\Lumen\Application(
     dirname(__DIR__)
 );
 
-// class_alias(Intervention\Image\Facades\Image::class, 'Image');
 $app->withFacades(
     class_alias('Intervention\Image\Facades\Image', 'Image')
 );
@@ -95,9 +95,8 @@ $app->configure('database'); //file to ensure the Redis database configuration i
 // $app->register(App\Helpers\LogActivity::class);
 // class_alias(App\Helpers\LogActivity::class, 'LogActivity'); // Aliases
 
-$app->register(Irazasyed\Larasupport\Providers\ArtisanServiceProvider::class); // Path
+$app->register(Irazasyed\Larasupport\Providers\ArtisanServiceProvider::class); // Artisan
 $app->register(Intervention\Image\ImageServiceProvider::class); // Intervention Image
-// $app->register(Intervention\Image\ImageServiceProviderLumen::class); //Intervention Image
 
 /*
 |--------------------------------------------------------------------------

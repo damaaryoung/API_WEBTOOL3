@@ -11,21 +11,22 @@ use App\Http\Requests\Pengajuan\KapbulRequest;
 // Models
 use App\Models\Pengajuan\AO\KapBulanan;
 use App\Models\Transaksi\TransAO;
-use App\Models\User;
+// use App\Models\User;
 
-use Illuminate\Support\Facades\File;
-use Illuminate\Http\Request;
-use App\Http\Requests;
-use Carbon\Carbon;
+// use Illuminate\Support\Facades\File;
+// use Illuminate\Http\Request;
+// use App\Http\Requests;
+// use Carbon\Carbon;
 use DB;
 
 class KapBulController extends BaseController
 {
 
-    public function show($id){
+    public function show($id)
+    {
         $check = KapBulanan::where('id', $id)->first();
 
-        if ($check == null) {
+        if (empty($check)) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
@@ -35,22 +36,22 @@ class KapBulController extends BaseController
 
         $data = array(
             'pemasukan' => array(
-                'debitur' => (int) $check->pemasukan_cadebt,
-                'pasangan'=> (int) $check->pemasukan_pasangan,
-                'penjamin'=> (int) $check->pemasukan_penjamin,
-                'total'   => (int) $check->total_pemasukan
+                'debitur' => $check->pemasukan_cadebt,
+                'pasangan'=> $check->pemasukan_pasangan,
+                'penjamin'=> $check->pemasukan_penjamin,
+                'total'   => $check->total_pemasukan
             ),
             'pengeluaran' => array(
-                'rumah_tangga'  => (int) $check->biaya_rumah_tangga,
-                'transport'     => (int) $check->biaya_transport,
-                'pendidikan'    => (int) $check->biaya_pendidikan,
-                'telp_list_air' => (int) $check->biaya_telp_listr_air,
-                'angsuran'      => (int) $check->angsuran,
-                'lain_lain'     => (int) $check->biaya_lain,
-                'total'         => (int) $check->total_pengeluaran
+                'rumah_tangga'  => $check->biaya_rumah_tangga,
+                'transport'     => $check->biaya_transport,
+                'pendidikan'    => $check->biaya_pendidikan,
+                'telp_list_air' => $check->biaya_telp_listr_air,
+                'angsuran'      => $check->angsuran,
+                'lain_lain'     => $check->biaya_lain,
+                'total'         => $check->total_pengeluaran
             ),
-            'penghasilan_bersih' => (int) $check->penghasilan_bersih,
-            'disposable_income'  => (int) $check->disposable_income
+            'penghasilan_bersih' => $check->penghasilan_bersih,
+            'disposable_income'  => $check->disposable_income
         );
 
         try {
@@ -59,7 +60,7 @@ class KapBulController extends BaseController
                 'status' => 'success',
                 'data'   => $data
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 "code"    => 501,
                 "status"  => "error",
@@ -68,10 +69,11 @@ class KapBulController extends BaseController
         }
     }
 
-    public function update($id, KapbulRequest $req){
+    public function update($id, KapbulRequest $req)
+    {
         $check = KapBulanan::where('id', $id)->first();
 
-        if ($check == null) {
+        if (empty($check)) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
@@ -81,7 +83,7 @@ class KapBulController extends BaseController
 
         $ao = TransAO::where('id_kapasitas_bulanan', $id)->first();
 
-        if ($ao == null) {
+        if (empty($ao)) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
@@ -140,7 +142,7 @@ class KapBulController extends BaseController
                 'message'=> 'Update Kapasitas Bulanan Berhasil',
                 'data'   => $KapBUl
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
 
             $err = DB::connection('web')->rollback();
 

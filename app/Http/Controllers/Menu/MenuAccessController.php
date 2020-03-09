@@ -5,52 +5,34 @@ namespace App\Http\Controllers\Menu;
 use Laravel\Lumen\Routing\Controller as BaseController;
 // use App\Http\Controllers\Controller as Helper;
 use App\Models\Menu\MenuAccess;
+use App\Models\Menu\MenuMaster;
+use App\Models\Menu\MenuSub;
 use Illuminate\Http\Request;
+use Cache;
 // use DB;
 
 class MenuAccessController extends BaseController
 {
-    public function index() {
-        try {
-            $query = MenuAccess::with('menu_master','menu_sub')->select('id','id_user', 'id_menu_master', 'id_menu_sub')->where('flg_aktif', 1)->orderBy('id_menu_master', 'asc')->get();
-
-            if ($query == '[]') {
-                return response()->json([
-                    "code"    => 404,
-                    "status"  => "not found",
-                    "message" => "Data kosong"
-                ], 404);
-            }
-
-            $data = array();
-            foreach ($query as $key => $val) {
-                $data[$key] = [
-                    'id'          => $val->id,
-                    'id_user'     => $val->id_user,
-                    'menu_master' => $val->menu_master['nama'],
-                    'menu_sub'    => $val->menu_sub['nama']
-                ];
-            }
-
-            return response()->json([
-                'code'   => 200,
-                'status' => 'success',
-                'count'  => sizeof($data),
-                'data'   => $data
-            ], 200);
-        } catch (Exception $e) {
-            return response()->json([
-                'code'    => 501,
-                'status'  => 'error',
-                'message' => $e
-            ], 501);
-        }
+    public function __construct() 
+    {
+        $this->time_cache = config('app.cache_exp');
+        $this->chunk      = 100;
     }
-
-    public function show($id) {
-        $val = MenuAccess::with('menu_master','menu_sub')->where('id', $id)->first();
-
-        if (!$val) {
+    
+    public function index() 
+    {
+        $query = Cache::remember('mAccess', $this->time_cache, function () {
+            
+            return MenuAccess::select('id','id_user')
+            ->addSelect([
+                'menu_master' => MenuMaster::select('nama')->whereColumn('id_menu_master', 'menu_master.id'),
+                'menu_sub'    => MenuSub::select('nama')->whereColumn('id_menu_sub', 'menu_sub.id'),
+            ])
+            ->where('flg_aktif', 1)->orderBy('id_menu_master', 'asc')->get();
+            
+        });
+        
+        if (empty($query)) {
             return response()->json([
                 "code"    => 404,
                 "status"  => "not found",
@@ -58,27 +40,14 @@ class MenuAccessController extends BaseController
             ], 404);
         }
 
-        $res = [
-            'id'            => $val->id,
-            'id_user'       => $val->id_user,
-            'id_menu_master'=> $val->id_menu_master,
-            'menu_master'   => $val->menu_master['nama'],
-            'id_menu_sub'   => $val->id_menu_sub,
-            'menu_sub'      => $val->menu_sub['nama'],
-            'print_access'  => $val->print_access,
-            'add_access'    => $val->add_access,
-            'edit_access'   => $val->edit_access,
-            'delete_access' => $val->delete_access,
-            'flg_aktif'     => (bool) $val->flg_aktif
-        ];
-
         try {
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'data'   => $res
+                'count'  => count($query),
+                'data'   => $query
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 'code'    => 501,
                 'status'  => 'error',
@@ -87,14 +56,49 @@ class MenuAccessController extends BaseController
         }
     }
 
-    public function store(Request $req) {
-        $id_user        = $req->input('id_user');
-        $id_menu_master = $req->input('id_menu_master');
-        $id_menu_sub    = $req->input('id_menu_sub');
-        $print_access   = $req->input('print_access'); //Enum('Y','N')
-        $add_access     = $req->input('add_access');   //Enum('Y','N')
-        $edit_access    = $req->input('edit_access');  //Enum('Y','N')
-        $delete_access  = $req->input('delete_access'); //Enum('Y','N')
+    public function show($id)
+    {
+        $query = MenuAccess::addSelect([
+            'menu_master' => MenuMaster::select('nama')->whereColumn('id_menu_master', 'menu_master.id'),
+            'menu_sub'    => MenuSub::select('nama')->whereColumn('id_menu_sub', 'menu_sub.id'),
+        ])->where('id', $id)->first();
+
+        if (empty($query)) {
+            return response()->json([
+                "code"    => 404,
+                "status"  => "not found",
+                "message" => "Data kosong"
+            ], 404);
+        }
+
+        try {
+            return response()->json([
+                'code'   => 200,
+                'status' => 'success',
+                'data'   => $query
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'code'    => 501,
+                'status'  => 'error',
+                'message' => $e
+            ], 501);
+        }
+    }
+
+    public function store(Request $req) 
+    {
+        $data = [
+            'id_user'       => $req->input('id_user'),
+            'id_menu_master'=> $req->input('id_menu_master'),
+            'id_menu_sub'   => $req->input('id_menu_sub'),
+            'print_access'  => $req->input('print_access'), //Enum('Y','N')
+            'add_access'    => $req->input('add_access'),   //Enum('Y','N')
+            'edit_access'   => $req->input('edit_access'),  //Enum('Y','N')
+            'delete_access' => $req->input('delete_access') //Enum('Y','N')
+        ];
+
+        extract($data);
 
         if (!$id_user) {
             return response()->json([
@@ -152,15 +156,7 @@ class MenuAccessController extends BaseController
             ], 400);
         }
 
-        $query = MenuAccess::create([
-            'id_user'       => $id_user,
-            'id_menu_master'=> $id_menu_master,
-            'id_menu_sub'   => $id_menu_sub,
-            'print_access'  => $print_access, //Enum('Y','N')
-            'add_access'    => $add_access,   //Enum('Y','N')
-            'edit_access'   => $edit_access,  //Enum('Y','N')
-            'delete_access' => $delete_access //Enum('Y','N')
-        ]);
+        MenuAccess::create($data);
 
         try {
             return response()->json([
@@ -168,7 +164,7 @@ class MenuAccessController extends BaseController
                 'status' => 'success',
                 'message'=> 'Data berhasil dibuat'
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 'code'    => 501,
                 'status'  => 'error',
@@ -177,10 +173,11 @@ class MenuAccessController extends BaseController
         }
     }
 
-    public function update($id, Request $req) {
+    public function update($id, Request $req) 
+    {
         $check = MenuAccess::where('id', $id)->first();
 
-        if (!$check) {
+        if (empty($check)) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
@@ -188,23 +185,23 @@ class MenuAccessController extends BaseController
             ], 404);
         }
 
-        $id_menu_master = empty($req->input('id_menu_master')) ? $check->id_menu_master : $req->input('id_menu_master');
-        $id_menu_sub    = empty($req->input('id_menu_sub')) ? $check->id_menu_sub : $req->input('id_menu_sub');
-        $print_access   = empty($req->input('print_access')) ? $check->print_access : $req->input('print_access'); //Enum('Y','N')
-        $add_access     = empty($req->input('add_access')) ? $check->add_access : $req->input('add_access');   //Enum('Y','N')
-        $edit_access    = empty($req->input('edit_access')) ? $check->edit_access : $req->input('edit_access');  //Enum('Y','N')
-        $delete_access  = empty($req->input('delete_access')) ? $check->delete_access : $req->input('delete_access'); //Enum('Y','N')
-        $flg_aktif      = empty($req->input('flg_aktif')) ? $check->flg_aktif : ($req->input('flg_aktif') == 'false' ? 0 : 1);
+        $data = array(
+            'id_menu_master' => empty($req->input('id_menu_master')) ? $check->id_menu_master : $req->input('id_menu_master'),
 
-        $query = MenuAccess::where('id', $id)->update([
-            'id_menu_master'=> $id_menu_master,
-            'id_menu_sub'   => $id_menu_sub,
-            'print_access'  => $print_access, //Enum('Y','N')
-            'add_access'    => $add_access,   //Enum('Y','N')
-            'edit_access'   => $edit_access,  //Enum('Y','N')
-            'delete_access' => $delete_access, //Enum('Y','N')
-            'flg_aktif'     => $flg_aktif
-        ]);
+            'id_menu_sub'    => empty($req->input('id_menu_sub')) ? $check->id_menu_sub : $req->input('id_menu_sub'),
+
+            'print_access'   => empty($req->input('print_access')) ? $check->print_access : $req->input('print_access'), //Enum('Y','N')
+
+            'add_access'     => empty($req->input('add_access')) ? $check->add_access : $req->input('add_access'),   //Enum('Y','N')
+
+            'edit_access'    => empty($req->input('edit_access')) ? $check->edit_access : $req->input('edit_access'),  //Enum('Y','N')
+
+            'delete_access'  => empty($req->input('delete_access')) ? $check->delete_access : $req->input('delete_access'), //Enum('Y','N')
+
+            'flg_aktif'      => empty($req->input('flg_aktif')) ? $check->flg_aktif : ($req->input('flg_aktif') == 'false' ? 0 : 1)
+        );
+
+        MenuAccess::where('id', $id)->update($data);
 
         try {
             return response()->json([
@@ -212,7 +209,7 @@ class MenuAccessController extends BaseController
                 'status' => 'success',
                 'message'=> 'Data berhasil diupdate'
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 'code'    => 501,
                 'status'  => 'error',
@@ -221,26 +218,17 @@ class MenuAccessController extends BaseController
         }
     }
 
-    public function delete($id_user) {
-        $check = MenuAccess::where('id_user', $id_user)->first();
-
-        if (!$check) {
-            return response()->json([
-                'code'    => 404,
-                'status'  => 'not found',
-                'message' => 'Data Tidak Ada!!'
-            ], 404);
-        }
-
+    public function delete($id_user) 
+    {
+        MenuAccess::where('id_user', $id_user)->update(['flg_aktif' => 0]);
+       
         try {
-            $query = MenuAccess::where('id_user', $id_user)->update(['flg_aktif' => 0]);
-
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
                 'message'=> 'Data dengan Id User '.$id_user.' berhasil dihapus'
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 'code'    => 501,
                 'status'  => 'error',
@@ -249,10 +237,15 @@ class MenuAccessController extends BaseController
         }
     }
 
-    public function trash() {
-        $query = MenuAccess::with('menu_master','menu_sub')->select('id','id_user', 'id_menu_master', 'id_menu_sub')->where('flg_aktif', 0)->orderBy('id_menu_master', 'asc')->get();
+    public function trash() 
+    {
+        $query = MenuAccess::select('id','id_user')
+        ->addSelect([
+            'menu_master' => MenuMaster::select('nama')->whereColumn('id_menu_master', 'menu_master.id'),
+            'menu_sub'    => MenuSub::select('nama')->whereColumn('id_menu_sub', 'menu_sub.id'),
+        ])->where('flg_aktif', 0)->orderBy('id_menu_master', 'asc')->get();
 
-        if ($query == '[]') {
+        if (empty($query)) {
             return response()->json([
                 "code"    => 404,
                 "status"  => "not found",
@@ -260,24 +253,14 @@ class MenuAccessController extends BaseController
             ], 404);
         }
 
-        $data = array();
-        foreach ($query as $key => $val) {
-            $data[$key] = [
-                'id'          => $val->id,
-                'id_user'     => $val->id_user,
-                'menu_master' => $val->menu_master['nama'],
-                'menu_sub'    => $val->menu_sub['nama']
-            ];
-        }
-
         try{
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'count'  => sizeof($data),
-                'data'   => $data
+                'count'  => count($query),
+                'data'   => $query
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 'code'    => 501,
                 'status'  => 'error',
@@ -286,8 +269,9 @@ class MenuAccessController extends BaseController
         }
     }
 
-    public function restore($id) {
-        $query = MenuAccess::where('id', $id)->update(['flg_aktif' => 1]);
+    public function restore($id) 
+    {
+        MenuAccess::where('id', $id)->update(['flg_aktif' => 1]);
 
         try {
             return response()->json([
@@ -295,7 +279,7 @@ class MenuAccessController extends BaseController
                 'status'  => 'success',
                 'message' => 'data berhasil dikembalikan'
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 "code"    => 501,
                 "status"  => "error",

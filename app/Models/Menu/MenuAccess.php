@@ -28,6 +28,8 @@ class MenuAccess extends Model implements AuthenticatableContract, AuthorizableC
         'flg_aktif' => 'boolean'
     ];
 
+    public $timestamps = false;
+
     public function menu_master()
     {
         return $this->belongsTo(MenuMaster::class, 'id_menu_master')
@@ -43,6 +45,4 @@ class MenuAccess extends Model implements AuthenticatableContract, AuthorizableC
                 return new MenuSub();
             });
     }
-
-    public $timestamps = false;
 }

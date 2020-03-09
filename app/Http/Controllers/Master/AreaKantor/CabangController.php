@@ -5,17 +5,47 @@ namespace App\Http\Controllers\Master\AreaKantor;
 use Laravel\Lumen\Routing\Controller as BaseController;
 use App\Http\Requests\AreaKantor\CabangRequest;
 use App\Models\AreaKantor\Cabang;
+use App\Models\Wilayah\Provinsi;
+use App\Models\Wilayah\Kabupaten;
+use App\Models\Wilayah\Kecamatan;
+use App\Models\Wilayah\Kelurahan;
 // use Illuminate\Http\Request;
 use App\Models\User;
 use Carbon\Carbon;
-// use DB;
+use Cache;
+use DB;
 
 class CabangController extends BaseController
 {
-    public function index() {
-        $query = Cabang::where('flg_aktif', 1)->orderBy('nama', 'asc')->get();
+    public function __construct() {
+        $this->time_cache = config('app.cache_exp');
+    }
 
-        if ($query == '[]') {
+    public function index() 
+    {
+        $data = array();
+
+        $query = Cache::remember('cabang.index', $this->time_cache, function () use ($data) {
+
+            Cabang::select('id', 'nama as nama_cabang', 'jenis_kantor')
+                ->addSelect([
+                    'nama_provinsi'  => Provinsi::select('nama')->whereColumn('id_provinsi', 'master_provinsi.id'),
+                    'nama_kabupaten' => Kabupaten::select('nama')->whereColumn('id_kabupaten', 'master_kabupaten.id'),
+                    'nama_kecamatan' => Kecamatan::select('nama')->whereColumn('id_kecamatan', 'master_kecamatan.id'),
+                    'nama_kelurahan' => Kelurahan::select('nama')->whereColumn('id_kelurahan', 'master_kelurahan.id')
+                ])
+                ->where('flg_aktif', 1)
+                ->orderBy('nama', 'asc')
+                ->chunk(50, function($chunks) use (&$data) {
+                    foreach($chunks as $chunk) {
+                        $data[] = $chunk;
+                    }
+                });
+
+            return $data;
+        });
+
+        if (empty($query)) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
@@ -23,28 +53,14 @@ class CabangController extends BaseController
             ], 404);
         }
 
-        $data = array();
-        foreach ($query as $key => $val) {
-            $data[$key] = [
-                "id"             => $val->id,
-                "nama_area"      => $val->area['nama'],
-                "nama_cabang"    => $val->nama,
-                "nama_provinsi"  => $val->prov['nama'],
-                "nama_kabupaten" => $val->kab['nama'],
-                "nama_kecamatan" => $val->kec['nama'],
-                "nama_kelurahan" => $val->kel['nama'],
-                "jenis_kantor"   => $val->jenis_kantor
-            ];
-        }
-
         try {
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'count'  => sizeof($data),
-                'data'   => $data
+                'count'  => sizeof($query),
+                'data'   => $query
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 "code"    => 501,
                 "status"  => "error",
@@ -73,7 +89,7 @@ class CabangController extends BaseController
                 'message' => 'Data berhasil dibuat',
                 'data'    => $data
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 "code"    => 501,
                 "status"  => "error",
@@ -82,10 +98,11 @@ class CabangController extends BaseController
         }
     }
 
-    public function show($id) {
+    public function show($id) 
+    {
         $check = Cabang::where('id', $id)->first();
 
-        if ($check == null) {
+        if (empty($check)) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
@@ -108,8 +125,8 @@ class CabangController extends BaseController
             "nama_kelurahan" => $check->kel['nama'],
             "kode_pos"       => $check->kel['kode_pos'],
             "jenis_kantor"   => $check->jenis_kantor,
-            "flg_aktif"      => (bool) $check->flg_aktif,
-            "created_at"     => Carbon::parse($check->created_at)->format('d-m-Y H:i:s')
+            "flg_aktif"      => $check->flg_aktif,
+            "created_at"     => $check->created_at
         );
 
         try {
@@ -118,7 +135,7 @@ class CabangController extends BaseController
                 'status' => 'success',
                 'data'   => $res
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 'code'   => 501,
                 'status' => 'error',
@@ -127,7 +144,8 @@ class CabangController extends BaseController
         }
     }
 
-    public function update($id, CabangRequest $req) {
+    public function update($id, CabangRequest $req) 
+    {
         $check = Cabang::where('id', $id)->first();
 
         if (!$check) {
@@ -158,7 +176,7 @@ class CabangController extends BaseController
                 'message' => 'Data berhasil diupdate',
                 'data'    => $data
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 'code'   => 501,
                 'status' => 'error',
@@ -167,18 +185,9 @@ class CabangController extends BaseController
         }
     }
 
-    public function delete($id) {
-        $check = Cabang::where('id', $id)->first();
-
-        if (!$check) {
-            return response()->json([
-                'code'    => 404,
-                'status'  => 'not found',
-                'message' => 'Data tidak ada'
-            ], 404);
-        }
-
-        $delCab = Cabang::where('id', $id)->update(['flg_aktif' => 0]);
+    public function delete($id) 
+    {
+        Cabang::where('id', $id)->update(['flg_aktif' => 0]);
 
         try {
             return response()->json([
@@ -186,7 +195,7 @@ class CabangController extends BaseController
                 'status'  => 'success',
                 'message' => 'Data dengan id '.$id.' berhasil dihapus'
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 'code'   => 501,
                 'status' => 'error',
@@ -195,10 +204,26 @@ class CabangController extends BaseController
         }
     }
 
-    public function trash() {
-        $query = Cabang::where('flg_aktif', 0)->orderBy('nama', 'asc')->get();
+    public function trash() 
+    {
+        $data = array();
 
-        if ($query == '[]') {
+        Cabang::select('id', 'nama as nama_cabang', 'jenis_kantor')
+        ->addSelect([
+            'nama_provinsi'  => Provinsi::select('nama')->whereColumn('id_provinsi', 'master_provinsi.id'),
+            'nama_kabupaten' => Kabupaten::select('nama')->whereColumn('id_kabupaten', 'master_kabupaten.id'),
+            'nama_kecamatan' => Kecamatan::select('nama')->whereColumn('id_kecamatan', 'master_kecamatan.id'),
+            'nama_kelurahan' => Kelurahan::select('nama')->whereColumn('id_kelurahan', 'master_kelurahan.id')
+        ])
+        ->where('flg_aktif', 0)
+        ->orderBy('nama', 'asc')
+        ->chunk(50, function($chunks) use (&$data) {
+            foreach($chunks as $chunk) {
+                $data[] = $chunk;
+            }
+        });
+
+        if (empty($data)) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
@@ -206,28 +231,14 @@ class CabangController extends BaseController
             ], 404);
         }
 
-        $res = array();
-        foreach ($query as $key => $val) {
-            $res[$key] = [
-                "id"             => $val->id,
-                "nama_area"      => $val->area['nama'],
-                "nama_cabang"    => $val->nama,
-                "nama_provinsi"  => $val->prov['nama'],
-                "nama_kabupaten" => $val->kab['nama'],
-                "nama_kecamatan" => $val->kec['nama'],
-                "nama_kelurahan" => $val->kel['nama'],
-                "jenis_kantor"   => $val->jenis_kantor
-            ];
-        }
-
         try {
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'count'  => $query->count(),
-                'data'   => $res
+                'count'  => sizeof($data),
+                'data'   => $data
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 "code"    => 501,
                 "status"  => "error",
@@ -236,8 +247,9 @@ class CabangController extends BaseController
         }
     }
 
-    public function restore($id) {
-        $query = Cabang::where('id', $id)->update(['flg_aktif' => 1]);
+    public function restore($id) 
+    {
+        Cabang::where('id', $id)->update(['flg_aktif' => 1]);
 
         try {
             return response()->json([
@@ -245,7 +257,7 @@ class CabangController extends BaseController
                 'status'  => 'success',
                 'message' => 'data berhasil dikembalikan'
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 "code"    => 501,
                 "status"  => "error",
@@ -301,12 +313,12 @@ class CabangController extends BaseController
         }
 
         if($limit == 'default'){
-            $result = $res;
+            $result = $res->get();
         }else{
-            $result = $res->limit($limit);
+            $result = $res->limit($limit)->get();
         }
 
-        if ($result->get() == '[]') {
+        if (empty($result)) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
@@ -335,7 +347,7 @@ class CabangController extends BaseController
                 'count'  => sizeof($data),
                 'data'   => $data
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 "code"    => 501,
                 "status"  => "error",

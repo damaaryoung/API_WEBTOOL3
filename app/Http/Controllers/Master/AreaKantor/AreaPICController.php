@@ -7,51 +7,69 @@ use App\Http\Requests\AreaKantor\AreaPICReq;
 use App\Models\AreaKantor\AreaPIC;
 use App\Models\AreaKantor\PIC;
 use Carbon\Carbon;
+use Cache;
 
 class AreaPICController extends BaseController
 {
-    public function index() {
-        $query = AreaPIC::with('area', 'cabang', 'kel')->where('flg_aktif', 1)->orderBy('nama_area_pic', 'asc')->get();
+    public function __construct() {
+        $this->time_cache = config('app.cache_exp');
+    }
 
-        if ($query == '[]') {
+    public function index() 
+    {
+        $query = Cache::remember('picArea.index.get', $this->time_cache, function () {
+            return AreaPIC::with('area', 'cabang', 'kel')
+            ->select('id', 'id_area', 'id_cabang', 'nama_area_pic', 'id_kelurahan', 'id_pic')
+            ->where('flg_aktif', 1)
+            ->orderBy('nama_area_pic', 'asc')
+            ->get();
+        });
+
+        if (empty($query)) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
                 'message' => 'Data kosong'
             ], 404);
         }
+        
+        $data = array();
 
-        $res = array();
-        foreach ($query as $key => $val) {
-            $pic = PIC::whereIn('id', explode(",", $val->id_pic))->select('id','nama', 'email', 'id_mj_pic')->get();
-
-            $pics = array();
-            foreach($pic as $i => $pi){
-                $pics[$i]['id'] = $pi->id;
-                $pics[$i]['nama'] = $pi->nama;
-                $pics[$i]['email'] = $pi->email;
-                $pics[$i]['jabatan'] = $pi->jpic['nama_jenis'];
+        $subQuery = Cache::remember('picArea.index.parsing', $this->time_cache, function () use ($query, &$data) {
+        
+            foreach ($query as $key => $val) {
+                $pic = PIC::whereIn('id', explode(",", $val->id_pic))->select('id','nama', 'email', 'id_mj_pic')->get();
+    
+                $pics = array();
+                foreach($pic as $i => $pi){
+                    $pics[$i]['id'] = $pi->id;
+                    $pics[$i]['nama'] = $pi->nama;
+                    $pics[$i]['email'] = $pi->email;
+                    $pics[$i]['jabatan'] = $pi->jpic['nama_jenis'];
+                }
+    
+                $data[$key] = [
+                    'id'                => $val->id,
+                    "nama_area_pic"     => $val->nama_area_pic,
+                    "nama_area_kerja"   => $val->area['nama'],
+                    "nama_kantor_cabang"=> $val->cabang['nama'],
+                    "nama_kelurahan"    => $val->kel['nama'],
+                    "kode_pos"          => $val->kel['kode_pos'],
+                    "pic"               => $pics
+                ];
             }
 
-            $data[$key] = [
-                'id'                => $val->id,
-                "nama_area_pic"     => $val->nama_area_pic,
-                "nama_area_kerja"   => $val->area['nama'],
-                "nama_kantor_cabang"=> $val->cabang['nama'],
-                "nama_kelurahan"    => $val->kel['nama'],
-                "kode_pos"          => $val->kel['kode_pos'],
-                "pic"               => $pics
-            ];
-        }
+            return $data;
+        });
 
         try {
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'count'  => sizeof($data),
-                'data'   => $data
+                'count'  => sizeof($subQuery),
+                'data'   => $subQuery
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 "code"    => 501,
                 "status"  => "error",
@@ -88,7 +106,7 @@ class AreaPICController extends BaseController
                 'message' => 'Data berhasil dibuat',
                 'data'    => $data
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 "code"    => 501,
                 "status"  => "error",
@@ -100,7 +118,7 @@ class AreaPICController extends BaseController
     public function show($id) {
         $val = AreaPIC::where('id', $id)->first();
 
-        if ($val == null) {
+        if (empty($val)) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
@@ -135,10 +153,9 @@ class AreaPICController extends BaseController
             "nama_kelurahan"    => $val->kel['nama'],
             "kode_pos"          => $val->kel['kode_pos'],
             "pic"               => $pics,
-            "flg_aktif"         => (bool) $val->flg_aktif,
-            "created_at"        => Carbon::parse($val->created_at)->format('d-m-Y H:i:s')
+            "flg_aktif"         => $val->flg_aktif,
+            "created_at"        => $val->created_at
         );
-        // }
 
         try {
             return response()->json([
@@ -146,7 +163,7 @@ class AreaPICController extends BaseController
                 'status' => 'success',
                 'data'   => $res
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 "code"    => 501,
                 "status"  => "error",
@@ -178,7 +195,7 @@ class AreaPICController extends BaseController
                 'message' => 'Data berhasil diubah',
                 'data'    => $data
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 "code"    => 501,
                 "status"  => "error",
@@ -187,17 +204,8 @@ class AreaPICController extends BaseController
         }
     }
 
-    public function delete($id) {
-        $check = AreaPIC::where('id', $id)->first();
-
-        if (!$check) {
-            return response()->json([
-                'code'    => 404,
-                'status'  => 'not found',
-                'message' => 'Data tidak ada'
-            ], 404);
-        }
-
+    public function delete($id) 
+    {
         AreaPIC::where('id', $id)->update(['flg_aktif' => 0]);
 
         try {
@@ -206,7 +214,7 @@ class AreaPICController extends BaseController
                 'status'  => 'success',
                 'message' => 'Data dengan id '.$id.' berhasil dihapus'
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 'code'   => 501,
                 'status' => 'error',
@@ -218,7 +226,7 @@ class AreaPICController extends BaseController
     public function trash() {
         $query = AreaPIC::where('flg_aktif', 0)->orderBy('nama_area_pic', 'asc')->get();
 
-        if ($query == '[]') {
+        if (empty($query)) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
@@ -242,10 +250,10 @@ class AreaPICController extends BaseController
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'count'  => $query->count(),
+                'count'  => sizeof($res),
                 'data'   => $res
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 "code"    => 501,
                 "status"  => "error",
@@ -263,7 +271,7 @@ class AreaPICController extends BaseController
                 'status'  => 'success',
                 'message' => 'data berhasil dikembalikan'
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 "code"    => 501,
                 "status"  => "error",
@@ -321,12 +329,12 @@ class AreaPICController extends BaseController
         }
 
         if($limit == 'default'){
-            $result = $res;
+            $result = $res->get();
         }else{
-            $result = $res->limit($limit);
+            $result = $res->limit($limit)->get();
         }
 
-        if ($result->get() == '[]') {
+        if (empty($result)) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
@@ -335,7 +343,7 @@ class AreaPICController extends BaseController
         }
 
         $data = array();
-        foreach ($result->get() as $key => $val) {
+        foreach ($result as $key => $val) {
             $data[$key] = [
                 'id'                => $val->id,
                 "nama_area_pic"     => $val->nama_area_pic,
@@ -353,7 +361,7 @@ class AreaPICController extends BaseController
                 'count'  => sizeof($data),
                 'data'   => $data
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 "code"    => 501,
                 "status"  => "error",

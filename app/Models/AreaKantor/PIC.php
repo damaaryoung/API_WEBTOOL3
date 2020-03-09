@@ -32,7 +32,9 @@ class PIC extends Model implements AuthenticatableContract, AuthorizableContract
     ];
 
     protected $casts = [
-        'flg_aktif' => 'boolean'
+        'flg_aktif'  => 'boolean',
+        'created_at' => 'date:m-d-Y H:i:s',
+        'updated_at' => 'date:m-d-Y H:i:s'
     ];
 
     public function user(){

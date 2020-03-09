@@ -6,14 +6,30 @@ use Laravel\Lumen\Routing\Controller as BaseController;
 use App\Http\Controllers\Controller as Helper;
 use App\Models\Wilayah\Provinsi;
 use Illuminate\Http\Request;
+use Cache;
+use Illuminate\Support\Facades\Redis;
 use DB;
 
 class ProvinsiController extends BaseController
 {
-    public function index() {
-        $query = Provinsi::select('id', 'nama')->where('flg_aktif', 1)->orderBy('nama', 'asc')->get();
+    public function __construct() {
+        $this->time_cache = config('app.cache_exp');
+    }
 
-        if ($query == '[]') {
+    public function index() {
+        $data = array();
+        $query = Cache::remember("prov.index", $this->time_cache, function () use ($data) {
+            foreach(
+                Provinsi::select('id', 'nama')->where('flg_aktif', 1)->orderBy('nama', 'asc')->cursor()
+                as $cursor
+            ){
+                $data[] = $cursor;
+            }
+
+            return $data;
+        });
+
+        if (empty($query)) {
             return response()->json([
                 "code"    => 404,
                 "status"  => "not found",
@@ -25,10 +41,10 @@ class ProvinsiController extends BaseController
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'count'  => $query->count(),
+                'count'  => sizeof($query),
                 'data'   => $query
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 "code"    => 501,
                 "status"  => "error",
@@ -48,16 +64,16 @@ class ProvinsiController extends BaseController
             ], 422);
         }
 
+        Provinsi::create(['nama' => $nama]);
+        
         try {
-            Provinsi::create(['nama' => $nama]);
-
             return response()->json([
                 'code'    => 200,
                 'status'  => 'success',
                 'message' => 'Data berhasil dibuat',
                 'data'    => array('nama' => $nama)
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 "code"    => 501,
                 "status"  => "error",
@@ -66,51 +82,30 @@ class ProvinsiController extends BaseController
         }
     }
 
-    public function show($IdOrName) {
-        $res = array();
-        if(preg_match("/^[0-9]{1,}$/", $IdOrName)){
-            $query = Provinsi::select('id','nama','flg_aktif')->where('id', $IdOrName)->first();
+    public function show($IdOrName) 
+    {
+        // $res = array();
+        // if(preg_match("/^[0-9]{1,}$/", $IdOrName)){
+        $query = Provinsi::select('id','nama as nama_provinsi','flg_aktif')->where('id', $IdOrName)->first();
+        // }else{
+        //     $query = Provinsi::select('id','nama','flg_aktif')->where('nama','like','%'.$IdOrName.'%')->get();
+        // }
 
-
-            if ($query == null) {
-                return response()->json([
-                    'code'    => 404,
-                    'status'  => 'not found',
-                    'message' => 'Data kosong!!'
-                ], 404);
-            }
-
-            $res = array(
-                "id"            => $query->id,
-                "nama_provinsi" => $query->nama,
-                "flg_aktif"     => (bool) $query->flg_aktif
-            );
-        }else{
-            $query = Provinsi::select('id','nama','flg_aktif')->where('nama','like','%'.$IdOrName.'%')->get();
-
-            if ($query == '[]') {
-                return response()->json([
-                    'code'    => 404,
-                    'status'  => 'not found',
-                    'message' => 'Data kosong!!'
-                ], 404);
-            }
-
-            foreach ($query as $key => $val) {
-                $res[$key] = [
-                    "id"            => $val->id,
-                    "nama_provinsi" => $val->nama
-                ];
-            }
+        if (empty($query)) {
+            return response()->json([
+                'code'    => 404,
+                'status'  => 'not found',
+                'message' => 'Data kosong!!'
+            ], 404);
         }
 
         try {
             return response()->json([
                 'code'    => 200,
                 'status'  => 'success',
-                'data'    => $res
+                'data'    => $query
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 "code"    => 501,
                 "status"  => "error",
@@ -119,10 +114,11 @@ class ProvinsiController extends BaseController
         }
     }
 
-    public function update($id, Request $req) {
+    public function update($id, Request $req) 
+    {
         $check = Provinsi::where('id', $id)->first();
 
-        if ($check == null) {
+        if (empty($check)) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
@@ -131,7 +127,7 @@ class ProvinsiController extends BaseController
         }
 
         $data = array(
-            "nama"      => empty($req->input('nama')) ? $check->nama : $req->input('nama'),
+            "nama"      => empty($req->input('nama'))      ? $check->nama : $req->input('nama'),
             "flg_aktif" => empty($req->input('flg_aktif')) ? $check->flg_aktif : ($req->input('flg_aktif') == 'false' ? 0 : 1)
         );
 
@@ -145,16 +141,16 @@ class ProvinsiController extends BaseController
             ], 422);
         }
 
-        try {
-            Provinsi::where('id', $id)->update($data);
+        Provinsi::where('id', $id)->update($data);
 
+        try {
             return response()->json([
                 'code'    => 200,
                 'status'  => 'success',
                 'message' => 'Data berhasil diupdate',
                 'data'    => $data
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 "code"    => 501,
                 "status"  => "error",
@@ -163,26 +159,17 @@ class ProvinsiController extends BaseController
         }
     }
 
-    public function delete($id) {
-        $check = Provinsi::where('id', $id)->first();
-
-        if ($check == null) {
-            return response()->json([
-                'code'    => 404,
-                'status'  => 'not found',
-                'message' => 'Data kosong!!'
-            ], 404);
-        }
+    public function delete($id) 
+    {
+        Provinsi::where('id', $id)->update(['flg_aktif' => 0]);
 
         try {
-            Provinsi::where('id', $id)->update(['flg_aktif' => 0]);
-
             return response()->json([
                 'code'    => 200,
                 'status'  => 'success',
                 'message' => 'Data dengan ID '.$id.', berhasil dihapus'
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 "code"    => 501,
                 "status"  => "error",
@@ -191,10 +178,11 @@ class ProvinsiController extends BaseController
         }
     }
 
-    public function trash(){
+    public function trash()
+    {
         $query = Provinsi::select('id', 'nama')->where('flg_aktif', 0)->orderBy('nama', 'asc')->get();
 
-        if ($query == '[]') {
+        if (empty($query)) {
             return response()->json([
                 "code"    => 404,
                 "status"  => "not found",
@@ -209,7 +197,7 @@ class ProvinsiController extends BaseController
                 'count'  => $query->count(),
                 'data'   => $query
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 "code"    => 501,
                 "status"  => "error",
@@ -218,17 +206,17 @@ class ProvinsiController extends BaseController
         }
     }
 
-    public function restore($id){
+    public function restore($id)
+    {
         Provinsi::where('id', $id)->update(['flg_aktif' => 1]);
 
         try {
-
             return response()->json([
                 'code'    => 200,
                 'status'  => 'success',
                 'message' => 'data berhasil dikembalikan'
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 "code"    => 501,
                 "status"  => "error",
@@ -284,12 +272,12 @@ class ProvinsiController extends BaseController
         }
 
         if($limit == 'default'){
-            $result = $res;
+            $result = $res->get();
         }else{
-            $result = $res->limit($limit);
+            $result = $res->limit($limit)->get();
         }
 
-        if ($result->get() == '[]') {
+        if (empty($result)) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
@@ -301,10 +289,10 @@ class ProvinsiController extends BaseController
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'count'  => $query->count(),
-                'data'   => $query->get()
+                'count'  => $result->count(),
+                'data'   => $result
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 "code"    => 501,
                 "status"  => "error",

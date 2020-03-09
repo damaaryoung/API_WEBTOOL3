@@ -35,7 +35,9 @@ class TransCAA extends Model implements AuthenticatableContract, AuthorizableCon
     ];
 
     protected $casts = [
-        'flg_aktif' => 'boolean'
+        'flg_aktif'  => 'boolean',
+        'created_at' => 'date:m-d-Y H:i:s',
+        'updated_at' => 'date:m-d-Y H:i:s'
     ];
 
     public function so(){

@@ -6,14 +6,34 @@ use Laravel\Lumen\Routing\Controller as BaseController;
 use App\Http\Controllers\Controller as Helper;
 use App\Models\Wilayah\Kelurahan;
 use Illuminate\Http\Request;
+use Cache;
 use DB;
 
 class KelurahanController extends BaseController
 {
-    public function index() {
-        $query = Kelurahan::with('kec')->select('id', 'nama', 'id_kecamatan','kode_pos')->where('flg_aktif', 1)->orderBy('nama', 'asc')->get();
+    public function __construct() 
+    {
+        $this->time_cache = config('app.cache_exp');
+    }
 
-        if ($query == '[]') {
+    public function index() 
+    {    
+        $data = array();
+
+        $query = Cache::remember('kel.index', $this->time_cache, function () use ($data) {
+            
+            foreach(
+                Kelurahan::withCount(['kec as nama_kecamatan' => function($sub) {
+                    $sub->select('nama');
+                }])->where('flg_aktif', 1)->orderBy('nama', 'asc')->cursor() as $cursor
+            ){
+                $data[] = $cursor;
+            }
+
+            return $data;
+        });
+
+        if (empty($query)) {
             return response()->json([
                 "code"    => 404,
                 "status"  => "not found",
@@ -21,24 +41,14 @@ class KelurahanController extends BaseController
             ], 404);
         }
 
-        $data = array();
-        foreach ($query as $key => $val) {
-            $data[$key] = [
-                "id"             => $val->id,
-                "nama"           => $val->nama,
-                "nama_kecamatan" => $val->kec['nama'],
-                'kode_pos'       => (string) $val->kode_pos
-            ];
-        }
-
         try {
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'count'  => sizeof($data),
-                'data'   => $data
+                'count'  => sizeof($query),
+                'data'   => $query
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 "code"    => 501,
                 "status"  => "error",
@@ -100,22 +110,22 @@ class KelurahanController extends BaseController
             ], 422);
         }
 
-        $query = array(
+        $data = array(
             'nama'         => $nama,
             'kode_pos'     => $kode_pos,
             'id_kecamatan' => $kecamatan
         );
 
-        try {
-            Kelurahan::create($query);
+        Kelurahan::create($data);
 
+        try {
             return response()->json([
                 'code'    => 200,
                 'status'  => 'success',
                 'message' => 'Data berhasil dibuat',
-                'data'    => $query
+                'data'    => $data
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 "code"    => 501,
                 "status"  => "error",
@@ -125,53 +135,34 @@ class KelurahanController extends BaseController
     }
 
     public function show($IdOrName) {
-        $res = array();
-        if(preg_match("/^[0-9]{1,}$/", $IdOrName)){
-            $query = Kelurahan::with('kec')->select('id', 'nama', 'id_kecamatan', 'kode_pos', 'flg_aktif')->where('id', $IdOrName)->first();
+        // $res = array();
+        // if(preg_match("/^[0-9]{1,}$/", $IdOrName)){
+        $query = Kelurahan::withCount(['kec as nama_kecamatan' => function ($sub) 
+        {
+            $sub->select('nama');
+        }])->where('id', $IdOrName)->first();
+        // }else{
+        //     Kelurahan::withCount(['kec as nama_kecamatan' => function ($sub) 
+        //     {
+        //         $sub->select('nama');
+        //     }])->where('nama','like','%'.$IdOrName.'%')->get();
+        // }
 
-            if ($query == null) {
-                return response()->json([
-                    'code'    => 404,
-                    'status'  => 'not found',
-                    'message' => 'Data kosong!!'
-                ], 404);
-            }
-
-            $res = [
-                'id'             => $query->id,
-                'nama'           => $query->nama,
-                'id_kecamatan'   => $query->id_kecamatan,
-                'nama_kecamatan' => $query->kec['nama'],
-                'kode_pos'       => $query->kode_pos,
-                'flg_aktif'      => $query->flg_aktif
-            ];
-        }else{
-            $query = Kelurahan::with('kec')->select('id', 'nama', 'id_kecamatan', 'flg_aktif')->where('nama','like','%'.$IdOrName.'%')->get();
-
-            if ($query == '[]') {
-                return response()->json([
-                    'code'    => 404,
-                    'status'  => 'not found',
-                    'message' => 'Data kosong!!'
-                ], 404);
-            }
-
-            foreach ($query as $key => $val) {
-                $res[$key] = [
-                    'id'             => $val->id,
-                    'nama_kelurahan' => $val->nama,
-                    'nama_kecamatan' => $val->kec['nama']
-                ];
-            }
+        if (empty($query)) {
+            return response()->json([
+                'code'    => 404,
+                'status'  => 'not found',
+                'message' => 'Data kosong!!'
+            ], 404);
         }
 
         try {
             return response()->json([
                 'code'    => 200,
                 'status'  => 'success',
-                'data'    => $res
+                'data'    => $query
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 "code"    => 501,
                 "status"  => "error",
@@ -180,10 +171,11 @@ class KelurahanController extends BaseController
         }
     }
 
-    public function update($id, Request $req) {
+    public function update($id, Request $req) 
+    {
         $check = Kelurahan::where('id', $id)->first();
 
-        if ($check == null) {
+        if (empty($check)) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
@@ -228,22 +220,23 @@ class KelurahanController extends BaseController
             ], 422);
         }
 
-        $query = array(
+        $data = array(
             'nama'         => $nama,
             'kode_pos'     => $kode_pos,
             'id_kecamatan' => $kecamatan,
             'flg_aktif'    => (bool) $flg_aktif
         );
 
-        try {
-            Kelurahan::where('id', $id)->update($query);
+        Kelurahan::where('id', $id)->update($data);
 
+        try {
             return response()->json([
                 'code'    => 200,
                 'status'  => 'success',
-                'message' => 'Data berhasil diupdate'
+                'message' => 'Data berhasil diupdate',
+                'data'    => $data
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 "code"    => 501,
                 "status"  => "error",
@@ -252,26 +245,17 @@ class KelurahanController extends BaseController
         }
     }
 
-    public function delete($id) {
-        $check = Kelurahan::where('id', $id)->first();
-
-        if ($check == null) {
-            return response()->json([
-                'code'    => 404,
-                'status'  => 'not found',
-                'message' => 'Data kosong!!'
-            ], 404);
-        }
-
+    public function delete($id) 
+    {
+        Kelurahan::where('id', $id)->update(['flg_aktif' => 0]);
+        
         try {
-            Kelurahan::where('id', $id)->update(['flg_aktif' => 0]);
-
             return response()->json([
                 'code'    => 200,
                 'status'  => 'success',
                 'message' => 'Data with ID '.$id.' was deleted successfully'
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 "code"    => 501,
                 "status"  => "error",
@@ -280,10 +264,14 @@ class KelurahanController extends BaseController
         }
     }
 
-    public function trash(){
-        $query = Kelurahan::with('kec')->select('id', 'nama', 'id_kecamatan','kode_pos')->where('flg_aktif', 0)->orderBy('nama', 'asc')->get();
+    public function trash()
+    {
+        $query = Kelurahan::withCount(['kec as nama_kecamatan' => function ($sub) 
+        {
+            $sub->select('nama');
+        }])->where('flg_aktif', 0)->orderBy('nama', 'asc')->get();
 
-        if ($query == '[]') {
+        if (empty($query)) {
             return response()->json([
                 "code"    => 404,
                 "status"  => "not found",
@@ -291,24 +279,14 @@ class KelurahanController extends BaseController
             ], 404);
         }
 
-        $res = array();
-        foreach ($query as $key => $val) {
-            $res[$key] = [
-                "id"             => $val->id,
-                "nama"           => $val->nama,
-                "nama_kecamatan" => $val->kec['nama'],
-                'kode_pos'       => (string) $val->kode_pos
-            ];
-        }
-
         try {
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
                 'count'  => $query->count(),
-                'data'   => $res
+                'data'   => $query
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 "code"    => 501,
                 "status"  => "error",
@@ -317,17 +295,17 @@ class KelurahanController extends BaseController
         }
     }
 
-    public function restore($id){
+    public function restore($id)
+    {
         Kelurahan::where('id', $id)->update(['flg_aktif' => 1]);
 
         try {
-
             return response()->json([
                 'code'    => 200,
                 'status'  => 'success',
                 'message' => 'data berhasil dikembalikan'
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 "code"    => 501,
                 "status"  => "error",
@@ -336,10 +314,20 @@ class KelurahanController extends BaseController
         }
     }
 
-    public function sector($id_kec) {
-        $query = Kelurahan::select('id', 'nama', 'kode_pos', 'id_kecamatan')->where('id_kecamatan', $id_kec)->orderBy('nama', 'asc')->get();
+    public function sector($id_kec) 
+    {
+        $data = array();
 
-        if ($query == '[]') {
+        foreach
+        (
+            Kelurahan::select('id', 'nama', 'kode_pos', 'id_kecamatan')->where('id_kecamatan', $id_kec)->orderBy('nama', 'asc')->cursor()
+            as $cursor
+        )
+        {
+            $data[] = $cursor;
+        }
+
+        if (empty($data)) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
@@ -351,10 +339,10 @@ class KelurahanController extends BaseController
             return response()->json([
                 'code'    => 200,
                 'status'  => 'success',
-                'count'   => $query->count(),
-                'data'    => $query
+                'count'   => count($data),
+                'data'    => $data
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 "code"    => 501,
                 "status"  => "error",
@@ -410,12 +398,12 @@ class KelurahanController extends BaseController
         }
 
         if($limit == 'default'){
-            $result = $res;
+            $result = $res->get();
         }else{
-            $result = $res->limit($limit);
+            $result = $res->limit($limit)->get();
         }
 
-        if ($result->get() == '[]') {
+        if (empty($result)) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
@@ -428,9 +416,9 @@ class KelurahanController extends BaseController
                 'code'   => 200,
                 'status' => 'success',
                 'count'  => $query->count(),
-                'data'   => $query->get()
+                'data'   => $query
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 "code"    => 501,
                 "status"  => "error",

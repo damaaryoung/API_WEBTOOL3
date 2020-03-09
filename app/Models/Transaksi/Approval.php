@@ -45,9 +45,10 @@ class Approval extends Model implements AuthenticatableContract, AuthorizableCon
         'id_cabang'     => 'integer',
         'plafon'        => 'integer',
         'tenor'         => 'integer',
-        'flg_aktif'     => 'boolean'
+        'flg_aktif'     => 'boolean',
+        'created_at'    => 'date:m-d-Y H:i:s',
+        'updated_at'    => 'date:m-d-Y H:i:s'
     ];
-
     // public $timestamps = false;
 
     public function user(){

@@ -5,16 +5,24 @@ namespace App\Http\Controllers\Master\AreaKantor;
 use Laravel\Lumen\Routing\Controller as BaseController;
 use App\Http\Requests\AreaKantor\JenisPICReq;
 use App\Models\AreaKantor\JPIC;
+use Cache;
 // use Illuminate\Http\Request;
 // use App\Models\User;
 use Carbon\Carbon;
 
 class JPICController extends BaseController
 {
-    public function index() {
-        $query = JPIC::select('id', 'nama_jenis','keterangan')->orderBy('nama_jenis', 'asc')->get();
+    public function __construct() {
+        $this->time_cache = config('app.cache_exp');
+    }
 
-        if ($query == '[]') {
+    public function index() 
+    {
+        $query = Cache::remember('jpic.index', $this->time_cache, function () {
+            return JPIC::select('id', 'nama_jenis','keterangan')->orderBy('nama_jenis', 'asc')->get();
+        });
+
+        if (empty($query)) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
@@ -26,10 +34,10 @@ class JPICController extends BaseController
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'count'  => $query->count(),
+                'count'  => count($query),
                 'data'   => $query
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 "code"    => 501,
                 "status"  => "error",
@@ -38,7 +46,8 @@ class JPICController extends BaseController
         }
     }
 
-    public function store(JenisPICReq $req) {
+    public function store(JenisPICReq $req) 
+    {
         $data = array(
             'nama_jenis' => $req->input('nama_jenis'),
             'cakupan'    => $req->input('cakupan'), // Schope
@@ -55,7 +64,7 @@ class JPICController extends BaseController
                 "message" => "Data berhasil dibuat",
                 'data'    => $data
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 "code"    => 501,
                 "status"  => "error",
@@ -64,10 +73,11 @@ class JPICController extends BaseController
         }
     }
 
-    public function show($id) {
-        $query = JPIC::where('id', $id)->first();
+    public function show($id) 
+    {
+        $query = JPIC::select('id', 'nama_jenis', 'keterangan', 'created_at', 'updated_at')->where('id', $id)->first();
 
-        if ($query == null) {
+        if (empty($query)) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
@@ -75,21 +85,13 @@ class JPICController extends BaseController
             ], 404);
         }
 
-        $data = array(
-            'id'         => $query->id,
-            'nama_jenis' => $query->nama_jenis,
-            'keterangan' => $query->keterangan,
-            'created_at' => Carbon::parse($query->created_at)->format('d-m-Y H:i:s'),
-            'updated_at' => Carbon::parse($query->updated_at)->format('d-m-Y H:i:s')
-        );
-
         try {
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'data'   => $data
+                'data'   => $query
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 'code'   => 501,
                 'status' => 'error',
@@ -98,10 +100,11 @@ class JPICController extends BaseController
         }
     }
 
-    public function update($id, JenisPICReq $req) {
+    public function update($id, JenisPICReq $req) 
+    {
         $check = JPIC::where('id', $id)->first();
 
-        if (!$check) {
+        if (empty($check)) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
@@ -125,7 +128,7 @@ class JPICController extends BaseController
                 'message' => 'Data berhasil diupdate',
                 'data'    => $data
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 'code'   => 501,
                 'status' => 'error',
@@ -134,17 +137,8 @@ class JPICController extends BaseController
         }
     }
 
-    public function delete($id) {
-        $check = JPIC::where('id', $id)->first();
-
-        if (!$check) {
-            return response()->json([
-                'code'    => 404,
-                'status'  => 'not found',
-                'message' => 'Data tidak ada'
-            ], 404);
-        }
-
+    public function delete($id) 
+    {
         JPIC::where('id', $id)->delete();
 
         try {
@@ -153,7 +147,7 @@ class JPICController extends BaseController
                 'status'  => 'success',
                 'message' => 'Data dengan id '.$id.' berhasil dihapus'
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 'code'   => 501,
                 'status' => 'error',
@@ -162,10 +156,11 @@ class JPICController extends BaseController
         }
     }
 
-    public function trash(){
+    public function trash()
+    {
         $query = JPIC::select('id', 'nama_jenis','keterangan')->orderBy('nama_jenis', 'asc')->onlyTrashed()->get();
 
-        if ($query == '[]') {
+        if (empty($query)) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
@@ -180,7 +175,7 @@ class JPICController extends BaseController
                 'count'  => $query->count(),
                 'data'   => $query
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 "code"    => 501,
                 "status"  => "error",
@@ -189,8 +184,9 @@ class JPICController extends BaseController
         }
     }
 
-    public function restore($id){
-        $query = JPIC::onlyTrashed()->where('id',$id)->restore();
+    public function restore($id)
+    {
+        JPIC::onlyTrashed()->where('id',$id)->restore();
 
         try {
             return response()->json([
@@ -198,7 +194,7 @@ class JPICController extends BaseController
                 'status' => 'success',
                 'data'   => 'Data berhasil dikembalikan ke daftar'
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 "code"    => 501,
                 "status"  => "error",
@@ -254,12 +250,12 @@ class JPICController extends BaseController
         }
 
         if($limit == 'default'){
-            $result = $res;
+            $result = $res->get();
         }else{
-            $result = $res->limit($limit);
+            $result = $res->limit($limit)->get();
         }
 
-        if ($result->get() == '[]') {
+        if (empty($result)) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
@@ -272,9 +268,9 @@ class JPICController extends BaseController
                 'code'   => 200,
                 'status' => 'success',
                 'count'  => $result->count(),
-                'data'   => $result->get()
+                'data'   => $result
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 "code"    => 501,
                 "status"  => "error",

@@ -11,12 +11,12 @@ use App\Http\Requests\Pengajuan\FaspinRequest;
 // Models
 use App\Models\Pengajuan\SO\FasilitasPinjaman;
 use App\Models\Transaksi\TransSO;
-use App\Models\User;
+// use App\Models\User;
 
-use Illuminate\Support\Facades\File;
-use Illuminate\Http\Request;
-use App\Http\Requests;
-use Carbon\Carbon;
+// use Illuminate\Support\Facades\File;
+// use Illuminate\Http\Request;
+// use App\Http\Requests;
+// use Carbon\Carbon;
 use DB;
 
 class FaspinController extends BaseController
@@ -30,7 +30,7 @@ class FaspinController extends BaseController
                 'status' => 'success',
                 'data'   => $query
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 "code"    => 501,
                 "status"  => "error",
@@ -39,10 +39,11 @@ class FaspinController extends BaseController
         }
     }
 
-    public function show($id){
-        $check = FasilitasPinjaman::where('id', $id)->first();
+    public function show($id)
+    {
+        $query = FasilitasPinjaman::select('id', 'jenis_pinjaman', 'tujuan_pinjaman', 'plafon', 'tenor', 'segmentasi_bpr')->where('id', $id)->first();
 
-        if ($check == null) {
+        if (empty($query)) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
@@ -50,22 +51,13 @@ class FaspinController extends BaseController
             ], 404);
         }
 
-        $data = array(
-            'id'              => $check->id == null ? null : (int) $check->id,
-            'jenis_pinjaman'  => $check->jenis_pinjaman,
-            'tujuan_pinjaman' => $check->tujuan_pinjaman,
-            'plafon'          => (int) $check->plafon,
-            'tenor'           => (int) $check->tenor,
-            'segmentasi_bpr'  => $check->segmentasi_bpr
-        );
-
         try {
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'data'   => $data
+                'data'   => $query
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 "code"    => 501,
                 "status"  => "error",
@@ -74,10 +66,11 @@ class FaspinController extends BaseController
         }
     }
 
-    public function update($id, FaspinRequest $req){
+    public function update($id, FaspinRequest $req)
+    {
         $check = FasilitasPinjaman::where('id', $id)->first();
 
-        if ($check == null) {
+        if (empty($check)) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
@@ -87,7 +80,7 @@ class FaspinController extends BaseController
 
         $so = TransSO::where('id_fasilitas_pinjaman', $id)->first();
 
-        if ($so == null) {
+        if (empty($so)) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
@@ -117,7 +110,7 @@ class FaspinController extends BaseController
                 'message'=> 'Update Fasilitas Pinjaman Berhasil',
                 'data'   => $dataFasilitasPinjaman
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
 
             $err = DB::connection('web')->rollback();
 

@@ -27,6 +27,8 @@ class MenuSub extends Model implements AuthenticatableContract, AuthorizableCont
         'flg_aktif' => 'boolean'
     ];
 
+    public $timestamps = false;
+
     public function menu_master()
     {
         return $this->belongsTo(MenuMaster::class, 'id_menu_master')->select(['id', 'nama'])
@@ -34,6 +36,4 @@ class MenuSub extends Model implements AuthenticatableContract, AuthorizableCont
                 return new MenuMaster();
             });
     }
-
-    public $timestamps = false;
 }

@@ -10,8 +10,8 @@ $router->get('/api', function () use ($router) {
 
 // $router->post('/push', 'ImgController@push');
 
-// $router->post('/img', 'ImgController@upload');
-// $router->get('/img', 'ImgController@getDecode');
+$router->post('/img', 'ImgController@upload');
+$router->get('/img', 'ImgController@getDecode');
 
 // $router->post('/up_caa', 'ImgController@uploadCAA');
 

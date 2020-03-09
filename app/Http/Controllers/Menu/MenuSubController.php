@@ -3,17 +3,29 @@
 namespace App\Http\Controllers\Menu;
 
 use Laravel\Lumen\Routing\Controller as BaseController;
-// use App\Models\Menu\MenuMaster;
+use App\Models\Menu\MenuMaster;
 use App\Models\Menu\MenuSub;
 use Illuminate\Http\Request;
+use Cache;
 // use DB;
 
 class MenuSubController extends BaseController
 {
-    public function index() {
-        $query = MenuSub::with('menu_master')->select('id','nama','url', 'id_menu_master')->where('flg_aktif', 1)->orderBy('nama', 'asc')->get();
+    public function __construct() 
+    {
+        $this->time_cache = config('app.cache_exp');
+        $this->chunk      = 100;
+    }
 
-        if ($query == '[]') {
+    public function index() 
+    {
+        $query = Cache::remember('mSub', $this->time_cache, function () {
+            return MenuSub::select('id','nama','url')
+            ->addSelect(['menu_master' => MenuMaster::select('nama')->whereColumn('id_menu_master', 'menu_master.id')])
+            ->where('flg_aktif', 1)->orderBy('nama', 'asc')->get();
+        });
+
+        if (empty($query)) {
             return response()->json([
                 "code"    => 404,
                 "status"  => "not found",
@@ -21,25 +33,14 @@ class MenuSubController extends BaseController
             ], 404);
         }
 
-        $data = array();
-        foreach ($query as $key => $val) {
-            $data[$key] = [
-                'id'          => $val->id,
-                'nama'        => $val->nama,
-                'url'         => $val->url,
-                'menu_master' => $val->menu_master['nama']
-            ];
-        }
-
         try {
-
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'count'  => sizeof($data),
-                'data'   => $data
+                'count'  => sizeof($query),
+                'data'   => $query
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 'code'   => 501,
                 'status' => 'error',
@@ -48,7 +49,8 @@ class MenuSubController extends BaseController
         }
     }
 
-    public function store(Request $req) {
+    public function store(Request $req) 
+    {
         $master = $req->input('id_menu_master');
         $reqNama   = $req->input('nama');
         $nama = strtolower($reqNama);
@@ -77,16 +79,16 @@ class MenuSubController extends BaseController
             'url'            => $url
         );
 
+        MenuSub::create($query);
+        
         try {
-            MenuSub::create($query);
-
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
                 'message'=> 'data berhasil dibuat',
                 'data'   => $query
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 'code'   => 501,
                 'status' => 'error',
@@ -95,15 +97,16 @@ class MenuSubController extends BaseController
         }
     }
 
-    public function show($IdOrSlug) {
-        $query = MenuSub::with('menu_master')
-                ->select('id','nama','url', 'id_menu_master', 'flg_aktif')
-                ->where('id', $IdOrSlug)
-                ->orWhere('url', $IdOrSlug)
-                ->first();
+    public function show($IdOrSlug) 
+    {
+        $query = MenuSub::select('id','nama','url', 'flg_aktif')
+        ->addSelect(['menu_master' => MenuMaster::select('nama')->whereColumn('id_menu_master', 'menu_master.id')])
+        ->where('id', $IdOrSlug)
+        ->orWhere('url', $IdOrSlug)
+        ->first();
 
 
-        if (!$query) {
+        if (empty($query)) {
             return response()->json([
                 "code"    => 404,
                 "status"  => "not found",
@@ -111,21 +114,13 @@ class MenuSubController extends BaseController
             ], 404);
         }
 
-        $res = [
-            'id'          => $query->id,
-            'nama'        => $query->nama,
-            'url'         => $query->url,
-            'menu_master' => $query->menu_master['nama'],
-            'flg_aktif'   => (bool) $query->flg_aktif
-        ];
-
         try {
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'data'   => $res
+                'data'   => $query
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 'code'   => 501,
                 'status' => 'error',
@@ -134,17 +129,8 @@ class MenuSubController extends BaseController
         }
     }
 
-    public function delete($IdOrSlug) {
-        $check = MenuSub::where('id', $IdOrSlug)->orWhere('url', $IdOrSlug)->first();
-
-        if (!$check) {
-            return response()->json([
-                'code'    => 404,
-                'status'  => 'Not Found',
-                'message' => 'Data tidak ada'
-            ], 404);
-        }
-
+    public function delete($IdOrSlug) 
+    {
         MenuSub::where('id', $IdOrSlug)->orWhere('url', $IdOrSlug)->update(['flg_aktif' => 0]);
 
         try {
@@ -153,7 +139,7 @@ class MenuSubController extends BaseController
                 'status' => 'success',
                 'message'=> 'Data dengan URL(IdOrSlug) '.$IdOrSlug.', berhasil dihapus'
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 'code'    => 501,
                 'status'  => 'error',
@@ -162,25 +148,18 @@ class MenuSubController extends BaseController
         }
     }
 
-    public function trash() {
+    public function trash() 
+    {
+        $query = MenuSub::select('id','nama','url')
+        ->addSelect(['menu_master' => MenuMaster::select('nama')->whereColumn('id_menu_master', 'menu_master.id')])
+        ->where('flg_aktif', 0)->orderBy('nama', 'asc')->get();
 
-        $query = MenuSub::with('menu_master')->select('id','nama','url', 'id_menu_master')->where('flg_aktif', 0)->orderBy('nama', 'asc')->get();
-
-        if ($query == '[]') {
+        if (empty($query)) {
             return response()->json([
                 "code"    => 404,
                 "status"  => "not found",
                 "message" => "Data kosong"
             ], 404);
-        }
-
-        foreach ($query as $key => $val) {
-            $res[$key] = [
-                'id'          => $val->id,
-                'nama'        => $val->nama,
-                'url'         => $val->url,
-                'menu_master' => $val->menu_master['nama']
-            ];
         }
 
         try {
@@ -189,9 +168,9 @@ class MenuSubController extends BaseController
                 'code'   => 200,
                 'status' => 'success',
                 'count'  => $query->count(),
-                'data'   => $res
+                'data'   => $query
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 'code'   => 501,
                 'status' => 'error',
@@ -200,8 +179,9 @@ class MenuSubController extends BaseController
         }
     }
 
-    public function restore($id) {
-        $query = MenuSub::where('id', $id)->update(['flg_aktif' => 1]);
+    public function restore($id) 
+    {
+        MenuSub::where('id', $id)->update(['flg_aktif' => 1]);
 
         try {
             return response()->json([
@@ -209,7 +189,7 @@ class MenuSubController extends BaseController
                 'status'  => 'success',
                 'message' => 'data berhasil dikembalikan'
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 "code"    => 501,
                 "status"  => "error",
@@ -255,12 +235,6 @@ class MenuSubController extends BaseController
         }
 
         try {
-            // $query = MenuSub::addSelect(['menu_master' => MenuMaster::select('nama')
-            // ->whereColumn('id_menu_master', 'menu_master.id')
-            // ])
-            // ->where('flg_aktif', $status)
-            // ->orderBy($orderBy, $orderVal);
-
             $query = MenuSub::addSelect(['menu_master' => function ($q) {
                 $q->select('nama')
                     ->from('menu_master')
@@ -276,12 +250,12 @@ class MenuSubController extends BaseController
             }
 
             if($limit == 'default'){
-                $result = $res;
+                $result = $res->get();
             }else{
-                $result = $res->limit($limit);
+                $result = $res->limit($limit)->get();
             }
 
-            if ($result->get() == '[]') {
+            if (empty($result)) {
                 return response()->json([
                     "code"    => 404,
                     "status"  => "not found",
@@ -293,9 +267,9 @@ class MenuSubController extends BaseController
                 'code'   => 200,
                 'status' => 'success',
                 'count'  => $result->count(),
-                'data'   => $result->get()->makeHidden('id_menu_master') //->pluck('menu_master')
+                'data'   => $result->makeHidden('id_menu_master') //->pluck('menu_master')
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 'code'   => 501,
                 'status' => 'error',

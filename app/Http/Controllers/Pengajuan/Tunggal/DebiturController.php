@@ -10,21 +10,21 @@ use App\Http\Requests\Pengajuan\DebiturRequest;
 
 // Models
 use App\Models\Pengajuan\SO\Debitur;
-use App\Models\Transaksi\TransSO;
+// use App\Models\Transaksi\TransSO;
 
-use Illuminate\Support\Facades\File;
+// use Illuminate\Support\Facades\File;
 use Carbon\Carbon;
-use Image;
 use DB;
 
 class DebiturController extends BaseController
 {
 
-    public function show($id){
+    public function show($id)
+    {
         $val = Debitur::with('prov_ktp','kab_ktp','kec_ktp','kel_ktp','prov_dom','kab_dom','kec_dom','kel_dom','prov_kerja','kab_kerja','kec_kerja','kel_kerja')
             ->where('id', $id)->first();
 
-        if ($val == null) {
+        if (empty($val)) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
@@ -33,7 +33,7 @@ class DebiturController extends BaseController
         }
 
         $nama_anak = explode(",", $val->nama_anak);
-        $tgl_anak = explode(",", $val->tgl_lahir_anak);
+        $tgl_anak  = explode(",", $val->tgl_lahir_anak);
 
         for ($i = 0; $i < count($nama_anak); $i++) {
             $anak[] = array(
@@ -156,7 +156,7 @@ class DebiturController extends BaseController
                 'status' => 'success',
                 'data'   => $data
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 "code"    => 501,
                 "status"  => "error",
@@ -165,10 +165,11 @@ class DebiturController extends BaseController
         }
     }
 
-    public function update($id, DebiturRequest $req){
+    public function update($id, DebiturRequest $req)
+    {
         $check_debt = Debitur::where('id', $id)->first();
 
-        if ($check_debt == null) {
+        if (empty($check_debt)) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
@@ -536,7 +537,7 @@ class DebiturController extends BaseController
                 'message'=> 'Update Debitur Berhasil',
                 'data'   => $dataDebitur
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
 
             $err = DB::connection('web')->rollback();
 

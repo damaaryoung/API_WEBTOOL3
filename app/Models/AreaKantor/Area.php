@@ -32,7 +32,9 @@ class Area extends Model implements AuthenticatableContract, AuthorizableContrac
     ];
 
     protected $casts = [
-        'flg_aktif' => 'boolean'
+        'flg_aktif'  => 'boolean',
+        'created_at' => 'date:m-d-Y H:i:s',
+        'updated_at' => 'date:m-d-Y H:i:s'
     ];
 
     public function prov(){
