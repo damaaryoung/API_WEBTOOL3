@@ -257,7 +257,7 @@ class Controller extends BaseController
             // $img->save($fullPath);
 
             Image::cache(function($image) use ($file, $fullPath) {
-                return $image->make(realpath($file))->resize(480, 360)->save($fullPath);
+                $image->make($file)->resize(480, 360)->save($fullPath);
              });
         }
         
