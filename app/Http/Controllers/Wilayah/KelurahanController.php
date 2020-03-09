@@ -14,7 +14,7 @@ class KelurahanController extends BaseController
     public function __construct() 
     {
         $this->time_cache = config('app.cache_exp');
-        $this->chunk = 100;
+        $this->chunk = 50;
     }
 
     public function index() 
