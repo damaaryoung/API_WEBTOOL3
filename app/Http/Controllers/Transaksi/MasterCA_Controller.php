@@ -901,6 +901,8 @@ class MasterCA_Controller extends BaseController
                 $idInfo = null;
             }
 
+            // dd($idInfo);
+
             if (!empty($dataRingkasan)) {
                 $analisa = RingkasanAnalisa::create($dataRingkasan);
                 $idAnalisa = $analisa->id;
