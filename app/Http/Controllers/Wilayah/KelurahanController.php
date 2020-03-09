@@ -21,29 +21,29 @@ class KelurahanController extends BaseController
     {    
         $data = array();
 
-        $query = Cache::remember('kel.index', $this->time_cache, function () use (&$data) {
+        // $query = Cache::remember('kel.index', $this->time_cache, function () use (&$data) {
             
-            // foreach(
-            //     Kelurahan::withCount(['kec as nama_kecamatan' => function($sub) {
-            //         $sub->select('nama');
-            //     }])->where('flg_aktif', 1)->orderBy('nama', 'asc')->cursor() as $cursor
-            // ){
-            //     $data[] = $cursor;
-            // }
+            foreach(
+                Kelurahan::withCount(['kec as nama_kecamatan' => function($sub) {
+                    $sub->select('nama');
+                }])->where('flg_aktif', 1)->orderBy('nama', 'asc')->cursor() as $cursor
+            ){
+                $data[] = $cursor;
+            }
 
-            Kelurahan::withCount(['kec as nama_kecamatan' => function($sub) {
-                $sub->select('nama');
-            }])->where('flg_aktif', 1)->orderBy('nama', 'asc')->chunk($this->chunk, function($chunks) use (&$data) {
-                foreach($chunks as $chunk){
-                    $data[] = $chunk;
-                }
-            });
+            // Kelurahan::withCount(['kec as nama_kecamatan' => function($sub) {
+            //     $sub->select('nama');
+            // }])->where('flg_aktif', 1)->orderBy('nama', 'asc')->chunk($this->chunk, function($chunks) use (&$data) {
+            //     foreach($chunks as $chunk){
+            //         $data[] = $chunk;
+            //     }
+            // });
 
-            return $data;
+            // return $data;
 
-        });
+        // });
 
-        if (empty($query)) {
+        if (empty($data)) {
             return response()->json([
                 "code"    => 404,
                 "status"  => "not found",
@@ -55,8 +55,8 @@ class KelurahanController extends BaseController
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'count'  => sizeof($query),
-                'data'   => $query
+                'count'  => sizeof($data),
+                'data'   => $data
             ], 200);
         } catch (\Exception $e) {
             return response()->json([

@@ -901,8 +901,6 @@ class MasterCA_Controller extends BaseController
                 $idInfo = null;
             }
 
-            // dd($idInfo);
-
             if (!empty($dataRingkasan)) {
                 $analisa = RingkasanAnalisa::create($dataRingkasan);
                 $idAnalisa = $analisa->id;
@@ -967,6 +965,7 @@ class MasterCA_Controller extends BaseController
                 'id_pendapatan_usaha'     => $idPendUs
             );
 
+            
             $newTransCA = array_merge($transCA, $dataID);
 
             $CA = TransCA::create($newTransCA);
