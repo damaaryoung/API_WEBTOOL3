@@ -1,13 +1,18 @@
 <?php
 
-$host = $_SERVER['HTTP_HOST'];
+if(isset($_SERVER['HTTP_HOST']) && !empty($_SERVER['HTTP_HOST'])){
+    $gethost = explode(".",$_SERVER['HTTP_HOST']);
+    $domain = array_shift($gethost);
+}else{
+    $domain = "103.31.232.146";
+}
 
 $production = '103.31.232.146';
 $office     = '103.234.254.186';
 
 $url_production = $production.':4100';
 
-if($host == $production){
+if($domain == $production){
     $app = [
     
         /*
