@@ -21,7 +21,7 @@ class KelurahanController extends BaseController
     {    
         $data = array();
 
-        // $query = Cache::remember('kel.index', $this->time_cache, function () use (&$data) {
+        $query = Cache::remember('kel.index', $this->time_cache, function () use (&$data) {
             
             foreach(
                 Kelurahan::withCount(['kec as nama_kecamatan' => function($sub) {
@@ -39,11 +39,11 @@ class KelurahanController extends BaseController
             //     }
             // });
 
-            // return $data;
+            return $data;
 
-        // });
+        });
 
-        if (empty($data)) {
+        if (empty($query)) {
             return response()->json([
                 "code"    => 404,
                 "status"  => "not found",
@@ -55,8 +55,8 @@ class KelurahanController extends BaseController
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'count'  => sizeof($data),
-                'data'   => $data
+                'count'  => sizeof($query),
+                'data'   => $query
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
