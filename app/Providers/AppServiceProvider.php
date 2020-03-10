@@ -3,9 +3,16 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Carbon\Carbon;
 
 class AppServiceProvider extends ServiceProvider
 {
+    public function boot()
+    {
+        Carbon::serializeUsing(function ($carbon) {
+            return $carbon->format('m-d-Y H:i:s');
+        });
+    }
     /**
      * Register any application services.
      *
@@ -14,9 +21,9 @@ class AppServiceProvider extends ServiceProvider
     public function register()
     {
         // Configs to Redis
-        $this->app->configure('database');
+        // $this->app->configure('database');
 
         // Enable queues
-        $this->app->make('queue');
+        // $this->app->make('queue');
     }
 }
