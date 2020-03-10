@@ -23,21 +23,21 @@ class KelurahanController extends BaseController
 
         $query = Cache::remember('kel.index', $this->time_cache, function () use (&$data) {
             
-            foreach(
-                Kelurahan::withCount(['kec as nama_kecamatan' => function($sub) {
-                    $sub->select('nama');
-                }])->where('flg_aktif', 1)->orderBy('nama', 'asc')->cursor() as $cursor
-            ){
-                $data[] = $cursor;
-            }
+            // foreach(
+            //     Kelurahan::withCount(['kec as nama_kecamatan' => function($sub) {
+            //         $sub->select('nama');
+            //     }])->where('flg_aktif', 1)->orderBy('nama', 'asc')->cursor() as $cursor
+            // ){
+            //     $data[] = $cursor;
+            // }
 
-            // Kelurahan::withCount(['kec as nama_kecamatan' => function($sub) {
-            //     $sub->select('nama');
-            // }])->where('flg_aktif', 1)->orderBy('nama', 'asc')->chunk($this->chunk, function($chunks) use (&$data) {
-            //     foreach($chunks as $chunk){
-            //         $data[] = $chunk;
-            //     }
-            // });
+            Kelurahan::withCount(['kec as nama_kecamatan' => function($sub) {
+                $sub->select('nama');
+            }])->where('flg_aktif', 1)->orderBy('nama', 'asc')->chunk($this->chunk, function($chunks) use (&$data) {
+                foreach($chunks as $chunk){
+                    $data[] = $chunk;
+                }
+            });
 
             return $data;
 

@@ -29,7 +29,7 @@ class Cabang extends Model implements AuthenticatableContract, AuthorizableContr
     protected $primaryKey = 'id';
 
     protected $fillable = [
-        'id_area', 'nama', 'id_provinsi', 'id_kabupaten', 'id_kecamatan', 'id_kelurahan', 'jenis_kantor', 'flg_aktif'
+        'id_area', 'nama', 'id_provinsi', 'id_kabupaten', 'id_kecamatan', 'id_kelurahan', 'jenis_kantor', 'flg_aktif', 'iks'
     ];
 
     protected $casts = [

@@ -13,6 +13,8 @@ $router->get('/api', function () use ($router) {
 $router->post('/img', 'ImgController@upload');
 $router->get('/img', 'ImgController@getDecode');
 
+$router->post('test-up', 'ImgController@testUp');
+
 // $router->post('/up_caa', 'ImgController@uploadCAA');
 
 $router->get('produk', 'Master\CodeController@produk');

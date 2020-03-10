@@ -101,7 +101,7 @@ class MasterCA_Controller extends BaseController
                     'status_ca'     => $status_ca,
                     'catatan_ca'    => $val->so['ca']['catatan_ca']
                 ],
-                'tgl_transaksi' => Carbon::parse($val->created_at)->format("d-m-Y H:i:s")
+                'tgl_transaksi' => $val->created_at
             ];
         }
 
@@ -191,7 +191,7 @@ class MasterCA_Controller extends BaseController
                     'status_ca'     => $status_ca,
                     'catatan_ca'    => $val->so['ca']['catatan_ca']
                 ],
-                'tgl_transaksi' => Carbon::parse($val->created_at)->format("d-m-Y H:i:s")
+                'tgl_transaksi' => $val->created_at
             ];
         }
 
@@ -380,7 +380,7 @@ class MasterCA_Controller extends BaseController
             'rekomendasi_ao'    => ['id' => $val->id_recom_ao          == null ? null : (int) $val->id_recom_ao],
             'status_ao'         => $status_ao,
             'status_ca'         => $status_ca,
-            'tgl_transaksi'     => Carbon::parse($val->created_at)->format("d-m-Y H:i:s")
+            'tgl_transaksi'     => $val->created_at
         );
 
         try {
@@ -1094,10 +1094,10 @@ class MasterCA_Controller extends BaseController
                 'asal_data'      => $val->so['asaldata']['nama'],
                 'nama_marketing' => $val->so['nama_marketing'],
                 'nama_debitur'   => $val->so['debt']['nama_lengkap'],
-                'plafon'         => (int) $val->so['faspin']['plafon'],
-                'tenor'          => (int) $val->so['faspin']['tenor'],
+                'plafon'         => $val->so['faspin']['plafon'],
+                'tenor'          => $val->so['faspin']['tenor'],
                 'status_ao'      => $status_ao,
-                'tgl_transaksi'  => Carbon::parse($val->created_at)->format("d-m-Y H:i:s")
+                'tgl_transaksi'  => $val->created_at
             ];
         }
 
@@ -1689,7 +1689,7 @@ class MasterCA_Controller extends BaseController
                     'status_ca'     => $status_ca,
                     'catatan_ca'    => $val->so['ca']['catatan_ca']
                 ],
-                'tgl_transaksi'     => Carbon::parse($val->created_at)->format("d-m-Y H:i:s")
+                'tgl_transaksi'     => $val->created_at
             ];
         }
 
@@ -1821,7 +1821,7 @@ class MasterCA_Controller extends BaseController
             'asuransi_jiwa'         => $check_ca->as_jiwa,
             'asuransi_jaminan'      => AsuransiJaminan::whereIn('id', explode(";", $check_ca->id_asuransi_jaminan))->get()->toArray(),
             'status_ca'             => $status_ca,
-            'tgl_transaksi'         => Carbon::parse($val->created_at)->format("d-m-Y H:i:s")
+            'tgl_transaksi'         => $check_ca->created_at
         ];
 
         try {
