@@ -96,7 +96,7 @@ class MasterSO_Controller extends BaseController
                 'count'  => sizeof($data),
                 'data'   => $data
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 "code"    => 501,
                 "status"  => "error",
@@ -249,7 +249,7 @@ class MasterSO_Controller extends BaseController
                 'status' => 'success',
                 'data'   => $data
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 "code"    => 501,
                 "status"  => "error",
@@ -908,7 +908,7 @@ class MasterSO_Controller extends BaseController
                 'count'  => sizeof($data),
                 'data'   => $data
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 "code"    => 501,
                 "status"  => "error",
@@ -1004,7 +1004,7 @@ class MasterSO_Controller extends BaseController
                 'count'  => sizeof($data),
                 'data'   => $data
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 "code"    => 501,
                 "status"  => "error",

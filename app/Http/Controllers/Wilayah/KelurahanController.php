@@ -14,26 +14,21 @@ class KelurahanController extends BaseController
     public function __construct() 
     {
         $this->time_cache = config('app.cache_exp');
-        $this->chunk = 50;
+        $this->chunk = 1000;
     }
 
     public function index() 
     {    
         $data = array();
 
-        $query = Cache::remember('kel.index', $this->time_cache, function () use (&$data) {
-            
-            // foreach(
-            //     Kelurahan::withCount(['kec as nama_kecamatan' => function($sub) {
-            //         $sub->select('nama');
-            //     }])->where('flg_aktif', 1)->orderBy('nama', 'asc')->cursor() as $cursor
-            // ){
-            //     $data[] = $cursor;
-            // }
+        $query = Cache::rememberForever('kel.index', function () use (&$data) {
 
-            Kelurahan::withCount(['kec as nama_kecamatan' => function($sub) {
-                $sub->select('nama');
-            }])->where('flg_aktif', 1)->orderBy('nama', 'asc')->chunk($this->chunk, function($chunks) use (&$data) {
+            DB::connection('web')->table('master_kelurahan')
+            ->join('master_kecamatan', 'master_kelurahan.id_kecamatan', 'master_kecamatan.id')
+            ->select('master_kelurahan.*', 'master_kecamatan.nama as nama_kecamatan')
+            ->where('master_kelurahan.flg_aktif', 1)
+            ->orderBy('master_kelurahan.nama', 'asc')
+            ->chunk($this->chunk, function($chunks) use (&$data) {
                 foreach($chunks as $chunk){
                     $data[] = $chunk;
                 }

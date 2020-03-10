@@ -112,7 +112,7 @@ class MasterCA_Controller extends BaseController
                 'count'  => sizeof($data),
                 'data'   => $data
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 "code"    => 501,
                 "status"  => "error",
@@ -219,7 +219,7 @@ class MasterCA_Controller extends BaseController
                     'data'   => $result
                 ], 200);
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 "code"    => 501,
                 "status"  => "error",
@@ -389,7 +389,7 @@ class MasterCA_Controller extends BaseController
                 'status' => 'success',
                 'data'   => $data
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 "code"    => 501,
                 "status"  => "error",
@@ -1092,7 +1092,7 @@ class MasterCA_Controller extends BaseController
                 'count'  => sizeof($data),
                 'data'   => $data
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 "code"    => 501,
                 "status"  => "error",
@@ -1678,7 +1678,7 @@ class MasterCA_Controller extends BaseController
                 'count'  => sizeof($data),
                 'data'   => $data
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 "code"    => 501,
                 "status"  => "error",
@@ -1808,7 +1808,7 @@ class MasterCA_Controller extends BaseController
                 'status' => 'success',
                 'data'   => $data[0]
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 "code"    => 501,
                 "status"  => "error",

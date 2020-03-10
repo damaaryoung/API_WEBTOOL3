@@ -182,7 +182,7 @@ class MasterCAA_Controller extends BaseController
                 'count'  => sizeof($data),
                 'data'   => $data
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 "code"    => 501,
                 "status"  => "error",
@@ -524,7 +524,7 @@ class MasterCAA_Controller extends BaseController
                 'message'=> 'Data untuk CAA berhasil dikirim',
                 'data'   => $approval
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $err = DB::connection('web')->rollback();
             return response()->json([
                 'code'    => 501,
@@ -804,7 +804,7 @@ class MasterCAA_Controller extends BaseController
                 'status' => 'success',
                 'data'   => $data
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 "code"    => 501,
                 "status"  => "error",
@@ -1127,7 +1127,7 @@ class MasterCAA_Controller extends BaseController
                 'status' => 'success',
                 'data'   => $data
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 "code"    => 501,
                 "status"  => "error",
@@ -1260,7 +1260,7 @@ class MasterCAA_Controller extends BaseController
                 'count'  => sizeof($data),
                 'data'   => $data
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 "code"    => 501,
                 "status"  => "error",
@@ -1438,7 +1438,7 @@ class MasterCAA_Controller extends BaseController
                 'count'  => sizeof($data),
                 'data'   => $data
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 "code"    => 501,
                 "status"  => "error",

@@ -120,7 +120,7 @@ class MasterAO_Controller extends BaseController
                 'count'  => sizeof($data),
                 'data'   => $data
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 "code"    => 501,
                 "status"  => "error",
@@ -255,7 +255,7 @@ class MasterAO_Controller extends BaseController
                 'status' => 'success',
                 'data'   => $data
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 "code"    => 501,
                 "status"  => "error",
@@ -271,7 +271,7 @@ class MasterAO_Controller extends BaseController
 
         $PIC = PIC::where('user_id', $user_id)->first();
 
-        if ($PIC == null) {
+        if (empty($PIC)) {
             return response()->json([
                 "code"    => 404,
                 "status"  => "not found",
@@ -303,7 +303,7 @@ class MasterAO_Controller extends BaseController
 
         $check_so = TransSO::where('id',$id)->where('status_das', 1)->where('status_hm', 1)->first();
 
-        if ($check_so == null) {
+        if (empty($check_so)) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
@@ -1152,11 +1152,12 @@ class MasterAO_Controller extends BaseController
             $lamp_skk = $check_lamp_skk;
         }
 
-        if($file = $req->file('lamp_sku')){
+        if($files = $req->file('lamp_sku')){
             $path = $lamp_dir.'/debitur';
-            $name = 'lamp_sku.';
+            $name = 'lamp_sku';
 
             $check_file = $check_lamp_sku;
+
             $arrayPath = array();
             foreach($files as $file){
                 $arrayPath[] = Helper::uploadImg($check_file, $file, $path, $name);
@@ -1168,9 +1169,7 @@ class MasterAO_Controller extends BaseController
             $lamp_sku = $check_lamp_sku;
         }
 
-        if($req->file('lamp_slip_gaji') != null){
-            $file = $req->file('lamp_slip_gaji');
-
+        if($file = $req->file('lamp_slip_gaji')){
             $path = $lamp_dir.'/debitur';
             $name = 'lamp_slip_gaji.'; //->getClientOriginalExtension();
 
@@ -1183,7 +1182,7 @@ class MasterAO_Controller extends BaseController
         }
 
 
-        if($file = $req->file('foto_pembukuan_usaha')){
+        if($files = $req->file('foto_pembukuan_usaha')){
             $path = $lamp_dir.'/debitur';
             $name = 'foto_pembukuan_usaha.';
             
@@ -1198,7 +1197,7 @@ class MasterAO_Controller extends BaseController
             $foto_pembukuan_usaha = $check_foto_pembukuan_usaha;
         }
 
-        if($file = $req->file('lamp_foto_usaha')){
+        if($files = $req->file('lamp_foto_usaha')){
             $path = $lamp_dir.'/debitur';
             $name = 'lamp_foto_usaha.';
 
@@ -1511,7 +1510,7 @@ class MasterAO_Controller extends BaseController
                 'count'  => sizeof($data),
                 'data'   => $data
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 "code"    => 501,
                 "status"  => "error",
@@ -1626,7 +1625,7 @@ class MasterAO_Controller extends BaseController
                 'count'  => sizeof($data),
                 'data'   => $data
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 "code"    => 501,
                 "status"  => "error",

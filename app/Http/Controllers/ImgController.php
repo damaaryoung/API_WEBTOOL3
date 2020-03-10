@@ -11,7 +11,8 @@ use DB;
 
 class ImgController extends BaseController
 {
-    public function push(Request $req){
+    public function push(Request $req)
+    {
         // $fcm_token = 'eVl--mRK8IY:APA91bFcPr9jKKpPN-XYRHGQtbRRP14MI4CYrW0FDUhp-AE_Pb2uytKVKm-mkYm5GdNlGqNuvoVhRPuTGNPU1P0BdIEzIFsuv3qE6dJUWJBzhOF7fNwiXm8W_kPfLAPzFEMj4j6Oq-4_';
 
         $fcm_token = $req->input('fcm_token');
@@ -36,7 +37,8 @@ class ImgController extends BaseController
         }
     }
 
-    public function upload(Request $req){
+    public function upload(Request $req)
+    {
         $file = $req->file('lam_imb');
         // $type = pathinfo($file, PATHINFO_EXTENSION);
         // $extention = $file->getClientOriginalExtension();
@@ -57,7 +59,8 @@ class ImgController extends BaseController
         }
     }
 
-    public function getDecode(){
+    public function getDecode()
+    {
         // $query = DB::connection('web')->table('agunan_tanah')->where('id', 7)->first();
         // $img64 = $query->lam_imb;
 
@@ -94,7 +97,7 @@ class ImgController extends BaseController
             $uploadPath = public_path("base");
             $fileName = "new.".$extension[1];
             $fileStream = fopen($uploadPath . '/' . $fileName , "wb"); 
-
+            
             fwrite($fileStream, $imgdata);
             fclose($fileStream);
         }else{
@@ -109,7 +112,8 @@ class ImgController extends BaseController
         // return response($file, 200)->header('Content-Type', 'image/png');
     }
 
-    public function uploadCAA(Request $req){
+    public function uploadCAA(Request $req)
+    {
         // $url = '103.31.232.149:3737/api/master/mcaa/66';
         $url = 'localhost:4100/api/master/mcaa/66';
 

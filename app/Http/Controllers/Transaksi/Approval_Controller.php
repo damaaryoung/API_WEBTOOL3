@@ -107,7 +107,7 @@ class Approval_Controller extends BaseController
                 'status' => 'success',
                 'data'   => $data
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 "code"    => 501,
                 "status"  => "error",
@@ -163,7 +163,7 @@ class Approval_Controller extends BaseController
                 'status' => 'success',
                 'data'   => $data
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 "code"    => 501,
                 "status"  => "error",
@@ -241,7 +241,7 @@ class Approval_Controller extends BaseController
                 'count'  => $query->count(),
                 'data'   => $data
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 "code"    => 501,
                 "status"  => "error",
@@ -319,7 +319,7 @@ class Approval_Controller extends BaseController
                 'status' => 'success',
                 'data'   => $data
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 "code"    => 501,
                 "status"  => "error",
@@ -460,7 +460,7 @@ class Approval_Controller extends BaseController
                     'transaksi' => $trans_caa
                 )
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $err = DB::connection('web')->rollback();
             return response()->json([
                 'code'    => 501,
@@ -617,7 +617,7 @@ class Approval_Controller extends BaseController
                 'status' => 'success',
                 'message'=> $result
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $err = DB::connection('web')->rollback();
             return response()->json([
                 'code'    => 501,
