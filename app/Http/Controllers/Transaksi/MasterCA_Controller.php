@@ -400,15 +400,15 @@ class MasterCA_Controller extends BaseController
 
     public function update($id, Request $request, BlankRequest $req) {
         $user_id  = $request->auth->user_id;
-        $username = $request->auth->user;
+        // $username = $request->auth->user;
 
         $PIC = PIC::where('user_id', $user_id)->first();
 
-        if ($PIC == null) {
+        if (empty($PIC)) {
             return response()->json([
                 "code"    => 404,
                 "status"  => "not found",
-                "message" => "User_ID anda adalah '".$user_id."' dengan username '".$username."' . Namun anda belum terdaftar sebagai PIC(CA). Harap daftarkan diri sebagai PIC pada form PIC(CA) atau hubungi bagian IT"
+                "message" => "User_ID anda adalah '".$user_id."' dengan username '".$PIC->nama."' . Namun anda belum terdaftar sebagai PIC(CA). Harap daftarkan diri sebagai PIC pada form PIC(CA) atau hubungi bagian IT"
             ], 404);
         }
 
@@ -477,17 +477,17 @@ class MasterCA_Controller extends BaseController
 
         // Pendapatan Usaha Cadebt
         $dataPendapatanUsaha = array(
-            'pemasukan_tunai'      => empty($req->input('pemasukan_tunai')) ? 0 : $req->input('pemasukan_tunai'),
-            'pemasukan_kredit'     => empty($req->input('pemasukan_kredit')) ? 0 : $req->input('pemasukan_kredit'),
-            'biaya_sewa'           => empty($req->input('biaya_sewa')) ? 0 : $req->input('biaya_sewa'),
-            'biaya_gaji_pegawai'   => empty($req->input('biaya_gaji_pegawai')) ? 0 : $req->input('biaya_gaji_pegawai'),
-            'biaya_belanja_brg'    => empty($req->input('biaya_belanja_brg')) ? 0 : $req->input('biaya_belanja_brg'),
+            'pemasukan_tunai'      => empty($req->input('pemasukan_tunai'))     ? 0 : $req->input('pemasukan_tunai'),
+            'pemasukan_kredit'     => empty($req->input('pemasukan_kredit'))    ? 0 : $req->input('pemasukan_kredit'),
+            'biaya_sewa'           => empty($req->input('biaya_sewa'))          ? 0 : $req->input('biaya_sewa'),
+            'biaya_gaji_pegawai'   => empty($req->input('biaya_gaji_pegawai'))  ? 0 : $req->input('biaya_gaji_pegawai'),
+            'biaya_belanja_brg'    => empty($req->input('biaya_belanja_brg'))   ? 0 : $req->input('biaya_belanja_brg'),
             'biaya_telp_listr_air' => empty($req->input('biaya_telp_listr_air')) ? 0 : $req->input('biaya_telp_listr_air'),
             'biaya_sampah_kemanan' => empty($req->input('biaya_sampah_kemanan')) ? 0 : $req->input('biaya_sampah_kemanan'),
-            'biaya_kirim_barang'   => empty($req->input('biaya_kirim_barang')) ? 0 : $req->input('biaya_kirim_barang'),
+            'biaya_kirim_barang'   => empty($req->input('biaya_kirim_barang'))  ? 0 : $req->input('biaya_kirim_barang'),
             'biaya_hutang_dagang'  => empty($req->input('biaya_hutang_dagang')) ? 0 : $req->input('biaya_hutang_dagang'),
-            'biaya_angsuran'       => empty($req->input('biaya_angsuran')) ? 0 : $req->input('biaya_angsuran'),
-            'biaya_lain_lain'      => empty($req->input('biaya_lain_lain')) ? 0 : $req->input('biaya_lain_lain')
+            'biaya_angsuran'       => empty($req->input('biaya_angsuran'))      ? 0 : $req->input('biaya_angsuran'),
+            'biaya_lain_lain'      => empty($req->input('biaya_lain_lain'))     ? 0 : $req->input('biaya_lain_lain')
         );
 
         $totalPendapatan = array(
@@ -533,6 +533,138 @@ class MasterCA_Controller extends BaseController
             'total_pemasukan'    => $ttl1 = array_sum(array_slice($inputKapBul, 0, 2)),
             'total_pengeluaran'  => $ttl2 = array_sum(array_slice($inputKapBul, 3)),
             'penghasilan_bersih' => $ttl1 - $ttl2
+        );
+
+
+        // Ceiling Recomendasi Pinjaman
+        $rekomPinjaman = array(
+            'penyimpangan_struktur'
+                => empty($req->input('penyimpangan_struktur'))
+                ? null : $req->input('penyimpangan_struktur'),
+
+            'penyimpangan_dokumen'
+                => empty($req->input('penyimpangan_dokumen'))
+                ? null : $req->input('penyimpangan_dokumen'),
+
+            'recom_nilai_pinjaman'
+                => empty($req->input('recom_nilai_pinjaman'))
+                ? null : $req->input('recom_nilai_pinjaman'),
+
+            'recom_tenor'
+                => empty($req->input('recom_tenor'))
+                ? null : $req->input('recom_tenor'),
+
+            'recom_angsuran'
+                => empty($req->input('recom_angsuran'))
+                ? null : $req->input('recom_angsuran'),
+
+            'recom_produk_kredit'
+                => empty($req->input('recom_produk_kredit'))
+                ? null : $req->input('recom_produk_kredit'),
+
+            'note_recom'
+                => empty($req->input('note_recom'))
+                ? null : $req->input('note_recom'),
+
+            'bunga_pinjaman'
+                => empty($req->input('bunga_pinjaman'))
+                ? null : $req->input('bunga_pinjaman'),
+
+            'nama_ca'
+                => empty($req->input('nama_ca'))
+                ? $PIC->nama : $req->input('nama_ca')
+        );
+
+        // Rekomendasi Angsuran pada table rrekomendasi_pinjaman
+        $plafonCA = $rekomPinjaman['recom_nilai_pinjaman'] == null ? 0 : $rekomPinjaman['recom_nilai_pinjaman'];
+        $tenorCA  = $rekomPinjaman['recom_tenor']          == null ? 0 : $rekomPinjaman['recom_tenor'];
+        $bunga    = $rekomPinjaman['bunga_pinjaman']       == null ? 0 : ($rekomPinjaman['bunga_pinjaman'] / 100);
+
+        $rekomen_pendapatan  = $total_KapBul['total_pemasukan']   == null ? 0 : $total_KapBul['total_pemasukan'];
+        $rekomen_pengeluaran = $total_KapBul['total_pengeluaran'] == null ? 0 : $total_KapBul['total_pengeluaran'];
+        $rekomen_angsuran    = $inputKapBul['angsuran']           == null ? 0 : $inputKapBul['angsuran'];
+
+        if ($plafonCA == 0 && $tenorCA == 0 && $bunga == 0) {
+            $recom_angs = 0;
+        }else{
+            $recom_angs = Helper::recom_angs($plafonCA, $tenorCA, $bunga);
+        }
+        
+        $rekomen_pend_bersih = $rekomen_pendapatan - $rekomen_pengeluaran;
+
+        $disposable_income   = $rekomen_pend_bersih - $recom_angs;
+
+        $kapBul = array_merge($inputKapBul, $total_KapBul, array('disposable_income'  => $disposable_income, 'ao_ca' => 'CA'));
+        // End Kapasitas Bulanan
+
+        // Check Pemeriksaan
+        $id_pe_ta = $check_ao->id_periksa_agunan_tanah;
+
+        if (empty($id_pe_ta)) {
+            $PeriksaTanah = null;
+        }
+
+        // $id_pe_ke = $check_ao->id_periksa_agunan_kendaraan;
+
+        // if ($id_pe_ke == null) {
+        //     $PeriksaKenda = null;
+        // }
+
+        $PeriksaTanah = PemeriksaanAgunTan::select('nilai_taksasi_agunan')->whereIn('id', explode(",", $id_pe_ta))->get()->toArray();
+
+        if (empty($PeriksaTanah)) {
+            $sumTaksasiTan = 0;
+        }else{
+            $sumTaksasiTan = array_sum(array_column($PeriksaTanah,'nilai_taksasi_agunan')); //array_sum($PeriksaTanah);
+        }
+
+        // $PeriksaKenda = PemeriksaanAgunTan::select('nilai_taksasi_agunan')->whereIn('id', explode(",", $id_pe_ta))->get()->toArray();
+
+        // if ($PeriksaKenda == []) {
+        //     $sumTaksasiKen = 0;
+        // }else{
+        //     $sumTaksasiKen = array_sum(array_column($PeriksaTanah,'nilai_taksasi_agunan')); //array_sum($PeriksaTanah);
+        // }
+        // $sumAllTaksasi = $sumTaksasiTan + $sumTaksasiKen; // Semua Nilai Taksasi dari semua agunan
+        $sumAllTaksasi = $sumTaksasiTan; // Semua Nilai Taksasi dari semua agunan
+
+
+        $recom_ltv   = Helper::recom_ltv($plafonCA, $sumAllTaksasi);
+        $recom_idir  = Helper::recom_idir($recom_angs, $rekomen_pendapatan, $rekomen_pengeluaran);
+        $recom_dsr   = Helper::recom_dsr($recom_angs, $rekomen_pendapatan, $rekomen_angsuran);
+        $recom_hasil = Helper::recom_hasil($recom_dsr, $recom_ltv, $recom_idir);
+
+        // Data Ringkasan Analisa CA
+        $dataRingkasan = array(
+            'kuantitatif_ttl_pendapatan'    => $rekomen_pendapatan,
+            'kuantitatif_ttl_pengeluaran'   => $rekomen_pengeluaran,
+            'kuantitatif_pendapatan_bersih' => $rekomen_pend_bersih,
+            'kuantitatif_angsuran'          => $recom_angs,
+            'kuantitatif_ltv'               => $recom_ltv,
+            'kuantitatif_dsr'               => $recom_dsr,
+            'kuantitatif_idir'              => $recom_idir,
+            'kuantitatif_hasil'             => $recom_hasil,
+
+
+            'kualitatif_analisa'
+                => empty($req->input('kualitatif_analisa'))
+                ? null : $req->input('kualitatif_analisa'),
+
+            'kualitatif_strenght'
+                => empty($req->input('kualitatif_strenght'))
+                ? null : $req->input('kualitatif_strenght'),
+
+            'kualitatif_weakness'
+                => empty($req->input('kualitatif_weakness'))
+                ? null : $req->input('kualitatif_weakness'),
+
+            'kualitatif_opportunity'
+                => empty($req->input('kualitatif_opportunity'))
+                ? null : $req->input('kualitatif_opportunity'),
+
+            'kualitatif_threatness'
+                => empty($req->input('kualitatif_threatness'))
+                ? null : $req->input('kualitatif_threatness'),
         );
 
         // Mutasi Bank
@@ -597,169 +729,6 @@ class MasterCA_Controller extends BaseController
             }
         }
 
-
-        // Rekomendasi CA
-        $inputRecomCA = array(
-            'produk'                => $req->input('produk'),
-            'plafon_kredit'         => $req->input('plafon_kredit'), //45000000
-            'jangka_waktu'          => $req->input('jangka_waktu'), // 48
-            'suku_bunga'            => $req->input('suku_bunga'), // 1.70
-            'pembayaran_bunga'      => $req->input('pembayaran_bunga'),
-            'akad_kredit'           => $req->input('akad_kredit'),
-            'ikatan_agunan'         => $req->input('ikatan_agunan'),
-            'biaya_provisi'         => $req->input('biaya_provisi'),
-            'biaya_administrasi'    => $req->input('biaya_administrasi'),
-            'biaya_credit_checking' => $req->input('biaya_credit_checking'),
-            'biaya_asuransi_jiwa'   => $req->input('biaya_asuransi_jiwa'),
-            'biaya_asuransi_jaminan'=> $req->input('biaya_asuransi_jaminan'),
-            'notaris'               => $req->input('notaris'),
-            'biaya_tabungan'        => $req->input('biaya_tabungan')
-        );
-
-        // Rekomendasi Angsuran pada table recom_ca
-        $plafonCA = $inputRecomCA['plafon_kredit'] == null ? 0 : $inputRecomCA['plafon_kredit'];
-        $tenorCA  = $inputRecomCA['jangka_waktu']  == null ? 0 : $inputRecomCA['jangka_waktu'];
-        $bunga    = $inputRecomCA['suku_bunga']    == null ? 0 : ($inputRecomCA['suku_bunga'] / 100);
-
-        if ($plafonCA == 0 && $tenorCA == 0 && $bunga == 0) {
-            $recom_angs = 0;
-        }else{
-            $recom_angs = Helper::recom_angs($plafonCA, $tenorCA, $bunga);
-        }
-
-        $passRecomCA = array(
-
-            'rekom_angsuran' => $recom_angs,
-
-            'angs_pertama_bunga_berjalan'
-                => empty($req->input('angs_pertama_bunga_berjalan')) ? null : $req->input('angs_pertama_bunga_berjalan'),
-
-            'pelunasan_nasabah_ro'
-                => empty($req->input('pelunasan_nasabah_ro'))        ? null : $req->input('pelunasan_nasabah_ro'),
-
-            'blokir_dana'
-                => empty($req->input('blokir_dana'))                 ? null : $req->input('blokir_dana'),
-
-            'pelunasan_tempat_lain'
-                => empty($req->input('pelunasan_tempat_lain'))       ? null : $req->input('pelunasan_tempat_lain'),
-
-            'blokir_angs_kredit'
-                => empty($req->input('blokir_angs_kredit'))          ? null : $req->input('blokir_angs_kredit')
-        );
-
-        $recomCA = array_merge($inputRecomCA, $passRecomCA);
-
-
-        $rekomen_pendapatan  = $total_KapBul['total_pemasukan']   == null ? 0 : $total_KapBul['total_pemasukan'];
-        $rekomen_pengeluaran = $total_KapBul['total_pengeluaran'] == null ? 0 : $total_KapBul['total_pengeluaran'];
-        $rekomen_angsuran    = $inputKapBul['angsuran']           == null ? 0 : $inputKapBul['angsuran'];
-        $rekomen_pend_bersih = $rekomen_pendapatan - $rekomen_pengeluaran;
-
-        $disposable_income   = $rekomen_pend_bersih - $recom_angs;
-
-        $kapBul = array_merge($inputKapBul, $total_KapBul, array('disposable_income'  => $disposable_income, 'ao_ca' => 'CA'));
-        // End Kapasitas Bulanan
-
-        // Check Pemeriksaan
-        $id_pe_ta = $check_ao->id_periksa_agunan_tanah;
-
-        if ($id_pe_ta == null) {
-            $PeriksaTanah = null;
-        }
-
-        $id_pe_ke = $check_ao->id_periksa_agunan_kendaraan;
-
-        if ($id_pe_ke == null) {
-            $PeriksaKenda = null;
-        }
-
-        $PeriksaTanah = PemeriksaanAgunTan::select('nilai_taksasi_agunan')->whereIn('id', explode(",", $id_pe_ta))->get()->toArray();
-
-        if ($PeriksaTanah == []) {
-            $sumTaksasiTan = 0;
-        }else{
-            $sumTaksasiTan = array_sum(array_column($PeriksaTanah,'nilai_taksasi_agunan')); //array_sum($PeriksaTanah);
-        }
-
-        // $PeriksaKenda = PemeriksaanAgunTan::select('nilai_taksasi_agunan')->whereIn('id', explode(",", $id_pe_ta))->get()->toArray();
-
-        // if ($PeriksaKenda == []) {
-        //     $sumTaksasiKen = 0;
-        // }else{
-        //     $sumTaksasiKen = array_sum(array_column($PeriksaTanah,'nilai_taksasi_agunan')); //array_sum($PeriksaTanah);
-        // }
-        // $sumAllTaksasi = $sumTaksasiTan + $sumTaksasiKen; // Semua Nilai Taksasi dari semua agunan
-        $sumAllTaksasi = $sumTaksasiTan; // Semua Nilai Taksasi dari semua agunan
-
-
-        $recom_ltv   = Helper::recom_ltv($plafonCA, $sumAllTaksasi);
-        $recom_idir  = Helper::recom_idir($recom_angs, $rekomen_pendapatan, $rekomen_pengeluaran);
-        $recom_dsr   = Helper::recom_dsr($recom_angs, $rekomen_pendapatan, $rekomen_angsuran);
-        $recom_hasil = Helper::recom_hasil($recom_dsr, $recom_ltv, $recom_idir);
-
-        // Data Ringkasan Analisa CA
-        $dataRingkasan = array(
-            'kuantitatif_ttl_pendapatan'    => $rekomen_pendapatan,
-            'kuantitatif_ttl_pengeluaran'   => $rekomen_pengeluaran,
-            'kuantitatif_pendapatan_bersih' => $rekomen_pend_bersih,
-            'kuantitatif_angsuran'          => $recom_angs,
-            'kuantitatif_ltv'               => $recom_ltv,
-            'kuantitatif_dsr'               => $recom_dsr,
-            'kuantitatif_idir'              => $recom_idir,
-            'kuantitatif_hasil'             => $recom_hasil,
-
-
-            'kualitatif_analisa'
-                => empty($req->input('kualitatif_analisa'))
-                ? null : $req->input('kualitatif_analisa'),
-
-            'kualitatif_strenght'
-                => empty($req->input('kualitatif_strenght'))
-                ? null : $req->input('kualitatif_strenght'),
-
-            'kualitatif_weakness'
-                => empty($req->input('kualitatif_weakness'))
-                ? null : $req->input('kualitatif_weakness'),
-
-            'kualitatif_opportunity'
-                => empty($req->input('kualitatif_opportunity'))
-                ? null : $req->input('kualitatif_opportunity'),
-
-            'kualitatif_threatness'
-                => empty($req->input('kualitatif_threatness'))
-                ? null : $req->input('kualitatif_threatness'),
-        );
-
-        $rekomPinjaman = array(
-            'penyimpangan_struktur'
-                => empty($req->input('penyimpangan_struktur'))
-                ? null : $req->input('penyimpangan_struktur'),
-
-            'penyimpangan_dokumen'
-                => empty($req->input('penyimpangan_dokumen'))
-                ? null : $req->input('penyimpangan_dokumen'),
-
-            'recom_nilai_pinjaman'
-                => empty($req->input('recom_nilai_pinjaman'))
-                ? null : $req->input('recom_nilai_pinjaman'),
-
-            'recom_tenor'
-                => empty($req->input('recom_tenor'))
-                ? null : $req->input('recom_tenor'),
-
-            'recom_angsuran'
-                => empty($req->input('recom_angsuran'))
-                ? null : $req->input('recom_angsuran'),
-
-            'recom_produk_kredit'
-                => empty($req->input('recom_produk_kredit'))
-                ? null : $req->input('recom_produk_kredit'),
-
-            'note_recom'
-                => empty($req->input('note_recom'))
-                ? null : $req->input('note_recom')
-        );
-
         $dataTabUang = array(
 
             'no_rekening'
@@ -807,8 +776,25 @@ class MasterCA_Controller extends BaseController
                 ? null : $req->input('tujuan_pengeluaran_dana')
         );
 
-        // Tambahan Rekomendasi CA
-        $recomCaOL = array(
+        // Rekomendasi CA
+        $recomCA = array(
+            'produk'                => $req->input('produk'),
+            'plafon_kredit'         => $req->input('plafon_kredit'),
+            'jangka_waktu'          => $req->input('jangka_waktu'),
+            'suku_bunga'            => $req->input('suku_bunga'),
+            'pembayaran_bunga'      => $req->input('pembayaran_bunga'),
+            'akad_kredit'           => $req->input('akad_kredit'),
+            'ikatan_agunan'         => $req->input('ikatan_agunan'),
+            'biaya_provisi'         => $req->input('biaya_provisi'),
+            'biaya_administrasi'    => $req->input('biaya_administrasi'),
+            'biaya_credit_checking' => $req->input('biaya_credit_checking'),
+            'biaya_asuransi_jiwa'   => $req->input('biaya_asuransi_jiwa'),
+            'biaya_asuransi_jaminan'=> $req->input('biaya_asuransi_jaminan'),
+            'notaris'               => $req->input('notaris'),
+            'biaya_tabungan'        => $req->input('biaya_tabungan'),
+
+            'rekom_angsuran'        => $recom_angs,
+
             'angs_pertama_bunga_berjalan' => $req->input('angs_pertama_bunga_berjalan'),
             'pelunasan_nasabah_ro'        => $req->input('pelunasan_nasabah_ro'),
             'blokir_dana'                 => $req->input('blokir_dana'),
@@ -930,9 +916,7 @@ class MasterCA_Controller extends BaseController
             }
 
             if (!empty($recomCA)) {
-                $newRecom = array_merge($recomCA, $recomCaOL);
-
-                $reCA = RekomendasiCA::create($newRecom);;
+                $reCA = RekomendasiCA::create($recomCA);;
                 $idReCA = $reCA->id;
             }else{
                 $idReCA = null;
@@ -1123,7 +1107,7 @@ class MasterCA_Controller extends BaseController
 
         $PIC = PIC::where('user_id', $user_id)->first();
 
-        if ($PIC == null) {
+        if (empty($PIC)) {
             return response()->json([
                 "code"    => 404,
                 "status"  => "not found",
@@ -1153,7 +1137,7 @@ class MasterCA_Controller extends BaseController
 
         $check_ca = TransCA::where('id_trans_so', $id_trans_so)->where('status_ca', 1)->first();
 
-        if (!$check_ca) {
+        if (empty($check_ca)) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
@@ -1173,29 +1157,114 @@ class MasterCA_Controller extends BaseController
             'revisi'      => $check_ca->id
         );
 
+        // // Pendapatan Usaha Cadebt
+        // $dataPendapatanUsaha = array(
+        //     'pemasukan_tunai'      => empty($req->input('pemasukan_tunai'))     ? $check_ca->usaha['pemasukan_tunai'] : $req->input('pemasukan_tunai'),
+        //     'pemasukan_kredit'     => empty($req->input('pemasukan_kredit'))    ? $check_ca->usaha['pemasukan_kredit'] : $req->input('pemasukan_kredit'),
+        //     'biaya_sewa'           => empty($req->input('biaya_sewa'))          ? $check_ca->usaha['biaya_sewa'] : $req->input('biaya_sewa'),
+        //     'biaya_gaji_pegawai'   => empty($req->input('biaya_gaji_pegawai'))  ? $check_ca->usaha['biaya_gaji_pegawai'] : $req->input('biaya_gaji_pegawai'),
+        //     'biaya_belanja_brg'    => empty($req->input('biaya_belanja_brg'))   ? $check_ca->usaha['biaya_belanja_brg'] : $req->input('biaya_belanja_brg'),
+        //     'biaya_telp_listr_air' => empty($req->input('biaya_telp_listr_air')) ? $check_ca->usaha['biaya_telp_listr_air'] : $req->input('biaya_telp_listr_air'),
+        //     'biaya_sampah_kemanan' => empty($req->input('biaya_sampah_kemanan')) ? $check_ca->usaha['biaya_sampah_kemanan'] : $req->input('biaya_sampah_kemanan'),
+        //     'biaya_kirim_barang'   => empty($req->input('biaya_kirim_barang'))  ? $check_ca->usaha['biaya_kirim_barang'] : $req->input('biaya_kirim_barang'),
+        //     'biaya_hutang_dagang'  => empty($req->input('biaya_hutang_dagang')) ? $check_ca->usaha['biaya_hutang_dagang'] : $req->input('biaya_hutang_dagang'),
+        //     'biaya_angsuran'       => empty($req->input('biaya_angsuran'))      ? $check_ca->usaha['biaya_angsuran'] : $req->input('biaya_angsuran'),
+        //     'biaya_lain_lain'      => empty($req->input('biaya_lain_lain'))     ? $check_ca->usaha['biaya_lain_lain'] : $req->input('biaya_lain_lain')
+        // );
 
-        // Rekomendasi CA
-        $inputRecomCA = array(
-            'produk'                => $req->input('produk'),
-            'plafon_kredit'         => $req->input('plafon_kredit'), //45000000
-            'jangka_waktu'          => $req->input('jangka_waktu'), // 48
-            'suku_bunga'            => $req->input('suku_bunga'), // 1.70
-            'pembayaran_bunga'      => $req->input('pembayaran_bunga'),
-            'akad_kredit'           => $req->input('akad_kredit'),
-            'ikatan_agunan'         => $req->input('ikatan_agunan'),
-            'biaya_provisi'         => $req->input('biaya_provisi'),
-            'biaya_administrasi'    => $req->input('biaya_administrasi'),
-            'biaya_credit_checking' => $req->input('biaya_credit_checking'),
-            'biaya_asuransi_jiwa'   => $req->input('biaya_asuransi_jiwa'),
-            'biaya_asuransi_jaminan'=> $req->input('biaya_asuransi_jaminan'),
-            'notaris'               => $req->input('notaris'),
-            'biaya_tabungan'        => $req->input('biaya_tabungan')
+        // $totalPendapatan = array(
+        //     'total_pemasukan'    => $ttl1 = array_sum(array_slice($dataPendapatanUsaha, 0, 2)),
+        //     'total_pengeluaran'  => $ttl2 = array_sum(array_slice($dataPendapatanUsaha, 2)),
+        //     'laba_usaha'         => $ttl1 - $ttl2
+        // );
+
+        // $Pendapatan = array_merge($dataPendapatanUsaha, $totalPendapatan, array('ao_ca' => 'CA'));
+
+        // Start Kapasitas Bulanan
+        $inputKapBul = array(
+
+            'pemasukan_cadebt'
+                => empty($req->input('pemasukan_debitur'))    ? $check_ca->usaha['pemasukan_debitur'] : $req->input('pemasukan_debitur'),
+
+            'pemasukan_pasangan'
+                => empty($req->input('pemasukan_pasangan'))   ? $check_ca->usaha['pemasukan_pasangan'] : $req->input('pemasukan_pasangan'),
+
+            'pemasukan_penjamin'
+                => empty($req->input('pemasukan_penjamin'))   ? $check_ca->usaha['pemasukan_penjamin'] : $req->input('pemasukan_penjamin'),
+
+            'biaya_rumah_tangga'
+                => empty($req->input('biaya_rumah_tangga'))   ? $check_ca->usaha['biaya_rumah_tangga'] : $req->input('biaya_rumah_tangga'),
+
+            'biaya_transport'
+                => empty($req->input('biaya_transport'))      ? $check_ca->usaha['biaya_transport'] : $req->input('biaya_transport'),
+
+            'biaya_pendidikan'
+                => empty($req->input('biaya_pendidikan'))     ? $check_ca->usaha['biaya_pendidikan'] : $req->input('biaya_pendidikan'),
+
+            'biaya_telp_listr_air'
+                => empty($req->input('biaya_telp_listr_air')) ? $check_ca->usaha['biaya_telp_listr_air'] : $req->input('biaya_telp_listr_air'),
+
+            'angsuran'
+                => empty($req->input('angsuran'))             ? $check_ca->usaha['angsuran'] : $req->input('angsuran'),
+
+            'biaya_lain'
+                => empty($req->input('biaya_lain'))           ? $check_ca->usaha['biaya_lain'] : $req->input('biaya_lain'),
         );
 
-        // Rekomendasi Angsuran pada table recom_ca
-        $plafonCA = $inputRecomCA['plafon_kredit'] == null ? 0 : $inputRecomCA['plafon_kredit'];
-        $tenorCA  = $inputRecomCA['jangka_waktu']  == null ? 0 : $inputRecomCA['jangka_waktu'];
-        $bunga    = $inputRecomCA['suku_bunga']    == null ? 0 : ($inputRecomCA['suku_bunga'] / 100);
+        $total_KapBul = array(
+            'total_pemasukan'    => $ttl1 = array_sum(array_slice($inputKapBul, 0, 2)),
+            'total_pengeluaran'  => $ttl2 = array_sum(array_slice($inputKapBul, 3)),
+            'penghasilan_bersih' => $ttl1 - $ttl2
+        );
+
+        // Ceiling Recomendasi Pinjaman
+        $rekomPinjaman = array(
+            'penyimpangan_struktur'
+                => empty($req->input('penyimpangan_struktur'))
+                ? $check_ca->recom_pin['penyimpangan_struktur'] : $req->input('penyimpangan_struktur'),
+
+            'penyimpangan_dokumen'
+                => empty($req->input('penyimpangan_dokumen'))
+                ? $check_ca->recom_pin['penyimpangan_dokumen'] : $req->input('penyimpangan_dokumen'),
+
+            'recom_nilai_pinjaman'
+                => empty($req->input('recom_nilai_pinjaman'))
+                ? $check_ca->recom_pin['recom_nilai_pinjaman'] : $req->input('recom_nilai_pinjaman'),
+
+            'recom_tenor'
+                => empty($req->input('recom_tenor'))
+                ? $check_ca->recom_pin['recom_tenor'] : $req->input('recom_tenor'),
+
+            'recom_angsuran'
+                => empty($req->input('recom_angsuran'))
+                ? $check_ca->recom_pin['recom_angsuran'] : $req->input('recom_angsuran'),
+
+            'recom_produk_kredit'
+                => empty($req->input('recom_produk_kredit'))
+                ? $check_ca->recom_pin['recom_produk_kredit'] : $req->input('recom_produk_kredit'),
+
+            'note_recom'
+                => empty($req->input('note_recom'))
+                ? $check_ca->recom_pin['note_recom'] : $req->input('note_recom'),
+
+            'bunga_pinjaman'
+                => empty($req->input('bunga_pinjaman'))
+                ? $check_ca->recom_pin['bunga_pinjaman'] : $req->input('bunga_pinjaman'),
+
+            'nama_ca'
+                => empty($req->input('nama_ca'))
+                ? $check_ca->recom_pin['nama'] : $req->input('nama_ca')
+        );
+
+        // Rekomendasi Angsuran pada table rekomendasi_pinjaman
+
+        $plafonCA = $rekomPinjaman['recom_nilai_pinjaman'] == null ? 0 : $rekomPinjaman['recom_nilai_pinjaman'];
+        $tenorCA  = $rekomPinjaman['recom_tenor']          == null ? 0 : $rekomPinjaman['recom_tenor'];
+        $bunga    = $rekomPinjaman['bunga_pinjaman']       == null ? 0 : ($rekomPinjaman['bunga_pinjaman'] / 100);
+
+        $rekomen_pendapatan  = $total_KapBul['total_pemasukan']   == null ? 0 : $total_KapBul['total_pemasukan'];
+        $rekomen_pengeluaran = $total_KapBul['total_pengeluaran'] == null ? 0 : $total_KapBul['total_pengeluaran'];
+        $rekomen_angsuran    = $inputKapBul['angsuran']           == null ? 0 : $inputKapBul['angsuran'];
 
         if ($plafonCA == 0 && $tenorCA == 0 && $bunga == 0) {
             $recom_angs = 0;
@@ -1203,129 +1272,28 @@ class MasterCA_Controller extends BaseController
             $recom_angs = Helper::recom_angs($plafonCA, $tenorCA, $bunga);
         }
 
-
-        $passRecomCA = array(
-            'rekom_angsuran' => $recom_angs,
-
-            'angs_pertama_bunga_berjalan'
-                => empty($req->input('angs_pertama_bunga_berjalan'))
-                ? $check_ca->recom_ca['angs_pertama_bunga_berjalan']
-                : $req->input('angs_pertama_bunga_berjalan'),
-
-            'pelunasan_nasabah_ro'
-                => empty($req->input('pelunasan_nasabah_ro'))
-                ? $check_ca->recom_ca['pelunasan_nasabah_ro']
-                : $req->input('pelunasan_nasabah_ro'),
-
-            'blokir_dana'
-                => empty($req->input('blokir_dana'))
-                ? $check_ca->recom_ca['blokir_dana']
-                : $req->input('blokir_dana'),
-
-            'pelunasan_tempat_lain'
-                => empty($req->input('pelunasan_tempat_lain'))
-                ? $check_ca->recom_ca['pelunasan_tempat_lain']
-                : $req->input('pelunasan_tempat_lain'),
-
-            'blokir_angs_kredit'
-                => empty($req->input('blokir_angs_kredit'))
-                ? $check_ca->recom_ca['blokir_angs_kredit']
-                : $req->input('blokir_angs_kredit')
-        );
-
-
-        $recomCA = array_merge($inputRecomCA, $passRecomCA);
-
-        $recomCaOL = array(
-            'angs_pertama_bunga_berjalan'
-                => empty($req->input('angs_pertama_bunga_berjalan'))
-                ? $check_ca->recom_ca['angs_pertama_bunga_berjalan']
-                : $req->input('angs_pertama_bunga_berjalan'),
-
-            'pelunasan_nasabah_ro'
-                => empty($req->input('pelunasan_nasabah_ro'))
-                ? $check_ca->recom_ca['pelunasan_nasabah_ro']
-                : $req->input('pelunasan_nasabah_ro'),
-
-            'blokir_dana'
-                => empty($req->input('blokir_dana'))
-                ? $check_ca->recom_ca['blokir_dana']
-                : $req->input('blokir_dana'),
-
-            'pelunasan_tempat_lain'
-                => empty($req->input('pelunasan_tempat_lain'))
-                ? $check_ca->recom_ca['pelunasan_tempat_lain']
-                : $req->input('pelunasan_tempat_lain'),
-
-            'blokir_angs_kredit'
-                => empty($req->input('blokir_angs_kredit'))
-                ? $check_ca->recom_ca['blokir_angs_kredit']
-                : $req->input('blokir_angs_kredit')
-        );
-
-        // Start Kapasitas Bulanan
-        $inputKapBul = array(
-
-            'pemasukan_cadebt'
-                => empty($req->input('pemasukan_debitur'))    ? null : (int) $req->input('pemasukan_debitur'),
-
-            'pemasukan_pasangan'
-                => empty($req->input('pemasukan_pasangan'))   ? null : (int) $req->input('pemasukan_pasangan'),
-
-            'pemasukan_penjamin'
-                => empty($req->input('pemasukan_penjamin'))   ? null : (int) $req->input('pemasukan_penjamin'),
-
-            'biaya_rumah_tangga'
-                => empty($req->input('biaya_rumah_tangga'))   ? null : (int) $req->input('biaya_rumah_tangga'),
-
-            'biaya_transport'
-                => empty($req->input('biaya_transport'))      ? null : (int) $req->input('biaya_transport'),
-
-            'biaya_pendidikan'
-                => empty($req->input('biaya_pendidikan'))     ? null : (int) $req->input('biaya_pendidikan'),
-
-            'biaya_telp_listr_air'
-                => empty($req->input('biaya_telp_listr_air')) ? null : (int) $req->input('biaya_telp_listr_air'),
-
-            'angsuran'
-                => empty($req->input('angsuran'))             ? null : (int) $req->input('angsuran'),
-
-            'biaya_lain'
-                => empty($req->input('biaya_lain'))           ? null : (int) $req->input('biaya_lain'),
-        );
-
-        $total_KapBul = array(
-            'total_pemasukan'    => $ttl1 = array_sum(array_slice($inputKapBul, 0, 2)),
-            'total_pengeluaran'  => $ttl2 = array_sum(array_slice($inputKapBul, 2)),
-            'penghasilan_bersih' => $ttl1 - $ttl2
-        );
-
-        $rekomen_pendapatan  = $total_KapBul['total_pemasukan']   == null ? 0 : $total_KapBul['total_pemasukan'];
-        $rekomen_pengeluaran = $total_KapBul['total_pengeluaran'] == null ? 0 : $total_KapBul['total_pengeluaran'];
-        $rekomen_angsuran    = $inputKapBul['angsuran']           == null ? 0 : $inputKapBul['angsuran'];
         $rekomen_pend_bersih = $rekomen_pendapatan - $rekomen_pengeluaran;
 
         $disposable_income   = $rekomen_pend_bersih - $recom_angs;
 
         $kapBul = array_merge($inputKapBul, $total_KapBul, array('disposable_income'  => $disposable_income, 'ao_ca' => 'CA'));
-        // End Kapasitas Bulanan
 
         // Check Pemeriksaan
         $id_pe_ta = $check_ao->id_periksa_agunan_tanah;
 
-        if ($id_pe_ta == null) {
+        if (empty($id_pe_ta)) {
             $PeriksaTanah = null;
         }
 
-        $id_pe_ke = $check_ao->id_periksa_agunan_kendaraan;
+        // $id_pe_ke = $check_ao->id_periksa_agunan_kendaraan;
 
-        if ($id_pe_ke == null) {
-            $PeriksaKenda = null;
-        }
+        // if ($id_pe_ke == null) {
+        //     $PeriksaKenda = null;
+        // }
 
         $PeriksaTanah = PemeriksaanAgunTan::select('nilai_taksasi_agunan')->whereIn('id', explode(",", $id_pe_ta))->get()->toArray();
 
-        if ($PeriksaTanah == []) {
+        if (empty($PeriksaTanah)) {
             $sumTaksasiTan = 0;
         }else{
             $sumTaksasiTan = array_sum(array_column($PeriksaTanah,'nilai_taksasi_agunan')); //array_sum($PeriksaTanah);
@@ -1395,7 +1363,6 @@ class MasterCA_Controller extends BaseController
                 $idAnalisa = null;
             }
 
-
             if (!empty($recomCA)) {
                 $newRecom = array_merge($recomCA, $recomCaOL);
 
@@ -1403,6 +1370,13 @@ class MasterCA_Controller extends BaseController
                 $idReCA = $reCA->id;
             }else{
                 $idReCA = null;
+            }
+
+            if (!empty($kapBul)) {
+                $Q_Kapbul = KapBulanan::create($kapBul);
+                $idKapBul = $Q_Kapbul->id;
+            }else{
+                $idKapBul = null;
             }
 
             $dataID = array(
@@ -1413,12 +1387,14 @@ class MasterCA_Controller extends BaseController
                 'id_recom_ca'             => $idReCA,
                 'id_rekomendasi_pinjaman' => $check_ca->id_rekomendasi_pinjaman,
                 'id_asuransi_jiwa'        => $check_ca->id_asuransi_jiwa,
-                'id_asuransi_jaminan'     => $check_ca->id_asuransi_jaminan
+                'id_asuransi_jaminan'     => $check_ca->id_asuransi_jaminan,
+                'id_kapasitas_bulanan'    => $idKapBul,
+                'id_pendapatan_usaha'     => $check_ca->id_pendapatan_usaha
             );
 
             $newTransCA = array_merge($transCA, $dataID);
 
-            $CA = TransCA::create($newTransCA);
+            TransCA::create($newTransCA);
 
             DB::connection('web')->commit();
 
@@ -1467,25 +1443,25 @@ class MasterCA_Controller extends BaseController
         // Analisa Kuantitatif dan Kualitatif
         $id_pe_ta = $check_ao->id_periksa_agunan_tanah;
 
-        if ($id_pe_ta == null) {
+        if (empty($id_pe_ta)) {
             $PeriksaTanah = null;
         }
 
-        $id_pe_ke = $check_ao->id_periksa_agunan_kendaraan;
+        // $id_pe_ke = $check_ao->id_periksa_agunan_kendaraan;
 
-        if ($id_pe_ke == null) {
-            $PeriksaKenda = null;
-        }
+        // if (empty($id_pe_ke)) {
+        //     $PeriksaKenda = null;
+        // }
 
         $PeriksaTanah = PemeriksaanAgunTan::select('nilai_taksasi_agunan')->whereIn('id', explode(",", $id_pe_ta))->get()->toArray();
 
-        if ($PeriksaTanah == []) {
+        if (empty($PeriksaTanah)) {
             $sumTaksasiTan = 0;
         }else{
             $sumTaksasiTan = array_sum(array_column($PeriksaTanah,'nilai_taksasi_agunan')); //array_sum($PeriksaTanah);
         }
 
-        // $PeriksaKenda = PemeriksaanAgunTan::select('nilai_taksasi_agunan')->whereIn('id', explode(",", $id_pe_ta))->get()->toArray();
+        // $PeriksaKenda = PemeriksaanAgunKen::select('nilai_taksasi_agunan')->whereIn('id', explode(",", $id_pe_ta))->get()->toArray();
 
         // if ($PeriksaKenda == null) {
         //     $sumTaksasiKen = 0;
@@ -1496,29 +1472,10 @@ class MasterCA_Controller extends BaseController
         // $sumAllTaksasi = $sumTaksasiTan + $sumTaksasiKen; // Semua Nilai Taksasi dari semua agunan
         $sumAllTaksasi = $sumTaksasiTan; // Semua Nilai Taksasi dari semua agunan
 
-        // Rekomendasi CA
-        $inputRecomCA = array(
-            'produk'                => $req->input('produk'),
-            'plafon_kredit'         => $req->input('plafon_kredit'), //45000000
-            'jangka_waktu'          => $req->input('jangka_waktu'), // 48
-            'suku_bunga'            => $req->input('suku_bunga'), // 1.70
-        );
-
-        // Rekomendasi Angsuran pada table recom_ca
-        $plafonCA = $inputRecomCA['plafon_kredit'] == null ? 0 : $inputRecomCA['plafon_kredit'];
-        $tenorCA  = $inputRecomCA['jangka_waktu']  == null ? 0 : $inputRecomCA['jangka_waktu'];
-        $bunga    = $inputRecomCA['suku_bunga']    == null ? 0 : ($inputRecomCA['suku_bunga'] / 100);
-
-        if ($plafonCA == 0 && $tenorCA == 0 && $bunga == 0) {
-            $recom_angs = 0;
-        }else{
-            $recom_angs = Helper::recom_angs($plafonCA, $tenorCA, $bunga);
-        }
-
         // Start Kapasitas Bulanan
         $inputKapBul = array(
 
-            'pemasukan_cadebt'
+            'pemasukan_debitur'
                 => empty($req->input('pemasukan_debitur'))    ? 0 : (int) $req->input('pemasukan_debitur'),
 
             'pemasukan_pasangan'
@@ -1552,11 +1509,29 @@ class MasterCA_Controller extends BaseController
             'penghasilan_bersih' => $ttl1 - $ttl2
         );
 
+        // Ceiling Recomendasi Pinjaman
+        $rekomPinjaman = array(
+            'produk'        => $req->input('produk'),
+            'plafon_kredit' => (int) $req->input('plafon_kredit'), //45000000
+            'jangka_waktu'  => (int) $req->input('jangka_waktu'), // 48
+            'suku_bunga'    => (float) $req->input('suku_bunga') // 1.70
+        );
 
-        // $rekomen_pendapatan  = $check->ao['kapbul']['total_pemasukan'];
+        // Rekomendasi Angsuran pada table rrekomendasi_pinjaman
+        $plafonCA = $rekomPinjaman['plafon_kredit'] == null ? 0 : $rekomPinjaman['plafon_kredit'];
+        $tenorCA  = $rekomPinjaman['jangka_waktu']  == null ? 0 : $rekomPinjaman['jangka_waktu'];
+        $bunga    = $rekomPinjaman['suku_bunga']    == null ? 0 : ($rekomPinjaman['suku_bunga'] / 100);
+
         $rekomen_pendapatan  = $total_KapBul['total_pemasukan']   == null ? 0 : $total_KapBul['total_pemasukan'];
         $rekomen_pengeluaran = $total_KapBul['total_pengeluaran'] == null ? 0 : $total_KapBul['total_pengeluaran'];
         $rekomen_angsuran    = $inputKapBul['angsuran']           == null ? 0 : $inputKapBul['angsuran'];
+
+        if ($plafonCA == 0 && $tenorCA == 0 && $bunga == 0) {
+            $recom_angs = 0;
+        }else{
+            $recom_angs = Helper::recom_angs($plafonCA, $tenorCA, $bunga);
+        }
+
         $rekomen_pend_bersih = $rekomen_pendapatan - $rekomen_pengeluaran;
 
         $disposable_income = $rekomen_pend_bersih - $recom_angs;
@@ -1583,9 +1558,12 @@ class MasterCA_Controller extends BaseController
         );
 
         $resultAll = array(
-            'rekomendasi_ca'       => $inputRecomCA,
+            'taksasi_agunan_tanah' => $sumTaksasiTan,
+            'rekomendasi_ca'       => $rekomPinjaman,
+            // 'rekomendasi_pinjaman' => $rekomPinjaman,
             'rekom_angsuran'       => $recom_angs,
-            'ringkasan_analisa_ca' => $dataRingkasan
+            'kapasitas_bulanan'    => $kapBul,
+            'ringkasan_analisa_ca' => $dataRingkasan,
         );
 
         DB::connection('web')->beginTransaction();
