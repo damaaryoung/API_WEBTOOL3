@@ -110,15 +110,15 @@ $router->put('/api/user/reset_password',     'UserController@resetPassword'); //
 $router->post('/api/operator/{id_trans_so}', 'Transaksi\MasterCA_Controller@operator');
 
 // $router->group(['middleware' => ['jwt.auth', 'log'], 'prefix' => 'api'], function () use ($router) {
-$router->group(['middleware' => ['jwt.auth'], 'prefix' => 'api'], function () use ($router) {
+$router->group(['middleware' => ['jwt.auth', 'log'], 'prefix' => 'api'], function () use ($router) {
 
     // Logs (History)
-    $router->group(['prefix' => '/logs'], function () use ($router){
-        $router->get('/',     ['subject' => 'Read Logs',  'uses' => 'LogsController@index']); //Log History All
-        $router->get('/{id}', ['subject' => 'Detail Log', 'uses' => 'LogsController@detail']); //Log History By ID
-        $router->get('/limit/{limit}', ['subject' => 'Limit Logs', 'uses' => 'LogsController@limit']); //Log History Limit
-        $router->get('/{param}/{key}={value}/status={status}/{orderVal}={orderBy}/limit={limit}', ['subject' => 'Search Logs', 'uses' => 'LogsController@search']); //Log History Search
-    });
+    // $router->group(['prefix' => '/logs'], function () use ($router){
+    //     $router->get('/',     ['subject' => 'Read Logs',  'uses' => 'LogsController@index']); //Log History All
+    //     $router->get('/{id}', ['subject' => 'Detail Log', 'uses' => 'LogsController@detail']); //Log History By ID
+    //     $router->get('/limit/{limit}', ['subject' => 'Limit Logs', 'uses' => 'LogsController@limit']); //Log History Limit
+    //     $router->get('/{param}/{key}={value}/status={status}/{orderVal}={orderBy}/limit={limit}', ['subject' => 'Search Logs', 'uses' => 'LogsController@search']); //Log History Search
+    // });
 
     // Users And User
     $router->get('/users',                ['subject' => 'Get All Users' ,        'uses' => 'UserController@getUsers']);

@@ -84,7 +84,7 @@ class MasterSO_Controller extends BaseController
                     'status'  => $status_hm,
                     'catatan' => $val->catatan_hm
                 ],
-                'tgl_transaksi' => Carbon::parse($val->created_at)->format("d-m-Y H:i:s")
+                'tgl_transaksi' => $val->created_at
             ];
 
         }
@@ -239,8 +239,8 @@ class MasterSO_Controller extends BaseController
                 'nama'    => $val->pas['nama_lengkap'],
             ],
             'penjamin'    => $pen,
-            'flg_aktif'   => (bool) $val->flg_aktif,
-            'tgl_transaksi' => Carbon::parse($val->created_at)->format("d-m-Y H:i:s")
+            'flg_aktif'   => $val->flg_aktif,
+            'tgl_transaksi' => $val->created_at
         ];
 
         try {
@@ -897,7 +897,7 @@ class MasterSO_Controller extends BaseController
                 'asal_data'       => $val->asaldata['nama'],
                 'nama_marketing'  => $val->nama_marketing,
                 'nama_calon_debt' => $val->debt['nama_lengkap'],
-                'tgl_transaksi'   => Carbon::parse($val->created_at)->format("d-m-Y H:i:s")
+                'tgl_transaksi'   => $val->created_at
             ];
         }
 
@@ -992,7 +992,7 @@ class MasterSO_Controller extends BaseController
                     'status'  => $status_hm,
                     'catatan' => $val->catatan_hm
                 ],
-                'tgl_transaksi' => Carbon::parse($val->created_at)->format("d-m-Y H:i:s")
+                'tgl_transaksi' => $val->created_at
             ];
 
         }

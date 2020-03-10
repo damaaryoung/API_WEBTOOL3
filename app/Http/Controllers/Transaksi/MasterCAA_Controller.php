@@ -170,7 +170,7 @@ class MasterCAA_Controller extends BaseController
                 ],
                 'status_ca'     => $status_ca,
                 'status_caa'    => $status_caa,
-                'tgl_transaksi' => Carbon::parse($val->created_at)->format("d-m-Y H:i:s"),
+                'tgl_transaksi' => $val->created_at,
                 'approval'      => $Appro
             ];
         }
@@ -795,7 +795,7 @@ class MasterCAA_Controller extends BaseController
                 'kuantitatif_hasil'             => $check_ca->ringkasan['kuantitatif_hasil']
             ],
             'status_ca'     => $status_ca,
-            'tgl_transaksi' => Carbon::parse($check_ca->created_at)->format("d-m-Y H:i:s")
+            'tgl_transaksi' => $check_ca->created_at
         );
 
         try {
@@ -1118,7 +1118,7 @@ class MasterCAA_Controller extends BaseController
             ],
             'rincian'       => $check_caa->rincian,
             'status_caa'    => $status_caa,
-            'tgl_transaksi' => Carbon::parse($check_caa->created_at)->format("d-m-Y H:i:s")
+            'tgl_transaksi' => $check_caa->created_at
         );
 
         try {
@@ -1244,12 +1244,12 @@ class MasterCAA_Controller extends BaseController
                 'asal_data'      => $val->so['asaldata']['nama'],
                 'nama_marketing' => $val->so['nama_marketing'],
                 'pengajuan' => [
-                    'plafon' => (int) $val->so['faspin']['plafon'],
-                    'tenor'  => (int) $val->so['faspin']['tenor']
+                    'plafon' => $val->so['faspin']['plafon'],
+                    'tenor'  => $val->so['faspin']['tenor']
                 ],
                 'nama_debitur'   => $val->so['debt']['nama_lengkap'],
                 'status_ca'      => $status_ca,
-                'tgl_transaksi'  => Carbon::parse($val->created_at)->format("d-m-Y H:i:s")
+                'tgl_transaksi'  => $val->created_at
             ];
         }
 
@@ -1426,7 +1426,7 @@ class MasterCAA_Controller extends BaseController
                 ],
                 'status_ca'     => $status_ca,
                 'status_caa'    => $status_caa,
-                'tgl_transaksi' => Carbon::parse($val->created_at)->format("d-m-Y H:i:s"),
+                'tgl_transaksi' => $val->created_at,
                 'approval'      => $Appro
             ];
         }
