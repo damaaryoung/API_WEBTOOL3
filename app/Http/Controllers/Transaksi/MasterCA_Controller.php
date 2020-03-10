@@ -1201,7 +1201,7 @@ class MasterCA_Controller extends BaseController
                 => empty($req->input('biaya_pendidikan'))     ? $check_ca->usaha['biaya_pendidikan'] : $req->input('biaya_pendidikan'),
 
             'biaya_telp_listr_air'
-                => empty($req->input('biaya_telp_listr_air')) ? $check_ca->usaha['biaya_telp_listr_air'] : $req->input('biaya_telp_listr_air'),
+                => empty($req->input('telp_listr_air'))       ? $check_ca->usaha['biaya_telp_listr_air'] : $req->input('telp_listr_air'),
 
             'angsuran'
                 => empty($req->input('angsuran'))             ? $check_ca->usaha['angsuran'] : $req->input('angsuran'),
@@ -1493,7 +1493,7 @@ class MasterCA_Controller extends BaseController
                 => empty($req->input('biaya_pendidikan'))     ? 0 : (int) $req->input('biaya_pendidikan'),
 
             'biaya_telp_listr_air'
-                => empty($req->input('biaya_telp_listr_air')) ? 0 : (int) $req->input('biaya_telp_listr_air'),
+                => empty($req->input('telp_listr_air'))       ? 0 : (int) $req->input('telp_listr_air'),
 
             'angsuran'
                 => empty($req->input('angsuran'))             ? 0 : (int) $req->input('angsuran'),
@@ -1558,8 +1558,8 @@ class MasterCA_Controller extends BaseController
 
         $resultAll = array(
             'taksasi_agunan_tanah' => $sumTaksasiTan,
-            'rekomendasi_ca'       => $rekomPinjaman,
-            // 'rekomendasi_pinjaman' => $rekomPinjaman,
+            // 'rekomendasi_ca'       => $rekomPinjaman,
+            'rekomendasi_pinjaman' => $rekomPinjaman,
             'rekom_angsuran'       => $recom_angs,
             'kapasitas_bulanan'    => $kapBul,
             'ringkasan_analisa_ca' => $dataRingkasan,
