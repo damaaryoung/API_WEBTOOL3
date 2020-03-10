@@ -23,7 +23,7 @@ class RekomendasiPinjaman extends Model implements AuthenticatableContract, Auth
     protected $primaryKey = 'id';
 
     protected $fillable = [
-       'penyimpangan_struktur', 'penyimpangan_dokumen', 'recom_nilai_pinjaman', 'recom_tenor', 'recom_angsuran', 'recom_produk_kredit', 'note_recom'
+       'penyimpangan_struktur', 'penyimpangan_dokumen', 'recom_nilai_pinjaman', 'recom_tenor', 'recom_angsuran', 'recom_produk_kredit', 'note_recom', 'bunga_pinjaman', 'nama_ca'
     ];
 
     protected $casts = [

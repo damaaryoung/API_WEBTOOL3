@@ -539,7 +539,7 @@ class MasterCAA_Controller extends BaseController
 
         $pic = PIC::where('user_id', $user_id)->first();
 
-        if ($pic == null) {
+        if (empty($pic)) {
             return response()->json([
                 "code"    => 404,
                 "status"  => "not found",
@@ -553,7 +553,7 @@ class MasterCAA_Controller extends BaseController
 
         $check_so = TransSO::with('pic', 'cabang')->where('id', $id)->where('status_das', 1)->where('status_hm', 1)->first();
 
-        if ($check_so == null) {
+        if (empty($check_so)) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
@@ -563,7 +563,7 @@ class MasterCAA_Controller extends BaseController
 
         $check_ao = TransAO::with('pic', 'cabang')->where('id_trans_so', $id)->where('status_ao', 1)->first();
 
-        if ($check_ao == null) {
+        if (empty($check_ao)) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
@@ -577,7 +577,7 @@ class MasterCAA_Controller extends BaseController
         $ca = Helper::checkDir($scope, $query_dir, $id_area, $id_cabang);
         $check_ca = $ca->first();
 
-        if ($check_ca == null) {
+        if (empty($check_ca)) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
@@ -590,7 +590,7 @@ class MasterCAA_Controller extends BaseController
 
         $AguTa = AgunanTanah::whereIn('id', $id_agu_ta)->get();
 
-        if ($AguTa == '[]') {
+        if (empty($AguTa)) {
             $idTan = null;
         }else{
             $idTan = array();
@@ -620,7 +620,7 @@ class MasterCAA_Controller extends BaseController
         $id_agu_ke = explode (",",$check_ao->id_agunan_kendaraan);
         $AguKe = AgunanKendaraan::whereIn('id', $id_agu_ke)->get();
 
-        if ($AguKe == '[]') {
+        if (empty($AguKe)) {
             $idKen = null;
         }else{
             $idKen = array();
@@ -674,11 +674,7 @@ class MasterCAA_Controller extends BaseController
                 'ca' => [
                     'nomor' => $check_ca->nomor_ca,
                     'nama'  => $check_ca->pic['nama']
-                ],
-                // 'caa' => [
-                //     'nomor' => $check_so->caa['nomor_caa'],
-                //     'nama'  => $check_so->caa['pic']['nama']
-                // ]
+                ]
             ],
             'nama_marketing' => $check_so->nama_marketing,
             'pic'  => [
@@ -747,6 +743,34 @@ class MasterCAA_Controller extends BaseController
                 'pembayaran_bunga' => (int) $check_ca->recom_ca['pembayaran_bunga'],
                 'catatan'          => $check_ca->catatan_ca
             ],
+            'rekomendasi_pinjaman' => [
+                'id'                    => $check_ca->id_rekomendasi_pinjaman,
+                'penyimpangan_struktur' => $check_ca->recom_pin['penyimpangan_struktur'],
+                'penyimpangan_dokumen'  => $check_ca->recom_pin['penyimpangan_dokumen'],
+                'recom_nilai_pinjaman'  => $check_ca->recom_pin['recom_nilai_pinjaman'],
+                'recom_tenor'           => $check_ca->recom_pin['recom_tenor'],
+                'recom_angsuran'        => $check_ca->recom_pin['recom_angsuran'],
+                'recom_produk_kredit'   => $check_ca->recom_pin['recom_produk_kredit'],
+                'note_recom'            => $check_ca->recom_pin['note_recom'],
+                'bunga_pinjaman'        => $check_ca->recom_pin['bunga_pinjaman'],
+                'nama_ca'               => $check_ca->recom_pin['nama_ca']
+            ],
+            'kapasitas_bulanan' => [
+                'id'                    => $check_ca->id_kapasitas_bulanan,
+                'pemasukan_cadebt'      => $check_ca->kapbul['pemasukan_cadebt'],
+                'pemasukan_pasangan'    => $check_ca->kapbul['pemasukan_pasangan'],
+                'pemasukan_penjamin'    => $check_ca->kapbul['pemasukan_penjamin'],
+                'biaya_rumah_tangga'    => $check_ca->kapbul['biaya_rumah_tangga'],
+                'biaya_transport'       => $check_ca->kapbul['biaya_transport'],
+                'biaya_pendidikan'      => $check_ca->kapbul['biaya_pendidikan'],
+                'biaya_telp_listr_air'  => $check_ca->kapbul['biaya_telp_listr_air'],
+                'angsuran'              => $check_ca->kapbul['angsuran'],
+                'biaya_lain'            => $check_ca->kapbul['biaya_lain'],
+                'total_pemasukan'       => $check_ca->kapbul['total_pemasukan'],
+                'total_pengeluaran'     => $check_ca->kapbul['total_pengeluaran'],
+                'penghasilan_bersih'    => $check_ca->kapbul['penghasilan_bersih'],
+                'disposable_income'     => $check_ca->kapbul['disposable_income']
+            ],
             'data_biaya' => [
                 'reguler' => $reguler = array(
                     'biaya_provisi'         => (int) $check_ca->recom_ca['biaya_provisi'],
@@ -781,7 +805,7 @@ class MasterCAA_Controller extends BaseController
                 'ttl_plafon'               => array_sum(array_column($infoCC, 'plafon')),
                 'ttl_debet'                => array_sum(array_column($infoCC, 'baki_debet')),
                 'ttl_angsuran'             => array_sum(array_column($infoCC, 'angsuran')),
-                'collectabilitas_terendah' => min(array_column($infoCC, 'collectabilitas')),
+                'collectabilitas_terendah' => max(array_column($infoCC, 'collectabilitas')),
                 'table'                    => $infoCC
             ],
             'ringkasan_analisa' => [
