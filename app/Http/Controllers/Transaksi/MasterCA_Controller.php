@@ -520,7 +520,7 @@ class MasterCA_Controller extends BaseController
                 => empty($req->input('biaya_pendidikan'))     ? 0 : $req->input('biaya_pendidikan'),
 
             'biaya_telp_listr_air'
-                => empty($req->input('biaya_telp_listr_air')) ? 0 : $req->input('biaya_telp_listr_air'),
+                => empty($req->input('telp_listr_air'))       ? 0 : $req->input('telp_listr_air'),
 
             'angsuran'
                 => empty($req->input('angsuran'))             ? 0 : $req->input('angsuran'),
@@ -534,7 +534,6 @@ class MasterCA_Controller extends BaseController
             'total_pengeluaran'  => $ttl2 = array_sum(array_slice($inputKapBul, 3)),
             'penghasilan_bersih' => $ttl1 - $ttl2
         );
-
 
         // Ceiling Recomendasi Pinjaman
         $rekomPinjaman = array(
