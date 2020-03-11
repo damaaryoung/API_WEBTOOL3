@@ -842,7 +842,7 @@ class MasterCAA_Controller extends BaseController
 
         $pic = PIC::where('user_id', $user_id)->first();
 
-        if ($pic == null) {
+        if (empty($pic)) {
             return response()->json([
                 "code"    => 404,
                 "status"  => "not found",

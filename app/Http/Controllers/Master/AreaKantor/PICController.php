@@ -25,7 +25,7 @@ class PICController extends BaseController
     {
         $data = array();
 
-        $query = Cache::remember('pic.index', $this->time_cache, function () use ($data) {
+        // $query = Cache::remember('pic.index', $this->time_cache, function () use ($data) {
             
             PIC::select('id', 'nama', 'email', 'user_id', 'id_area', 'id_cabang', 'plafon_caa as plafon_max')
             ->addSelect([
@@ -43,10 +43,10 @@ class PICController extends BaseController
                }
             });
 
-            return $data;
-        });
+            // return $data;
+        // });
 
-        if (empty($query)) {
+        if (empty($data)) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
@@ -58,8 +58,8 @@ class PICController extends BaseController
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'count'  => sizeof($query),
-                'data'   => $query
+                'count'  => count($data),
+                'data'   => $data
             ], 200);
         } catch (\Exception $e) {
             return response()->json([

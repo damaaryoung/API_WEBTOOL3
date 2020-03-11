@@ -18,9 +18,9 @@ class JPICController extends BaseController
 
     public function index() 
     {
-        $query = Cache::remember('jpic.index', $this->time_cache, function () {
-            return JPIC::select('id', 'nama_jenis','keterangan')->orderBy('nama_jenis', 'asc')->get();
-        });
+        // $query = Cache::remember('jpic.index', $this->time_cache, function () {
+            $query = JPIC::select('id', 'nama_jenis','keterangan')->orderBy('nama_jenis', 'asc')->get();
+        // });
 
         if (empty($query)) {
             return response()->json([
