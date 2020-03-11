@@ -148,13 +148,13 @@ class MasterSO_Controller extends BaseController
             ];
         }
 
-        $id_penj = explode (",",$val->id_penjamin);
-        $pen = array();
-        foreach ($id_penj as $value) {
-            $pen[] = array(
-                'id' => (int) $value
-            );
-        }
+        $pen = Penjamin::whereIn('id', explode(",", $val->id_penjamin))->get();
+        // $pen = array();
+        // foreach ($id_penj as $value) {
+        //     $pen[] = array(
+        //         'id' => (int) $value
+        //     );
+        // }
 
         // $pen = Penjamin::select('id', 'nama_ktp as nama')->whereIn('id', $id_penj)->get()->toArray();
 
