@@ -260,7 +260,9 @@ class Controller extends BaseController
             //     $constraint->aspectRatio();
             // })->save($fullPath);
 
-            Image::make(realpath($file))->save($fullPath);
+            Image::make(realpath($file))->resize(480, 360, function ($constraint) {
+                $constraint->aspectRatio();
+            })->save($fullPath);
 
             // $quick = Image::cache(function($image) use ($file, $fullPath) {
             //     return $image->make($file)->resize(480, 360)->save($fullPath);
