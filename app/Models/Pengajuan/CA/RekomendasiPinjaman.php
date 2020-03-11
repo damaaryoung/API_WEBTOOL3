@@ -29,7 +29,8 @@ class RekomendasiPinjaman extends Model implements AuthenticatableContract, Auth
     protected $casts = [
         'recom_nilai_pinjaman' => 'integer',
         'recom_tenor'          => 'integer',
-        'recom_angsuran'       => 'integer'
+        'recom_angsuran'       => 'integer',
+        'bunga_pinjaman'       => 'float'
     ];
 
     public $timestamps = false;

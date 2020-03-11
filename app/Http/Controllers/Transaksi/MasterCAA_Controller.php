@@ -32,7 +32,7 @@ class MasterCAA_Controller extends BaseController
 
         $pic = PIC::where('user_id', $user_id)->first();
 
-        if ($pic == null) {
+        if (empty($pic)) {
             return response()->json([
                 "code"    => 404,
                 "status"  => "not found",
@@ -48,7 +48,7 @@ class MasterCAA_Controller extends BaseController
 
         $query = Helper::checkDir($scope, $query_dir, $id_area, $id_cabang);
 
-        if ($query->get() == '[]') {
+        if (empty($query->get())) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
@@ -148,13 +148,10 @@ class MasterCAA_Controller extends BaseController
             $data[] = [
                 'status_revisi'  => $val->revisi >= 1 ? 'Y' : 'N',
                 'id_trans_so'    => $val->id_trans_so == null ? null : (int) $val->id_trans_so,
-                'id_trans_ca'    => $val->id == null ? null : (int) $val->id,
                 'nomor_so'       => $val->so['nomor_so'],
-
-                'nomor_ao'       => $val->so['ao']['nomor_ao'],
-                'nomor_ca'       => $val->nomor_ca,
-                'nomor_caa'      => $val->so['caa']['nomor_caa'],
-
+                'nama_so'        => $val->so['nama_so'],
+                'status_ca'      => $status_ca,
+                'status_caa'     => $status_caa,
                 'pic'            => $val->pic['nama'],
                 'area'           => $val->area['nama'],
                 'cabang'         => $val->cabang['nama'],
@@ -166,13 +163,12 @@ class MasterCAA_Controller extends BaseController
                 ],
                 'rekomendasi_ao' => $rekomendasi_ao,
                 'rekomendasi_ca' => $rekomendasi_ca,
+                'rekomendasi_pinjaman' => $val->recom_pin,
                 'nama_debitur'   => $val->so['debt']['nama_lengkap'],
                 'agunan' => [
                     'tanah'     => $Tan,
                     'kendaraan' => $Ken
                 ],
-                'status_ca'     => $status_ca,
-                'status_caa'    => $status_caa,
                 'tgl_transaksi' => $val->created_at,
                 'approval'      => $Appro
             ];
@@ -603,8 +599,8 @@ class MasterCAA_Controller extends BaseController
                     'jenis'          => $value->jenis_sertifikat,
                     'tipe_lokasi'    => $value->tipe_lokasi,
                     'luas' => [
-                        'tanah'    => (int) $value->luas_tanah,
-                        'bangunan' => (int) $value->luas_bangunan
+                        'tanah'    => $value->luas_tanah,
+                        'bangunan' => $value->luas_bangunan
                     ],
                     'tgl_berlaku_shgb'        => Carbon::parse($value->tgl_berlaku_shgb)->format("d-m-Y"),
                     'nama_pemilik_sertifikat' => $value->nama_pemilik_sertifikat,
@@ -664,7 +660,7 @@ class MasterCAA_Controller extends BaseController
         $data = array(
             'status_revisi' => $check_ca->revisi >= 1 ? 'Y' : 'N',
             'id_trans_so' => $check_so->id == null ? null : (int) $check_so->id,
-            'id_trans_ca' => $check_ca->id == null ? null : (int) $check_ca->id,
+            'status_ca'   => $status_ca,
             'transaksi'   => [
                 'so' => [
                     'nomor' => $check_so->nomor_so,
@@ -708,27 +704,27 @@ class MasterCAA_Controller extends BaseController
             'pendapatan_usaha' => [
                 'id'        => $check_ca->id_pendapatan_usaha == null ? null : (int) $check_ao->id_pendapatan_usaha,
                 'pemasukan' => array(
-                    'tunai' => (int) $check_ca->usaha['pemasukan_tunai'],
-                    'kredit'=> (int) $check_ca->usaha['pemasukan_kredit'],
-                    'total' => (int) $check_ca->usaha['total_pemasukan']
+                    'tunai' => $check_ca->usaha['pemasukan_tunai'],
+                    'kredit'=> $check_ca->usaha['pemasukan_kredit'],
+                    'total' => $check_ca->usaha['total_pemasukan']
                 ),
                 'pengeluaran' => array(
-                    'biaya_sewa'           => (int) $check_ca->usaha['biaya_sewa'],
-                    'biaya_gaji_pegawai'   => (int) $check_ca->usaha['biaya_gaji_pegawai'],
-                    'biaya_belanja_brg'    => (int) $check_ca->usaha['biaya_belanja_brg'],
-                    'biaya_telp_listr_air' => (int) $check_ca->usaha['biaya_telp_listr_air'],
-                    'biaya_sampah_kemanan' => (int) $check_ca->usaha['biaya_sampah_kemanan'],
-                    'biaya_kirim_barang'   => (int) $check_ca->usaha['biaya_kirim_barang'],
-                    'biaya_hutang_dagang'  => (int) $check_ca->usaha['biaya_hutang_dagang'],
-                    'angsuran'             => (int) $check_ca->usaha['biaya_angsuran'],
-                    'lain_lain'            => (int) $check_ca->usaha['biaya_lain_lain'],
-                    'total'                => (int) $check_ca->usaha['total_pengeluaran']
+                    'biaya_sewa'           => $check_ca->usaha['biaya_sewa'],
+                    'biaya_gaji_pegawai'   => $check_ca->usaha['biaya_gaji_pegawai'],
+                    'biaya_belanja_brg'    => $check_ca->usaha['biaya_belanja_brg'],
+                    'biaya_telp_listr_air' => $check_ca->usaha['biaya_telp_listr_air'],
+                    'biaya_sampah_kemanan' => $check_ca->usaha['biaya_sampah_kemanan'],
+                    'biaya_kirim_barang'   => $check_ca->usaha['biaya_kirim_barang'],
+                    'biaya_hutang_dagang'  => $check_ca->usaha['biaya_hutang_dagang'],
+                    'angsuran'             => $check_ca->usaha['biaya_angsuran'],
+                    'lain_lain'            => $check_ca->usaha['biaya_lain_lain'],
+                    'total'                => $check_ca->usaha['total_pengeluaran']
                 ),
-                'penghasilan_bersih' => (int) $check_ca->usaha['laba_usaha']
+                'penghasilan_bersih' => $check_ca->usaha['laba_usaha']
             ],
             'pengajuan' => [
-                'plafon' => (int) $check_so->faspin['plafon'],
-                'tenor'  => (int) $check_so->faspin['tenor']
+                'plafon' => $check_so->faspin['plafon'],
+                'tenor'  => $check_so->faspin['tenor']
             ],
             'rekomendasi_ao'   => [
                 'id'               => $check_ao->id_recom_ao == null ? null : (int) $check_ao->id_recom_ao,
@@ -821,7 +817,6 @@ class MasterCAA_Controller extends BaseController
                 'kuantitatif_idir'              => $check_ca->ringkasan['kuantitatif_idir'],
                 'kuantitatif_hasil'             => $check_ca->ringkasan['kuantitatif_hasil']
             ],
-            'status_ca'     => $status_ca,
             'tgl_transaksi' => $check_ca->created_at
         );
 
@@ -892,11 +887,11 @@ class MasterCAA_Controller extends BaseController
         $caa = Helper::checkDir($scope, $query_dir, $id_area, $id_cabang);
         $check_caa = $caa->first();
 
-        if ($check_caa == null) {
+        if (empty($check_caa)) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
-                'message' => 'Transaksi dengan id '.$id.' belum sampai ke CAA'
+                'message' => 'Transaksi dengan id '.$id.' belum di cek dan di kalkulasi oleh caa'
             ], 404);
         }
 
@@ -904,7 +899,7 @@ class MasterCAA_Controller extends BaseController
 
         $AguTa = AgunanTanah::whereIn('id', $id_agu_ta)->get();
 
-        if ($AguTa == '[]') {
+        if (empty($AguTa)) {
             $idTan = null;
         }else{
             $idTan = array();
@@ -914,8 +909,8 @@ class MasterCAA_Controller extends BaseController
                     'jenis'          => $value->jenis_sertifikat,
                     'tipe_lokasi'    => $value->tipe_lokasi,
                     'luas' => [
-                        'tanah'    => (int) $value->luas_tanah,
-                        'bangunan' => (int) $value->luas_bangunan
+                        'tanah'    => $value->luas_tanah,
+                        'bangunan' => $value->luas_bangunan
                     ],
                     'tgl_berlaku_shgb'        => Carbon::parse($value->tgl_berlaku_shgb)->format("d-m-Y"),
                     'nama_pemilik_sertifikat' => $value->nama_pemilik_sertifikat,
@@ -936,7 +931,7 @@ class MasterCAA_Controller extends BaseController
 
         $AguKe = AgunanKendaraan::whereIn('id', $id_agu_ke)->get();
 
-        if ($AguKe == '[]') {
+        if (empty($AguKe)) {
             $idKen = null;
         }else{
             $idKen = array();
@@ -965,7 +960,7 @@ class MasterCAA_Controller extends BaseController
 
         $get_pic = PIC::with('jpic')->whereIn('id', explode(",", $check_caa->pic_team_caa))->get();
 
-        if($get_pic == '[]'){
+        if(empty($get_pic)){
             $ptc = null;
         }else{
             $ptc = array();
@@ -1008,7 +1003,7 @@ class MasterCAA_Controller extends BaseController
                     'nama'  => $check_caa->pic['nama']
                 ]
             ],
-
+            'status_caa'    => $status_caa,
             'nama_marketing' => $check_so->nama_marketing,
             'pic'  => [
                 'id'   => $check_caa->id_pic == null ? null : (int) $check_caa->id_pic,
@@ -1092,7 +1087,7 @@ class MasterCAA_Controller extends BaseController
                 'produk'           => $check_ao->recom_ao['produk'],
                 'plafon'           => $check_ao->recom_ao['plafon_kredit'],
                 'tenor'            => $check_ao->recom_ao['jangka_waktu'],
-                'suku_bunga'       => floatval($check_ao->recom_ao['suku_bunga']),
+                'suku_bunga'       => $check_ao->recom_ao['suku_bunga'],
                 'pembayaran_bunga' => $check_ao->recom_ao['pembayaran_bunga'],
                 'catatan'          => $check_ao->catatan_ao
             ],
@@ -1101,31 +1096,32 @@ class MasterCAA_Controller extends BaseController
                 'produk'               => $check_ca->recom_ca['produk'],
                 'plafon'               => $check_ca->recom_ca['plafon_kredit'],
                 'tenor'                => $check_ca->recom_ca['jangka_waktu'],
-                'suku_bunga'           => floatval($check_ca->recom_ca['suku_bunga']),
+                'suku_bunga'           => $check_ca->recom_ca['suku_bunga'],
                 'pembayaran_bunga'     => $check_ca->recom_ca['pembayaran_bunga'],
                 'rekomendasi_angsuran' => $check_ca->recom_ca['rekom_angsuran'],
                 'catatan'              => $check_ca->catatan_ca
             ],
+            'rekomendasi_pinjaman'     => $check_ca->recom_pin,
             'data_biaya' => [
                 'reguler' => $reguler = array(
-                    'biaya_provisi'         => (int) $check_ca->recom_ca['biaya_provisi'],
-                    'biaya_administrasi'    => (int) $check_ca->recom_ca['biaya_administrasi'],
-                    'biaya_credit_checking' => (int) $check_ca->recom_ca['biaya_credit_checking'],
+                    'biaya_provisi'         => $check_ca->recom_ca['biaya_provisi'],
+                    'biaya_administrasi'    => $check_ca->recom_ca['biaya_administrasi'],
+                    'biaya_credit_checking' => $check_ca->recom_ca['biaya_credit_checking'],
                     'biaya_premi' => [
-                        'asuransi_jiwa'     => (int) $check_ca->recom_ca['biaya_asuransi_jiwa'],
-                        'asuransi_jaminan'  => (int) $check_ca->recom_ca['biaya_asuransi_jaminan']
+                        'asuransi_jiwa'     => $check_ca->recom_ca['biaya_asuransi_jiwa'],
+                        'asuransi_jaminan'  => $check_ca->recom_ca['biaya_asuransi_jaminan']
                     ],
-                    'biaya_tabungan'                    => (int) $check_ca->recom_ca['biaya_tabungan'],
-                    'biaya_notaris'                     => (int) $check_ca->recom_ca['notaris'],
-                    'angsuran_pertama_bungan_berjalan'  => (int) $check_ca->recom_ca['angs_pertama_bunga_berjalan'],
-                    'pelunasan_nasabah_ro'              => (int) $check_ca->recom_ca['pelunasan_nasabah_ro']
+                    'biaya_tabungan'                    => $check_ca->recom_ca['biaya_tabungan'],
+                    'biaya_notaris'                     => $check_ca->recom_ca['notaris'],
+                    'angsuran_pertama_bungan_berjalan'  => $check_ca->recom_ca['angs_pertama_bunga_berjalan'],
+                    'pelunasan_nasabah_ro'              => $check_ca->recom_ca['pelunasan_nasabah_ro']
                 ),
 
                 'hold_dana' => $hold_dana = array(
-                    'pelunasan_tempat_lain'         => (int) $check_ca->recom_ca['pelunasan_tempat_lain'],
+                    'pelunasan_tempat_lain'         => $check_ca->recom_ca['pelunasan_tempat_lain'],
                     'blokir' => [
-                        'tempat_lain'               => (int) $check_ca->recom_ca['blokir_dana'],
-                        'dua_kali_angsuran_kredit'  => (int) $check_ca->recom_ca['blokir_angs_kredit']
+                        'tempat_lain'               => $check_ca->recom_ca['blokir_dana'],
+                        'dua_kali_angsuran_kredit'  => $check_ca->recom_ca['blokir_angs_kredit']
                     ]
                 ),
 
@@ -1144,7 +1140,6 @@ class MasterCAA_Controller extends BaseController
                 'file_lain'           => empty($check_caa->file_lain) ? null : explode(";", $check_caa->file_lain)
             ],
             'rincian'       => $check_caa->rincian,
-            'status_caa'    => $status_caa,
             'tgl_transaksi' => $check_caa->created_at
         );
 

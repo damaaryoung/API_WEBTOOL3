@@ -29,6 +29,7 @@ class RekomendasiCA extends Model implements AuthenticatableContract, Authorizab
     protected $casts = [
         'plafon_kredit'               => 'integer',
         'jangka_waktu'                => 'integer',
+        'suku_bunga'                  => 'float',
         'pembayaran_bunga'            => 'integer',
         'biaya_provisi'               => 'integer',
         'biaya_administrasi'          => 'integer',

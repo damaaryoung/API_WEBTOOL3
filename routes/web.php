@@ -487,7 +487,7 @@ $router->group(['middleware' => ['jwt.auth', 'log'], 'prefix' => 'api'], functio
             $router->post('/{id}', ['subject' => 'Update pendapatan_calon_debitur', 'uses' => 'UsahaCadebtController@update']);
         });
     });
-
+    
     // CA
     $router->group(['namespace' => 'Pengajuan\TunggalCA'], function() use ($router){
         // Mutasi Bank
@@ -518,13 +518,6 @@ $router->group(['middleware' => ['jwt.auth', 'log'], 'prefix' => 'api'], functio
             $router->put('/{id}', ['subject' => 'Update - Ringkasan Analisa', 'uses' => 'RAnalisController@update']);
         });
 
-        // Rekomendasi Pinjaman
-        $router->group(['prefix' => '/rekom_pinjaman'], function() use ($router) {
-            $router->get('/',     ['subject' => 'Read - Rekomendasi Pinjaman',   'uses' => 'RekomPinController@index']);
-            $router->get('/{id}', ['subject' => 'Detail - Rekomendasi Pinjaman', 'uses' => 'RekomPinController@show']);
-            $router->put('/{id}', ['subject' => 'Update - Rekomendasi Pinjaman', 'uses' => 'RekomPinController@update']);
-        });
-
         // Asuransi Jiwa
         $router->group(['prefix' => '/asuransi_jiwa'], function() use ($router) {
             $router->get('/',     ['subject' => 'Read - Asuransi Jiwa',   'uses' => 'AsJiwaController@index']);
@@ -537,6 +530,29 @@ $router->group(['middleware' => ['jwt.auth', 'log'], 'prefix' => 'api'], functio
             $router->get('/',     ['subject' => 'Read - Asuransi Jaminan',   'uses' => 'AsJaminanController@index']);
             $router->get('/{id}', ['subject' => 'Detail - Asuransi Jaminan', 'uses' => 'AsJaminanController@show']);
             $router->put('/{id}', ['subject' => 'Update - Asuransi Jaminan', 'uses' => 'AsJaminanController@update']);
+        });
+    });
+
+    $router->group(['namespace' => 'Pengajuan\Rekomendasi'], function() use ($router){
+        // Rekomendasi AO
+        $router->group(['prefix' => '/rekom_ao'], function() use ($router) {
+            $router->get('/',     ['subject' => 'Read - Rekomendasi AO',   'uses' => 'RekomAoController@index']);
+            $router->get('/{id}', ['subject' => 'Detail - Rekomendasi AO', 'uses' => 'RekomAoController@show']);
+            $router->put('/{id}', ['subject' => 'Update - Rekomendasi AO', 'uses' => 'RekomAoController@update']);
+        });
+
+        // Rekomendasi CA
+        $router->group(['prefix' => '/rekom_ca'], function() use ($router) {
+            $router->get('/',     ['subject' => 'Read - Rekomendasi CA',   'uses' => 'RekomCaController@index']);
+            $router->get('/{id}', ['subject' => 'Detail - Rekomendasi CA', 'uses' => 'RekomCaController@show']);
+            $router->put('/{id}', ['subject' => 'Update - Rekomendasi CA', 'uses' => 'RekomCaController@update']);
+        });
+
+        // Rekomendasi Pinjaman
+        $router->group(['prefix' => '/rekom_pinjaman'], function() use ($router) {
+            $router->get('/',     ['subject' => 'Read - Rekomendasi Pinjaman',   'uses' => 'RekomPinController@index']);
+            $router->get('/{id}', ['subject' => 'Detail - Rekomendasi Pinjaman', 'uses' => 'RekomPinController@show']);
+            $router->put('/{id}', ['subject' => 'Update - Rekomendasi Pinjaman', 'uses' => 'RekomPinController@update']);
         });
     });
 });

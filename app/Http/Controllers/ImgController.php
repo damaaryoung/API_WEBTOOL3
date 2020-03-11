@@ -194,12 +194,30 @@ class ImgController extends BaseController
         $file = $req->file('file');
 
         $name = $file->getClientOriginalName();
+        
+        $path = '/public/base';
 
-        $thumbPath = public_path('base/thumbnail/').$name;
+        $file->move($path, $name);
+
+        $thumbPath = '/public/base/'.$name;
 
         $targetName = $name.'.jpeg';
 
-        $result = Helper::genPdfThumbnail($thumbPath, $targetName);
-        return json()->json(['thumb' => $result], 200);
+        $target = dirname($thumbPath).DIRECTORY_SEPARATOR.$targetName;
+        // dd($target);
+        $im     = new Imagick('/public/base/ig.pdf[0]'); // 0-first page, 1-second page
+        
+        dd($im);
+		$im->setImageColorspace(255); // prevent image colors from inverting
+		$im->setimageformat("jpeg");
+		$im->thumbnailimage(150,150); // width and height
+		$im->writeimage($targetName);
+		$im->clear();
+        $im->destroy();
+
+        // dd($thumbPath);
+
+        // $result = Helper::genPdfThumbnail($thumbPath, $targetName);
+        return json()->json(['thumb' => $target], 200);
     } 
 }

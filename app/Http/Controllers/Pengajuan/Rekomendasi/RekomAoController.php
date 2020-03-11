@@ -1,20 +1,20 @@
 <?php
 
-namespace App\Http\Controllers\Pengajuan\TunggalCA;
+namespace App\Http\Controllers\Pengajuan\Rekomendasi;
 
 use Laravel\Lumen\Routing\Controller as BaseController;
 
 // Form Request
-use App\Http\Requests\Pengajuan\RekomPinReq;
+use App\Http\Requests\Rekomendasi\RekomAoReq;
 
 // Models
-use App\Models\Pengajuan\CA\RekomendasiPinjaman;
+use App\Models\Pengajuan\AO\RekomendasiAO;
 use DB;
 
-class RekomPinController extends BaseController
+class RekomAoController extends BaseController
 {
     public function index(){
-        $query = RekomendasiPinjaman::get()->toArray();
+        $query = RekomendasiAO::orderBy('id', 'desc')->get();
 
         try {
             return response()->json([
@@ -22,7 +22,7 @@ class RekomPinController extends BaseController
                 'status' => 'success',
                 'data'   => $query
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 "code"    => 501,
                 "status"  => "error",
@@ -32,9 +32,9 @@ class RekomPinController extends BaseController
     }
 
     public function show($id){
-        $query = RekomendasiPinjaman::where('id', $id)->first();
+        $query = RekomendasiAO::where('id', $id)->first();
 
-        if($query == null){
+        if(empty($query)){
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
@@ -48,7 +48,7 @@ class RekomPinController extends BaseController
                 'status' => 'success',
                 'data'   => $query
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 "code"    => 501,
                 "status"  => "error",
@@ -57,10 +57,10 @@ class RekomPinController extends BaseController
         }
     }
 
-    public function update($id, RekomPinReq $req){
-        $check = RekomendasiPinjaman::where('id', $id)->first();
+    public function update($id, RekomAoReq $req){
+        $check = RekomendasiAO::where('id', $id)->first();
 
-        if ($check == null) {
+        if (empty($check)) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
@@ -101,7 +101,7 @@ class RekomPinController extends BaseController
         DB::connection('web')->beginTransaction();
 
         try {
-            RekomendasiPinjaman::where('id', $id)->update($rekomPinjaman);
+            RekomendasiAO::where('id', $id)->update($rekomPinjaman);
 
             DB::connection('web')->commit();
 
@@ -111,7 +111,7 @@ class RekomPinController extends BaseController
                 'message'=> 'Update Data Berhasil',
                 'data'   => $rekomPinjaman
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
 
             $err = DB::connection('web')->rollback();
 

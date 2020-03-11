@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\Pengajuan;
+namespace App\Http\Requests\Rekomendasi;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;

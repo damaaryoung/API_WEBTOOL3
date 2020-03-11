@@ -39,7 +39,7 @@ class MasterCA_Controller extends BaseController
 
         $pic = PIC::where('user_id', $user_id)->first();
 
-        if ($pic == null) {
+        if (empty($pic)) {
             return response()->json([
                 "code"    => 404,
                 "status"  => "not found",
@@ -55,7 +55,7 @@ class MasterCA_Controller extends BaseController
 
         $query = Helper::checkDir($scope, $query_dir, $id_area, $id_cabang);
 
-        if ($query->get() == '[]') {
+        if (empty($query->get())) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
@@ -92,18 +92,8 @@ class MasterCA_Controller extends BaseController
 
             $data[$key] = [
                 'id_trans_so'    => $val->id_trans_so == null ? null : (int) $val->id_trans_so,
-                'id_trans_ca'    => $val->so['id_trans_ca'] == null ? null : (int) $val->so['id_trans_ca'],
                 'nomor_so'       => $val->so['nomor_so'],
-                'nomor_ao'       => $val->nomor_ao,
-                // 'nomor_ca'       => $val->so['ca']['nomor_ca'],
-                'pic'            => $val->pic['nama'],
-                'area'           => $val->area['nama'],
-                'cabang'         => $val->cabang['nama'],
-                'asal_data'      => $val->so['asaldata']['nama'],
-                'nama_marketing' => $val->so['nama_marketing'],
-                'nama_debitur'   => $val->so['debt']['nama_lengkap'],
-                'plafon'         => $val->so['faspin']['plafon'],
-                'tenor'          => $val->so['faspin']['tenor'],
+                'nama_so'        => $val->so['nama_so'],
                 "ao" => [
                     'status_ao'     => $status_ao,
                     'catatan_ao'    => $val->catatan_ao
@@ -116,7 +106,15 @@ class MasterCA_Controller extends BaseController
                     'status_caa'     => $status_caa,
                     'catatan_caa'    => $val->so['caa']['catatan_caa']
                 ],
-                'tgl_transaksi' => $val->created_at
+                'pic'            => $val->pic['nama'],
+                'area'           => $val->area['nama'],
+                'cabang'         => $val->cabang['nama'],
+                'asal_data'      => $val->so['asaldata']['nama'],
+                'nama_marketing' => $val->so['nama_marketing'],
+                'nama_debitur'   => $val->so['debt']['nama_lengkap'],
+                'plafon'         => $val->so['faspin']['plafon'],
+                'tenor'          => $val->so['faspin']['tenor'],
+                'tgl_transaksi'  => $val->created_at
             ];
         }
 
@@ -141,7 +139,7 @@ class MasterCA_Controller extends BaseController
 
         $pic = PIC::where('user_id', $user_id)->first();
 
-        if ($pic == null) {
+        if (empty($pic)) {
             return response()->json([
                 "code"    => 404,
                 "status"  => "not found",
@@ -157,7 +155,7 @@ class MasterCA_Controller extends BaseController
 
         $query = Helper::checkDir($scope, $query_dir, $id_area, $id_cabang);
 
-        if ($query->get() == '[]') {
+        if (empty($query->get())) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
@@ -186,18 +184,8 @@ class MasterCA_Controller extends BaseController
 
             $data[] = [
                 'id_trans_so'    => $val->id_trans_so == null ? null : (int) $val->id_trans_so,
-                'id_trans_ca'    => $val->so['id_trans_ca'] == null ? null : (int) $val->so['id_trans_ca'],
                 'nomor_so'       => $val->so['nomor_so'],
                 'nomor_ao'       => $val->nomor_ao,
-                // 'nomor_ca'       => $val->so['ca']['nomor_ca'],
-                'pic'            => $val->pic['nama'],
-                'area'           => $val->area['nama'],
-                'cabang'         => $val->cabang['nama'],
-                'asal_data'      => $val->so['asaldata']['nama'],
-                'nama_marketing' => $val->so['nama_marketing'],
-                'nama_debitur'   => $val->so['debt']['nama_lengkap'],
-                'plafon'         => (int) $val->so['faspin']['plafon'],
-                'tenor'          => (int) $val->so['faspin']['tenor'],
                 "ao" => [
                     'status_ao'     => $status_ao,
                     'catatan_ao'    => $val->catatan_ao
@@ -206,6 +194,14 @@ class MasterCA_Controller extends BaseController
                     'status_ca'     => $status_ca,
                     'catatan_ca'    => $val->so['ca']['catatan_ca']
                 ],
+                'pic'            => $val->pic['nama'],
+                'area'           => $val->area['nama'],
+                'cabang'         => $val->cabang['nama'],
+                'asal_data'      => $val->so['asaldata']['nama'],
+                'nama_marketing' => $val->so['nama_marketing'],
+                'nama_debitur'   => $val->so['debt']['nama_lengkap'],
+                'plafon'         => $val->so['faspin']['plafon'],
+                'tenor'          => $val->so['faspin']['tenor'],
                 'tgl_transaksi' => $val->created_at
             ];
         }
@@ -282,56 +278,13 @@ class MasterCA_Controller extends BaseController
             ], 404);
         }
 
-        // $id_penj = explode (",", $val->so['id_penjamin']);
-
-        // foreach ($id_penj as $key => $value) {
-        //     $idPen[$key] = array(
-        //         'id' => $value == null ? null : (int) $value
-        //     );
-        // }
-
         $idPen = Penjamin::whereIn('id',  explode (",", $val->so['id_penjamin']))->get();
-
-
-        // $id_agu_ta = explode (",",$val->id_agunan_tanah);
-
-        // foreach ($id_agu_ta as $key => $value) {
-        //     $idTan[$key] = array(
-        //         'id' => $value == null ? null : (int) $value
-        //     );
-        // }
 
         $idTan = AgunanTanah::whereIn('id', explode (",",$val->id_agunan_tanah))->get();
 
-
-        // $id_agu_ke = explode (",",$val->id_agunan_kendaraan);
-
-        // foreach ($id_agu_ke as $key => $value) {
-        //     $idKen[$key] = array(
-        //         'id' => $value == null ? null : (int) $value
-        //     );
-        // }
-
         $idKen = AgunanKendaraan::whereIn('id', explode (",",$val->id_agunan_kendaraan))->get();
 
-        // $id_pe_agu_ta = explode (",",$val->id_periksa_agunan_tanah);
-
-        // foreach ($id_pe_agu_ta as $key => $value) {
-        //     $idPeTan[$key] = array(
-        //         'id' => $value == null ? null : (int) $value
-        //     );
-        // }
-
         $idPeTan = PemeriksaanAgunTan::whereIn('id', explode (",",$val->id_periksa_agunan_tanah))->get();
-
-
-        // $id_pe_agu_ke = explode (",",$val->id_periksa_agunan_kendaraan);
-
-        // foreach ($id_pe_agu_ke as $key => $value) {
-        //     $idPeKen[$key] = array(
-        //         'id' => $value == null ? null : (int) $value
-        //     );
-        // }
 
         $idPeKen = PemeriksaanAgunKen::whereIn('id', explode (",",$val->id_periksa_agunan_kendaraan))->get();
 
@@ -354,11 +307,10 @@ class MasterCA_Controller extends BaseController
 
         $data = array(
             'id_trans_so'    => $val->id_trans_so == null ? null : (int) $val->id_trans_so,
-            'id_trans_ca'    => $val->so['id_trans_ca'] == null ? null : (int) $val->so['id_trans_ca'],
             'nomor_so'       => $val->so['nomor_so'],
-            'nomor_ao'       => $val->nomor_ao,
-            // 'nomor_ca'       => $val->so['ca']['nomor_ca'],
             'nama_so'        => $val->so['nama_so'],
+            'status_ao'      => $status_ao,
+            'status_ca'      => $status_ca,
             'nama_marketing' => $val->so['nama_marketing'],
             'pic'  => [
                 'id'         => $val->id_pic == null ? null : (int) $val->id_pic,
@@ -380,15 +332,8 @@ class MasterCA_Controller extends BaseController
             'fasilitas_pinjaman'  => [
                 'id'   => $val->so['id_fasilitas_pinjaman'] == null ? null : (int) $val->so['id_fasilitas_pinjaman']
             ],
-            'data_debitur' => [
-                'id'                 => $val->so['id_calon_debitur'] == null ? null : (int) $val->so['id_calon_debitur'],
-                'nama_lengkap'       => $val->so['debt']['nama_lengkap'],
-                'foto_agunan_rumah'  => $val->so['debt']['foto_agunan_rumah']
-            ],
-            'data_pasangan' => [
-                'id'           => $val->so['id_pasangan'] == null ? null : (int) $val->so['id_pasangan'],
-                'nama_lengkap' => $val->so['pas']['nama_lengkap']
-            ],
+            'data_debitur'  => $val->so['debt'],
+            'data_pasangan' => $val->so['pas'],
             'data_penjamin' => $idPen,
             'data_agunan' => [
                 'agunan_tanah'     => $idTan,
@@ -398,11 +343,9 @@ class MasterCA_Controller extends BaseController
                 'agunan_tanah' => $idPeTan,
                 'agunan_kendaraan' => $idPeKen
             ],
-            'kapasitas_bulanan' => ['id' => $val->id_kapasitas_bulanan == null ? null : (int) $val->id_kapasitas_bulanan],
-            'pendapatan_usaha'  => ['id' => $val->id_pendapatan_usaha  == null ? null : (int) $val->id_pendapatan_usaha],
-            'rekomendasi_ao'    => ['id' => $val->id_recom_ao          == null ? null : (int) $val->id_recom_ao],
-            'status_ao'         => $status_ao,
-            'status_ca'         => $status_ca,
+            'kapasitas_bulanan' => $val->kapbul,
+            'pendapatan_usaha'  => $val->usaha,
+            'rekomendasi_ao'    => $val->recom_ao,
             'tgl_transaksi'     => $val->created_at
         );
 

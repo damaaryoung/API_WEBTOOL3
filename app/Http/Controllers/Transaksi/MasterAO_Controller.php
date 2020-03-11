@@ -33,7 +33,7 @@ class MasterAO_Controller extends BaseController
 
         $pic = PIC::where('user_id', $user_id)->first();
 
-        if ($pic == null) {
+        if (empty($pic)) {
             return response()->json([
                 "code"    => 404,
                 "status"  => "not found",
@@ -49,7 +49,7 @@ class MasterAO_Controller extends BaseController
 
         $query = Helper::checkDir($scope, $query_dir, $id_area, $id_cabang);
 
-        if ($query->get() == '[]') {
+        if (empty($query->get())) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
@@ -86,17 +86,7 @@ class MasterAO_Controller extends BaseController
 
             $data[$key] = [
                 'id'             => $val->id          == null ? null : (int) $val->id,
-                'id_trans_ao'    => $val->id_trans_ao == null ? null : (int) $val->id_trans_ao,
                 'nomor_so'       => $val->nomor_so,
-                // 'nomor_ao'       => $val->ao['nomor_ao'],
-                'pic'            => $val->pic['nama'],
-                'area'           => $val->area['nama'],
-                'cabang'         => $val->cabang['nama'],
-                'asal_data'      => $val->asaldata['nama'],
-                'nama_marketing' => $val->nama_marketing,
-                'nama_debitur'   => $val->debt['nama_lengkap'],
-                'plafon'         => (int) $val->faspin['plafon'],
-                'tenor'          => (int) $val->faspin['tenor'],
                 'das'            => [
                     'status'  => $status_das,
                     'catatan' => $val->catatan_das
@@ -109,7 +99,15 @@ class MasterAO_Controller extends BaseController
                     'status'  => $status_ao,
                     'catatan' => $val->ao['catatan_ao']
                 ],
-                'tgl_transaksi' => $val->created_at
+                'pic'            => $val->pic['nama'],
+                'area'           => $val->area['nama'],
+                'cabang'         => $val->cabang['nama'],
+                'asal_data'      => $val->asaldata['nama'],
+                'nama_marketing' => $val->nama_marketing,
+                'nama_debitur'   => $val->debt['nama_lengkap'],
+                'plafon'         => $val->faspin['plafon'],
+                'tenor'          => $val->faspin['tenor'],
+                'tgl_transaksi'  => $val->created_at
             ];
         }
 
@@ -133,7 +131,7 @@ class MasterAO_Controller extends BaseController
         $user_id = $req->auth->user_id;
         $pic     = PIC::where('user_id', $user_id)->first();
 
-        if ($pic == null) {
+        if (empty($pic)) {
             return response()->json([
                 "code"    => 404,
                 "status"  => "not found",
@@ -151,7 +149,7 @@ class MasterAO_Controller extends BaseController
         $vals = Helper::checkDir($scope, $query_dir, $id_area, $id_cabang);
         $val  = $vals->first();
 
-        if ($val == null) {
+        if (empty($val)) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
@@ -160,18 +158,6 @@ class MasterAO_Controller extends BaseController
         }
 
         $penjamin = Penjamin::whereIn('id', explode (",",$val->id_penjamin))->get();
-
-        // if ($penjamin != '[]') {
-        //     $pen = array();
-        //     foreach ($penjamin as $key => $value) {
-        //         $pen[$key] = [
-        //             "id"        => $val->id == null ? null : (int) $value->id,
-        //             "nama_ktp"  => $value->nama_ktp,
-        //         ];
-        //     }
-        // }else{
-        //     $pen = null;
-        // }
 
         if ($val->status_das == 1) {
             $status_das = 'complete';
@@ -199,35 +185,8 @@ class MasterAO_Controller extends BaseController
 
         $data = array(
             'id'          => $val->id          == null ? null : (int) $val->id,
-            'id_trans_ao' => $val->id_trans_ao == null ? null : (int) $val->id_trans_ao,
             'nomor_so'    => $val->nomor_so,
-            // 'nomor_ao'    => $val->ao['nomor_ao'],
             'nama_so'     => $val->nama_so,
-            'id_pic'      => $val->id_pic == null ? null : (int) $val->id_pic,
-            'nama_pic'    => $val->pic['nama'],
-            'area'   => [
-                'id'      => $val->id_area == null ? null : (int) $val->id_area,
-                'nama'    => $val->area['nama']
-            ],
-            'id_cabang'   => $val->id_cabang == null ? null : (int) $val->id_cabang,
-            'nama_cabang' => $val->cabang['nama'],
-            'asaldata'  => [
-                'id'   => $val->asaldata['id'] == null ? null : (int) $val->asaldata['id'],
-                'nama' => $val->asaldata['nama']
-            ],
-            'nama_marketing' => $val->nama_marketing,
-            'fasilitas_pinjaman'  => [
-                'id'              => $val->id_fasilitas_pinjaman == null ? null : (int) $val->id_fasilitas_pinjaman
-            ],
-            'data_debitur' => [
-                'id'             => $val->id_calon_debitur == null ? null : (int) $val->id_calon_debitur,
-                'nama_lengkap'   => $val->debt['nama_lengkap'],
-            ],
-            'data_pasangan' => [
-                'id'             => $val->id_pasangan == null ? null : (int) $val->id_pasangan,
-                'nama_lengkap'   => $val->pas['nama_lengkap'],
-            ],
-            'data_penjamin' => $penjamin,
             'das'=> [
                 'status'  => $status_das,
                 'catatan' => $val->catatan_das
@@ -244,7 +203,26 @@ class MasterAO_Controller extends BaseController
                 "ideb"      => explode(";", $val->lamp_ideb),
                 "pefindo"   => explode(";", $val->lamp_pefindo)
             ],
-            'tgl_transaksi' => $val->created_at
+            'id_pic'      => $val->id_pic == null ? null : (int) $val->id_pic,
+            'nama_pic'    => $val->pic['nama'],
+            'area'   => [
+                'id'      => $val->id_area == null ? null : (int) $val->id_area,
+                'nama'    => $val->area['nama']
+            ],
+            'id_cabang'   => $val->id_cabang == null ? null : (int) $val->id_cabang,
+            'nama_cabang' => $val->cabang['nama'],
+            'asaldata'  => [
+                'id'   => $val->asaldata['id'] == null ? null : (int) $val->asaldata['id'],
+                'nama' => $val->asaldata['nama']
+            ],
+            'nama_marketing' => $val->nama_marketing,
+            'fasilitas_pinjaman'  => [
+                'id'              => $val->id_fasilitas_pinjaman == null ? null : (int) $val->id_fasilitas_pinjaman
+            ],
+            'data_debitur'  => $val->debt,
+            'data_pasangan' => $val->pas,
+            'data_penjamin' => $penjamin,
+            'tgl_transaksi' => $val->created_at,
         );
 
         try {
@@ -374,8 +352,6 @@ class MasterAO_Controller extends BaseController
             $form_persetujuan_ideb = $check_form_persetujuan_ideb;
         }
 
-        // $id_penj = explode (",",$check_so->id_penjamin);
-
         $TransAO = array(
             'nomor_ao'              => $nomor_ao,
             'id_trans_so'           => $id,
@@ -390,7 +366,7 @@ class MasterAO_Controller extends BaseController
 
         $recom_AO = array(
             'produk'                => $req->input('produk'),
-            'plafon_kredit'         => empty($req->input('plafon_kredit')) ? $check_so->faspin['plafon'] : $req->input('plafon_kredit'),
+            'plafon_kredit'         => $req->input('plafon_kredit'),
             'jangka_waktu'          => $req->input('jangka_waktu'),
             'suku_bunga'            => $req->input('suku_bunga'),
             'pembayaran_bunga'      => $req->input('pembayaran_bunga'),
@@ -952,41 +928,15 @@ class MasterAO_Controller extends BaseController
         // Start Kapasitas Bulanan
         $inputKapBul = array(
 
-            'pemasukan_cadebt'
-                => empty($req->input('pemasukan_debitur')) ? null
-                : (int) $req->input('pemasukan_debitur'),
-
-            'pemasukan_pasangan'
-                => empty($req->input('pemasukan_pasangan')) ? null
-                : (int) $req->input('pemasukan_pasangan'),
-
-            'pemasukan_penjamin'
-                => empty($req->input('pemasukan_penjamin')) ? null
-                : (int) $req->input('pemasukan_penjamin'),
-
-            'biaya_rumah_tangga'
-                => empty($req->input('biaya_rumah_tangga')) ? null
-                : (int) $req->input('biaya_rumah_tangga'),
-
-            'biaya_transport'
-                => empty($req->input('biaya_transport')) ? null
-                : (int) $req->input('biaya_transport'),
-
-            'biaya_pendidikan'
-                => empty($req->input('biaya_pendidikan')) ? null
-                : (int) $req->input('biaya_pendidikan'),
-
-            'biaya_telp_listr_air'
-                => empty($req->input('biaya_telp_listr_air')) ? null
-                : (int) $req->input('biaya_telp_listr_air'),
-
-            'angsuran'
-                => empty($req->input('angsuran')) ? null
-                : (int) $req->input('angsuran'),
-
-            'biaya_lain'
-                => empty($req->input('biaya_lain')) ? null
-                : (int) $req->input('biaya_lain'),
+            'pemasukan_cadebt'      => $req->input('pemasukan_debitur'),
+            'pemasukan_pasangan'    => $req->input('pemasukan_pasangan'),
+            'pemasukan_penjamin'    => $req->input('pemasukan_penjamin'),
+            'biaya_rumah_tangga'    => $req->input('biaya_rumah_tangga'),
+            'biaya_transport'       => $req->input('biaya_transport'),
+            'biaya_pendidikan'      => $req->input('biaya_pendidikan'),
+            'biaya_telp_listr_air'  => $req->input('telp_listr_air'), // jangan lupa hampir sama dengan pendapatan usaha
+            'angsuran'              => $req->input('angsuran'),
+            'biaya_lain'            => $req->input('biaya_lain')
         );
 
         $total_KapBul = array(

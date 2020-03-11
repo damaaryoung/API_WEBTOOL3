@@ -34,7 +34,21 @@ class DebiturRequest extends FormRequest
                 $rules['no_npwp']   = 'digits:15|unique:web.calon_debitur,no_npwp,'.$check->id;
                 $rules['no_telp']   = 'between:9,13|unique:web.calon_debitur,no_telp,'.$check->id;
                 $rules['no_hp']     = 'between:9,13|unique:web.calon_debitur,no_hp,'.$check->id;
+            }else{
+                $rules['no_ktp']    = 'digits:16|unique:web.calon_debitur,no_ktp';
+                $rules['no_ktp_kk'] = 'digits:16|unique:web.calon_debitur,no_ktp_kk';
+                $rules['no_kk']     = 'digits:16|unique:web.calon_debitur,no_kk';
+                $rules['no_npwp']   = 'digits:15|unique:web.calon_debitur,no_npwp';
+                $rules['no_telp']   = 'between:9,13|unique:web.calon_debitur,no_telp';
+                $rules['no_hp']     = 'between:9,13|unique:web.calon_debitur,no_hp';
             }
+        }else{
+            $rules['no_ktp']    = 'digits:16';
+            $rules['no_ktp_kk'] = 'digits:16';
+            $rules['no_kk']     = 'digits:16';
+            $rules['no_npwp']   = 'digits:15';
+            $rules['no_telp']   = 'between:9,13';
+            $rules['no_hp']     = 'between:9,13';
         }
 
         $rules = [
@@ -57,8 +71,8 @@ class DebiturRequest extends FormRequest
             'id_kelurahan_domisili' => 'numeric',
             'jumlah_tanggungan'     => 'numeric',
             'tgl_lahir_anak.*'      => 'date_format:d-m-Y',
-            'tinggi_badan'          => 'numeric',
-            'berat_badan'           => 'numeric',
+            'tinggi_badan'          => 'required|numeric',
+            'berat_badan'           => 'required|numeric',
             'pekerjaan'             => 'in:KARYAWAN,PNS,WIRASWASTA,PENGURUS_RT',
             'id_prov_tempat_kerja'  => 'numeric',
             'id_kab_tempat_kerja'   => 'numeric',
@@ -91,31 +105,6 @@ class DebiturRequest extends FormRequest
     public function messages(){
         return [
             // Debitur
-            'jenis_kelamin.required'          => ':attribute wajib diisi',
-            'status_nikah.required'           => ':attribute harus salah satu dari jenis berikut :values',
-            'no_ktp.required'                 => ':attribute wajib diisi',
-            'no_ktp.required'                 => ':attribute wajib diisi',
-            'no_ktp_kk.required'              => ':attribute wajib diisi',
-            'no_ktp_kk.required'              => ':attribute wajib diisi',
-            'no_kk.required'                  => ':attribute wajib diisi',
-            'no_kk.required'                  => ':attribute wajib diisi',
-            'no_npwp.required'                => ':attribute wajib diisi',
-            'no_npwp.required'                => ':attribute wajib diisi',
-            'tgl_lahir.required'              => ':attribute wajib diisi',
-            // 'agama.required'                  => ':attribute wajib diisi',
-            'rt_ktp.required'                 => ':attribute wajib diisi',
-            'rw_ktp.required'                 => ':attribute wajib diisi',
-            'id_provinsi_ktp.required'        => ':attribute wajib diisi',
-            'id_kabupaten_ktp.required'       => ':attribute wajib diisi',
-            'id_kecamatan_ktp.required'       => ':attribute wajib diisi',
-            'id_kelurahan_ktp.required'       => ':attribute wajib diisi',
-            'rt_domisili.required'            => ':attribute wajib diisi',
-            'rw_domisili.required'            => ':attribute wajib diisi',
-            'id_provinsi_domisili.required'   => ':attribute wajib diisi',
-            'id_kabupaten_domisili.required'  => ':attribute wajib diisi',
-            'id_kecamatan_domisili.required'  => ':attribute wajib diisi',
-            'id_kelurahan_domisili.required'  => ':attribute wajib diisi',
-
             'jenis_kelamin.in'               => ':attribute harus salah satu dari jenis berikut :values',
             'status_nikah.in'                => ':attribute harus salah satu dari jenis berikut :values',
             'no_ktp.digits'                  => ':attribute harus berupa angka dan berjumlah :digits digit',

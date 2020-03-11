@@ -29,6 +29,7 @@ class RekomendasiAO extends Model implements AuthenticatableContract, Authorizab
     protected $casts = [
         'plafon_kredit'         => 'integer',
         'jangka_waktu'          => 'integer',
+        'suku_bunga'            => 'float',
         'biaya_provisi'         => 'integer',
         'biaya_administrasi'    => 'integer',
         'biaya_credit_checking' => 'integer',

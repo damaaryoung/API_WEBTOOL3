@@ -30,7 +30,10 @@ class RingkasanAnalisa extends Model implements AuthenticatableContract, Authori
         'kuantitatif_ttl_pendapatan'    => 'integer',
         'kuantitatif_ttl_pengeluaran'   => 'integer',
         'kuantitatif_pendapatan_bersih' => 'integer',
-        'kuantitatif_angsuran'          => 'integer'
+        'kuantitatif_angsuran'          => 'integer',
+        'kuantitatif_ltv'               => 'float',
+        'kuantitatif_dsr'               => 'float',
+        'kuantitatif_idir'              => 'float'
     ];
 
     public $timestamps = false;
