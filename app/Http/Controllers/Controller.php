@@ -256,13 +256,11 @@ class Controller extends BaseController
             $file->move($path, $namefile);
         }else{
             // cut size image
+            Image::make(realpath($file))->save($fullPath);
+
             // Image::make(realpath($file))->resize(480, 360, function ($constraint) {
             //     $constraint->aspectRatio();
             // })->save($fullPath);
-
-            Image::make(realpath($file))->resize(480, 360, function ($constraint) {
-                $constraint->aspectRatio();
-            })->save($fullPath);
 
             // $quick = Image::cache(function($image) use ($file, $fullPath) {
             //     return $image->make($file)->resize(480, 360)->save($fullPath);
