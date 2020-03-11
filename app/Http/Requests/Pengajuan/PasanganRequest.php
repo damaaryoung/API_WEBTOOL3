@@ -33,7 +33,7 @@ class PasanganRequest extends FormRequest
                     $rules['no_kk_pas']     = 'digits:16|unique:web.pasangan_calon_debitur,no_kk,'.$check->id_pasangan;
                     $rules['no_npwp_pas']   = 'digits:15|unique:web.pasangan_calon_debitur,no_npwp,'.$check->id_pasangan;
                     $rules['tgl_lahir_pas'] = 'date_format:d-m-Y';
-                    $rules['no_telp_pas']   = 'between:11,13|unique:web.pasangan_calon_debitur,no_telp,'.$check->id_pasangan;
+                    $rules['no_telp_pas']   = 'between:9,13|unique:web.pasangan_calon_debitur,no_telp,'.$check->id_pasangan;
                 }
             }
 
@@ -60,7 +60,7 @@ class PasanganRequest extends FormRequest
                 'no_ktp_kk_pas'         => 'digits:16|unique:web.pasangan_calon_debitur,no_ktp_kk',
                 'no_npwp_pas'           => 'digits:15|unique:web.pasangan_calon_debitur,no_npwp',
                 'tgl_lahir_pas'         => 'date_format:d-m-Y',
-                'no_telp_pas'           => 'between:11,13|unique:web.pasangan_calon_debitur,no_telp',
+                'no_telp_pas'           => 'between:9,13|unique:web.pasangan_calon_debitur,no_telp',
                 'lamp_ktp_pas'          => 'mimes:jpg,jpeg,png,pdf',
                 'lamp_kk_pas'           => 'mimes:jpg,jpeg,png,pdf'
             ];

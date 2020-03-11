@@ -29,7 +29,7 @@ class PenjaminRequest extends FormRequest
             if ($check->id_penjamin != null) {
                 $rules['no_ktp_pen']  = 'digits:16|unique:web.penjamin_calon_debitur,no_ktp,' . $check->id;
                 $rules['no_npwp_pen'] = 'digits:15|unique:web.penjamin_calon_debitur,no_npwp,' . $check->id;
-                $rules['no_telp_pen'] = 'between:11,13|unique:web.penjamin_calon_debitur,no_telp,' . $check->id;
+                $rules['no_telp_pen'] = 'between:9,13|unique:web.penjamin_calon_debitur,no_telp,' . $check->id;
             }
 
             $rules = [
@@ -54,7 +54,7 @@ class PenjaminRequest extends FormRequest
                 'no_npwp_pen.*'           => 'digits:15}unique:web.penjamin_calon_debitur,no_npwp',
                 'tgl_lahir_pen.*'         => 'date_format:d-m-Y',
                 'jenis_kelamin_pen.*'     => 'in:L,P',
-                'no_telp_pen.*'           => 'between:11,13}unique:web.penjamin_calon_debitur,no_telp',
+                'no_telp_pen.*'           => 'between:9,13}unique:web.penjamin_calon_debitur,no_telp',
                 'lamp_ktp_pen.*'          => 'mimes:jpg,jpeg,png,pdf',
                 'lamp_ktp_pasangan_pen.*' => 'mimes:jpg,jpeg,png,pdf',
                 'lamp_kk_pen.*'           => 'mimes:jpg,jpeg,png,pdf',

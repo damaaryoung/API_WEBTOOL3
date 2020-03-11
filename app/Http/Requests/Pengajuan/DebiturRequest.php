@@ -32,8 +32,8 @@ class DebiturRequest extends FormRequest
                 $rules['no_ktp_kk'] = 'digits:16|unique:web.calon_debitur,no_ktp_kk,'.$check->id;
                 $rules['no_kk']     = 'digits:16|unique:web.calon_debitur,no_kk,'.$check->id;
                 $rules['no_npwp']   = 'digits:15|unique:web.calon_debitur,no_npwp,'.$check->id;
-                $rules['no_telp']   = 'between:11,13|unique:web.calon_debitur,no_telp,'.$check->id;
-                $rules['no_hp']     = 'between:11,13|unique:web.calon_debitur,no_hp,'.$check->id;
+                $rules['no_telp']   = 'between:9,13|unique:web.calon_debitur,no_telp,'.$check->id;
+                $rules['no_hp']     = 'between:9,13|unique:web.calon_debitur,no_hp,'.$check->id;
             }
         }
 
