@@ -35,7 +35,7 @@ class BlankRequest extends FormRequest
                     for ($i = 0; $i < count($id_penj); $i++) {
                         $rules['no_ktp_pen.'.$i]  = 'digits:16|unique:web.penjamin_calon_debitur,no_ktp,' . $id_penj[$i];
                         $rules['no_npwp_pen.'.$i] = 'digits:15|unique:web.penjamin_calon_debitur,no_npwp,' . $id_penj[$i];
-                        $rules['no_telp_pen.'.$i] = 'between:11,13|unique:web.penjamin_calon_debitur,no_telp,' . $id_penj[$i];
+                        $rules['no_telp_pen.'.$i] = 'between:9,13|unique:web.penjamin_calon_debitur,no_telp,' . $id_penj[$i];
                     }
                 }
 
@@ -45,7 +45,7 @@ class BlankRequest extends FormRequest
                     $rules['no_kk_pas']     = 'digits:16|unique:web.pasangan_calon_debitur,no_kk,'.$trans->id_pasangan;
                     $rules['no_npwp_pas']   = 'digits:15|unique:web.pasangan_calon_debitur,no_npwp,'.$trans->id_pasangan;
                     $rules['tgl_lahir_pas'] = 'date_format:d-m-Y';
-                    $rules['no_telp_pas']   = 'between:11,13|unique:web.pasangan_calon_debitur,no_telp,'.$trans->id_pasangan;
+                    $rules['no_telp_pas']   = 'between:9,13|unique:web.pasangan_calon_debitur,no_telp,'.$trans->id_pasangan;
                 }
 
                 if ($trans->id_calon_debt != null) {
@@ -53,8 +53,8 @@ class BlankRequest extends FormRequest
                     $rules['no_ktp_kk'] = 'digits:16|unique:web.calon_debitur,no_ktp_kk,'.$trans->id_calon_debt;
                     $rules['no_kk']     = 'digits:16|unique:web.calon_debitur,no_kk,'.$trans->id_calon_debt;
                     $rules['no_npwp']   = 'digits:15|unique:web.calon_debitur,no_npwp,'.$trans->id_calon_debt;
-                    $rules['no_telp']   = 'between:11,13|unique:web.calon_debitur,no_telp,'.$trans->id_calon_debt;
-                    $rules['no_hp']     = 'between:11,13|unique:web.calon_debitur,no_hp,'.$trans->id_calon_debt;
+                    $rules['no_telp']   = 'between:9,13|unique:web.calon_debitur,no_telp,'.$trans->id_calon_debt;
+                    $rules['no_hp']     = 'between:9,13|unique:web.calon_debitur,no_hp,'.$trans->id_calon_debt;
                 }
             }
 
@@ -84,8 +84,8 @@ class BlankRequest extends FormRequest
                 'id_kecamatan_domisili' => 'integer',
                 'id_kelurahan_domisili' => 'integer',
                 'jumlah_tanggungan'     => 'integer',
-                'no_telp'               => 'between:11,13',
-                'no_hp'                 => 'between:11,13',
+                'no_telp'               => 'between:9,13',
+                'no_hp'                 => 'between:9,13',
 
                 // Pasangan
                 'jenis_kelamin_pas'         => 'in:L,P',
@@ -316,8 +316,8 @@ class BlankRequest extends FormRequest
                 'id_kelurahan_domisili' => 'integer',
                 'jumlah_tanggungan'     => 'integer',
                 'pendidikan_terakhir'   => 'required',
-                'no_telp'               => 'required|between:11,13',
-                'no_hp'                 => 'between:11,13',
+                'no_telp'               => 'required|between:9,13',
+                'no_hp'                 => 'between:9,13',
                 'alamat_surat'          => 'required',
 
                 'tgl_lahir_anak.*'      => 'date_format:d-m-Y',
@@ -347,7 +347,7 @@ class BlankRequest extends FormRequest
                 'no_kk_pas'                 => 'digits:16',
                 'no_npwp_pas'               => 'digits:15',
 
-                'no_telp_pas'               => 'between:11,13',
+                'no_telp_pas'               => 'between:9,13',
                 'tgl_lahir_pas'             => 'date_format:d-m-Y',
 
                 // 'lamp_ktp_pas'              => 'mimes:jpg,jpeg,png',
@@ -365,7 +365,7 @@ class BlankRequest extends FormRequest
                 // Penjamin
                 'no_ktp_pen.*'              => 'digits:16',
                 'no_npwp_pen.*'             => 'digits:15',
-                'no_telp_pen.*'             => 'between:11,13',
+                'no_telp_pen.*'             => 'between:9,13',
 
                 'tgl_lahir_pen.*'            => 'date_format:d-m-Y',
                 'jenis_kelamin_pen.*'        => 'in:L,P',
