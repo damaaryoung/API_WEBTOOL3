@@ -159,21 +159,19 @@ class MasterAO_Controller extends BaseController
             ], 404);
         }
 
-        $id_penj = explode (",",$val->id_penjamin);
+        $penjamin = Penjamin::whereIn('id', explode (",",$val->id_penjamin))->get();
 
-        $penjamin = Penjamin::whereIn('id', $id_penj)->get();
-
-        if ($penjamin != '[]') {
-            $pen = array();
-            foreach ($penjamin as $key => $value) {
-                $pen[$key] = [
-                    "id"        => $val->id == null ? null : (int) $value->id,
-                    "nama_ktp"  => $value->nama_ktp,
-                ];
-            }
-        }else{
-            $pen = null;
-        }
+        // if ($penjamin != '[]') {
+        //     $pen = array();
+        //     foreach ($penjamin as $key => $value) {
+        //         $pen[$key] = [
+        //             "id"        => $val->id == null ? null : (int) $value->id,
+        //             "nama_ktp"  => $value->nama_ktp,
+        //         ];
+        //     }
+        // }else{
+        //     $pen = null;
+        // }
 
         if ($val->status_das == 1) {
             $status_das = 'complete';
@@ -229,7 +227,7 @@ class MasterAO_Controller extends BaseController
                 'id'             => $val->id_pasangan == null ? null : (int) $val->id_pasangan,
                 'nama_lengkap'   => $val->pas['nama_lengkap'],
             ],
-            'data_penjamin' => $pen,
+            'data_penjamin' => $penjamin,
             'das'=> [
                 'status'  => $status_das,
                 'catatan' => $val->catatan_das

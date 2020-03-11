@@ -8,6 +8,9 @@ use App\Http\Requests\Transaksi\BlankRequest;
 use App\Models\Pengajuan\CAA\Penyimpangan;
 use App\Models\Pengajuan\AO\AgunanKendaraan;
 use App\Models\Pengajuan\AO\AgunanTanah;
+use App\Models\Pengajuan\AO\PemeriksaanAgunTan;
+use App\Models\Pengajuan\AO\PemeriksaanAgunKen;
+use App\Models\Pengajuan\SO\Penjamin;
 use App\Models\Pengajuan\CA\InfoACC;
 use Illuminate\Support\Facades\File;
 use App\Models\Transaksi\Approval;
@@ -197,7 +200,7 @@ class MasterCAA_Controller extends BaseController
 
         $PIC = PIC::where('user_id', $user_id)->first();
 
-        if ($PIC == null) {
+        if (empty($PIC)) {
             return response()->json([
                 "code"    => 404,
                 "status"  => "not found",

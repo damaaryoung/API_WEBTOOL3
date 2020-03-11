@@ -5,11 +5,14 @@ namespace App\Http\Controllers\Transaksi;
 use Laravel\Lumen\Routing\Controller as BaseController;
 use App\Models\Pengajuan\CA\RekomendasiPinjaman;
 
+use App\Models\Pengajuan\AO\AgunanTanah;
+use App\Models\Pengajuan\AO\AgunanKendaraan;
 use App\Models\Pengajuan\AO\PemeriksaanAgunTan;
-// use App\Models\Pengajuan\AO\PemeriksaanAgunKen;
+use App\Models\Pengajuan\AO\PemeriksaanAgunKen;
 
 use App\Models\Pengajuan\CA\AsuransiJaminan;
 use App\Models\Pengajuan\AO\PendapatanUsaha;
+use App\Models\Pengajuan\SO\Penjamin;
 use App\Http\Controllers\Controller as Helper;
 use App\Http\Requests\Transaksi\BlankRequest;
 use App\Models\Pengajuan\CA\RingkasanAnalisa;
@@ -244,7 +247,7 @@ class MasterCA_Controller extends BaseController
         $user_id = $req->auth->user_id;
         $pic     = PIC::where('user_id', $user_id)->first();
 
-        if ($pic == null) {
+        if (empty($pic)) {
             return response()->json([
                 "code"    => 404,
                 "status"  => "not found",
@@ -258,7 +261,7 @@ class MasterCA_Controller extends BaseController
 
         $check_so = TransSO::where('id', $id)->where('status_das', 1)->where('status_hm', 1)->first();
 
-        if (!$check_so) {
+        if (empty($check_so)) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
@@ -271,7 +274,7 @@ class MasterCA_Controller extends BaseController
         $vals = Helper::checkDir($scope, $query_dir, $id_area, $id_cabang);
         $val = $vals->first();
 
-        if ($val == null) {
+        if (empty($val)) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
@@ -279,50 +282,58 @@ class MasterCA_Controller extends BaseController
             ], 404);
         }
 
-        $id_penj = explode (",", $val->so['id_penjamin']);
+        // $id_penj = explode (",", $val->so['id_penjamin']);
 
-        foreach ($id_penj as $key => $value) {
-            $idPen[$key] = array(
-                'id' => $value == null ? null : (int) $value
-            );
-        }
+        // foreach ($id_penj as $key => $value) {
+        //     $idPen[$key] = array(
+        //         'id' => $value == null ? null : (int) $value
+        //     );
+        // }
 
-
-        $id_agu_ta = explode (",",$val->id_agunan_tanah);
-
-        foreach ($id_agu_ta as $key => $value) {
-            $idTan[$key] = array(
-                'id' => $value == null ? null : (int) $value
-            );
-        }
+        $idPen = Penjamin::whereIn('id',  explode (",", $val->so['id_penjamin']))->get();
 
 
-        $id_agu_ke = explode (",",$val->id_agunan_kendaraan);
+        // $id_agu_ta = explode (",",$val->id_agunan_tanah);
 
-        foreach ($id_agu_ke as $key => $value) {
-            $idKen[$key] = array(
-                'id' => $value == null ? null : (int) $value
-            );
-        }
+        // foreach ($id_agu_ta as $key => $value) {
+        //     $idTan[$key] = array(
+        //         'id' => $value == null ? null : (int) $value
+        //     );
+        // }
 
-
-        $id_pe_agu_ta = explode (",",$val->id_periksa_agunan_tanah);
-
-        foreach ($id_pe_agu_ta as $key => $value) {
-            $idPeTan[$key] = array(
-                'id' => $value == null ? null : (int) $value
-            );
-        }
+        $idTan = AgunanTanah::whereIn('id', explode (",",$val->id_agunan_tanah))->get();
 
 
-        $id_pe_agu_ke = explode (",",$val->id_periksa_agunan_kendaraan);
+        // $id_agu_ke = explode (",",$val->id_agunan_kendaraan);
 
-        foreach ($id_pe_agu_ke as $key => $value) {
-            $idPeKen[$key] = array(
-                'id' => $value == null ? null : (int) $value
-            );
-        }
+        // foreach ($id_agu_ke as $key => $value) {
+        //     $idKen[$key] = array(
+        //         'id' => $value == null ? null : (int) $value
+        //     );
+        // }
 
+        $idKen = AgunanKendaraan::whereIn('id', explode (",",$val->id_agunan_kendaraan))->get();
+
+        // $id_pe_agu_ta = explode (",",$val->id_periksa_agunan_tanah);
+
+        // foreach ($id_pe_agu_ta as $key => $value) {
+        //     $idPeTan[$key] = array(
+        //         'id' => $value == null ? null : (int) $value
+        //     );
+        // }
+
+        $idPeTan = PemeriksaanAgunTan::whereIn('id', explode (",",$val->id_periksa_agunan_tanah))->get();
+
+
+        // $id_pe_agu_ke = explode (",",$val->id_periksa_agunan_kendaraan);
+
+        // foreach ($id_pe_agu_ke as $key => $value) {
+        //     $idPeKen[$key] = array(
+        //         'id' => $value == null ? null : (int) $value
+        //     );
+        // }
+
+        $idPeKen = PemeriksaanAgunKen::whereIn('id', explode (",",$val->id_periksa_agunan_kendaraan))->get();
 
         if ($val->status_ao == 1) {
             $status_ao = 'recommend';
