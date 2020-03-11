@@ -6,6 +6,7 @@ use Laravel\Lumen\Routing\Controller as BaseController;
 use App\Http\Controllers\Controller as Helper;
 use Illuminate\Support\Facades\File;
 use Illuminate\Http\Request;
+use Imagick;
 use Image;
 use DB;
 
@@ -190,23 +191,15 @@ class ImgController extends BaseController
 
     public function testUp(Request $req)
     {
-        // $file = $req->file('file');
-        
-        // $path = '192.168.1.38/upload';
-        
-        // $name = 'test.'.$file->getClientOriginalName();
+        $file = $req->file('file');
 
-        // $img = Image::make(realpath($file))->save($path . '/' . $name);
+        $name = $file->getClientOriginalName();
 
-        // return response()->json([$img], 200);
+        $thumbPath = public_path('base/thumbnail/').$name;
 
-        /* Source File URL */
-        $remote_file_url = 'http://103.31.232.146:3737/public/1218091802890001/debitur/kk.IMG20200302121234.jpg';
-        
-        /* New file name and path for this file */
-        $local_file = 'new-hack.png';
-        
-        /* Copy the file from source url to server */
-        return copy($remote_file_url, $local_file);
+        $targetName = $name.'.jpeg';
+
+        $result = Helper::genPdfThumbnail($thumbPath, $targetName);
+        return json()->json(['thumb' => $result], 200);
     } 
 }

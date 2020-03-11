@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Laravel\Lumen\Routing\Controller as BaseController;
 use Illuminate\Support\Facades\File;
+use Imagick;
 use Image;
 class Controller extends BaseController
 {
@@ -231,6 +232,21 @@ class Controller extends BaseController
         return $out;
     }
 
+    public static function genPdfThumbnail($source, $targetName)
+	{
+		//$source = realpath($source);
+		$target = dirname($source).DIRECTORY_SEPARATOR.$targetName;
+		$im     = new Imagick($source."[0]"); // 0-first page, 1-second page
+		$im->setImageColorspace(255); // prevent image colors from inverting
+		$im->setimageformat("jpeg");
+		$im->thumbnailimage(150,150); // width and height
+		$im->writeimage($targetName);
+		$im->clear();
+        $im->destroy();
+        
+        return $target;
+	}
+
     public static function uploadImg($check, $file, $path, $name)
     {
         // Check Directory
@@ -251,12 +267,16 @@ class Controller extends BaseController
         }
 
         $fullPath = $path.'/'.$namefile;
+        $thumbPath = $path.'/thumbnail/'.$namefile;
         
         if($file->getClientMimeType() == "application/pdf"){
             $file->move($path, $namefile);
+            self::genPdfThumbnail($thumbPath, $namefile.'.jpg');
         }else{
             // cut size image
-            Image::make(realpath($file))->save($fullPath);
+            Image::make(realpath($file))->save($fullPath); // Original
+
+            Image::make(realpath($file))->resize(150,150)->save($thumbPath); // Thumbnail
 
             // Image::make(realpath($file))->resize(480, 360, function ($constraint) {
             //     $constraint->aspectRatio();
