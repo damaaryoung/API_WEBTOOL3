@@ -79,6 +79,14 @@ class MasterCA_Controller extends BaseController
                 $status_ca = 'waiting';
             }
 
+            if ($val->so['caa']['status_caa'] == 1) {
+                $status_caa = 'recommend';
+            }elseif($val->so['caa']['status_caa'] == 2){
+                $status_caa = 'not recommend';
+            }else{
+                $status_caa = 'waiting';
+            }
+
             $data[$key] = [
                 'id_trans_so'    => $val->id_trans_so == null ? null : (int) $val->id_trans_so,
                 'id_trans_ca'    => $val->so['id_trans_ca'] == null ? null : (int) $val->so['id_trans_ca'],
@@ -100,6 +108,10 @@ class MasterCA_Controller extends BaseController
                 "ca" => [
                     'status_ca'     => $status_ca,
                     'catatan_ca'    => $val->so['ca']['catatan_ca']
+                ],
+                "caa" => [
+                    'status_caa'     => $status_caa,
+                    'catatan_caa'    => $val->so['caa']['catatan_caa']
                 ],
                 'tgl_transaksi' => $val->created_at
             ];
