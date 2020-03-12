@@ -21,7 +21,7 @@ class AreaController extends BaseController
     {
         $data = array();
 
-        $query = Cache::remember('area.index', $this->time_cache, function () use ($data) {
+        // $query = Cache::remember('area.index', $this->time_cache, function () use ($data) {
 
             Area::select('id', 'nama as nama_area')
                 ->addSelect([
@@ -36,10 +36,10 @@ class AreaController extends BaseController
                     }
                 });
 
-            return $data;
-        });
+            // return $data;
+        // });
 
-        if (empty($query)) {
+        if (empty($data)) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
@@ -51,8 +51,8 @@ class AreaController extends BaseController
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'count'  => sizeof($query),
-                'data'   => $query
+                'count'  => sizeof($data),
+                'data'   => $data
             ], 200);
         } catch (\Exception $e) {
             return response()->json([

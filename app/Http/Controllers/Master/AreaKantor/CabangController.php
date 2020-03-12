@@ -25,7 +25,7 @@ class CabangController extends BaseController
     {
         $data = array();
 
-        $query = Cache::remember('cabang.index', $this->time_cache, function () use ($data) {
+        // $query = Cache::remember('cabang.index', $this->time_cache, function () use ($data) {
 
             Cabang::select('id', 'nama as nama_cabang', 'jenis_kantor')
                 ->addSelect([
@@ -42,10 +42,10 @@ class CabangController extends BaseController
                     }
                 });
 
-            return $data;
-        });
+            // return $data;
+        // });
 
-        if (empty($query)) {
+        if (empty($data)) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
@@ -57,8 +57,8 @@ class CabangController extends BaseController
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'count'  => sizeof($query),
-                'data'   => $query
+                'count'  => sizeof($data),
+                'data'   => $data
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
