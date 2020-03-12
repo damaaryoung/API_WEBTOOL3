@@ -309,6 +309,7 @@ class MasterCA_Controller extends BaseController
             'id_trans_so'    => $val->id_trans_so == null ? null : (int) $val->id_trans_so,
             'nomor_so'       => $val->so['nomor_so'],
             'nama_so'        => $val->so['nama_so'],
+            'nomor_ao'       => $val->nomor_ao,
             'status_ao'      => $status_ao,
             'status_ca'      => $status_ca,
             'nama_marketing' => $val->so['nama_marketing'],

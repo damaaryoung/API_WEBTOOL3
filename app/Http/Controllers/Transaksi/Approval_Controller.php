@@ -475,7 +475,7 @@ class Approval_Controller extends BaseController
 
         $check_so = TransSO::where('id', $id)->first();
 
-        if ($check_so == null) {
+        if (empty($check_so)) {
             return response()->json([
                 "code"    => 404,
                 "status"  => "not found",
@@ -485,7 +485,7 @@ class Approval_Controller extends BaseController
 
         $check_ao = TransAO::where('status_ao', 1)->where('id_trans_so', $id)->first();
 
-        if ($check_ao == null) {
+        if (empty($check_ao)) {
             return response()->json([
                 "code"    => 404,
                 "status"  => "not found",
@@ -495,7 +495,7 @@ class Approval_Controller extends BaseController
 
         $check_ca = TransCA::where('status_ca', 1)->where('id_trans_so', $id)->latest()->first();
 
-        if ($check_ca == null) {
+        if (empty($check_ca)) {
             return response()->json([
                 "code"    => 404,
                 "status"  => "not found",
@@ -505,7 +505,7 @@ class Approval_Controller extends BaseController
 
         $check_caa = TransCAA::where('status_caa', 1)->where('id_trans_so', $id)->first();
 
-        if ($check_caa == null) {
+        if (empty($check_caa)) {
             return response()->json([
                 "code"    => 404,
                 "status"  => "not found",
@@ -516,7 +516,7 @@ class Approval_Controller extends BaseController
 
         $check_team = Approval::where('id_trans_so', $id)->whereIn('id_pic', explode(",", $check_caa->pic_team_caa))->get();
 
-        if ($check_team == '[]') {
+        if (empty($check_team)) {
             return response()->json([
                 "code"    => 404,
                 "status"  => "not found",
@@ -531,19 +531,14 @@ class Approval_Controller extends BaseController
                 'id_pic'  => $val->id_pic  == null ? null : (int) $val->id_pic,
                 'user_id' => $val->user_id == null ? null : (int) $val->user_id,
                 'nama_pic'=> $val->pic['nama'],
-                'plafon'  => (int) $val->plafon,
-                'tenor'   => (int) $val->tenor,
+                'plafon'  => $val->plafon,
+                'tenor'   => $val->tenor,
                 'status'  => $val->status,
                 'rincian' => $val->rincian
             ];
         }
 
-        // Agunan Tanah
-        // $id_agu_ta = explode (",",$check_ao->id_agunan_tanah);
-
-        $id_agu_ta = explode (",", null);
-
-        $AguTa = AgunanTanah::whereIn('id', $id_agu_ta)->get();
+        $AguTa = AgunanTanah::whereIn('id', explode(",", $check_ao->id_agunan_tanah))->get();
 
         $idTan = array();
         foreach ($AguTa as $key => $value) {
@@ -555,9 +550,7 @@ class Approval_Controller extends BaseController
 
 
         // Agunan Kendaraan
-        $id_agu_ke = explode (",",$check_ao->id_agunan_kendaraan);
-
-        $AguKe = AgunanKendaraan::whereIn('id', $id_agu_ke)->get();
+        $AguKe = AgunanKendaraan::whereIn('id', explode (",",$check_ao->id_agunan_kendaraan))->get();
 
         $idKen = array();
         foreach ($AguKe as $key => $value) {
