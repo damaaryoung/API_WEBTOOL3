@@ -9,6 +9,7 @@ use App\Models\Wilayah\Provinsi;
 use App\Models\Wilayah\Kabupaten;
 use App\Models\Wilayah\Kecamatan;
 use App\Models\Wilayah\Kelurahan;
+use App\Models\AreaKantor\Area;
 // use Illuminate\Http\Request;
 use App\Models\User;
 use Carbon\Carbon;
@@ -29,6 +30,7 @@ class CabangController extends BaseController
 
             Cabang::select('id', 'nama as nama_cabang', 'jenis_kantor')
                 ->addSelect([
+                    'nama_area'      => Area::select('nama')->whereColumn('id_area', 'mk_area.id'),
                     'nama_provinsi'  => Provinsi::select('nama')->whereColumn('id_provinsi', 'master_provinsi.id'),
                     'nama_kabupaten' => Kabupaten::select('nama')->whereColumn('id_kabupaten', 'master_kabupaten.id'),
                     'nama_kecamatan' => Kecamatan::select('nama')->whereColumn('id_kecamatan', 'master_kecamatan.id'),
