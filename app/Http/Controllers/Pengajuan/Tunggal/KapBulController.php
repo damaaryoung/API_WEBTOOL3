@@ -45,7 +45,7 @@ class KapBulController extends BaseController
                 'rumah_tangga'  => $check->biaya_rumah_tangga,
                 'transport'     => $check->biaya_transport,
                 'pendidikan'    => $check->biaya_pendidikan,
-                'telp_list_air' => $check->biaya_telp_listr_air,
+                'telp_list_air' => $check->telp_listr_air,
                 'angsuran'      => $check->angsuran,
                 'lain_lain'     => $check->biaya_lain,
                 'total'         => $check->total_pengeluaran
@@ -111,8 +111,8 @@ class KapBulController extends BaseController
             'biaya_pendidikan'      => empty($req->input('biaya_pendidikan')) ? 
                 ($check->biaya_pendidikan == null ? 0 : $check->biaya_pendidikan) : $req->input('biaya_pendidikan'),
 
-            'biaya_telp_listr_air'  => empty($req->input('biaya_telp_listr_air')) ? 
-                ($check->biaya_telp_listr_air == null ? 0 : $check->biaya_telp_listr_air) : $req->input('biaya_telp_listr_air'),
+            'telp_listr_air'        => empty($req->input('telp_listr_air')) ? 
+                ($check->telp_listr_air == null ? 0 : $check->telp_listr_air) : $req->input('telp_listr_air'),
 
             'angsuran'              => empty($req->input('angsuran')) ? 
                 ($check->angsuran == null ? 0 : $check->angsuran) : $req->input('angsuran'),

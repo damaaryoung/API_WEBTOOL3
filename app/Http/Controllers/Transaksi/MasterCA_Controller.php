@@ -485,7 +485,7 @@ class MasterCA_Controller extends BaseController
             'biaya_pendidikan'
                 => empty($req->input('biaya_pendidikan'))     ? 0 : $req->input('biaya_pendidikan'),
 
-            'biaya_telp_listr_air'
+            'telp_listr_air'
                 => empty($req->input('telp_listr_air'))       ? 0 : $req->input('telp_listr_air'),
 
             'angsuran'
@@ -1166,8 +1166,8 @@ class MasterCA_Controller extends BaseController
             'biaya_pendidikan'
                 => empty($req->input('biaya_pendidikan'))     ? $check_ca->usaha['biaya_pendidikan'] : $req->input('biaya_pendidikan'),
 
-            'biaya_telp_listr_air'
-                => empty($req->input('telp_listr_air'))       ? $check_ca->usaha['biaya_telp_listr_air'] : $req->input('telp_listr_air'),
+            'telp_listr_air'
+                => empty($req->input('telp_listr_air'))       ? $check_ca->usaha['telp_listr_air'] : $req->input('telp_listr_air'),
 
             'angsuran'
                 => empty($req->input('angsuran'))             ? $check_ca->usaha['angsuran'] : $req->input('angsuran'),
@@ -1458,7 +1458,7 @@ class MasterCA_Controller extends BaseController
             'biaya_pendidikan'
                 => empty($req->input('biaya_pendidikan'))     ? 0 : (int) $req->input('biaya_pendidikan'),
 
-            'biaya_telp_listr_air'
+            'telp_listr_air'
                 => empty($req->input('telp_listr_air'))       ? 0 : (int) $req->input('telp_listr_air'),
 
             'angsuran'

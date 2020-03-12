@@ -762,7 +762,7 @@ class MasterCAA_Controller extends BaseController
                 'biaya_rumah_tangga'    => $check_ca->kapbul['biaya_rumah_tangga'],
                 'biaya_transport'       => $check_ca->kapbul['biaya_transport'],
                 'biaya_pendidikan'      => $check_ca->kapbul['biaya_pendidikan'],
-                'biaya_telp_listr_air'  => $check_ca->kapbul['biaya_telp_listr_air'],
+                'telp_listr_air'        => $check_ca->kapbul['telp_listr_air'],
                 'angsuran'              => $check_ca->kapbul['angsuran'],
                 'biaya_lain'            => $check_ca->kapbul['biaya_lain'],
                 'total_pemasukan'       => $check_ca->kapbul['total_pemasukan'],

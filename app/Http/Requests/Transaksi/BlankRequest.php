@@ -157,7 +157,7 @@ class BlankRequest extends FormRequest
                 'luas_bangunan.*'       => 'integer',
                 'jenis_sertifikat.*'    => 'in:SHM,SHGB',
                 // 'tgl_ukur_sertifikat.*' => 'date_format:d-m-Y',
-                'tgl_berlaku_shgb.*'      => 'date_format:d-m-Y',
+                // 'tgl_berlaku_shgb.*'      => 'date_format:d-m-Y',
                 'agunan_bag_depan.*'      => 'mimes:jpg,jpeg,png,pdf',
                 'agunan_bag_jalan.*'      => 'mimes:jpg,jpeg,png,pdf',
                 'agunan_bag_ruangtamu.*'  => 'mimes:jpg,jpeg,png,pdf',
@@ -181,7 +181,7 @@ class BlankRequest extends FormRequest
                 'biaya_rumah_tangga'    => 'integer',
                 'biaya_transport'       => 'integer',
                 'biaya_pendidikan'      => 'integer',
-                'biaya_telp_listr_air'  => 'integer',
+                'telp_listr_air'        => 'integer',
                 'biaya_lain'            => 'integer',
 
                 // Pendapatan Usaha
@@ -422,7 +422,7 @@ class BlankRequest extends FormRequest
                 'luas_bangunan.*'       => 'integer',
                 'jenis_sertifikat.*'    => 'in:SHM,SHGB',
                 // 'tgl_ukur_sertifikat.*' => 'date_format:d-m-Y',
-                'tgl_berlaku_shgb.*'      => 'date_format:d-m-Y',
+                // 'tgl_berlaku_shgb.*'      => 'date_format:d-m-Y',
                 'agunan_bag_depan.*'      => 'mimes:jpg,jpeg,png,pdf',
                 'agunan_bag_jalan.*'      => 'mimes:jpg,jpeg,png,pdf',
                 'agunan_bag_ruangtamu.*'  => 'mimes:jpg,jpeg,png,pdf',
@@ -446,7 +446,7 @@ class BlankRequest extends FormRequest
                 'biaya_rumah_tangga'    => 'integer',
                 'biaya_transport'       => 'integer',
                 'biaya_pendidikan'      => 'integer',
-                'biaya_telp_listr_air'  => 'integer',
+                'telp_listr_air'        => 'integer',
                 'biaya_lain'            => 'integer',
 
                 // Pendapatan Usaha
@@ -745,7 +745,7 @@ class BlankRequest extends FormRequest
             'luas_bangunan.*.integer'         => $integer,
             'jenis_sertifikat.*.in'           => $in,
             // 'tgl_ukur_sertifikat.*.date_format' => $date_format,
-            'tgl_berlaku_shgb.*.date_format'  => $date_format,
+            // 'tgl_berlaku_shgb.*.date_format'  => $date_format,
 
             'agunan_bag_depan.*.mimes'       => $mimes,
             'agunan_bag_jalan.*.mimes'       => $mimes,
@@ -784,7 +784,7 @@ class BlankRequest extends FormRequest
             'biaya_transport.integer'       => $integer,
             'biaya_pendidikan.integer'      => $integer,
             'angsuran.integer'              => $integer,
-            'biaya_telp_listr_air.integer'  => $integer,
+            'telp_listr_air.integer'        => $integer,
             'biaya_lain.integer'            => $integer,
 
             // Pendapatan Usaha

@@ -29,7 +29,7 @@ class KapbulRequest extends FormRequest
             'biaya_rumah_tangga'    => 'integer',
             'biaya_transport'       => 'integer',
             'biaya_pendidikan'      => 'integer',
-            'biaya_telp_listr_air'  => 'integer',
+            'telp_listr_air'        => 'integer',
             'biaya_lain'            => 'integer',
             'angsuran'              => 'integer'
         ];
@@ -44,7 +44,7 @@ class KapbulRequest extends FormRequest
             'biaya_rumah_tangga.integer'    => ':attribute harus berupa angka / bilangan bulat',
             'biaya_transport.integer'       => ':attribute harus berupa angka / bilangan bulat',
             'biaya_pendidikan.integer'      => ':attribute harus berupa angka / bilangan bulat',
-            'biaya_telp_listr_air.integer'  => ':attribute harus berupa angka / bilangan bulat',
+            'telp_listr_air.integer'        => ':attribute harus berupa angka / bilangan bulat',
             'biaya_lain.integer'            => ':attribute harus berupa angka / bilangan bulat',
             'angsuran.integer'              => ':attribute harus berupa angka / bilangan bulat'
         ];

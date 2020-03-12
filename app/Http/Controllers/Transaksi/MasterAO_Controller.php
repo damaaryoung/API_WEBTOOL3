@@ -934,7 +934,7 @@ class MasterAO_Controller extends BaseController
             'biaya_rumah_tangga'    => $req->input('biaya_rumah_tangga'),
             'biaya_transport'       => $req->input('biaya_transport'),
             'biaya_pendidikan'      => $req->input('biaya_pendidikan'),
-            'biaya_telp_listr_air'  => $req->input('telp_listr_air'), // jangan lupa hampir sama dengan pendapatan usaha
+            'telp_listr_air'        => $req->input('telp_listr_air'), // jangan lupa hampir sama dengan pendapatan usaha
             'angsuran'              => $req->input('angsuran'),
             'biaya_lain'            => $req->input('biaya_lain')
         );

@@ -62,7 +62,7 @@ class A_KendaraanRequest extends FormRequest
                 'luas_bangunan.*.numeric'           => ':attribute harus berupa angka',
                 'jenis_sertifikat.*.in'             => ':attribute harus salah satu dari jenis berikut :values',
                 // 'tgl_ukur_sertifikat.*.date_format' => ':attribute harus berupa angka dengan format :format',
-                'tgl_berlaku_shgb.*.date_format'    => ':attribute harus berupa angka dengan format :format',
+                // 'tgl_berlaku_shgb.*.date_format'    => ':attribute harus berupa angka dengan format :format',
 
                 'lamp_agunan_depan.*.mimes'         => ':attribute harus bertipe :values',
                 'lamp_agunan_kanan.*.mimes'         => ':attribute harus bertipe :values',
@@ -84,7 +84,7 @@ class A_KendaraanRequest extends FormRequest
                 'luas_bangunan.numeric'           => ':attribute harus berupa angka',
                 'jenis_sertifikat.in'             => ':attribute harus salah satu dari jenis berikut :values',
                 // 'tgl_ukur_sertifikat.date_format' => ':attribute harus berupa angka dengan format :format',
-                'tgl_berlaku_shgb.date_format'    => ':attribute harus berupa angka dengan format :format',
+                // 'tgl_berlaku_shgb.date_format'    => ':attribute harus berupa angka dengan format :format',
 
                 'lamp_agunan_depan.mimes'         => ':attribute harus bertipe :values',
                 'lamp_agunan_kanan.mimes'         => ':attribute harus bertipe :values',
