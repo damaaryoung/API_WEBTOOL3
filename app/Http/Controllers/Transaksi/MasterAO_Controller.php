@@ -127,6 +127,113 @@ class MasterAO_Controller extends BaseController
         }
     }
 
+    public function indexWait($ao_ca, $status, Request $req){
+        $user_id  = $req->auth->user_id;
+
+        $pic = PIC::where('user_id', $user_id)->first();
+
+        if (empty($pic)) {
+            return response()->json([
+                "code"    => 404,
+                "status"  => "not found",
+                "message" => "User_ID anda adalah '".$user_id."' dengan username '".$req->auth->user."' . Namun anda belum terdaftar sebagai PIC(CA). Harap daftarkan diri sebagai PIC(CA) pada form PIC atau hubungi bagian IT"
+            ], 404);
+        }
+
+        $id_area   = $pic->id_area;
+        $id_cabang = $pic->id_cabang;
+        $scope     = $pic->jpic['cakupan'];
+
+        $query_dir = TransSO::with('pic', 'cabang', 'ao', 'ca')
+        ->where('status_das', 1)
+        ->where('status_hm', 1)
+        ->orderBy('created_at', 'desc');
+
+        $query = Helper::checkDir($scope, $query_dir, $id_area, $id_cabang);
+
+        if (empty($query->get())) {
+            return response()->json([
+                'code'    => 404,
+                'status'  => 'not found',
+                'message' => 'Data di SO masih kosong'
+            ], 404);
+        }
+
+        $data = array();
+        foreach ($query->get() as $val) {
+
+            if ($val->ao['status_ao'] == 1) {
+                $status_ao = 'recommend';
+            }elseif($val->ao['status_ao'] == 2){
+                $status_ao = 'not recommend';
+            }else{
+                $status_ao = 'waiting';
+            }
+
+            if ($val->ca['status_ca'] == 1) {
+                $status_ca = 'recommend';
+            }elseif($val->ca['status_ca'] == 2){
+                $status_ca = 'not recommend';
+            }else{
+                $status_ca = 'waiting';
+            }
+
+            $data[] = [
+                'id_trans_so'    => $val->id == null ? null : (int) $val->id,
+                'nomor_so'       => $val->nomor_so,
+                "ao" => [
+                    'status_ao'     => $status_ao,
+                    'catatan_ao'    => $val->ao['catatan_ao']
+                ],
+                "ca" => [
+                    'status_ca'     => $status_ca,
+                    'catatan_ca'    => $val->ca['catatan_ca']
+                ],
+                'pic'            => $val->pic['nama'],
+                'area'           => $val->area['nama'],
+                'cabang'         => $val->cabang['nama'],
+                'asal_data'      => $val->asaldata['nama'],
+                'nama_marketing' => $val->nama_marketing,
+                'nama_debitur'   => $val->debt['nama_lengkap'],
+                'plafon'         => $val->faspin['plafon'],
+                'tenor'          => $val->faspin['tenor'],
+                'tgl_transaksi'  => $val->created_at
+            ];
+        }
+
+        $res = array_filter($data, function ($item) use ($ao_ca, $status) {
+            if (stripos($item[$ao_ca]["status_{$ao_ca}"], $status) !== false) {
+                return true;
+            }
+            return false;
+        });
+        
+        try {
+            if($res == false){
+                return response()->json([
+                    'code'   => 404,
+                    'status' => 'not found',
+                    'count'  => 0,
+                    'message'=> 'data tidak ditemukan'
+                ], 404);
+            }else{
+                foreach($res as $val){$result[] = $val;}
+                return response()->json([
+                    'code'   => 200,
+                    'status' => 'success',
+                    'count'  => sizeof($result),
+                    'data'   => $result
+                ], 200);
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                "code"    => 501,
+                "status"  => "error",
+                "message" => $e
+            ], 501);
+        }
+    }
+
     public function show($id, Request $req){
         $user_id = $req->auth->user_id;
         $pic     = PIC::where('user_id', $user_id)->first();

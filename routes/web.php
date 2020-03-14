@@ -312,8 +312,11 @@ $router->group(['middleware' => ['jwt.auth', 'log'], 'prefix' => 'api'], functio
                 // Search
                 $router->get('/{param}/{key}={value}/status={status}/{orderVal}={orderBy}/limit={limit}', ['subject' => 'Search Trans_SO', 'uses' => 'MasterAO_Controller@search']);
 
-                // Filter
+                // Filter Year
                 $router->get('/filter/{year}/{month}', ['subject' => 'Filter Trans_SO', 'uses' => 'MasterAO_Controller@filter']);
+                
+                // Filter Status
+                $router->get('/status/{ao_ca}/{status}', ['subject' => 'Filter status_ao', 'uses' => 'MasterAO_Controller@indexWait']);
             });
 
             // Trans CA
