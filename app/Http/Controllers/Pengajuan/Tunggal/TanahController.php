@@ -48,7 +48,6 @@ class TanahController extends BaseController
         }
 
         if($file = $req->file('agunan_bag_jalan')){
-            $check = $check_agunan_bag_jalan;
             $name  = 'bag_jalan';
             $check = '';
 
@@ -58,7 +57,6 @@ class TanahController extends BaseController
         }
 
         if($file = $req->file('agunan_bag_ruangtamu')){
-            $check = $check_agunan_bag_ruangtamu;
             $name = 'bag_ruangtamu';
             $check = '';
 
@@ -69,7 +67,6 @@ class TanahController extends BaseController
 
 
         if($file = $req->file('agunan_bag_kamarmandi')){
-            $check = $check_agunan_bag_kamarmandi;
             $name = 'bag_kamarmandi';
             $check = '';
 
@@ -79,7 +76,6 @@ class TanahController extends BaseController
         }
 
         if($file = $req->file('agunan_bag_dapur')){
-            $check = $check_agunan_bag_dapur;
             $name = 'bag_dapur';
             $check = '';
 
@@ -89,7 +85,6 @@ class TanahController extends BaseController
         }
 
         if ($file = $req->file('lamp_sertifikat')) {
-            $check = $check_lamp_sertifikat;
             $name = 'lamp_sertifikat';
             $check = '';
 
@@ -100,7 +95,6 @@ class TanahController extends BaseController
 
         // Tambahan Agunan Tanah
         if ($file = $req->file('lamp_imb')) {
-            $check = $check_lamp_imb;
             $name = 'lamp_imb';
             $check = '';
 
@@ -110,7 +104,6 @@ class TanahController extends BaseController
         }
 
         if ($file = $req->file('lamp_pbb')) {
-            $check = $check_lamp_pbb;
             $name = 'lamp_pbb';
             $check = '';
 
