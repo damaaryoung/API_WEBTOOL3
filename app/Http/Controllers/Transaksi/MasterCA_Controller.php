@@ -497,7 +497,7 @@ class MasterCA_Controller extends BaseController
         );
 
         $total_KapBul = array(
-            'total_pemasukan'    => $ttl1 = array_sum(array_slice($inputKapBul, 0, 2)),
+            'total_pemasukan'    => $ttl1 = array_sum(array_slice($inputKapBul, 0, 3)),
             'total_pengeluaran'  => $ttl2 = array_sum(array_slice($inputKapBul, 3)),
             'penghasilan_bersih' => $ttl1 - $ttl2
         );
@@ -1178,7 +1178,7 @@ class MasterCA_Controller extends BaseController
         );
 
         $total_KapBul = array(
-            'total_pemasukan'    => $ttl1 = array_sum(array_slice($inputKapBul, 0, 2)),
+            'total_pemasukan'    => $ttl1 = array_sum(array_slice($inputKapBul, 0, 3)),
             'total_pengeluaran'  => $ttl2 = array_sum(array_slice($inputKapBul, 3)),
             'penghasilan_bersih' => $ttl1 - $ttl2
         );
@@ -1470,8 +1470,8 @@ class MasterCA_Controller extends BaseController
         );
 
         $total_KapBul = array(
-            'total_pemasukan'    => $ttl1 = array_sum(array_slice($inputKapBul, 0, 2)),
-            'total_pengeluaran'  => $ttl2 = array_sum(array_slice($inputKapBul, 2)),
+            'total_pemasukan'    => $ttl1 = array_sum(array_slice($inputKapBul, 0, 3)),
+            'total_pengeluaran'  => $ttl2 = array_sum(array_slice($inputKapBul, 3)),
             'penghasilan_bersih' => $ttl1 - $ttl2
         );
 
