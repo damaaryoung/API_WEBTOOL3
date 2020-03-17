@@ -452,6 +452,7 @@ $router->group(['middleware' => ['jwt.auth', 'log'], 'prefix' => 'api'], functio
         $router->group(['prefix' => '/agunan'], function() use ($router) {
             // Agunan Tabah / Sertifikat
             $router->group(['prefix' => '/tanah'], function() use ($router) {
+                $router->post('/{id_trans}/store',  ['subject' => 'Create agunan_tanah', 'uses' => 'TanahController@store']);
                 $router->get('/{id}',  ['subject' => 'Detail agunan_tanah', 'uses' => 'TanahController@show']);
                 $router->post('/{id}', ['subject' => 'Update agunan_tanah', 'uses' => 'TanahController@update']);
             });

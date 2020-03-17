@@ -87,7 +87,7 @@ class DebiturController extends BaseController
                 'rt'             => $val->rt_domisili == null ? null : (int) $val->rt_domisili,
                 'rw'             => $val->rw_domisili == null ? null : (int) $val->rw_domisili,
                 'kelurahan' => [
-                    'id'    => $val->id_kel_tempat_kerja == null ? null : (int) $val->id_kel_tempat_kerja,
+                    'id'    => $val->id_kel_domisili == null ? null : (int) $val->id_kel_domisili,
                     'nama'  => $val->kel_dom['nama']
                 ],
                 'kecamatan' => [

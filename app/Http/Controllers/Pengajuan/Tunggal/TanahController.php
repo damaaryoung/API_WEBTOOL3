@@ -23,8 +23,183 @@ use DB;
 
 class TanahController extends BaseController
 {
+    public function store($id_trans, A_TanahRequest $req)
+    {
+        $check_so = TransSO::where('id', $id_trans)->first();
 
-    public function show($id){
+        if ($check_so == null) {
+            return response()->json([
+                'code'    => 404,
+                'status'  => 'not found',
+                'message' => 'Data Transasksi dengan id-trans-so "'.$id_trans.'" tidak ada'
+            ], 404);
+        }
+
+        $path = 'public/' . $check_so->debt['no_ktp'] . '/agunan_tanah';
+
+        /** Lampiran Agunan Tanah */
+        if($file = $req->file('agunan_bag_depan')){
+            $name = 'bag_depan';
+            $check = '';
+            
+            $agunan_bag_depan = Helper::uploadImg($check, $file, $path, $name);
+        }else{
+            $agunan_bag_depan = null;
+        }
+
+        if($file = $req->file('agunan_bag_jalan')){
+            $check = $check_agunan_bag_jalan;
+            $name  = 'bag_jalan';
+            $check = '';
+
+            $agunan_bag_jalan = Helper::uploadImg($check, $file, $path, $name);
+        }else{
+            $agunan_bag_jalan = null;
+        }
+
+        if($file = $req->file('agunan_bag_ruangtamu')){
+            $check = $check_agunan_bag_ruangtamu;
+            $name = 'bag_ruangtamu';
+            $check = '';
+
+            $agunan_bag_ruangtamu = Helper::uploadImg($check, $file, $path, $name);
+        }else{
+            $agunan_bag_ruangtamu = null;
+        }
+
+
+        if($file = $req->file('agunan_bag_kamarmandi')){
+            $check = $check_agunan_bag_kamarmandi;
+            $name = 'bag_kamarmandi';
+            $check = '';
+
+            $agunan_bag_kamarmandi = Helper::uploadImg($check, $file, $path, $name);
+        }else{
+            $agunan_bag_kamarmandi = null;
+        }
+
+        if($file = $req->file('agunan_bag_dapur')){
+            $check = $check_agunan_bag_dapur;
+            $name = 'bag_dapur';
+            $check = '';
+
+            $agunan_bag_dapur = Helper::uploadImg($check, $file, $path, $name);
+        }else{
+            $agunan_bag_dapur = null;
+        }
+
+        if ($file = $req->file('lamp_sertifikat')) {
+            $check = $check_lamp_sertifikat;
+            $name = 'lamp_sertifikat';
+            $check = '';
+
+            $lamp_sertifikat = Helper::uploadImg($check, $file, $path, $name);
+        }else {
+            $lamp_sertifikat = null;
+        }
+
+        // Tambahan Agunan Tanah
+        if ($file = $req->file('lamp_imb')) {
+            $check = $check_lamp_imb;
+            $name = 'lamp_imb';
+            $check = '';
+
+            $lamp_imb = Helper::uploadImg($check, $file, $path, $name);
+        }else{
+            $lamp_imb = null;
+        }
+
+        if ($file = $req->file('lamp_pbb')) {
+            $check = $check_lamp_pbb;
+            $name = 'lamp_pbb';
+            $check = '';
+
+            $lamp_pbb = Helper::uploadImg($check, $file, $path, $name);
+        }else {
+            $lamp_pbb = null;
+        }
+        /** */
+
+        $data = array(
+            'tipe_lokasi'             => $req->input('tipe_lokasi_agunan'),
+
+            'alamat'                  => $req->input('alamat_agunan'),
+
+            'id_provinsi'             => $req->input('id_prov_agunan'),
+
+            'id_kabupaten'            => $req->input('id_kab_agunan'),
+
+            'id_kecamatan'            => $req->input('id_kec_agunan'),
+
+            'id_kelurahan'            => $req->input('id_kel_agunan'),
+
+            'rt'                      => $req->input('rt_agunan'),
+
+            'rw'                      => $req->input('rw_agunan'),
+
+            'luas_tanah'              => $req->input('luas_tanah'),
+
+            'luas_bangunan'           => $req->input('luas_bangunan'),
+
+            'nama_pemilik_sertifikat' => $req->input('nama_pemilik_sertifikat'),
+
+            'jenis_sertifikat'        => $req->input('jenis_sertifikat'),
+
+            'no_sertifikat'           => $req->input('no_sertifikat'),
+
+            'tgl_ukur_sertifikat'     => $req->input('tgl_ukur_sertifikat'),
+
+            'tgl_berlaku_shgb'        => empty($req->input('tgl_berlaku_shgb')) ? null : Carbon::parse($req->input('tgl_berlaku_shgb'))->format('Y-m-d'),
+
+            'no_imb'                  => $req->input('no_imb'),
+            'njop'                    => $req->input('njop'),
+            'nop'                     => $req->input('nop'),
+            'agunan_bag_depan'        => $agunan_bag_depan,
+            'agunan_bag_jalan'        => $agunan_bag_jalan,
+            'agunan_bag_ruangtamu'    => $agunan_bag_ruangtamu,
+            'agunan_bag_kamarmandi'   => $agunan_bag_kamarmandi,
+            'agunan_bag_dapur'        => $agunan_bag_dapur,
+            'lamp_imb'                => $lamp_imb,
+            'lamp_pbb'                => $lamp_pbb,
+            'lamp_sertifikat'         => $lamp_sertifikat,
+        );
+
+        DB::connection('web')->beginTransaction();
+
+        try {
+
+            $query = AgunanTanah::create($data);
+
+            if($check_so->ao['id_agunan_tanah'] == null){
+                $id_agunan = $query->id;
+            }else{
+                $id_agunan = $check_so->ao['id_agunan_tanah'].','.$query->id;
+            }
+
+            TransAO::where('id_trans_so', $id_trans)->update(['id_agunan_tanah' => $id_agunan]);
+
+            DB::connection('web')->commit();
+
+            return response()->json([
+                'code'   => 200,
+                'status' => 'success',
+                'message'=> 'Update Agunan Tanah Berhasil',
+                'data'   => $query
+            ], 200);
+        } catch (\Exception $e) {
+
+            $err = DB::connection('web')->rollback();
+
+            return response()->json([
+                'code'    => 501,
+                'status'  => 'error',
+                'message' => $err
+            ], 501);
+        }
+    }
+
+    public function show($id)
+    {
         $check = AgunanTanah::with('prov', 'kab','kec','kel')
             ->where('id', $id)->first();
 
@@ -90,7 +265,7 @@ class TanahController extends BaseController
                 'status' => 'success',
                 'data'   => $data
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 "code"    => 501,
                 "status"  => "error",
@@ -99,7 +274,8 @@ class TanahController extends BaseController
         }
     }
 
-    public function update($id, A_TanahRequest $req){
+    public function update($id, A_TanahRequest $req)
+    {
         $check_tan = AgunanTanah::where('id', $id)->first();
 
         if ($check_tan == null) {
@@ -291,7 +467,7 @@ class TanahController extends BaseController
                 'message'=> 'Update Agunan Tanah Berhasil',
                 'data'   => $dataAgunanTanah
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
 
             $err = DB::connection('web')->rollback();
 
