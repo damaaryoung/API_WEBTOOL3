@@ -1311,11 +1311,16 @@ class MasterAO_Controller extends BaseController
         try{
 
             if (!empty($daAguTa)) {
+                $arrayTan = array();
+                $arrayPemTan = array();
+
                 for ($i = 0; $i < count($daAguTa); $i++) {
 
                     $tanah = AgunanTanah::create($daAguTa[$i]);
 
                     $id_tanah['id'][$i] = $tanah->id;
+
+                    $arrayTan[] = $tanah;
                 }
 
                 for ($i = 0; $i < count($pemAguTa); $i++) {
@@ -1324,20 +1329,28 @@ class MasterAO_Controller extends BaseController
                     $pemTanah = PemeriksaanAgunTan::create($pemAguTa_N[$i]);
 
                     $id_pem_tan['id'][$i] = $pemTanah->id;
+
+                    $arrayPemTan[] = $pemTanah;
                 }
 
                 $tanID   = implode(",", $id_tanah['id']);
                 $p_tanID = implode(",", $id_pem_tan['id']);
             }else{
+                $arrayTan = null;
+                $arrayPemTan = null;
                 $tanID   = null;
                 $p_tanID = null;
             }
 
             if (!empty($daAguKe)) {
+                $arrayKen = array();
+                $arrayPemKen = array();
+
                 for ($i = 0; $i < count($daAguKe); $i++) {
                     $kendaraan = AgunanKendaraan::create($daAguKe[$i]);
 
                     $id_kendaraan['id'][$i] = $kendaraan->id;
+                    $arrayKen[] = $kendaraan;
                 }
 
                 for ($i = 0; $i < count($pemAguKe); $i++) {
@@ -1346,11 +1359,14 @@ class MasterAO_Controller extends BaseController
                     $pemKendaraan = PemeriksaanAgunKen::create($pemAguKe_N[$i]);
 
                     $id_pem_ken['id'][$i] = $pemKendaraan->id;
+                    $arrayPemKen[] = $pemKendaraan;
                 }
 
                 $kenID   = implode(",", $id_kendaraan['id']);
                 $p_kenID = implode(",", $id_pem_ken['id']);
             }else{
+                $arrayKen    = null;
+                $arrayPemKen = null;
                 $kenID   = null;
                 $p_kenID = null;
             }
@@ -1361,7 +1377,6 @@ class MasterAO_Controller extends BaseController
             $verif = VerifModel::create($dataVerifikasi);
             $id_verif = $verif->id;
 
-
             $kap = KapBulanan::create($kapBul);
             $id_kapbul = $kap->id;
 
@@ -1369,6 +1384,7 @@ class MasterAO_Controller extends BaseController
                 $keuangan = PendapatanUsaha::create($dataKeUsaha);
                 $id_usaha = $keuangan->id;
             }else{
+                $keuangan = null;
                 $id_usaha = null;
             }
 
@@ -1376,6 +1392,7 @@ class MasterAO_Controller extends BaseController
                 $recom = RekomendasiAO::create($recom_AO);
                 $id_recom = $recom->id;
             }else{
+                $recom = null;
                 $id_recom = null;
             }
 
@@ -1405,8 +1422,18 @@ class MasterAO_Controller extends BaseController
                 'code'   => 200,
                 'status' => 'success',
                 'message'=> 'Data untuk AO berhasil dikirim',
-                'data'   => $new_TransAO
-                // 'message'=> $msg
+                'data'   => [
+                    'trans_ao'                      => $new_TransAO,
+                    'agunan_tanah'                  => $arrayTan,
+                    'pemeriksaaan_agunan_tanah'     => $arrayPemTan,
+                    'agunan_kendaraan'              => $arrayKen,
+                    'pemeriksaaan_agunan_kendaraan' => $arrayPemKen,
+                    'validasi'                      => $valid,
+                    'vierifikasi'                   => $verif,
+                    'kapasitas_bulanan'             => $kap,
+                    'pendapatan_usaha'              => $keuangan,
+                    'rekomendasi_so'                => $recom
+                ]
             ], 200);
         } catch (\Exception $e) {
             $err = DB::connection('web')->rollback();
