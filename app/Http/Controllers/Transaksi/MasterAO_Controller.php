@@ -741,7 +741,6 @@ class MasterAO_Controller extends BaseController
             $lamp_sertifikat_tan = $check_lamp_sertifikat_tan;
         }
 
-
         if (!empty($req->input('tipe_lokasi_agunan'))) {
 
             for ($i = 0; $i < count($req->input('tipe_lokasi_agunan')); $i++){
@@ -851,60 +850,63 @@ class MasterAO_Controller extends BaseController
                         => empty($lamp_sertifikat_tan[$i])
                         ? null : $lamp_sertifikat_tan[$i]
                 ];
+            }
 
+        }
+
+        if (!empty($req->input('nama_penghuni_agunan'))){
+            for($i = 0; $i < count($req->input('nama_penghuni_agunan')); $i++){
                 $pemAguTa[] = [
                     'nama_penghuni'
                         => empty($req->nama_penghuni_agunan[$i])
                         ? null : $req->nama_penghuni_agunan[$i],
-
+    
                     'status_penghuni'
                         => empty($req->status_penghuni_agunan[$i])
                         ? null : strtoupper($req->status_penghuni_agunan[$i]),
-
+    
                     'bentuk_bangunan'
                         => empty($req->bentuk_bangunan_agunan[$i])
                         ? null : $req->bentuk_bangunan_agunan[$i],
-
+    
                     'kondisi_bangunan'
                         => empty($req->kondisi_bangunan_agunan[$i])
                         ? null : $req->kondisi_bangunan_agunan[$i],
-
+    
                     'fasilitas'
                         => empty($req->fasilitas_agunan[$i])
                         ? null : $req->fasilitas_agunan[$i],
-
+    
                     'listrik'
                         => empty($req->listrik_agunan[$i])
                         ? null : $req->listrik_agunan[$i],
-
+    
                     'nilai_taksasi_agunan'
                         => empty($req->nilai_taksasi_agunan[$i])
                         ? null : $req->nilai_taksasi_agunan[$i],
-
+    
                     'nilai_taksasi_bangunan'
                         => empty($req->nilai_taksasi_bangunan[$i])
                         ? null : $req->nilai_taksasi_bangunan[$i],
-
+    
                     'tgl_taksasi'
                         => empty($req->tgl_taksasi_agunan[$i])
                         ? null : Carbon::parse($req->tgl_taksasi_agunan[$i])->format('Y-m-d'),
-
+    
                     'nilai_likuidasi'
                         => empty($req->nilai_likuidasi_agunan[$i])
                         ? null : $req->nilai_likuidasi_agunan[$i],
-
+    
                     'nilai_agunan_independen'
                         => empty($req->nilai_agunan_independen[$i])
                         ? null : $req->nilai_agunan_independen[$i],
-
+    
                     'perusahaan_penilai_independen'
                         => empty($req->perusahaan_penilai_independen[$i])
                         ? null : $req->perusahaan_penilai_independen[$i]
                 ];
             }
-
         }
-
 
         if (!empty($req->input('no_bpkb_ken'))) {
 
@@ -1312,7 +1314,6 @@ class MasterAO_Controller extends BaseController
 
             if (!empty($daAguTa)) {
                 $arrayTan = array();
-                $arrayPemTan = array();
 
                 for ($i = 0; $i < count($daAguTa); $i++) {
 
@@ -1323,6 +1324,14 @@ class MasterAO_Controller extends BaseController
                     $arrayTan[] = $tanah;
                 }
 
+                $tanID   = implode(",", $id_tanah['id']);
+            }else{
+                $arrayTan = null;
+                $tanID   = null;
+            }
+
+            if(!empty($pemAguTa)){
+                $arrayPemTan = array();
                 for ($i = 0; $i < count($pemAguTa); $i++) {
                     $pemAguTa_N[$i] = array_merge(array('id_agunan_tanah' => $id_tanah['id'][$i]), $pemAguTa[$i]);
 
@@ -1333,12 +1342,9 @@ class MasterAO_Controller extends BaseController
                     $arrayPemTan[] = $pemTanah;
                 }
 
-                $tanID   = implode(",", $id_tanah['id']);
                 $p_tanID = implode(",", $id_pem_tan['id']);
             }else{
-                $arrayTan = null;
                 $arrayPemTan = null;
-                $tanID   = null;
                 $p_tanID = null;
             }
 
