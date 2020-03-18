@@ -559,4 +559,19 @@ $router->group(['middleware' => ['jwt.auth', 'log'], 'prefix' => 'api'], functio
             $router->put('/{id}', ['subject' => 'Update - Rekomendasi Pinjaman', 'uses' => 'RekomPinController@update']);
         });
     });
+
+    $router->group(['namespace' => 'Pengajuan\ao'], function() use ($router){
+        // Rekomendasi AO
+        $router->group(['prefix' => '/verifikasi'], function() use ($router) {
+            // $router->get('/',     ['subject' => 'Read - Rekomendasi AO',   'uses' => 'VerifController@index']);
+            // $router->get('/{id}', ['subject' => 'Detail - Rekomendasi AO', 'uses' => 'VerifController@show']);
+            $router->put('/{id}', ['subject' => 'Update - Rekomendasi AO', 'uses' => 'VerifController@update']);
+        });
+
+        $router->group(['prefix' => '/validasi'], function() use ($router) {
+            // $router->get('/',     ['subject' => 'Read - Rekomendasi AO',   'uses' => 'ValidController@index']);
+            // $router->get('/{id}', ['subject' => 'Detail - Rekomendasi AO', 'uses' => 'ValidController@show']);
+            $router->put('/{id}', ['subject' => 'Update - Rekomendasi AO', 'uses' => 'ValidController@update']);
+        });
+    });
 });

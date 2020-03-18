@@ -347,6 +347,8 @@ class MasterCA_Controller extends BaseController
             'kapasitas_bulanan' => $val->kapbul,
             'pendapatan_usaha'  => $val->usaha,
             'rekomendasi_ao'    => $val->recom_ao,
+            'verifikasi'        => $val->verif,
+            'validasi'          => $val->valid,
             'tgl_transaksi'     => $val->created_at
         );
 
