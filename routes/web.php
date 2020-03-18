@@ -308,7 +308,7 @@ $router->group(['middleware' => ['jwt.auth', 'log'], 'prefix' => 'api'], functio
                 $router->post('/{id}', ['subject' => 'Create Trans_AO', 'uses' => 'MasterAO_Controller@update']);
                 $router->get('/',      ['subject' => 'Read Trans_SO',   'uses' => 'MasterAO_Controller@index']);
                 $router->get('/{id}',  ['subject' => 'Detail Trans_SO', 'uses' => 'MasterAO_Controller@show']);
-
+                $router->post('/{id_transaksi}/pers_ideb',  ['subject' => 'persetujuan ideb Trans_SO', 'uses' => 'LampiranController@form_ideb']);
                 // Search
                 $router->get('/{param}/{key}={value}/status={status}/{orderVal}={orderBy}/limit={limit}', ['subject' => 'Search Trans_SO', 'uses' => 'MasterAO_Controller@search']);
 

@@ -450,7 +450,7 @@ class MasterAO_Controller extends BaseController
         // Form Persetujuan Ideb
         if($file = $req->file('form_persetujuan_ideb')){
             $path = $lamp_dir.'/ideb';
-            $name = 'form_persetujuan_ideb.';
+            $name = 'form_persetujuan_ideb';
 
             $check_file = $check_form_persetujuan_ideb;
 
@@ -517,7 +517,7 @@ class MasterAO_Controller extends BaseController
         /** Lampiran Agunan Tanah */
         if($files = $req->file('agunan_bag_depan')){
             $path = $lamp_dir.'/agunan_tanah';
-            $name = 'agunan_bag_depan.';
+            $name = 'agunan_bag_depan';
 
             $check_file = $check_agunan_bag_depan;
 
@@ -534,7 +534,7 @@ class MasterAO_Controller extends BaseController
 
         if($files = $req->file('agunan_bag_jalan')){
             $path = $lamp_dir.'/agunan_tanah';
-            $name = 'agunan_bag_jalan.';
+            $name = 'agunan_bag_jalan';
 
             $check_file = $check_agunan_bag_jalan;
 
@@ -551,7 +551,7 @@ class MasterAO_Controller extends BaseController
 
         if($files = $req->file('agunan_bag_ruangtamu')){
             $path = $lamp_dir.'/agunan_tanah';
-            $name = 'agunan_bag_ruangtamu.';
+            $name = 'agunan_bag_ruangtamu';
 
             $check_file = $check_agunan_bag_ruangtamu;
 
@@ -568,7 +568,7 @@ class MasterAO_Controller extends BaseController
 
         if($files = $req->file('agunan_bag_kamarmandi')){
             $path = $lamp_dir.'/agunan_tanah';
-            $name = 'agunan_bag_kamarmandi.';
+            $name = 'agunan_bag_kamarmandi';
 
             $check_file = $check_agunan_bag_kamarmandi;
 
@@ -585,7 +585,7 @@ class MasterAO_Controller extends BaseController
 
         if($files = $req->file('agunan_bag_dapur')){
             $path = $lamp_dir.'/agunan_tanah';
-            $name = 'agunan_bag_dapur.';
+            $name = 'agunan_bag_dapur';
 
             $check_file = $check_agunan_bag_dapur;
 
@@ -603,7 +603,7 @@ class MasterAO_Controller extends BaseController
         /** Lampiran Agunan Kendaraan */
         if ($files = $req->file('lamp_agunan_depan_ken')) {
             $path = $lamp_dir.'/agunan_kendaraan';
-            $name = 'agunan_depan.';
+            $name = 'agunan_depan';
 
             $check_file = $check_lamp_agunan_depan_ken;
 
@@ -621,7 +621,7 @@ class MasterAO_Controller extends BaseController
 
         if ($files = $req->file('lamp_agunan_kanan_ken')) {
             $path = $lamp_dir.'/agunan_kendaraan';
-            $name = 'agunan_kanan.';
+            $name = 'agunan_kanan';
 
             $check_file = $check_lamp_agunan_kanan_ken;
 
@@ -639,7 +639,7 @@ class MasterAO_Controller extends BaseController
 
         if ($files = $req->file('lamp_agunan_kiri_ken')) {
             $path = $lamp_dir.'/agunan_kendaraan';
-            $name = 'agunan_kiri.';
+            $name = 'agunan_kiri';
 
             $check_file = $check_lamp_agunan_kiri_ken;
 
@@ -657,7 +657,7 @@ class MasterAO_Controller extends BaseController
 
         if ($files = $req->file('lamp_agunan_belakang_ken')) {
             $path = $lamp_dir.'/agunan_kendaraan';
-            $name = 'agunan_belakang.';
+            $name = 'agunan_belakang';
 
             $check_file = $check_lamp_agunan_belakang_ken;
 
@@ -674,7 +674,7 @@ class MasterAO_Controller extends BaseController
 
         if ($files = $req->file('lamp_agunan_dalam_ken')) {
             $path = $lamp_dir.'/agunan_kendaraan';
-            $name = 'agunan_dalam.';
+            $name = 'agunan_dalam';
 
             $check_file = $check_lamp_agunan_dalam_ken;
 
@@ -692,7 +692,7 @@ class MasterAO_Controller extends BaseController
         // Tambahan Agunan Tanah
         if ($files = $req->file('lamp_imb')) {
             $path = $lamp_dir.'/agunan_tanah';
-            $name = 'lamp_imb.';
+            $name = 'lamp_imb';
 
             $check_file = $check_lamp_imb_tan;
 
@@ -709,7 +709,7 @@ class MasterAO_Controller extends BaseController
 
         if ($files = $req->file('lamp_pbb')) {
             $path = $lamp_dir.'/agunan_tanah';
-            $name = 'lamp_pbb.';
+            $name = 'lamp_pbb';
 
             $check_file = $check_lamp_pbb_tan;
 
@@ -726,7 +726,7 @@ class MasterAO_Controller extends BaseController
 
         if ($files = $req->file('lamp_sertifikat')) {
             $path = $lamp_dir.'/agunan_tanah';
-            $name = 'lamp_sertifikat.';
+            $name = 'lamp_sertifikat';
 
             $check_file = $check_lamp_sertifikat_tan;
 
@@ -1116,7 +1116,7 @@ class MasterAO_Controller extends BaseController
         // Lampiran Debitur
         if($file = $req->file('lamp_ktp')){
             $path = $lamp_dir.'/debitur';
-            $name = 'ktp.';
+            $name = 'ktp';
 
             $check_file = $check_lamp_ktp;
             
@@ -1127,7 +1127,7 @@ class MasterAO_Controller extends BaseController
         
         if($file = $req->file('lamp_kk')){
             $path = $lamp_dir.'/debitur';
-            $name = 'kk.';
+            $name = 'kk';
             
             $check_file = $check_lamp_kk;
             
@@ -1138,7 +1138,7 @@ class MasterAO_Controller extends BaseController
 
         if($file = $req->file('lamp_sertifikat')){
             $path = $lamp_dir.'/debitur';
-            $name = 'sertifikat.';
+            $name = 'sertifikat';
 
             $check_file = $check_lamp_sertifikat;
 
@@ -1149,7 +1149,7 @@ class MasterAO_Controller extends BaseController
 
         if($file = $req->file('lamp_pbb')){
             $path = $lamp_dir.'/debitur';
-            $name = 'pbb.';
+            $name = 'pbb';
 
             $check_file = $check_lamp_sttp_pbb;
 
@@ -1160,7 +1160,7 @@ class MasterAO_Controller extends BaseController
 
         if($file = $req->file('lamp_imb')){
             $path = $lamp_dir.'/debitur';
-            $name = 'imb.';
+            $name = 'imb';
             
             $check_file = $check_lamp_imb;
 
@@ -1171,7 +1171,7 @@ class MasterAO_Controller extends BaseController
 
         if($file = $req->file('foto_agunan_rumah')){
             $path = $lamp_dir.'/debitur';
-            $name = 'foto_agunan_rumah.';
+            $name = 'foto_agunan_rumah';
 
             $check_file = $check_foto_agunan_rumah;
 
@@ -1182,7 +1182,7 @@ class MasterAO_Controller extends BaseController
 
         if ($files = $req->file('lamp_buku_tabungan')) {
             $path = $lamp_dir.'/lamp_buku_tabungan';
-            $name = 'lamp_buku_tabungan.';
+            $name = 'lamp_buku_tabungan';
 
             $check_file = $check_lamp_buku_tabungan;
 
@@ -1198,7 +1198,7 @@ class MasterAO_Controller extends BaseController
 
         if($file = $req->file('lamp_skk')){
             $path = $lamp_dir.'/debitur';
-            $name = 'lamp_skk.';
+            $name = 'lamp_skk';
 
             $check_file = $check_lamp_skk;
 
@@ -1226,7 +1226,7 @@ class MasterAO_Controller extends BaseController
 
         if($file = $req->file('lamp_slip_gaji')){
             $path = $lamp_dir.'/debitur';
-            $name = 'lamp_slip_gaji.'; //->getClientOriginalExtension();
+            $name = 'lamp_slip_gaji'; //->getClientOriginalExtension();
 
             $check_file = $check_lamp_slip_gaji;
 
@@ -1239,7 +1239,7 @@ class MasterAO_Controller extends BaseController
 
         if($files = $req->file('foto_pembukuan_usaha')){
             $path = $lamp_dir.'/debitur';
-            $name = 'foto_pembukuan_usaha.';
+            $name = 'foto_pembukuan_usaha';
             
             $check_file = $check_foto_pembukuan_usaha;
             $arrayPath = array();
@@ -1254,7 +1254,7 @@ class MasterAO_Controller extends BaseController
 
         if($files = $req->file('lamp_foto_usaha')){
             $path = $lamp_dir.'/debitur';
-            $name = 'lamp_foto_usaha.';
+            $name = 'lamp_foto_usaha';
 
             $check_file = $check_lamp_foto_usaha;
             $arrayPath = array();
@@ -1270,7 +1270,7 @@ class MasterAO_Controller extends BaseController
 
         if ($file = $req->file('lamp_surat_cerai')) {
             $path = $lamp_dir.'/debitur';
-            $name = 'lamp_surat_cerai.';
+            $name = 'lamp_surat_cerai';
 
             $check_file = $check_lamp_surat_cerai;
 
@@ -1281,7 +1281,7 @@ class MasterAO_Controller extends BaseController
 
         if ($file = $req->file('lamp_tempat_tinggal')) {
             $path = $lamp_dir.'/debitur';
-            $name = 'lamp_tempat_tinggal.';
+            $name = 'lamp_tempat_tinggal';
 
             $check_file = $check_lamp_tempat_tinggal;
 
