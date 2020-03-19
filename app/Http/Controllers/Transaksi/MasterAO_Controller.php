@@ -435,17 +435,17 @@ class MasterAO_Controller extends BaseController
 
         /** End Check Lampiran */
 
-        $check_ao = TransAO::where('id_trans_so', $id)->first();
+        $check_ao = 442; //TransAO::where('id_trans_so', $id)->first();
 
-        if ($check_ao != null) {
-            return response()->json([
-                'code'    => 404,
-                'status'  => 'not found',
-                'message' => 'Transaksi dengan id '.$id.' sudah ada di AO'
-            ], 404);
-        }
+        // if ($check_ao != null) {
+        //     return response()->json([
+        //         'code'    => 404,
+        //         'status'  => 'not found',
+        //         'message' => 'Transaksi dengan id '.$id.' sudah ada di AO'
+        //     ], 404);
+        // }
 
-        $lamp_dir = 'public/'.$check_so->debt['no_ktp'];
+        $lamp_dir = 'public/'.'1232323233'; //$check_so->debt['no_ktp'];
 
         // Form Persetujuan Ideb
         if($file = $req->file('form_persetujuan_ideb')){
@@ -794,6 +794,8 @@ class MasterAO_Controller extends BaseController
                 ];
             }
         }
+
+        // dd($pemAguTa);
 
 
         if (!empty($req->input('tipe_lokasi_agunan'))) {
@@ -1314,12 +1316,12 @@ class MasterAO_Controller extends BaseController
         DB::connection('web')->beginTransaction();
         try{
 
-            if (!empty($daAguTa)){
+            if (!empty($pemAguTa)){
                 $arrayPemTan = array();
                 for ($i = 0; $i < count($pemAguTa); $i++) {
-                    $pemAguTa_N[$i] = array_merge(array('id_agunan_tanah' => $id_tanah['id'][$i]), $pemAguTa[$i]);
+                    // $pemAguTa_N[$i] = array_merge(array('id_agunan_tanah' => $id_tanah['id'][$i]), $pemAguTa[$i]);
 
-                    $pemTanah = PemeriksaanAgunTan::create($pemAguTa_N[$i]);
+                    $pemTanah = PemeriksaanAgunTan::create($pemAguTa[$i]);
 
                     $id_pem_tan['id'][$i] = $pemTanah->id;
 
