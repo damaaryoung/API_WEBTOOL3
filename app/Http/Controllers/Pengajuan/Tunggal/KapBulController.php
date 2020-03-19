@@ -115,7 +115,8 @@ class KapBulController extends BaseController
         $total_KapBul = array(
             'total_pemasukan'    => $ttl1 = array_sum(array_slice($dataKapBulanan, 0, 3)),
             'total_pengeluaran'  => $ttl2 = array_sum(array_slice($dataKapBulanan, 3)),
-            'penghasilan_bersih' => $ttl1 - $ttl2
+            'penghasilan_bersih' => $ttl1 - $ttl2,
+            'ao_ca'              => empty($req->input('ao_ca') ? $check->ao_ca : $req->input('ao_ca'))
         );
 
         $KapBUl = array_merge($dataKapBulanan, $total_KapBul);

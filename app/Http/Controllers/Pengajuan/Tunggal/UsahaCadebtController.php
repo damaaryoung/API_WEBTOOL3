@@ -92,44 +92,34 @@ class UsahaCadebtController extends BaseController
 
         // Pendapatan Usaha Calon Debitur
         $dataPendapatanUsaha = array(
-            'pemasukan_tunai'      => empty($req->input('pemasukan_tunai')) ? 
-                ($check->pemasukan_tunai == null ? 0 : $check->pemasukan_tunai) : $req->input('pemasukan_tunai'),
+            'pemasukan_tunai'      => empty($req->input('pemasukan_tunai')) ? $check->pemasukan_tunai : $req->input('pemasukan_tunai'),
 
-            'pemasukan_kredit'     => empty($req->input('pemasukan_kredit')) ? 
-                ($check->pemasukan_kredit == null ? 0 : $check->pemasukan_kredit) : $req->input('pemasukan_kredit'),
+            'pemasukan_kredit'     => empty($req->input('pemasukan_kredit')) ? $check->pemasukan_kredit : $req->input('pemasukan_kredit'),
 
-            'biaya_sewa'           => empty($req->input('biaya_sewa')) ? 
-                ($check->biaya_sewa == null ? 0 : $check->biaya_sewa) : $req->input('biaya_sewa'),
+            'biaya_sewa'           => empty($req->input('biaya_sewa')) ? $check->biaya_sewa : $req->input('biaya_sewa'),
 
-            'biaya_gaji_pegawai'   => empty($req->input('biaya_gaji_pegawai')) ? 
-                ($check->biaya_gaji_pegawai == null ? 0 : $check->biaya_gaji_pegawai) : $req->input('biaya_gaji_pegawai'),
+            'biaya_gaji_pegawai'   => empty($req->input('biaya_gaji_pegawai')) ? $check->biaya_gaji_pegawai : $req->input('biaya_gaji_pegawai'),
 
-            'biaya_belanja_brg'    => empty($req->input('biaya_belanja_brg')) ? 
-                ($check->biaya_belanja_brg == null ? 0 : $check->biaya_belanja_brg) : $req->input('biaya_belanja_brg'),
+            'biaya_belanja_brg'    => empty($req->input('biaya_belanja_brg')) ? $check->biaya_belanja_brg : $req->input('biaya_belanja_brg'),
 
-            'biaya_telp_listr_air' => empty($req->input('biaya_telp_listr_air')) ?
-                ($check->biaya_telp_listr_air == null ? 0 : $check->biaya_telp_listr_air) : $req->input('biaya_telp_listr_air'),
+            'biaya_telp_listr_air' => empty($req->input('biaya_telp_listr_air')) ? $check->biaya_telp_listr_air : $req->input('biaya_telp_listr_air'),
 
-            'biaya_sampah_kemanan' => empty($req->input('biaya_sampah_kemanan')) ? 
-                ($check->biaya_sampah_kemanan == null ? 0 : $check->biaya_sampah_kemanan) : $req->input('biaya_sampah_kemanan'),
+            'biaya_sampah_kemanan' => empty($req->input('biaya_sampah_kemanan')) ? $check->biaya_sampah_kemanan : $req->input('biaya_sampah_kemanan'),
 
-            'biaya_kirim_barang'   => empty($req->input('biaya_kirim_barang')) ? 
-                ($check->biaya_kirim_barang == null ? 0 : $check->biaya_kirim_barang) : $req->input('biaya_kirim_barang'),
+            'biaya_kirim_barang'   => empty($req->input('biaya_kirim_barang')) ? $check->biaya_kirim_barang : $req->input('biaya_kirim_barang'),
 
-            'biaya_hutang_dagang'  => empty($req->input('biaya_hutang_dagang')) ? 
-                ($check->biaya_hutang_dagang == null ? 0 : $check->biaya_hutang_dagang) : $req->input('biaya_hutang_dagang'),
+            'biaya_hutang_dagang'  => empty($req->input('biaya_hutang_dagang')) ? $check->biaya_hutang_dagang : $req->input('biaya_hutang_dagang'),
 
-            'biaya_angsuran'       => empty($req->input('biaya_angsuran')) ? 
-                ($check->biaya_angsuran == null ? 0 : $check->biaya_angsuran) : $req->input('biaya_angsuran'),
+            'biaya_angsuran'       => empty($req->input('biaya_angsuran')) ? $check->biaya_angsuran : $req->input('biaya_angsuran'),
 
-            'biaya_lain_lain'      => empty($req->input('biaya_lain_lain')) ? 
-                ($check->biaya_lain_lain == null ? 0 : $check->biaya_lain_lain) : $req->input('biaya_lain_lain')
+            'biaya_lain_lain'      => empty($req->input('biaya_lain_lain')) ? $check->biaya_lain_lain : $req->input('biaya_lain_lain')
         );
 
         $totalPendapatan = array(
             'total_pemasukan'    => $ttl1 = array_sum(array_slice($dataPendapatanUsaha, 0, 2)),
             'total_pengeluaran'  => $ttl2 = array_sum(array_slice($dataPendapatanUsaha, 2)),
-            'laba_usaha'         => $ttl1 - $ttl2
+            'laba_usaha'         => $ttl1 - $ttl2,
+            'ao_ca'              => empty($req->input('ao_ca')) ? $check->ao_ca : $req->input('ao_ca')
         );
 
         $Pendapatan = array_merge($dataPendapatanUsaha, $totalPendapatan);
