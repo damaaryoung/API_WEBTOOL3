@@ -12,6 +12,7 @@ use App\Models\Pengajuan\AO\PemeriksaanAgunTan;
 use App\Models\Pengajuan\AO\PemeriksaanAgunKen;
 use App\Models\Pengajuan\SO\Penjamin;
 use App\Models\Pengajuan\CA\InfoACC;
+use App\Models\Pengajuan\CA\MutasiBank;
 use Illuminate\Support\Facades\File;
 use App\Models\Transaksi\Approval;
 use App\Models\Transaksi\TransCAA;
@@ -656,7 +657,7 @@ class MasterCAA_Controller extends BaseController
         }else{
             $status_ca = 'waiting';
         }
-        $mutasi = DB::connection('web')->table('mutasi_bank')->whereIn('id', explode(",", $check_ao->id_mutasi_bank))->get()->toArray();
+        $mutasi = MutasiBank::whereIn('id', explode(",", $check_ca->id_mutasi_bank))->get()->toArray();
            
         if($mutasi != []){
             foreach($mutasi as $i => $mut){
@@ -749,7 +750,7 @@ class MasterCAA_Controller extends BaseController
                 'id'   => $check_ca->id_cabang == null ? null : (int) $check_ca->id_cabang,
                 'nama' => $check_ca->cabang['nama'],
             ],
-            'asaldata' => $check_so->id_asal_data,
+            'asaldata' => $check_so->asaldata,
             'data_debitur' => $check_so->debt,
             'data_pasangan' => DB::connection('web')->table('pasangan_calon_debitur')->where('id', $check_so->id_pasangan)->first(),
             'data_penjamin' => DB::connection('web')->table('penjamin_calon_debitur')->where('id', $check_so->id_penjamin)->get(),
@@ -784,14 +785,11 @@ class MasterCAA_Controller extends BaseController
                 ),
                 'penghasilan_bersih' => $check_ca->usaha['laba_usaha']
             ],
-            'pengajuan' => [
-                'plafon' => $check_so->faspin['plafon'],
-                'tenor'  => $check_so->faspin['tenor']
-            ],
-            'rekomendasi_ao' => $check_ao->id_recom_ao,
-            'rekomendasi_ca' => $check_ca->id_recom_ca,
-            'rekomendasi_pinjaman' => $check_ca->id_rekomendasi_pinjaman,
-            'kapasitas_bulanan' => $check_ca->id_kapasitas_bulanan,
+            'pengajuan' => $check_so->faspin,
+            'rekomendasi_ao' => $check_ao->recom_ao,
+            'rekomendasi_ca' => $check_ca->recom_ca,
+            'rekomendasi_pinjaman' => $check_ca->recom_pin,
+            'kapasitas_bulanan' => $check_ca->kapbul,
             // 'data_biaya' => [
             //     'reguler' => $reguler = array(
             //         'biaya_provisi'         => (int) $check_ca->recom_ca['biaya_provisi'],
@@ -831,7 +829,7 @@ class MasterCAA_Controller extends BaseController
             ],
             'mutasi_bank' => $dataMutasi,
             'data_keuangan' => DB::connection('web')->table('log_tabungan_debt')->where('id', $check_ca->id_log_tabungan)->get(),
-            'ringkasan_analisa' => $check_ca->id_ringkasan_analisa,
+            'ringkasan_analisa' => $check_ca->ringkasan,
             'asuransi_jiwa'   => DB::connection('web')->table('asuransi_jiwa')->where('id', $check_ca->id_asuransi_jiwa)->first(),
             'asuransi_jaminan' => $asuransi_jaminan,
             'tgl_transaksi' => $check_ca->updated_at
