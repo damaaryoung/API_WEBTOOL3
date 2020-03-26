@@ -656,6 +656,67 @@ class MasterCAA_Controller extends BaseController
         }else{
             $status_ca = 'waiting';
         }
+        $mutasi = DB::connection('web')->table('mutasi_bank')->whereIn('id', explode(",", $check_ao->id_mutasi_bank))->get()->toArray();
+           
+        if($mutasi != []){
+            foreach($mutasi as $i => $mut){
+                $doub[$i] = array_slice($mut, 0, 5);
+            }
+
+            // $arr = array();
+            foreach($mutasi as $i => $mut){
+                $slice[$i] = array_slice($mut, 5);
+                foreach($slice as $key => $val){
+                    foreach($val as $row => $col){
+                        $arr[$i][$row] = explode(";",$col);
+                    }
+                }
+            }
+
+            // $dataMut = array();
+            foreach ($arr as $key => $subarr)
+            {
+                foreach ($subarr as $subkey => $subvalue)
+                {
+                    foreach($subvalue as $childkey => $childvalue)
+                    {   
+                        $out[$key][$childkey][$subkey] = ($childvalue);
+                    }
+
+                    $dataMutasi[$key] = array_merge($doub[$key], array('table' => $out[$key]));
+                }
+            }
+        }else{
+            $dataMutasi = null;
+        }
+
+        $jaminan = DB::connection('web')->table('asuransi_jaminan')->where('id', $check_ca->id_asuransi_jaminan)->first();
+
+        if($jaminan == null)
+        {
+            $asuransi_jaminan = null;
+        }
+        else
+        {
+            $aj = array(
+                'id'                    => explode(';', $jaminan->id),
+                'nama_asuransi'         => explode(';', $jaminan->nama_asuransi),
+                'jangka_waktu'          => explode(';', $jaminan->jangka_waktu),
+                'nilai_pertanggungan'   => explode(';', $jaminan->nilai_pertanggungan),
+                'jatuh_tempo'           => explode(';', $jaminan->jatuh_tempo)
+            );
+
+            $asuransi_jaminan = array();
+            for ($i=0; $i < count($aj['nama_asuransi']); $i++) { 
+                $asuransi_jaminan[] = array(
+                    'id'                    => $aj['id'][0],
+                    'nama_asuransi'         => $aj['nama_asuransi'][$i],
+                    'jangka_waktu'          => $aj['jangka_waktu'][$i],
+                    'nilai_pertanggungan'   => $aj['nilai_pertanggungan'][$i],
+                    'jatuh_tempo'           => $aj['jatuh_tempo'][$i]
+                );
+            }
+        }
 
         $data = array(
             'status_revisi' => $check_ca->revisi >= 1 ? 'Y' : 'N',
@@ -688,19 +749,20 @@ class MasterCAA_Controller extends BaseController
                 'id'   => $check_ca->id_cabang == null ? null : (int) $check_ca->id_cabang,
                 'nama' => $check_ca->cabang['nama'],
             ],
-            'asaldata' => [
-                'id'   => $check_so->id_asal_data == null ? null : (int) $check_so->id_asal_data,
-                'nama' => $check_so->asaldata['nama'],
-            ],
-            'data_debitur' => [
-                'id'           => $check_so->id_calon_debitur == null ? null : (int) $check_so->id_calon_debitur,
-                'nama_lengkap' => $check_so->debt['nama_lengkap'],
-                'lamp_usaha'   => $check_so->debt['lamp_foto_usaha']
-            ],
+            'asaldata' => $check_so->id_asal_data,
+            'data_debitur' => $check_so->debt,
+            'data_pasangan' => DB::connection('web')->table('pasangan_calon_debitur')->where('id', $check_so->id_pasangan)->first(),
+            'data_penjamin' => DB::connection('web')->table('penjamin_calon_debitur')->where('id', $check_so->id_penjamin)->get(),
             'data_agunan' => [
                 'agunan_tanah'     => $idTan,
                 'agunan_kendaraan' => $idKen
             ],
+            'pemeriksaan' => [
+                'agunan_tanah' => DB::connection('web')->table('periksa_agunan_tanah')->where('id_agunan_tanah', $check_ao->id_agunan_tanah)->get(),
+                'agunan_kendaraan' => DB::connection('web')->table('periksa_agunan_kendaraan')->where('id_agunan_kendaraan', $check_ao->id_agunan_kendaraan)->get(),
+            ],
+            'verifikasi'    => DB::connection('web')->table('tb_verifikasi')->where('id', $check_ao->id_verifikasi)->first(),
+            'validasi'      => DB::connection('web')->table('tb_validasi')->where('id', $check_ao->id_validasi)->first(),
             'pendapatan_usaha' => [
                 'id'        => $check_ca->id_pendapatan_usaha == null ? null : (int) $check_ao->id_pendapatan_usaha,
                 'pemasukan' => array(
@@ -726,79 +788,39 @@ class MasterCAA_Controller extends BaseController
                 'plafon' => $check_so->faspin['plafon'],
                 'tenor'  => $check_so->faspin['tenor']
             ],
-            'rekomendasi_ao'   => [
-                'id'               => $check_ao->id_recom_ao == null ? null : (int) $check_ao->id_recom_ao,
-                'plafon'           => (int) $check_ao->recom_ao['plafon_kredit'],
-                'tenor'            => (int) $check_ao->recom_ao['jangka_waktu'],
-                'suku_bunga'       => floatval($check_ao->recom_ao['suku_bunga']),
-                'pembayaran_bunga' => (int) $check_ao->recom_ao['pembayaran_bunga'],
-                'catatan'          => $check_ao->catatan_ao
-            ],
-            'rekomendasi_ca' => [
-                'id'               => $check_ca->id_recom_ca == null ? null : (int) $check_ca->id_recom_ca,
-                'plafon'           => (int) $check_ca->recom_ca['plafon_kredit'],
-                'tenor'            => (int) $check_ca->recom_ca['jangka_waktu'],
-                'suku_bunga'       => floatval($check_ca->recom_ca['suku_bunga']),
-                'pembayaran_bunga' => (int) $check_ca->recom_ca['pembayaran_bunga'],
-                'catatan'          => $check_ca->catatan_ca
-            ],
-            'rekomendasi_pinjaman' => [
-                'id'                    => $check_ca->id_rekomendasi_pinjaman,
-                'penyimpangan_struktur' => $check_ca->recom_pin['penyimpangan_struktur'],
-                'penyimpangan_dokumen'  => $check_ca->recom_pin['penyimpangan_dokumen'],
-                'recom_nilai_pinjaman'  => $check_ca->recom_pin['recom_nilai_pinjaman'],
-                'recom_tenor'           => $check_ca->recom_pin['recom_tenor'],
-                'recom_angsuran'        => $check_ca->recom_pin['recom_angsuran'],
-                'recom_produk_kredit'   => $check_ca->recom_pin['recom_produk_kredit'],
-                'note_recom'            => $check_ca->recom_pin['note_recom'],
-                'bunga_pinjaman'        => $check_ca->recom_pin['bunga_pinjaman'],
-                'nama_ca'               => $check_ca->recom_pin['nama_ca']
-            ],
-            'kapasitas_bulanan' => [
-                'id'                    => $check_ca->id_kapasitas_bulanan,
-                'pemasukan_cadebt'      => $check_ca->kapbul['pemasukan_cadebt'],
-                'pemasukan_pasangan'    => $check_ca->kapbul['pemasukan_pasangan'],
-                'pemasukan_penjamin'    => $check_ca->kapbul['pemasukan_penjamin'],
-                'biaya_rumah_tangga'    => $check_ca->kapbul['biaya_rumah_tangga'],
-                'biaya_transport'       => $check_ca->kapbul['biaya_transport'],
-                'biaya_pendidikan'      => $check_ca->kapbul['biaya_pendidikan'],
-                'telp_listr_air'        => $check_ca->kapbul['telp_listr_air'],
-                'angsuran'              => $check_ca->kapbul['angsuran'],
-                'biaya_lain'            => $check_ca->kapbul['biaya_lain'],
-                'total_pemasukan'       => $check_ca->kapbul['total_pemasukan'],
-                'total_pengeluaran'     => $check_ca->kapbul['total_pengeluaran'],
-                'penghasilan_bersih'    => $check_ca->kapbul['penghasilan_bersih'],
-                'disposable_income'     => $check_ca->kapbul['disposable_income']
-            ],
-            'data_biaya' => [
-                'reguler' => $reguler = array(
-                    'biaya_provisi'         => (int) $check_ca->recom_ca['biaya_provisi'],
-                    'biaya_administrasi'    => (int) $check_ca->recom_ca['biaya_administrasi'],
-                    'biaya_credit_checking' => (int) $check_ca->recom_ca['biaya_credit_checking'],
-                    'biaya_premi' => [
-                        'asuransi_jiwa'     => (int) $check_ca->recom_ca['biaya_asuransi_jiwa'],
-                        'asuransi_jaminan'  => (int) $check_ca->recom_ca['biaya_asuransi_jaminan']
-                    ],
-                    'biaya_tabungan'                    => (int) $check_ca->recom_ca['biaya_tabungan'],
-                    'biaya_notaris'                     => (int) $check_ca->recom_ca['notaris'],
-                    'angsuran_pertama_bungan_berjalan'  => (int) $check_ca->recom_ca['angs_pertama_bunga_berjalan'],
-                    'pelunasan_nasabah_ro'              => (int) $check_ca->recom_ca['pelunasan_nasabah_ro']
-                ),
+            'rekomendasi_ao' => $check_ao->id_recom_ao,
+            'rekomendasi_ca' => $check_ca->id_recom_ca,
+            'rekomendasi_pinjaman' => $check_ca->id_rekomendasi_pinjaman,
+            'kapasitas_bulanan' => $check_ca->id_kapasitas_bulanan,
+            // 'data_biaya' => [
+            //     'reguler' => $reguler = array(
+            //         'biaya_provisi'         => (int) $check_ca->recom_ca['biaya_provisi'],
+            //         'biaya_administrasi'    => (int) $check_ca->recom_ca['biaya_administrasi'],
+            //         'biaya_credit_checking' => (int) $check_ca->recom_ca['biaya_credit_checking'],
+            //         'biaya_premi' => [
+            //             'asuransi_jiwa'     => (int) $check_ca->recom_ca['biaya_asuransi_jiwa'],
+            //             'asuransi_jaminan'  => (int) $check_ca->recom_ca['biaya_asuransi_jaminan']
+            //         ],
+            //         'biaya_tabungan'                    => (int) $check_ca->recom_ca['biaya_tabungan'],
+            //         'biaya_notaris'                     => (int) $check_ca->recom_ca['notaris'],
+            //         'angsuran_pertama_bungan_berjalan'  => (int) $check_ca->recom_ca['angs_pertama_bunga_berjalan'],
+            //         'pelunasan_nasabah_ro'              => (int) $check_ca->recom_ca['pelunasan_nasabah_ro']
+            //     ),
 
-                'hold_dana' => $hold_dana = array(
-                    'pelunasan_tempat_lain'         => (int) $check_ca->recom_ca['pelunasan_tempat_lain'],
-                    'blokir' => [
-                        'tempat_lain'               => (int) $check_ca->recom_ca['blokir_dana'],
-                        'dua_kali_angsuran_kredit'  => (int) $check_ca->recom_ca['blokir_angs_kredit']
-                    ]
-                ),
+            //     'hold_dana' => $hold_dana = array(
+            //         'pelunasan_tempat_lain'         => (int) $check_ca->recom_ca['pelunasan_tempat_lain'],
+            //         'blokir' => [
+            //             'tempat_lain'               => (int) $check_ca->recom_ca['blokir_dana'],
+            //             'dua_kali_angsuran_kredit'  => (int) $check_ca->recom_ca['blokir_angs_kredit']
+            //         ]
+            //     ),
 
-                'total' => array(
-                    'biaya_reguler'     => $ttl1 = array_sum($reguler + $reguler['biaya_premi']),
-                    'biaya_hold_dana'   => $ttl2 = array_sum($hold_dana + $hold_dana['blokir']),
-                    'jml_total'         => $ttl1 + $ttl2
-                )
-            ],
+            //     'total' => array(
+            //         'biaya_reguler'     => $ttl1 = array_sum($reguler + $reguler['biaya_premi']),
+            //         'biaya_hold_dana'   => $ttl2 = array_sum($hold_dana + $hold_dana['blokir']),
+            //         'jml_total'         => $ttl1 + $ttl2
+            //     )
+            // ],
             'info_analisa_cc' => [
                 'count_table'              => count($infoCC),
                 'ttl_plafon'               => array_sum(array_column($infoCC, 'plafon')),
@@ -807,17 +829,12 @@ class MasterCAA_Controller extends BaseController
                 'collectabilitas_terendah' => max(array_column($infoCC, 'collectabilitas')),
                 'table'                    => $infoCC
             ],
-            'ringkasan_analisa' => [
-                'kuantitatif_ttl_pendapatan'    => $check_ca->ringkasan['kuantitatif_ttl_pendapatan'],
-                'kuantitatif_ttl_pengeluaran'   => $check_ca->ringkasan['kuantitatif_ttl_pengeluaran'],
-                'kuantitatif_pendapatan_bersih' => $check_ca->ringkasan['kuantitatif_pendapatan_bersih'],
-                'kuantitatif_angsuran'          => $check_ca->ringkasan['kuantitatif_angsuran'],
-                'kuantitatif_ltv'               => $check_ca->ringkasan['kuantitatif_ltv'],
-                'kuantitatif_dsr'               => $check_ca->ringkasan['kuantitatif_dsr'],
-                'kuantitatif_idir'              => $check_ca->ringkasan['kuantitatif_idir'],
-                'kuantitatif_hasil'             => $check_ca->ringkasan['kuantitatif_hasil']
-            ],
-            'tgl_transaksi' => $check_ca->created_at
+            'mutasi_bank' => $dataMutasi,
+            'data_keuangan' => DB::connection('web')->table('log_tabungan_debt')->where('id', $check_ca->id_log_tabungan)->get(),
+            'ringkasan_analisa' => $check_ca->id_ringkasan_analisa,
+            'asuransi_jiwa'   => DB::connection('web')->table('asuransi_jiwa')->where('id', $check_ca->id_asuransi_jiwa)->first(),
+            'asuransi_jaminan' => $asuransi_jaminan,
+            'tgl_transaksi' => $check_ca->updated_at
         );
 
         try {
