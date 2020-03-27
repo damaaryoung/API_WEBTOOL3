@@ -719,62 +719,67 @@ class MasterCAA_Controller extends BaseController
             }
         }
 
-        $penj = Penjamin::where('id', $check_so->id_penjamin)->get();
+        $penj = Penjamin::whereIn('id', explode(",", $check_so->id_penjamin))->get();
 
-        $penjamin = array();
-        foreach ($penj as $pen) {
-            $penjamin[] = [
-                'id'                => $pen->id,
-                'nama_ktp'          => $pen->nama_ktp,
-                'nama_ibu_kandung'  => $pen->nama_ibu_kandung,
-                'no_ktp'            => $pen->no_ktp,
-                'no_npwp'           => $pen->no_npwp,
-                'tempat_lahir'      => $pen->tempat_lahir,
-                'tgl_lahir'         => $pen->tgl_lahir,
-                'jenis_kelamin'     => $pen->jenis_kelamin,
-                'alamat_ktp'        => $pen->alamat_ktp,
-                'no_telp'           => $pen->no_telp,
-                'hubungan_debitur'  => $pen->hubungan_debitur,
-
-                "pekerjaan" => [
-                    "nama_pekerjaan"        => $pen->pekerjaan,
-                    "posisi_pekerjaan"      => $pen->posisi_pekerjaan,
-                    "nama_tempat_kerja"     => $pen->nama_tempat_kerja,
-                    "jenis_pekerjaan"       => $pen->jenis_pekerjaan,
-                    "tgl_mulai_kerja"       => $pen->tgl_mulai_kerja,
-                    "no_telp_tempat_kerja"  => $pen->no_telp_tempat_kerja,
-                    'alamat' => [
-                        'alamat_singkat' => $pen->alamat_tempat_kerja,
-                        'rt'             => $pen->rt_tempat_kerja,
-                        'rw'             => $pen->rw_tempat_kerja,
-                        'kelurahan' => [
-                            'id'    => $pen->id_kel_tempat_kerja,
-                            'nama'  => $pen->kel_kerja['nama']
-                        ],
-                        'kecamatan' => [
-                            'id'    => $pen->id_kec_tempat_kerja,
-                            'nama'  => $pen->kec_kerja['nama']
-                        ],
-                        'kabupaten' => [
-                            'id'    => $pen->id_kab_tempat_kerja,
-                            'nama'  => $pen->kab_kerja['nama'],
-                        ],
-                        'provinsi'  => [
-                            'id'    => $pen->id_prov_tempat_kerja,
-                            'nama'  => $pen->prov_kerja['nama'],
-                        ],
-                        'kode_pos'  => $pen->kel_kerja['kode_pos'] == null ? null : (int) $pen->kel_kerja['kode_pos']
+        if (!$penj) {
+            $penjamin = null;
+        }else{
+            $penjamin = array();
+            foreach ($penj as $pen) {
+                $penjamin[] = [
+                    'id'                => $pen->id,
+                    'nama_ktp'          => $pen->nama_ktp,
+                    'nama_ibu_kandung'  => $pen->nama_ibu_kandung,
+                    'no_ktp'            => $pen->no_ktp,
+                    'no_npwp'           => $pen->no_npwp,
+                    'tempat_lahir'      => $pen->tempat_lahir,
+                    'tgl_lahir'         => $pen->tgl_lahir,
+                    'jenis_kelamin'     => $pen->jenis_kelamin,
+                    'alamat_ktp'        => $pen->alamat_ktp,
+                    'no_telp'           => $pen->no_telp,
+                    'hubungan_debitur'  => $pen->hubungan_debitur,
+    
+                    "pekerjaan" => [
+                        "nama_pekerjaan"        => $pen->pekerjaan,
+                        "posisi_pekerjaan"      => $pen->posisi_pekerjaan,
+                        "nama_tempat_kerja"     => $pen->nama_tempat_kerja,
+                        "jenis_pekerjaan"       => $pen->jenis_pekerjaan,
+                        "tgl_mulai_kerja"       => $pen->tgl_mulai_kerja,
+                        "no_telp_tempat_kerja"  => $pen->no_telp_tempat_kerja,
+                        'alamat' => [
+                            'alamat_singkat' => $pen->alamat_tempat_kerja,
+                            'rt'             => $pen->rt_tempat_kerja,
+                            'rw'             => $pen->rw_tempat_kerja,
+                            'kelurahan' => [
+                                'id'    => $pen->id_kel_tempat_kerja,
+                                'nama'  => $pen->kel_kerja['nama']
+                            ],
+                            'kecamatan' => [
+                                'id'    => $pen->id_kec_tempat_kerja,
+                                'nama'  => $pen->kec_kerja['nama']
+                            ],
+                            'kabupaten' => [
+                                'id'    => $pen->id_kab_tempat_kerja,
+                                'nama'  => $pen->kab_kerja['nama'],
+                            ],
+                            'provinsi'  => [
+                                'id'    => $pen->id_prov_tempat_kerja,
+                                'nama'  => $pen->prov_kerja['nama'],
+                            ],
+                            'kode_pos'  => $pen->kel_kerja['kode_pos'] == null ? null : (int) $pen->kel_kerja['kode_pos']
+                        ]
+                    ],
+    
+                    'lampiran' => [
+                        'lamp_ktp' => $pen->lamp_ktp,
+                        'lamp_ktp_pasangan' => $pen->lamp_ktp_pasangan,
+                        'lamp_kk' => $pen->lamp_kk,
+                        'lamp_buku_nikah' => $pen->lamp_buku_nikah
                     ]
-                ],
-
-                'lampiran' => [
-                    'lamp_ktp' => $pen->lamp_ktp,
-                    'lamp_ktp_pasangan' => $pen->lamp_ktp_pasangan,
-                    'lamp_kk' => $pen->lamp_kk,
-                    'lamp_buku_nikah' => $pen->lamp_buku_nikah
-                ]
-            ];
+                ];
+            }
         }
+
 
         $data = array(
             'status_revisi' => $check_ca->revisi >= 1 ? 'Y' : 'N',
