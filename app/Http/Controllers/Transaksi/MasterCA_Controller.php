@@ -426,7 +426,7 @@ class MasterCA_Controller extends BaseController
                         'id'   => $val->so['debt']['id_prov_ktp'] == null ? null : (int) $val->so['debt']['id_prov_ktp'],
                         'nama' => $val->so['debt']['prov_ktp']['nama'],
                     ],
-                    'kode_pos' => $val->socket_addrinfo_explain['debt']['kel_ktp']['kode_pos'] == null ? null : (int) $val->socket_addrinfo_explain['debt']['kel_ktp']['kode_pos']
+                    'kode_pos' => $val->so['debt']['kel_ktp']['kode_pos'] == null ? null : (int) $val->so['debt']['kel_ktp']['kode_pos']
                 ],
                 'alamat_domisili' => [
                     'alamat_singkat' => $val->so['debt']['alamat_domisili'],
@@ -445,8 +445,8 @@ class MasterCA_Controller extends BaseController
                         'nama'  => $val->so['debt']['kab_dom']['nama'],
                     ],
                     'provinsi'  => [
-                        'id'   => $val->socket_addrinfo_explain['debt']['id_prov_domisili'] == null ? null : (int) $val->socket_addrinfo_explain['debt']['id_prov_domisili'],
-                        'nama' => $val->socket_addrinfo_explain['debt']['prov_dom']['nama'],
+                        'id'   => $val->so['debt']['id_prov_domisili'] == null ? null : (int) $val->so['debt']['id_prov_domisili'],
+                        'nama' => $val->so['debt']['prov_dom']['nama'],
                     ],
                     'kode_pos' => $val->so['debt']['kel_dom']['kode_pos'] == null ? null : (int) $val->so['debt']['kel_dom']['kode_pos']
                 ],
@@ -550,7 +550,7 @@ class MasterCA_Controller extends BaseController
             ],
 
             'data_penjamin' => $penjamin,
-            
+
             'data_agunan' => [
                 'agunan_tanah'     => $idTan,
                 'agunan_kendaraan' => $idKen
