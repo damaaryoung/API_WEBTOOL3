@@ -751,7 +751,114 @@ class MasterCAA_Controller extends BaseController
                 'nama' => $check_ca->cabang['nama'],
             ],
             'asaldata' => $check_so->asaldata,
-            'data_debitur' => $check_so->debt,
+
+            'data_debitur' => [
+                'id'                    => $check_so->id_calon_debitur,
+                'nama_lengkap'          => $check_so->debt['nama_lengkap'],
+                'gelar_keagamaan'       => $check_so->debt['gelar_keagamaan'],
+                'gelar_pendidikan'      => $check_so->debt['gelar_pendidikan'],
+                'jenis_kelamin'         => $check_so->debt['jenis_kelamin'],
+                'status_nikah'          => $check_so->debt['status_nikah'],
+                'ibu_kandung'           => $check_so->debt['ibu_kandung'],
+                'tinggi_badan'          => $check_so->debt['tinggi_badan'],
+                'berat_badan'           => $check_so->debt['berat_badan'],
+                'no_ktp'                => $check_so->debt['no_ktp'],
+                'no_ktp_kk'             => $check_so->debt['no_ktp_kk'],
+                'no_kk'                 => $check_so->debt['no_kk'],
+                'no_npwp'               => $check_so->debt['no_npwp'],
+                'tempat_lahir'          => $check_so->debt['tempat_lahir'],
+                'tgl_lahir'             => $check_so->debt['tgl_lahir'],
+                'agama'                 => $check_so->debt['agama'],
+                'alamat_ktp' => [
+                    'alamat_singkat' => $check_so->debt['alamat_ktp'],
+                    'rt'     => $check_so->debt['rt_ktp'] == null ? null : (int) $check_so->debt['rt_ktp'],
+                    'rw'     => $check_so->debt['rw_ktp'] == null ? null : (int) $check_so->debt['rw_ktp'],
+                    'kelurahan' => [
+                        'id'    => $check_so->debt['id_kel_ktp'] == null ? null : (int) $check_so->debt['id_kel_ktp'],
+                        'nama'  => $check_so->debt['kel_ktp']['nama']
+                    ],
+                    'kecamatan' => [
+                        'id'    => $check_so->debt['id_kec_ktp'] == null ? null : (int) $check_so->debt['id_kec_ktp'],
+                        'nama'  => $check_so->debt['kec_ktp']['nama']
+                    ],
+                    'kabupaten' => [
+                        'id'    => $check_so->debt['id_kab_ktp'] == null ? null : (int) $check_so->debt['id_kab_ktp'],
+                        'nama'  => $check_so->debt['kab_ktp']['nama'],
+                    ],
+                    'provinsi'  => [
+                        'id'   => $check_so->debt['id_prov_ktp'] == null ? null : (int) $check_so->debt['id_prov_ktp'],
+                        'nama' => $check_so->debt['prov_ktp']['nama'],
+                    ],
+                    'kode_pos' => $check_so->debt['kel_ktp']['kode_pos'] == null ? null : (int) $check_so->debt['kel_ktp']['kode_pos']
+                ],
+                'alamat_domisili' => [
+                    'alamat_singkat' => $check_so->debt['alamat_domisili'],
+                    'rt'             => $check_so->debt['rt_domisili'] == null ? null : (int) $check_so->debt['rt_domisili'],
+                    'rw'             => $check_so->debt['rw_domisili'] == null ? null : (int) $check_so->debt['rw_domisili'],
+                    'kelurahan' => [
+                        'id'    => $check_so->debt['id_kel_domisili'] == null ? null : (int) $check_so->debt['id_kel_domisili'],
+                        'nama'  => $check_so->debt['kel_dom']['nama']
+                    ],
+                    'kecamatan' => [
+                        'id'    => $check_so->debt['id_kec_domisili'] == null ? null : (int) $check_so->debt['id_kec_domisili'],
+                        'nama'  => $check_so->debt['kec_dom']['nama']
+                    ],
+                    'kabupaten' => [
+                        'id'    => $check_so->debt['id_kab_domisili'] == null ? null : (int) $check_so->debt['id_kab_domisili'],
+                        'nama'  => $check_so->debt['kab_dom']['nama'],
+                    ],
+                    'provinsi'  => [
+                        'id'   => $check_so->debt['id_prov_domisili'] == null ? null : (int) $check_so->debt['id_prov_domisili'],
+                        'nama' => $check_so->debt['prov_dom']['nama'],
+                    ],
+                    'kode_pos' => $check_so->debt['kel_dom']['kode_pos'] == null ? null : (int) $check_so->debt['kel_dom']['kode_pos']
+                ],
+                "pekerjaan" => [
+                    "nama_pekerjaan"        => $check_so->debt['pekerjaan'],
+                    "posisi_pekerjaan"      => $check_so->debt['posisi_pekerjaan'],
+                    "nama_tempat_kerja"     => $check_so->debt['nama_tempat_kerja'],
+                    "jenis_pekerjaan"       => $check_so->debt['jenis_pekerjaan'],
+                    "tgl_mulai_kerja"       => $check_so->debt['tgl_mulai_kerja'], //Carbon::parse($val->tgl_mulai_kerja)->format('d-m-Y'),
+                    "no_telp_tempat_kerja"  => $check_so->debt['no_telp_tempat_kerja'],
+                    'alamat' => [
+                        'alamat_singkat' => $check_so->debt['alamat_tempat_kerja'],
+                        'rt'             => $check_so->debt['rt_tempat_kerja'] == null ? null : (int) $check_so->debt['rt_tempat_kerja'],
+                        'rw'             => $check_so->debt['rw_tempat_kerja'] == null ? null : (int) $check_so->debt['rw_tempat_kerja'],
+                        'kelurahan' => [
+                            'id'    => $check_so->debt['id_kel_tempat_kerja'] == null ? null : (int) $check_so->debt['id_kel_tempat_kerja'],
+                            'nama'  => $check_so->debt['kel_kerja']['nama']
+                        ],
+                        'kecamatan' => [
+                            'id'    => $check_so->debt['id_kec_tempat_kerja'] == null ? null : (int) $check_so->debt['id_kec_tempat_kerja'],
+                            'nama'  => $check_so->debt['kec_kerja']['nama']
+                        ],
+                        'kabupaten' => [
+                            'id'    => $check_so->debt['id_kab_tempat_kerja'] == null ? null : (int) $check_so->debt['id_kab_tempat_kerja'],
+                            'nama'  => $check_so->debt['kab_kerja']['nama'],
+                        ],
+                        'provinsi'  => [
+                            'id'    => $check_so->debt['id_prov_tempat_kerja'] == null ? null : (int) $check_so->debt['id_prov_tempat_kerja'],
+                            'nama'  => $check_so->debt['prov_kerja']['nama'],
+                        ],
+                        'kode_pos'  => $check_so->debt['kel_kerja']['kode_pos'] == null ? null : (int) $check_so->debt['kel_kerja']['kode_pos']
+                    ]
+                ],
+                'pendidikan_terakhir'   => $check_so->debt['pendidikan_terakhir'],
+                'jumlah_tanggungan'     => $check_so->debt['jumlah_tanggungan'],
+                'no_telp'               => $check_so->debt['no_telp'],
+                'no_hp'                 => $check_so->debt['no_hp'],
+                'alamat_surat'          => $check_so->debt['alamat_surat'],
+                'lampiran' => [
+                    'lamp_ktp'              => $check_so->debt['lamp_ktp'],
+                    'lamp_kk'               => $check_so->debt['lamp_kk'],
+                    'lamp_buku_tabungan'    => $check_so->debt['lamp_buku_tabungan'],
+                    'lamp_sertifikat'       => $check_so->debt['lamp_sertifikat'],
+                    'lamp_sttp_pbb'         => $check_so->debt['lamp_sttp_pbb'],
+                    'lamp_imb'              => $check_so->debt['lamp_imb'],
+                    'foto_agunan_rumah'     => $check_so->debt['foto_agunan_rumah']
+                ]
+            ],
+
             'data_pasangan' => DB::connection('web')->table('pasangan_calon_debitur')->where('id', $check_so->id_pasangan)->first(),
             'data_penjamin' => DB::connection('web')->table('penjamin_calon_debitur')->where('id', $check_so->id_penjamin)->get(),
             'data_agunan' => [
