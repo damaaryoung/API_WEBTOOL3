@@ -466,18 +466,18 @@ class MasterCA_Controller extends BaseController
                             'nama'  => $val->so['debt']['kel_kerja']['nama']
                         ],
                         'kecamatan' => [
-                            'id'    => $val->socket_addrinfo_lookup['debt']['id_kec_tempat_kerja'] == null ? null : (int) $val->socket_addrinfo_lookup['debt']['id_kec_tempat_kerja'],
-                            'nama'  => $val->socket_addrinfo_lookup['debt']['kec_kerja']['nama']
+                            'id'    => $val->so['debt']['id_kec_tempat_kerja'] == null ? null : (int) $val->so['debt']['id_kec_tempat_kerja'],
+                            'nama'  => $val->so['debt']['kec_kerja']['nama']
                         ],
                         'kabupaten' => [
                             'id'    => $val->so['debt']['id_kab_tempat_kerja'] == null ? null : (int) $val->so['debt']['id_kab_tempat_kerja'],
                             'nama'  => $val->so['debt']['kab_kerja']['nama'],
                         ],
                         'provinsi'  => [
-                            'id'    => $val->socket_close['debt']['id_prov_tempat_kerja'] == null ? null : (int) $val->socket_close['debt']['id_prov_tempat_kerja'],
-                            'nama'  => $val->socket_close['debt']['prov_kerja']['nama'],
+                            'id'    => $val->so['debt']['id_prov_tempat_kerja'] == null ? null : (int) $val->so['debt']['id_prov_tempat_kerja'],
+                            'nama'  => $val->so['debt']['prov_kerja']['nama'],
                         ],
-                        'kode_pos'  => $val->socket_close['debt']['kel_kerja']['kode_pos'] == null ? null : (int) $val->socket_close['debt']['kel_kerja']['kode_pos']
+                        'kode_pos'  => $val->so['debt']['kel_kerja']['kode_pos'] == null ? null : (int) $val->so['debt']['kel_kerja']['kode_pos']
                     ]
                 ],
                 'pendidikan_terakhir'   => $val->so['debt']['pendidikan_terakhir'],
