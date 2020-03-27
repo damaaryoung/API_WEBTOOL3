@@ -719,6 +719,63 @@ class MasterCAA_Controller extends BaseController
             }
         }
 
+        $penj = DB::connection('web')->table('penjamin_calon_debitur')->where('id', $check_so->id_penjamin)->get();
+
+        $penjamin = array();
+        foreach ($penj as $pen) {
+            $penjamin[] = [
+                'id'                => $pen->id,
+                'nama_ktp'          => $pen->nama_ktp,
+                'nama_ibu_kandung'  => $pen->nama_ibu_kandung,
+                'no_ktp'            => $pen->no_ktp,
+                'no_npwp'           => $pen->no_npwp,
+                'tempat_lahir'      => $pen->tempat_lahir,
+                'tgl_lahir'         => $pen->tgl_lahir,
+                'jenis_kelamin'     => $pen->jenis_kelamin,
+                'alamat_ktp'        => $pen->alamat_ktp,
+                'no_telp'           => $pen->no_telp,
+                'hubungan_debitur'  => $pen->hubungan_debitur,
+
+                "pekerjaan" => [
+                    "nama_pekerjaan"        => $pen->pekerjaan,
+                    "posisi_pekerjaan"      => $pen->posisi_pekerjaan,
+                    "nama_tempat_kerja"     => $pen->nama_tempat_kerja,
+                    "jenis_pekerjaan"       => $pen->jenis_pekerjaan,
+                    "tgl_mulai_kerja"       => $pen->tgl_mulai_kerja,
+                    "no_telp_tempat_kerja"  => $pen->no_telp_tempat_kerja,
+                    'alamat' => [
+                        'alamat_singkat' => $pen->alamat_tempat_kerja,
+                        'rt'             => $pen->rt_tempat_kerja,
+                        'rw'             => $pen->rw_tempat_kerja,
+                        'kelurahan' => [
+                            'id'    => $pen->id_kel_tempat_kerja,
+                            'nama'  => $pen->kel_kerja['nama']
+                        ],
+                        'kecamatan' => [
+                            'id'    => $pen->id_kec_tempat_kerja,
+                            'nama'  => $pen->kec_kerja['nama']
+                        ],
+                        'kabupaten' => [
+                            'id'    => $pen->id_kab_tempat_kerja,
+                            'nama'  => $pen->kab_kerja['nama'],
+                        ],
+                        'provinsi'  => [
+                            'id'    => $pen->id_prov_tempat_kerja,
+                            'nama'  => $pen->prov_kerja['nama'],
+                        ],
+                        'kode_pos'  => $pen->kel_kerja['kode_pos'] == null ? null : (int) $pen->kel_kerja['kode_pos']
+                    ]
+                ],
+
+                'lampiran' => [
+                    'lamp_ktp' => $pen->lamp_ktp,
+                    'lamp_ktp_pasangan' => $pen->lamp_ktp_pasangan,
+                    'lamp_kk' => $pen->lamp_kk,
+                    'lamp_buku_nikah' => $pen->lamp_buku_nikah
+                ]
+            ];
+        }
+
         $data = array(
             'status_revisi' => $check_ca->revisi >= 1 ? 'Y' : 'N',
             'id_trans_so' => $check_so->id == null ? null : (int) $check_so->id,
@@ -859,8 +916,59 @@ class MasterCAA_Controller extends BaseController
                 ]
             ],
 
-            'data_pasangan' => DB::connection('web')->table('pasangan_calon_debitur')->where('id', $check_so->id_pasangan)->first(),
-            'data_penjamin' => DB::connection('web')->table('penjamin_calon_debitur')->where('id', $check_so->id_penjamin)->get(),
+            'data_pasangan' => [
+                'id'                    => $check_so->id_pasangan,
+                'nama_lengkap'          => $check_so->pas['nama_lengkap'],
+                'nama_ibu_kandung'      => $check_so->pas['nama_ibu_kandung'],
+                'gelar_keagamaan'       => $check_so->pas['gelar_keagamaan'],
+                'gelar_pendidikan'      => $check_so->pas['gelar_pendidikan'],
+                'jenis_kelamin'         => $check_so->pas['jenis_kelamin'],
+                'no_ktp'                => $check_so->pas['no_ktp'],
+                'no_ktp_kk'             => $check_so->pas['no_ktp_kk'],
+                'no_npwp'               => $check_so->pas['no_npwp'],
+                'tempat_lahir'          => $check_so->pas['tempat_lahir'],
+                'tgl_lahir'             => $check_so->pas['tgl_lahir'],
+                'alamat_ktp'            => $check_so->pas['alamat_ktp'],
+                'no_telp'               => $check_so->pas['no_telp'],
+                
+                "pekerjaan" => [
+                    "nama_pekerjaan"        => $check_so->pas['pekerjaan'],
+                    "posisi_pekerjaan"      => $check_so->pas['posisi_pekerjaan'],
+                    "nama_tempat_kerja"     => $check_so->pas['nama_tempat_kerja'],
+                    "jenis_pekerjaan"       => $check_so->pas['jenis_pekerjaan'],
+                    "tgl_mulai_kerja"       => $check_so->pas['tgl_mulai_kerja'],
+                    "no_telp_tempat_kerja"  => $check_so->pas['no_telp_tempat_kerja'],
+                    'alamat' => [
+                        'alamat_singkat' => $check_so->pas['alamat_tempat_kerja'],
+                        'rt'             => $check_so->pas['rt_tempat_kerja'] == null ? null : (int) $check_so->pas['rt_tempat_kerja'],
+                        'rw'             => $check_so->pas['rw_tempat_kerja'] == null ? null : (int) $check_so->pas['rw_tempat_kerja'],
+                        'kelurahan' => [
+                            'id'    => $check_so->pas['id_kel_tempat_kerja'] == null ? null : (int) $check_so->pas['id_kel_tempat_kerja'],
+                            'nama'  => $check_so->pas['kel_kerja']['nama']
+                        ],
+                        'kecamatan' => [
+                            'id'    => $check_so->pas['id_kec_tempat_kerja'] == null ? null : (int) $check_so->pas['id_kec_tempat_kerja'],
+                            'nama'  => $check_so->pas['kec_kerja']['nama']
+                        ],
+                        'kabupaten' => [
+                            'id'    => $check_so->pas['id_kab_tempat_kerja'] == null ? null : (int) $check_so->pas['id_kab_tempat_kerja'],
+                            'nama'  => $check_so->pas['kab_kerja']['nama'],
+                        ],
+                        'provinsi'  => [
+                            'id'    => $check_so->pas['id_prov_tempat_kerja'] == null ? null : (int) $check_so->pas['id_prov_tempat_kerja'],
+                            'nama'  => $check_so->pas['prov_kerja']['nama'],
+                        ],
+                        'kode_pos'  => $check_so->pas['kel_kerja']['kode_pos'] == null ? null : (int) $check_so->pas['kel_kerja']['kode_pos']
+                    ]
+                ],
+                'lampiran' => [
+                    'lamp_ktp'        => $check_so->pas['lamp_ktp'],
+                    'lamp_buku_nikah' => $check_so->pas['lamp_buku_nikah']
+                ]
+            ],
+
+            'data_penjamin' => $penjamin,
+
             'data_agunan' => [
                 'agunan_tanah'     => $idTan,
                 'agunan_kendaraan' => $idKen

@@ -280,6 +280,61 @@ class MasterCA_Controller extends BaseController
 
         $idPen = Penjamin::whereIn('id',  explode (",", $val->so['id_penjamin']))->get();
 
+        $penjamin = array();
+        foreach ($idPen as $pen) {
+            $penjamin[] = [
+                'id'                => $pen->id,
+                'nama_ktp'          => $pen->nama_ktp,
+                'nama_ibu_kandung'  => $pen->nama_ibu_kandung,
+                'no_ktp'            => $pen->no_ktp,
+                'no_npwp'           => $pen->no_npwp,
+                'tempat_lahir'      => $pen->tempat_lahir,
+                'tgl_lahir'         => $pen->tgl_lahir,
+                'jenis_kelamin'     => $pen->jenis_kelamin,
+                'alamat_ktp'        => $pen->alamat_ktp,
+                'no_telp'           => $pen->no_telp,
+                'hubungan_debitur'  => $pen->hubungan_debitur,
+
+                "pekerjaan" => [
+                    "nama_pekerjaan"        => $pen->pekerjaan,
+                    "posisi_pekerjaan"      => $pen->posisi_pekerjaan,
+                    "nama_tempat_kerja"     => $pen->nama_tempat_kerja,
+                    "jenis_pekerjaan"       => $pen->jenis_pekerjaan,
+                    "tgl_mulai_kerja"       => $pen->tgl_mulai_kerja,
+                    "no_telp_tempat_kerja"  => $pen->no_telp_tempat_kerja,
+                    'alamat' => [
+                        'alamat_singkat' => $pen->alamat_tempat_kerja,
+                        'rt'             => $pen->rt_tempat_kerja,
+                        'rw'             => $pen->rw_tempat_kerja,
+                        'kelurahan' => [
+                            'id'    => $pen->id_kel_tempat_kerja,
+                            'nama'  => $pen->kel_kerja['nama']
+                        ],
+                        'kecamatan' => [
+                            'id'    => $pen->id_kec_tempat_kerja,
+                            'nama'  => $pen->kec_kerja['nama']
+                        ],
+                        'kabupaten' => [
+                            'id'    => $pen->id_kab_tempat_kerja,
+                            'nama'  => $pen->kab_kerja['nama'],
+                        ],
+                        'provinsi'  => [
+                            'id'    => $pen->id_prov_tempat_kerja,
+                            'nama'  => $pen->prov_kerja['nama'],
+                        ],
+                        'kode_pos'  => $pen->kel_kerja['kode_pos'] == null ? null : (int) $pen->kel_kerja['kode_pos']
+                    ]
+                ],
+
+                'lampiran' => [
+                    'lamp_ktp' => $pen->lamp_ktp,
+                    'lamp_ktp_pasangan' => $pen->lamp_ktp_pasangan,
+                    'lamp_kk' => $pen->lamp_kk,
+                    'lamp_buku_nikah' => $pen->lamp_buku_nikah
+                ]
+            ];
+        }
+
         $idTan = AgunanTanah::whereIn('id', explode (",",$val->id_agunan_tanah))->get();
 
         $idKen = AgunanKendaraan::whereIn('id', explode (",",$val->id_agunan_kendaraan))->get();
@@ -335,114 +390,167 @@ class MasterCA_Controller extends BaseController
             ],
 
             'data_debitur' => [
-                'id'                    => $val->id_calon_debitur,
-                'nama_lengkap'          => $val->debt['nama_lengkap'],
-                'gelar_keagamaan'       => $val->debt['gelar_keagamaan'],
-                'gelar_pendidikan'      => $val->debt['gelar_pendidikan'],
-                'jenis_kelamin'         => $val->debt['jenis_kelamin'],
-                'status_nikah'          => $val->debt['status_nikah'],
-                'ibu_kandung'           => $val->debt['ibu_kandung'],
-                'tinggi_badan'          => $val->debt['tinggi_badan'],
-                'berat_badan'           => $val->debt['berat_badan'],
-                'no_ktp'                => $val->debt['no_ktp'],
-                'no_ktp_kk'             => $val->debt['no_ktp_kk'],
-                'no_kk'                 => $val->debt['no_kk'],
-                'no_npwp'               => $val->debt['no_npwp'],
-                'tempat_lahir'          => $val->debt['tempat_lahir'],
-                'tgl_lahir'             => $val->debt['tgl_lahir'],
-                'agama'                 => $val->debt['agama'],
+                'id'                    => $val->so['id_calon_debitur'],
+                'nama_lengkap'          => $val->so['debt']['nama_lengkap'],
+                'gelar_keagamaan'       => $val->so['debt']['gelar_keagamaan'],
+                'gelar_pendidikan'      => $val->so['debt']['gelar_pendidikan'],
+                'jenis_kelamin'         => $val->so['debt']['jenis_kelamin'],
+                'status_nikah'          => $val->so['debt']['status_nikah'],
+                'ibu_kandung'           => $val->so['debt']['ibu_kandung'],
+                'tinggi_badan'          => $val->so['debt']['tinggi_badan'],
+                'berat_badan'           => $val->so['debt']['berat_badan'],
+                'no_ktp'                => $val->so['debt']['no_ktp'],
+                'no_ktp_kk'             => $val->so['debt']['no_ktp_kk'],
+                'no_kk'                 => $val->so['debt']['no_kk'],
+                'no_npwp'               => $val->so['debt']['no_npwp'],
+                'tempat_lahir'          => $val->so['debt']['tempat_lahir'],
+                'tgl_lahir'             => $val->so['debt']['tgl_lahir'],
+                'agama'                 => $val->so['debt']['agama'],
                 'alamat_ktp' => [
-                    'alamat_singkat' => $val->debt['alamat_ktp'],
-                    'rt'     => $val->debt['rt_ktp'] == null ? null : (int) $val->debt['rt_ktp'],
-                    'rw'     => $val->debt['rw_ktp'] == null ? null : (int) $val->debt['rw_ktp'],
+                    'alamat_singkat' => $val->so['debt']['alamat_ktp'],
+                    'rt'     => $val->so['debt']['rt_ktp'] == null ? null : (int) $val->so['debt']['rt_ktp'],
+                    'rw'     => $val->so['debt']['rw_ktp'] == null ? null : (int) $val->so['debt']['rw_ktp'],
                     'kelurahan' => [
-                        'id'    => $val->debt['id_kel_ktp'] == null ? null : (int) $val->debt['id_kel_ktp'],
-                        'nama'  => $val->debt['kel_ktp']['nama']
+                        'id'    => $val->so['debt']['id_kel_ktp'] == null ? null : (int) $val->so['debt']['id_kel_ktp'],
+                        'nama'  => $val->so['debt']['kel_ktp']['nama']
                     ],
                     'kecamatan' => [
-                        'id'    => $val->debt['id_kec_ktp'] == null ? null : (int) $val->debt['id_kec_ktp'],
-                        'nama'  => $val->debt['kec_ktp']['nama']
+                        'id'    => $val->so['debt']['id_kec_ktp'] == null ? null : (int) $val->so['debt']['id_kec_ktp'],
+                        'nama'  => $val->so['debt']['kec_ktp']['nama']
                     ],
                     'kabupaten' => [
-                        'id'    => $val->debt['id_kab_ktp'] == null ? null : (int) $val->debt['id_kab_ktp'],
-                        'nama'  => $val->debt['kab_ktp']['nama'],
+                        'id'    => $val->so['debt']['id_kab_ktp'] == null ? null : (int) $val->so['debt']['id_kab_ktp'],
+                        'nama'  => $val->so['debt']['kab_ktp']['nama'],
                     ],
                     'provinsi'  => [
-                        'id'   => $val->debt['id_prov_ktp'] == null ? null : (int) $val->debt['id_prov_ktp'],
-                        'nama' => $val->debt['prov_ktp']['nama'],
+                        'id'   => $val->so['debt']['id_prov_ktp'] == null ? null : (int) $val->so['debt']['id_prov_ktp'],
+                        'nama' => $val->so['debt']['prov_ktp']['nama'],
                     ],
-                    'kode_pos' => $val->debt['kel_ktp']['kode_pos'] == null ? null : (int) $val->debt['kel_ktp']['kode_pos']
+                    'kode_pos' => $val->socket_addrinfo_explain['debt']['kel_ktp']['kode_pos'] == null ? null : (int) $val->socket_addrinfo_explain['debt']['kel_ktp']['kode_pos']
                 ],
                 'alamat_domisili' => [
-                    'alamat_singkat' => $val->debt['alamat_domisili'],
-                    'rt'             => $val->debt['rt_domisili'] == null ? null : (int) $val->debt['rt_domisili'],
-                    'rw'             => $val->debt['rw_domisili'] == null ? null : (int) $val->debt['rw_domisili'],
+                    'alamat_singkat' => $val->so['debt']['alamat_domisili'],
+                    'rt'             => $val->so['debt']['rt_domisili'] == null ? null : (int) $val->so['debt']['rt_domisili'],
+                    'rw'             => $val->so['debt']['rw_domisili'] == null ? null : (int) $val->so['debt']['rw_domisili'],
                     'kelurahan' => [
-                        'id'    => $val->debt['id_kel_domisili'] == null ? null : (int) $val->debt['id_kel_domisili'],
-                        'nama'  => $val->debt['kel_dom']['nama']
+                        'id'    => $val->so['debt']['id_kel_domisili'] == null ? null : (int) $val->so['debt']['id_kel_domisili'],
+                        'nama'  => $val->so['debt']['kel_dom']['nama']
                     ],
                     'kecamatan' => [
-                        'id'    => $val->debt['id_kec_domisili'] == null ? null : (int) $val->debt['id_kec_domisili'],
-                        'nama'  => $val->debt['kec_dom']['nama']
+                        'id'    => $val->so['debt']['id_kec_domisili'] == null ? null : (int) $val->so['debt']['id_kec_domisili'],
+                        'nama'  => $val->so['debt']['kec_dom']['nama']
                     ],
                     'kabupaten' => [
-                        'id'    => $val->debt['id_kab_domisili'] == null ? null : (int) $val->debt['id_kab_domisili'],
-                        'nama'  => $val->debt['kab_dom']['nama'],
+                        'id'    => $val->so['debt']['id_kab_domisili'] == null ? null : (int) $val->so['debt']['id_kab_domisili'],
+                        'nama'  => $val->so['debt']['kab_dom']['nama'],
                     ],
                     'provinsi'  => [
-                        'id'   => $val->debt['id_prov_domisili'] == null ? null : (int) $val->debt['id_prov_domisili'],
-                        'nama' => $val->debt['prov_dom']['nama'],
+                        'id'   => $val->socket_addrinfo_explain['debt']['id_prov_domisili'] == null ? null : (int) $val->socket_addrinfo_explain['debt']['id_prov_domisili'],
+                        'nama' => $val->socket_addrinfo_explain['debt']['prov_dom']['nama'],
                     ],
-                    'kode_pos' => $val->debt['kel_dom']['kode_pos'] == null ? null : (int) $val->debt['kel_dom']['kode_pos']
+                    'kode_pos' => $val->so['debt']['kel_dom']['kode_pos'] == null ? null : (int) $val->so['debt']['kel_dom']['kode_pos']
                 ],
                 "pekerjaan" => [
-                    "nama_pekerjaan"        => $val->debt['pekerjaan'],
-                    "posisi_pekerjaan"      => $val->debt['posisi_pekerjaan'],
-                    "nama_tempat_kerja"     => $val->debt['nama_tempat_kerja'],
-                    "jenis_pekerjaan"       => $val->debt['jenis_pekerjaan'],
-                    "tgl_mulai_kerja"       => $val->debt['tgl_mulai_kerja'], //Carbon::parse($val->tgl_mulai_kerja)->format('d-m-Y'),
-                    "no_telp_tempat_kerja"  => $val->debt['no_telp_tempat_kerja'],
+                    "nama_pekerjaan"        => $val->so['debt']['pekerjaan'],
+                    "posisi_pekerjaan"      => $val->so['debt']['posisi_pekerjaan'],
+                    "nama_tempat_kerja"     => $val->so['debt']['nama_tempat_kerja'],
+                    "jenis_pekerjaan"       => $val->so['debt']['jenis_pekerjaan'],
+                    "tgl_mulai_kerja"       => $val->so['debt']['tgl_mulai_kerja'],
+                    "no_telp_tempat_kerja"  => $val->so['debt']['no_telp_tempat_kerja'],
                     'alamat' => [
-                        'alamat_singkat' => $val->debt['alamat_tempat_kerja'],
-                        'rt'             => $val->debt['rt_tempat_kerja'] == null ? null : (int) $val->debt['rt_tempat_kerja'],
-                        'rw'             => $val->debt['rw_tempat_kerja'] == null ? null : (int) $val->debt['rw_tempat_kerja'],
+                        'alamat_singkat' => $val->so['debt']['alamat_tempat_kerja'],
+                        'rt'             => $val->so['debt']['rt_tempat_kerja'] == null ? null : (int) $val->so['debt']['rt_tempat_kerja'],
+                        'rw'             => $val->so['debt']['rw_tempat_kerja'] == null ? null : (int) $val->so['debt']['rw_tempat_kerja'],
                         'kelurahan' => [
-                            'id'    => $val->debt['id_kel_tempat_kerja'] == null ? null : (int) $val->debt['id_kel_tempat_kerja'],
-                            'nama'  => $val->debt['kel_kerja']['nama']
+                            'id'    => $val->so['debt']['id_kel_tempat_kerja'] == null ? null : (int) $val->so['debt']['id_kel_tempat_kerja'],
+                            'nama'  => $val->so['debt']['kel_kerja']['nama']
                         ],
                         'kecamatan' => [
-                            'id'    => $val->debt['id_kec_tempat_kerja'] == null ? null : (int) $val->debt['id_kec_tempat_kerja'],
-                            'nama'  => $val->debt['kec_kerja']['nama']
+                            'id'    => $val->socket_addrinfo_lookup['debt']['id_kec_tempat_kerja'] == null ? null : (int) $val->socket_addrinfo_lookup['debt']['id_kec_tempat_kerja'],
+                            'nama'  => $val->socket_addrinfo_lookup['debt']['kec_kerja']['nama']
                         ],
                         'kabupaten' => [
-                            'id'    => $val->debt['id_kab_tempat_kerja'] == null ? null : (int) $val->debt['id_kab_tempat_kerja'],
-                            'nama'  => $val->debt['kab_kerja']['nama'],
+                            'id'    => $val->so['debt']['id_kab_tempat_kerja'] == null ? null : (int) $val->so['debt']['id_kab_tempat_kerja'],
+                            'nama'  => $val->so['debt']['kab_kerja']['nama'],
                         ],
                         'provinsi'  => [
-                            'id'    => $val->debt['id_prov_tempat_kerja'] == null ? null : (int) $val->debt['id_prov_tempat_kerja'],
-                            'nama'  => $val->debt['prov_kerja']['nama'],
+                            'id'    => $val->socket_close['debt']['id_prov_tempat_kerja'] == null ? null : (int) $val->socket_close['debt']['id_prov_tempat_kerja'],
+                            'nama'  => $val->socket_close['debt']['prov_kerja']['nama'],
                         ],
-                        'kode_pos'  => $val->debt['kel_kerja']['kode_pos'] == null ? null : (int) $val->debt['kel_kerja']['kode_pos']
+                        'kode_pos'  => $val->socket_close['debt']['kel_kerja']['kode_pos'] == null ? null : (int) $val->socket_close['debt']['kel_kerja']['kode_pos']
                     ]
                 ],
-                'pendidikan_terakhir'   => $val->debt['pendidikan_terakhir'],
-                'jumlah_tanggungan'     => $val->debt['jumlah_tanggungan'],
-                'no_telp'               => $val->debt['no_telp'],
-                'no_hp'                 => $val->debt['no_hp'],
-                'alamat_surat'          => $val->debt['alamat_surat'],
+                'pendidikan_terakhir'   => $val->so['debt']['pendidikan_terakhir'],
+                'jumlah_tanggungan'     => $val->so['debt']['jumlah_tanggungan'],
+                'no_telp'               => $val->so['debt']['no_telp'],
+                'no_hp'                 => $val->so['debt']['no_hp'],
+                'alamat_surat'          => $val->so['debt']['alamat_surat'],
                 'lampiran' => [
-                    'lamp_ktp'              => $val->debt['lamp_ktp'],
-                    'lamp_kk'               => $val->debt['lamp_kk'],
-                    'lamp_buku_tabungan'    => $val->debt['lamp_buku_tabungan'],
-                    'lamp_sertifikat'       => $val->debt['lamp_sertifikat'],
-                    'lamp_sttp_pbb'         => $val->debt['lamp_sttp_pbb'],
-                    'lamp_imb'              => $val->debt['lamp_imb'],
-                    'foto_agunan_rumah'     => $val->debt['foto_agunan_rumah']
+                    'lamp_ktp'              => $val->so['debt']['lamp_ktp'],
+                    'lamp_kk'               => $val->so['debt']['lamp_kk'],
+                    'lamp_buku_tabungan'    => $val->so['debt']['lamp_buku_tabungan'],
+                    'lamp_sertifikat'       => $val->so['debt']['lamp_sertifikat'],
+                    'lamp_sttp_pbb'         => $val->so['debt']['lamp_sttp_pbb'],
+                    'lamp_imb'              => $val->so['debt']['lamp_imb'],
+                    'foto_agunan_rumah'     => $val->so['debt']['foto_agunan_rumah']
                 ]
             ],
 
-            'data_pasangan' => $val->so['pas'],
-            'data_penjamin' => $idPen,
+            // 'data_pasangan' => $val->so['pas'],
+
+            'data_pasangan' => [
+                'id'                    => $val->so['id_pasangan'],
+                'nama_lengkap'          => $val->so['pas']['nama_lengkap'],
+                'nama_ibu_kandung'      => $val->so['pas']['nama_ibu_kandung'],
+                'gelar_keagamaan'       => $val->so['pas']['gelar_keagamaan'],
+                'gelar_pendidikan'      => $val->so['pas']['gelar_pendidikan'],
+                'jenis_kelamin'         => $val->so['pas']['jenis_kelamin'],
+                'no_ktp'                => $val->so['pas']['no_ktp'],
+                'no_ktp_kk'             => $val->so['pas']['no_ktp_kk'],
+                'no_npwp'               => $val->so['pas']['no_npwp'],
+                'tempat_lahir'          => $val->so['pas']['tempat_lahir'],
+                'tgl_lahir'             => $val->so['pas']['tgl_lahir'],
+                'alamat_ktp'            => $val->so['pas']['alamat_ktp'],
+                'no_telp'               => $val->so['pas']['no_telp'],
+                
+                "pekerjaan" => [
+                    "nama_pekerjaan"        => $val->so['pas']['pekerjaan'],
+                    "posisi_pekerjaan"      => $val->so['pas']['posisi_pekerjaan'],
+                    "nama_tempat_kerja"     => $val->so['pas']['nama_tempat_kerja'],
+                    "jenis_pekerjaan"       => $val->so['pas']['jenis_pekerjaan'],
+                    "tgl_mulai_kerja"       => $val->so['pas']['tgl_mulai_kerja'],
+                    "no_telp_tempat_kerja"  => $val->so['pas']['no_telp_tempat_kerja'],
+                    'alamat' => [
+                        'alamat_singkat' => $val->so['pas']['alamat_tempat_kerja'],
+                        'rt'             => $val->so['pas']['rt_tempat_kerja'] == null ? null : (int) $val->so['pas']['rt_tempat_kerja'],
+                        'rw'             => $val->so['pas']['rw_tempat_kerja'] == null ? null : (int) $val->so['pas']['rw_tempat_kerja'],
+                        'kelurahan' => [
+                            'id'    => $val->so['pas']['id_kel_tempat_kerja'] == null ? null : (int) $val->so['pas']['id_kel_tempat_kerja'],
+                            'nama'  => $val->so['pas']['kel_kerja']['nama']
+                        ],
+                        'kecamatan' => [
+                            'id'    => $val->so['pas']['id_kec_tempat_kerja'] == null ? null : (int) $val->so['pas']['id_kec_tempat_kerja'],
+                            'nama'  => $val->so['pas']['kec_kerja']['nama']
+                        ],
+                        'kabupaten' => [
+                            'id'    => $val->so['pas']['id_kab_tempat_kerja'] == null ? null : (int) $val->so['pas']['id_kab_tempat_kerja'],
+                            'nama'  => $val->so['pas']['kab_kerja']['nama'],
+                        ],
+                        'provinsi'  => [
+                            'id'    => $val->so['pas']['id_prov_tempat_kerja'] == null ? null : (int) $val->so['pas']['id_prov_tempat_kerja'],
+                            'nama'  => $val->so['pas']['prov_kerja']['nama'],
+                        ],
+                        'kode_pos'  => $val->so['pas']['kel_kerja']['kode_pos'] == null ? null : (int) $val->so['pas']['kel_kerja']['kode_pos']
+                    ]
+                ],
+                'lampiran' => [
+                    'lamp_ktp'        => $val->so['pas']['lamp_ktp'],
+                    'lamp_buku_nikah' => $val->so['pas']['lamp_buku_nikah']
+                ]
+            ],
+
+            'data_penjamin' => $penjamin,
+            
             'data_agunan' => [
                 'agunan_tanah'     => $idTan,
                 'agunan_kendaraan' => $idKen

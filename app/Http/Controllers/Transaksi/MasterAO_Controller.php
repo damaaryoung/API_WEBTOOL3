@@ -291,7 +291,7 @@ class MasterAO_Controller extends BaseController
         }
 
         $data = array(
-            'id'          => $val->id          == null ? null : (int) $val->id,
+            'id'          => $val->id == null ? null : (int) $val->id,
             'nomor_so'    => $val->nomor_so,
             'nama_so'     => $val->nama_so,
             'das'=> [
@@ -434,7 +434,58 @@ class MasterAO_Controller extends BaseController
                 ]
             ],
 
-            'data_pasangan' => $val->pas,
+            // 'data_pasangan' => $val->pas,
+            'data_pasangan' => [
+                'nama_lengkap'          => $val->pas['nama_lengkap'],
+                'nama_ibu_kandung'      => $val->pas['nama_ibu_kandung'],
+                'gelar_keagamaan'       => $val->pas['gelar_keagamaan'],
+                'gelar_pendidikan'      => $val->pas['gelar_pendidikan'],
+                'jenis_kelamin'         => $val->pas['jenis_kelamin'],
+                'no_ktp'                => $val->pas['no_ktp'],
+                'no_ktp_kk'             => $val->pas['no_ktp_kk'],
+                'no_npwp'               => $val->pas['no_npwp'],
+                'tempat_lahir'          => $val->pas['tempat_lahir'],
+                'tgl_lahir'             => $val->pas['tgl_lahir'],
+                'alamat_ktp'            => $val->pas['alamat_ktp'],
+                'no_telp'               => $val->pas['no_telp'],
+                
+                "pekerjaan" => [
+                    "nama_pekerjaan"        => $val->pas['pekerjaan'],
+                    "posisi_pekerjaan"      => $val->pas['posisi_pekerjaan'],
+                    "nama_tempat_kerja"     => $val->pas['nama_tempat_kerja'],
+                    "jenis_pekerjaan"       => $val->pas['jenis_pekerjaan'],
+                    "tgl_mulai_kerja"       => $val->pas['tgl_mulai_kerja'],
+                    "no_telp_tempat_kerja"  => $val->pas['no_telp_tempat_kerja'],
+                    'alamat' => [
+                        'alamat_singkat' => $val->pas['alamat_tempat_kerja'],
+                        'rt'             => $val->pas['rt_tempat_kerja'] == null ? null : (int) $val->pas['rt_tempat_kerja'],
+                        'rw'             => $val->pas['rw_tempat_kerja'] == null ? null : (int) $val->pas['rw_tempat_kerja'],
+                        'kelurahan' => [
+                            'id'    => $val->pas['id_kel_tempat_kerja'] == null ? null : (int) $val->pas['id_kel_tempat_kerja'],
+                            'nama'  => $val->pas['kel_kerja']['nama']
+                        ],
+                        'kecamatan' => [
+                            'id'    => $val->pas['id_kec_tempat_kerja'] == null ? null : (int) $val->pas['id_kec_tempat_kerja'],
+                            'nama'  => $val->pas['kec_kerja']['nama']
+                        ],
+                        'kabupaten' => [
+                            'id'    => $val->pas['id_kab_tempat_kerja'] == null ? null : (int) $val->pas['id_kab_tempat_kerja'],
+                            'nama'  => $val->pas['kab_kerja']['nama'],
+                        ],
+                        'provinsi'  => [
+                            'id'    => $val->pas['id_prov_tempat_kerja'] == null ? null : (int) $val->pas['id_prov_tempat_kerja'],
+                            'nama'  => $val->pas['prov_kerja']['nama'],
+                        ],
+                        'kode_pos'  => $val->pas['kel_kerja']['kode_pos'] == null ? null : (int) $val->pas['kel_kerja']['kode_pos']
+                    ]
+                ],
+                'lampiran' => [
+                    'lamp_ktp'        => $val->pas['lamp_ktp'],
+                    'lamp_buku_nikah' => $val->pas['lamp_buku_nikah']
+                ],
+                'flg_aktif'             => $val->pas['flg_aktif']
+            ],
+
             'data_penjamin' => $penjamin,
             'tgl_transaksi' => $val->created_at,
         );
