@@ -719,7 +719,7 @@ class MasterCAA_Controller extends BaseController
             }
         }
 
-        $penj = DB::connection('web')->table('penjamin_calon_debitur')->where('id', $check_so->id_penjamin)->get();
+        $penj = Penjamin::where('id', $check_so->id_penjamin)->get();
 
         $penjamin = array();
         foreach ($penj as $pen) {
