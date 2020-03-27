@@ -264,7 +264,31 @@ class MasterAO_Controller extends BaseController
             ], 404);
         }
 
-        $penjamin = Penjamin::whereIn('id', explode (",",$val->id_penjamin))->get();
+        $penj = Penjamin::whereIn('id', explode (",",$val->id_penjamin))->get();
+
+        $penjamin = array();
+        foreach ($penj as $pen) {
+            $penjamin[] = [
+                'id'                => $pen->id,
+                'nama_ktp'          => $pen->nama_ktp,
+                'nama_ibu_kandung'  => $pen->nama_ibu_kandung,
+                'no_ktp'            => $pen->no_ktp,
+                'no_npwp'           => $pen->no_npwp,
+                'tempat_lahir'      => $pen->tempat_lahir,
+                'tgl_lahir'         => $pen->tgl_lahir,
+                'jenis_kelamin'     => $pen->jenis_kelamin,
+                'alamat_ktp'        => $pen->alamat_ktp,
+                'no_telp'           => $pen->no_telp,
+                'hubungan_debitur'  => $pen->hubungan_debitur,
+
+                'lampiran' => [
+                    'lamp_ktp' => $pen->lamp_ktp,
+                    'lamp_ktp_pasangan' => $pen->lamp_ktp_pasangan,
+                    'lamp_kk' => $pen->lamp_kk,
+                    'lamp_buku_nikah' => $pen->lamp_buku_nikah
+                ]
+            ];
+        }
 
         if ($val->status_das == 1) {
             $status_das = 'complete';
@@ -436,6 +460,7 @@ class MasterAO_Controller extends BaseController
 
             // 'data_pasangan' => $val->pas,
             'data_pasangan' => [
+                'id'                    => $val->id_pasangan,
                 'nama_lengkap'          => $val->pas['nama_lengkap'],
                 'nama_ibu_kandung'      => $val->pas['nama_ibu_kandung'],
                 'gelar_keagamaan'       => $val->pas['gelar_keagamaan'],
@@ -448,7 +473,7 @@ class MasterAO_Controller extends BaseController
                 'tgl_lahir'             => $val->pas['tgl_lahir'],
                 'alamat_ktp'            => $val->pas['alamat_ktp'],
                 'no_telp'               => $val->pas['no_telp'],
-                
+
                 "pekerjaan" => [
                     "nama_pekerjaan"        => $val->pas['pekerjaan'],
                     "posisi_pekerjaan"      => $val->pas['posisi_pekerjaan'],
