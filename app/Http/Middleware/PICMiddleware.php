@@ -6,7 +6,7 @@ use Laravel\Lumen\Routing\Controller as BaseController;
 use Closure;
 use DB;
 use DateTime;
-use App\Models\Master\PIC;
+use App\Models\AreaKantor\PIC;
 
 class PICMiddleware
 {
