@@ -614,7 +614,7 @@ class MasterCA_Controller extends BaseController
 
         $transCA = array(
             'nomor_ca'    => $nomor_ca,
-            'user_id'     => $user_id,
+            'user_id'     => $req->auth->user_id,
             'id_trans_so' => $id,
             'id_pic'      => $pic->id,
             'id_area'     => $pic->id_area,
@@ -1124,15 +1124,7 @@ class MasterCA_Controller extends BaseController
     {
         $user_id  = $req->auth->user_id;
 
-        $pic = PIC::where('user_id', $user_id)->first();
-
-        if ($pic == null) {
-            return response()->json([
-                "code"    => 404,
-                "status"  => "not found",
-                "message" => "User_ID anda adalah '".$user_id."' dengan username '".$req->auth->user."' . Namun anda belum terdaftar sebagai PIC(CA). Harap daftarkan diri sebagai PIC(CA) pada form PIC atau hubungi bagian IT"
-            ], 404);
-        }
+        $pic = $req->pic;
 
         $column = array(
             'id', 'nomor_ao', 'id_trans_so', 'user_id', 'id_pic', 'id_area', 'id_cabang', 'id_validasi', 'id_verifikasi', 'id_agunan_tanah', 'id_agunan_kendaraan', 'id_periksa_agunan_tanah', 'id_periksa_agunan_kendaraan', 'id_kapasitas_bulanan', 'id_pendapatan_usaha', 'id_recom_ao', 'catatan_ao', 'status_ao', 'form_persetujuan_ideb'
@@ -1284,7 +1276,7 @@ class MasterCA_Controller extends BaseController
 
         $transCA = array(
             'nomor_ca'    => $check_ca->nomor_ca . ' [revisi]',
-            'user_id'     => $user_id,
+            'user_id'     => $req->auth->user_id,
             'id_trans_so' => $id_trans_so,
             'id_pic'      => $check_ca->id_pic,
             'id_area'     => $check_ca->id_area,

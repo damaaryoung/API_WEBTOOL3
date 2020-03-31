@@ -608,7 +608,7 @@ class MasterAO_Controller extends BaseController
         $TransAO = array(
             'nomor_ao'              => $nomor_ao,
             'id_trans_so'           => $id,
-            'user_id'               => $user_id,
+            'user_id'               => $req->auth->user_id,
             'id_pic'                => $pic->id,
             'id_area'               => $pic->id_area,
             'id_cabang'             => $pic->id_cabang,

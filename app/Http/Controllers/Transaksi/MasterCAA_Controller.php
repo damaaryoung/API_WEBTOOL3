@@ -427,7 +427,7 @@ class MasterCAA_Controller extends BaseController
 
         $data = array(
             'nomor_caa'          => $nomor_caa,
-            'user_id'            => $user_id,
+            'user_id'            => $req->auth->user_id,
             'id_trans_so'        => $id,
             'id_pic'             => $pic->id,
             'id_area'            => $pic->id_area,
