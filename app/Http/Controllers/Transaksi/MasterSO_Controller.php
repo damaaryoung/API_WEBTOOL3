@@ -236,6 +236,7 @@ class MasterSO_Controller extends BaseController
     public function store(Request $request, BlankRequest $req)
     {
         $pic = $request->pic; // From PIC middleware
+        $user_id = $request->auth->user_id;
 
         $countTSO = TransSO::latest('id','nomor_so')->first();
 
@@ -262,7 +263,7 @@ class MasterSO_Controller extends BaseController
 
         $trans_so = array(
             'nomor_so'       => $nomor_so,
-            'user_id'        => $req->auth->user_id,
+            'user_id'        => $user_id,
             'id_pic'         => $pic->id,
             'id_area'        => $pic->id_area,
             'id_cabang'      => $pic->id_cabang,
