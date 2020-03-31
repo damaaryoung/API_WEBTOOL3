@@ -184,7 +184,8 @@ class MasterCAA_Controller extends BaseController
 
     public function update($id, Request $request, BlankRequest $req)
     {
-        $pic = $request->pic; // From PIC middleware
+        $pic     = $request->pic; // From PIC middleware
+        $user_id = $request->auth->user_id;
 
         $countCAA = TransCAA::latest('id','nomor_caa')->first();
 
@@ -427,7 +428,7 @@ class MasterCAA_Controller extends BaseController
 
         $data = array(
             'nomor_caa'          => $nomor_caa,
-            'user_id'            => $req->auth->user_id,
+            'user_id'            => $user_id,
             'id_trans_so'        => $id,
             'id_pic'             => $pic->id,
             'id_area'            => $pic->id_area,

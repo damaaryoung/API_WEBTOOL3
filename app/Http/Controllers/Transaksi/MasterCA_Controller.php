@@ -1122,8 +1122,6 @@ class MasterCA_Controller extends BaseController
 
     public function search($param, $key, $value, $status, $orderVal, $orderBy, $limit, Request $req)
     {
-        $user_id  = $req->auth->user_id;
-
         $pic = $req->pic;
 
         $column = array(
@@ -1242,6 +1240,7 @@ class MasterCA_Controller extends BaseController
 
     public function revisi($id_trans_so, $id_trans_ca, Request $req)
     {
+        $user_id = $request->auth->user_id;
         $pic = $req->pic; // From PIC middleware
 
         $check_so = TransSO::where('id', $id_trans_so)->where('status_das', 1)->where('status_hm', 1)->first();
@@ -1276,7 +1275,7 @@ class MasterCA_Controller extends BaseController
 
         $transCA = array(
             'nomor_ca'    => $check_ca->nomor_ca . ' [revisi]',
-            'user_id'     => $req->auth->user_id,
+            'user_id'     => $user_id,
             'id_trans_so' => $id_trans_so,
             'id_pic'      => $check_ca->id_pic,
             'id_area'     => $check_ca->id_area,

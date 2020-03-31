@@ -507,6 +507,7 @@ class MasterAO_Controller extends BaseController
     public function update($id, Request $request, BlankRequest $req)
     {
         $pic = $request->pic; // From PIC middleware
+        $user_id = $request->auth->user_id;
 
         $countTAO = TransAO::latest('id','nomor_ao')->first();
 
@@ -581,17 +582,17 @@ class MasterAO_Controller extends BaseController
 
         /** End Check Lampiran */
 
-        $check_ao = 442; //TransAO::where('id_trans_so', $id)->first();
+        $check_ao = TransAO::where('id_trans_so', $id)->first();
 
-        // if ($check_ao != null) {
-        //     return response()->json([
-        //         'code'    => 404,
-        //         'status'  => 'not found',
-        //         'message' => 'Transaksi dengan id '.$id.' sudah ada di AO'
-        //     ], 404);
-        // }
+        if ($check_ao != null) {
+            return response()->json([
+                'code'    => 404,
+                'status'  => 'not found',
+                'message' => 'Transaksi dengan id '.$id.' sudah ada di AO'
+            ], 404);
+        }
 
-        $lamp_dir = 'public/'.'1232323233'; //$check_so->debt['no_ktp'];
+        $lamp_dir = $check_so->debt['no_ktp'];
 
         // Form Persetujuan Ideb
         if($file = $req->file('form_persetujuan_ideb')){
@@ -608,7 +609,7 @@ class MasterAO_Controller extends BaseController
         $TransAO = array(
             'nomor_ao'              => $nomor_ao,
             'id_trans_so'           => $id,
-            'user_id'               => $req->auth->user_id,
+            'user_id'               => $user_id,
             'id_pic'                => $pic->id,
             'id_area'               => $pic->id_area,
             'id_cabang'             => $pic->id_cabang,

@@ -303,7 +303,8 @@ class Approval_Controller extends BaseController
 
     public function approve($id, $id_approval, Request $req, ApprovalReq $request)
     {
-        $pic = $req->pic; // From PIC middleware
+        $pic     = $req->pic; // From PIC middleware
+        $user_id = $req->auth->user_id;
 
         $check_so = TransSO::where('id', $id)->first();
 
@@ -375,7 +376,7 @@ class Approval_Controller extends BaseController
         $id_cabang = $pic->id_cabang;
 
         $form = array(
-            'user_id'       => $req->auth->user_id,
+            'user_id'       => $user_id,
             'id_area'       => $id_area,
             'id_cabang'     => $id_cabang,
             'plafon'        => $request->input('plafon'),
