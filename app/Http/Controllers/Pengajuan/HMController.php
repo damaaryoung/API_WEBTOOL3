@@ -12,18 +12,9 @@ use Carbon\Carbon;
 
 class HMController extends BaseController
 {
-    public function index(Request $req){
-        $user_id  = $req->auth->user_id;
-
-        $pic = PIC::where('user_id', $user_id)->first();
-
-        if ($pic == null) {
-            return response()->json([
-                "code"    => 404,
-                "status"  => "not found",
-                "message" => "User_ID anda adalah '".$user_id."' dengan username '".$req->auth->user."' . Namun anda belum terdaftar sebagai PIC(AO). Harap daftarkan diri sebagai PIC(AO) pada form PIC atau hubungi bagian IT"
-            ], 404);
-        }
+    public function index(Request $req)
+    {
+        $pic = $req->pic; // From PIC middleware
 
         $id_area   = $pic->id_area;
         $id_cabang = $pic->id_cabang;
@@ -104,7 +95,8 @@ class HMController extends BaseController
         }
     }
 
-    public function show($id, Request $req){
+    public function show($id, Request $req)
+    {
         $val = TransSO::with('asaldata','debt', 'pic')->where('id', $id)->first();
         if ($val == null) {
             return response()->json([
@@ -385,7 +377,8 @@ class HMController extends BaseController
         }
     }
 
-    public function update($id, Request $req){
+    public function update($id, Request $req)
+    {
         $check = TransSO::where('id', $id)->first();
 
         if ($check == null) {
@@ -452,17 +445,7 @@ class HMController extends BaseController
 
     public function search($param, $key, $value, $status, $orderVal, $orderBy, $limit)
     {
-        $user_id  = $req->auth->user_id;
-
-        $pic = PIC::where('user_id', $user_id)->first();
-
-        if ($pic == null) {
-            return response()->json([
-                "code"    => 404,
-                "status"  => "not found",
-                "message" => "User_ID anda adalah '".$user_id."' dengan username '".$req->auth->user."' . Namun anda belum terdaftar sebagai PIC(AO). Harap daftarkan diri sebagai PIC(AO) pada form PIC atau hubungi bagian IT"
-            ], 404);
-        }
+        $pic = $req->pic; // From PIC middleware
 
         $column = array(
             'id', 'nomor_so', 'user_id', 'id_pic', 'id_area', 'id_cabang', 'id_asal_data', 'nama_marketing', 'nama_so', 'id_fasilitas_pinjaman', 'id_calon_debitur', 'id_pasangan', 'id_penjamin', 'id_trans_ao', 'id_trans_ca', 'id_trans_caa', 'catatan_das', 'catatan_hm', 'status_das', 'status_hm', 'lamp_ideb', 'lamp_pefindo'

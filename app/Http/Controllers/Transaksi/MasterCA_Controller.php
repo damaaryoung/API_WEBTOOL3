@@ -34,18 +34,9 @@ use DB;
 
 class MasterCA_Controller extends BaseController
 {
-    public function index(Request $req){
-        $user_id  = $req->auth->user_id;
-
-        $pic = PIC::where('user_id', $user_id)->first();
-
-        if (empty($pic)) {
-            return response()->json([
-                "code"    => 404,
-                "status"  => "not found",
-                "message" => "User_ID anda adalah '".$user_id."' dengan username '".$req->auth->user."' . Namun anda belum terdaftar sebagai PIC(CA). Harap daftarkan diri sebagai PIC(CA) pada form PIC atau hubungi bagian IT"
-            ], 404);
-        }
+    public function index(Request $req)
+    {
+        $pic = $req->pic; // From PIC middleware
 
         $id_area   = $pic->id_area;
         $id_cabang = $pic->id_cabang;
@@ -134,18 +125,9 @@ class MasterCA_Controller extends BaseController
         }
     }
 
-    public function indexWait($ao_ca, $status, Request $req){
-        $user_id  = $req->auth->user_id;
-
-        $pic = PIC::where('user_id', $user_id)->first();
-
-        if (empty($pic)) {
-            return response()->json([
-                "code"    => 404,
-                "status"  => "not found",
-                "message" => "User_ID anda adalah '".$user_id."' dengan username '".$req->auth->user."' . Namun anda belum terdaftar sebagai PIC(CA). Harap daftarkan diri sebagai PIC(CA) pada form PIC atau hubungi bagian IT"
-            ], 404);
-        }
+    public function indexWait($ao_ca, $status, Request $req)
+    {
+        $pic = $req->pic; // From PIC middleware
 
         $id_area   = $pic->id_area;
         $id_cabang = $pic->id_cabang;
@@ -239,17 +221,9 @@ class MasterCA_Controller extends BaseController
         }
     }
 
-    public function show($id, Request $req){
-        $user_id = $req->auth->user_id;
-        $pic     = PIC::where('user_id', $user_id)->first();
-
-        if (empty($pic)) {
-            return response()->json([
-                "code"    => 404,
-                "status"  => "not found",
-                "message" => "User_ID anda adalah '".$user_id."' dengan username '".$req->auth->user."' . Namun anda belum terdaftar sebagai PIC(CA). Harap daftarkan diri sebagai PIC(CA) pada form PIC atau hubungi bagian IT"
-            ], 404);
-        }
+    public function show($id, Request $req)
+    {
+        $pic = $req->pic; // From PIC middleware
 
         $id_area   = $pic->id_area;
         $id_cabang = $pic->id_cabang;
@@ -582,19 +556,9 @@ class MasterCA_Controller extends BaseController
         }
     }
 
-    public function update($id, Request $request, BlankRequest $req) {
-        $user_id  = $request->auth->user_id;
-        // $username = $request->auth->user;
-
-        $PIC = PIC::where('user_id', $user_id)->first();
-
-        if (empty($PIC)) {
-            return response()->json([
-                "code"    => 404,
-                "status"  => "not found",
-                "message" => "User_ID anda adalah '".$user_id."' dengan username '".$PIC->nama."' . Namun anda belum terdaftar sebagai PIC(CA). Harap daftarkan diri sebagai PIC pada form PIC(CA) atau hubungi bagian IT"
-            ], 404);
-        }
+    public function update($id, Request $request, BlankRequest $req)
+    {
+        $pic = $request->pic; // From PIC middleware
 
         $countCA = TransCA::latest('id','nomor_ca')->first();
 
@@ -1284,19 +1248,9 @@ class MasterCA_Controller extends BaseController
         }
     }
 
-    public function revisi($id_trans_so, $id_trans_ca, Request $req) {
-        $user_id  = $req->auth->user_id;
-        $username = $req->auth->user;
-
-        $PIC = PIC::where('user_id', $user_id)->first();
-
-        if (empty($PIC)) {
-            return response()->json([
-                "code"    => 404,
-                "status"  => "not found",
-                "message" => "User_ID anda adalah '".$user_id."' dengan username '".$username."' . Namun anda belum terdaftar sebagai PIC(CA). Harap daftarkan diri sebagai PIC pada form PIC(CA) atau hubungi bagian IT"
-            ], 404);
-        }
+    public function revisi($id_trans_so, $id_trans_ca, Request $req)
+    {
+        $pic = $req->pic; // From PIC middleware
 
         $check_so = TransSO::where('id', $id_trans_so)->where('status_das', 1)->where('status_hm', 1)->first();
 
@@ -1601,7 +1555,8 @@ class MasterCA_Controller extends BaseController
 
 
     // Sample
-    public function operator($id_trans_so, Request $req, Helper $help) {
+    public function operator($id_trans_so, Request $req, Helper $help)
+    {
 
         $check = TransSO::where('id',$id_trans_so)->where('status_das', 1)->where('status_hm', 1)->first();
 
@@ -1769,18 +1724,9 @@ class MasterCA_Controller extends BaseController
         }
     }
 
-    public function filter($year, $month, Request $req){
-        $user_id  = $req->auth->user_id;
-
-        $pic = PIC::where('user_id', $user_id)->first();
-
-        if ($pic == null) {
-            return response()->json([
-                "code"    => 404,
-                "status"  => "not found",
-                "message" => "User_ID anda adalah '".$user_id."' dengan username '".$req->auth->user."' . Namun anda belum terdaftar sebagai PIC(CA). Harap daftarkan diri sebagai PIC(CA) pada form PIC atau hubungi bagian IT"
-            ], 404);
-        }
+    public function filter($year, $month, Request $req)
+    {
+        $pic = $req->pic; // From PIC middleware
 
         $id_area   = $pic->id_area;
         $id_cabang = $pic->id_cabang;
@@ -1870,17 +1816,9 @@ class MasterCA_Controller extends BaseController
         }
     }
 
-    public function full_show($id, Request $req){
-        $user_id = $req->auth->user_id;
-        $pic     = PIC::where('user_id', $user_id)->first();
-
-        if ($pic == null) {
-            return response()->json([
-                "code"    => 404,
-                "status"  => "not found",
-                "message" => "User_ID anda adalah '".$user_id."' dengan username '".$req->auth->user."' . Namun anda belum terdaftar sebagai PIC(CA). Harap daftarkan diri sebagai PIC(CA) pada form PIC atau hubungi bagian IT"
-            ], 404);
-        }
+    public function full_show($id, Request $req)
+    {
+        $pic = $req->pic; // From PIC middleware
 
         $id_area   = $pic->id_area;
         $id_cabang = $pic->id_cabang;

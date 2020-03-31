@@ -28,18 +28,9 @@ use DB;
 
 class MasterAO_Controller extends BaseController
 {
-    public function index(Request $req){
-        $user_id  = $req->auth->user_id;
-
-        $pic = PIC::where('user_id', $user_id)->first();
-
-        if (empty($pic)) {
-            return response()->json([
-                "code"    => 404,
-                "status"  => "not found",
-                "message" => "User_ID anda adalah '".$user_id."' dengan username '".$req->auth->user."' . Namun anda belum terdaftar sebagai PIC(AO). Harap daftarkan diri sebagai PIC(AO) pada form PIC atau hubungi bagian IT"
-            ], 404);
-        }
+    public function index(Request $req)
+    {
+        $pic = $req->pic; // From PIC middleware
 
         $id_area   = $pic->id_area;
         $id_cabang = $pic->id_cabang;
@@ -127,18 +118,9 @@ class MasterAO_Controller extends BaseController
         }
     }
 
-    public function indexWait($ao_ca, $status, Request $req){
-        $user_id  = $req->auth->user_id;
-
-        $pic = PIC::where('user_id', $user_id)->first();
-
-        if (empty($pic)) {
-            return response()->json([
-                "code"    => 404,
-                "status"  => "not found",
-                "message" => "User_ID anda adalah '".$user_id."' dengan username '".$req->auth->user."' . Namun anda belum terdaftar sebagai PIC(CA). Harap daftarkan diri sebagai PIC(CA) pada form PIC atau hubungi bagian IT"
-            ], 404);
-        }
+    public function indexWait($ao_ca, $status, Request $req)
+    {
+        $pic = $req->pic; // From PIC middleware
 
         $id_area   = $pic->id_area;
         $id_cabang = $pic->id_cabang;
@@ -234,17 +216,9 @@ class MasterAO_Controller extends BaseController
         }
     }
 
-    public function show($id, Request $req){
-        $user_id = $req->auth->user_id;
-        $pic     = PIC::where('user_id', $user_id)->first();
-
-        if (empty($pic)) {
-            return response()->json([
-                "code"    => 404,
-                "status"  => "not found",
-                "message" => "User_ID anda adalah '".$user_id."' dengan username '".$req->auth->user."' . Namun anda belum terdaftar sebagai PIC(AO). Harap daftarkan diri sebagai PIC(AO) pada form PIC atau hubungi bagian IT"
-            ], 404);
-        }
+    public function show($id, Request $req)
+    {
+        $pic = $req->pic; // From PIC middleware
 
         $id_area   = $pic->id_area;
         $id_cabang = $pic->id_cabang;
@@ -530,20 +504,9 @@ class MasterAO_Controller extends BaseController
         }
     }
 
-    public function update($id, Request $request, BlankRequest $req) {
-
-        $user_id  = $request->auth->user_id;
-        $username = $request->auth->user;
-
-        $PIC = PIC::where('user_id', $user_id)->first();
-
-        if (empty($PIC)) {
-            return response()->json([
-                "code"    => 404,
-                "status"  => "not found",
-                "message" => "User_ID anda adalah '".$user_id."' dengan username '".$username."' . Namun anda belum terdaftar sebagai PIC. Harap daftarkan diri sebagai PIC pada form PIC atau hubungi bagian IT"
-            ], 404);
-        }
+    public function update($id, Request $request, BlankRequest $req)
+    {
+        $pic = $request->pic; // From PIC middleware
 
         $countTAO = TransAO::latest('id','nomor_ao')->first();
 
@@ -1639,17 +1602,7 @@ class MasterAO_Controller extends BaseController
 
     public function search($param, $key, $value, $status, $orderVal, $orderBy, $limit, Request $req)
     {
-        $user_id  = $req->auth->user_id;
-
-        $pic = PIC::where('user_id', $user_id)->first();
-
-        if ($pic == null) {
-            return response()->json([
-                "code"    => 404,
-                "status"  => "not found",
-                "message" => "User_ID anda adalah '".$user_id."' dengan username '".$req->auth->user."' . Namun anda belum terdaftar sebagai PIC(AO). Harap daftarkan diri sebagai PIC(AO) pada form PIC atau hubungi bagian IT"
-            ], 404);
-        }
+        $pic = $req->pic; // From PIC middleware
 
         $column = array(
             'id', 'nomor_so', 'user_id', 'id_pic', 'id_area', 'id_cabang', 'id_asal_data', 'nama_marketing', 'nama_so', 'id_fasilitas_pinjaman', 'id_calon_debitur', 'id_pasangan', 'id_penjamin', 'id_trans_ao', 'id_trans_ca', 'id_trans_caa', 'catatan_das', 'catatan_hm', 'status_das', 'status_hm', 'lamp_ideb', 'lamp_pefindo'
@@ -1793,18 +1746,9 @@ class MasterAO_Controller extends BaseController
         }
     }
 
-    public function filter($year, $month=null, Request $req){
-        $user_id  = $req->auth->user_id;
-
-        $pic = PIC::where('user_id', $user_id)->first();
-
-        if ($pic == null) {
-            return response()->json([
-                "code"    => 404,
-                "status"  => "not found",
-                "message" => "User_ID anda adalah '".$user_id."' dengan username '".$req->auth->user."' . Namun anda belum terdaftar sebagai PIC(AO). Harap daftarkan diri sebagai PIC(AO) pada form PIC atau hubungi bagian IT"
-            ], 404);
-        }
+    public function filter($year, $month=null, Request $req)
+    {
+        $pic = $req->pic; // From PIC middleware
 
         $id_area   = $pic->id_area;
         $id_cabang = $pic->id_cabang;

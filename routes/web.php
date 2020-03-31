@@ -269,26 +269,27 @@ $router->group(['middleware' => ['jwt.auth', 'log'], 'prefix' => 'api'], functio
             });
         });
 
-        // DAS
-        $router->get('/das',       ['subject' => 'Get Trans_SO from DAS Admin',     'uses' => 'Pengajuan\DASController@index']);
-        $router->get('/das/{id}',  ['subject' => 'Detail Trans_SO from DAS Admin',  'uses' => 'Pengajuan\DASController@show']);
-        $router->post('/das/{id}', ['subject' => 'Give Status and Note to Trans_SO','uses' => 'Pengajuan\DASController@update']);
+        
+        $router->group(['middleware' => 'pic'], function() use ($router) {
+            // DAS
+            $router->get('/das',       ['subject' => 'Get Trans_SO from DAS Admin',     'uses' => 'Pengajuan\DASController@index']);
+            $router->get('/das/{id}',  ['subject' => 'Detail Trans_SO from DAS Admin',  'uses' => 'Pengajuan\DASController@show']);
+            $router->post('/das/{id}', ['subject' => 'Give Status and Note to Trans_SO','uses' => 'Pengajuan\DASController@update']);
+    
+            // Search
+            $router->get('/das/{param}/{key}={value}/status={status}/{orderVal}={orderBy}/limit={limit}', ['subject' => 'Search Trans_SO from DAS Admin', 'uses' => 'Pengajuan\DASController@search']);
 
-        // Search
-        $router->get('/das/{param}/{key}={value}/status={status}/{orderVal}={orderBy}/limit={limit}', ['subject' => 'Search Trans_SO from DAS Admin', 'uses' => 'Pengajuan\DASController@search']);
-
-
-        // HM
-        $router->get('/hm',      ['subject' => 'Get Trans_SO from ds_spv',         'uses' => 'Pengajuan\HMController@index']);
-        $router->get('/hm/{id}', ['subject' => 'Detail Trans_SO from ds_spv',      'uses' => 'Pengajuan\HMController@show']);
-        $router->put('/hm/{id}', ['subject' => 'Give Status and Note to Trans_SO', 'uses' => 'Pengajuan\HMController@update']);
-
-        // Search
-        $router->get('/hm/{param}/{key}={value}/status={status}/{orderVal}={orderBy}/limit={limit}', ['subject' => 'Search Trans_SO from ds_spv', 'uses' => 'Pengajuan\HMController@search']);
+            // HM
+            $router->get('/hm',      ['subject' => 'Get Trans_SO from ds_spv',         'uses' => 'Pengajuan\HMController@index']);
+            $router->get('/hm/{id}', ['subject' => 'Detail Trans_SO from ds_spv',      'uses' => 'Pengajuan\HMController@show']);
+            $router->put('/hm/{id}', ['subject' => 'Give Status and Note to Trans_SO', 'uses' => 'Pengajuan\HMController@update']);
+    
+            // Search
+            $router->get('/hm/{param}/{key}={value}/status={status}/{orderVal}={orderBy}/limit={limit}', ['subject' => 'Search Trans_SO from ds_spv', 'uses' => 'Pengajuan\HMController@search']);
+        });
 
         // Transaksi From SO -> CAA, etc
-        $router->group(['namespace' => 'Transaksi'], function() use ($router) {
-
+        $router->group(['middleware' => 'pic', 'namespace' => 'Transaksi'], function() use ($router) {
             // Trans SO
             $router->group(['prefix' => '/mcc',], function() use ($router) {
                 $router->post('/',     ['subject' => 'Create Trans_SO', 'uses' => 'MasterSO_Controller@store']);

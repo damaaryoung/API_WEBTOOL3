@@ -21,18 +21,9 @@ use DB;
 
 class Approval_Controller extends BaseController
 {
-    public function list_team(Request $req) {
-        $user_id  = $req->auth->user_id; //1725540
-
-        $pic = PIC::where('user_id', $user_id)->first();
-
-        if ($pic == null) {
-            return response()->json([
-                "code"    => 404,
-                "status"  => "not found",
-                "message" => "User_ID anda adalah '".$user_id."' dengan username '".$req->auth->user."' . Namun anda belum terdaftar pada PIC (Karyawan) di Sefin System. Harap daftarkan diri sebagai PIC pada form PIC atau hubungi bagian IT"
-            ], 404);
-        }
+    public function list_team(Request $req)
+    {
+        $pic = $req->pic; // From PIC middleware
 
         $id_area   = $pic->id_area;
         $id_cabang = $pic->id_cabang;
@@ -116,18 +107,9 @@ class Approval_Controller extends BaseController
         }
     }
 
-    public function detail_team($id_team, Request $req) {
-        $user_id  = $req->auth->user_id; //1725540
-
-        $pic = PIC::where('user_id', $user_id)->first();
-
-        if ($pic == null) {
-            return response()->json([
-                "code"    => 404,
-                "status"  => "not found",
-                "message" => "User_ID anda adalah '".$user_id."' dengan username '".$req->auth->user."' . Namun anda belum terdaftar pada PIC (Karyawan) di Sefin System. Harap daftarkan diri sebagai PIC pada form PIC atau hubungi bagian IT"
-            ], 404);
-        }
+    public function detail_team($id_team, Request $req)
+    {
+        $pic = $req->pic; // From PIC middleware
 
         $val = PIC::with(['jpic', 'area','cabang'])
             ->where('flg_aktif', 1)
@@ -172,19 +154,9 @@ class Approval_Controller extends BaseController
         }
     }
 
-    public function index($id, Request $req){
-        $user_id = $req->auth->user_id;
-
-        $pic = PIC::where('user_id', $user_id)->first();
-
-
-        if ($pic == null) {
-            return response()->json([
-                "code"    => 404,
-                "status"  => "not found",
-                "message" => "User_ID anda adalah '".$user_id."' dengan username '".$req->auth->user."'. Yang berhak melihat halaman ini adalah Direktur, CRM, PC dan AM. Mohon cek dimenu Team CAA untuk validasi data anda atau silahkan hubungin tim IT"
-            ], 404);
-        }
+    public function index($id, Request $req)
+    {
+        $pic = $req->pic; // From PIC middleware
 
         $query = Approval::with('so', 'caa', 'pic')
                 ->where('id_trans_so', $id)
@@ -250,7 +222,8 @@ class Approval_Controller extends BaseController
         }
     }
 
-    public function show($id, $id_approval, Request $req){
+    public function show($id, $id_approval, Request $req)
+    {
         $check_caa = TransCAA::where('status_caa', 1)->where('id_trans_so', $id)->first();
 
         if ($check_caa == null) {
@@ -328,18 +301,9 @@ class Approval_Controller extends BaseController
         }
     }
 
-    public function approve($id, $id_approval, Request $req, ApprovalReq $request){
-        $user_id = $req->auth->user_id;
-
-        $pic = PIC::where('user_id', $user_id)->first();
-
-        if ($pic == null) {
-            return response()->json([
-                "code"    => 404,
-                "status"  => "not found",
-                "message" => "User_ID anda adalah '".$user_id."' dengan username '".$req->auth->user."'. Yang berhak melihat halaman ini adalah Direktur, CRM, PC dan AM. Mohon cek dimenu Team CAA untuk validasi data anda atau silahkan hubungin tim IT"
-            ], 404);
-        }
+    public function approve($id, $id_approval, Request $req, ApprovalReq $request)
+    {
+        $pic = $req->pic; // From PIC middleware
 
         $check_so = TransSO::where('id', $id)->first();
 
@@ -471,7 +435,8 @@ class Approval_Controller extends BaseController
     }
 
     // Team Caa
-    public function report_approval($id){
+    public function report_approval($id)
+    {
 
         $check_so = TransSO::where('id', $id)->first();
 
