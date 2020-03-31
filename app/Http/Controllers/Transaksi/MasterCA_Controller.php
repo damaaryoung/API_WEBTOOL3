@@ -577,10 +577,10 @@ class MasterCA_Controller extends BaseController
         $year  = $nows->year;
         $month = $nows->month;
 
-        $JPIC   = JPIC::where('id', $PIC->id_mj_pic)->first();
+        $JPIC   = JPIC::where('id', $pic->id_mj_pic)->first();
 
         //  ID-Cabang - AO / CA / SO - Bulan - Tahun - NO. Urut
-        $nomor_ca = $PIC->id_cabang.'-'.$JPIC->nama_jenis.'-'.$month.'-'.$year.'-'.$lastNumb;
+        $nomor_ca = $pic->id_cabang.'-'.$JPIC->nama_jenis.'-'.$month.'-'.$year.'-'.$lastNumb;
 
         $check_so = TransSO::where('id',$id)->where('status_das', 1)->where('status_hm', 1)->first();
 
@@ -616,9 +616,9 @@ class MasterCA_Controller extends BaseController
             'nomor_ca'    => $nomor_ca,
             'user_id'     => $user_id,
             'id_trans_so' => $id,
-            'id_pic'      => $PIC->id,
-            'id_area'     => $PIC->id_area,
-            'id_cabang'   => $PIC->id_cabang,
+            'id_pic'      => $pic->id,
+            'id_area'     => $pic->id_area,
+            'id_cabang'   => $pic->id_cabang,
             'catatan_ca'  => $req->input('catatan_ca'),
             'status_ca'   => empty($req->input('status_ca')) ? 1 : $req->input('status_ca')
         );
@@ -719,7 +719,7 @@ class MasterCA_Controller extends BaseController
 
             'nama_ca'
                 => empty($req->input('nama_ca'))
-                ? $PIC->nama : $req->input('nama_ca')
+                ? $pic->nama : $req->input('nama_ca')
         );
 
         // Rekomendasi Angsuran pada table rrekomendasi_pinjaman

@@ -525,10 +525,10 @@ class MasterAO_Controller extends BaseController
         $year  = $nows->year;
         $month = $nows->month;
 
-        $JPIC   = JPIC::where('id', $PIC->id_mj_pic)->first();
+        $JPIC   = JPIC::where('id', $pic->id_mj_pic)->first();
 
         //  ID-Cabang - AO / CA / SO - Bulan - Tahun - NO. Urut
-        $nomor_ao = $PIC->id_cabang.'-'.$JPIC->nama_jenis.'-'.$month.'-'.$year.'-'.$lastNumb;
+        $nomor_ao = $pic->id_cabang.'-'.$JPIC->nama_jenis.'-'.$month.'-'.$year.'-'.$lastNumb;
 
         $check_so = TransSO::where('id',$id)->where('status_das', 1)->where('status_hm', 1)->first();
 
@@ -609,9 +609,9 @@ class MasterAO_Controller extends BaseController
             'nomor_ao'              => $nomor_ao,
             'id_trans_so'           => $id,
             'user_id'               => $user_id,
-            'id_pic'                => $PIC->id,
-            'id_area'               => $PIC->id_area,
-            'id_cabang'             => $PIC->id_cabang,
+            'id_pic'                => $pic->id,
+            'id_area'               => $pic->id_area,
+            'id_cabang'             => $pic->id_cabang,
             'catatan_ao'            => $req->input('catatan_ao'),
             'status_ao'             => empty($req->input('status_ao')) ? 1 : $req->input('status_ao'),
             'form_persetujuan_ideb' => $form_persetujuan_ideb

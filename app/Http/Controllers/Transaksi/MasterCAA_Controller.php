@@ -203,10 +203,10 @@ class MasterCAA_Controller extends BaseController
         $year  = $nows->year;
         $month = $nows->month;
 
-        $JPIC   = JPIC::where('id', $PIC->id_mj_pic)->first();
+        $JPIC   = JPIC::where('id', $pic->id_mj_pic)->first();
 
         //  ID-Cabang - AO / CA / SO - Bulan - Tahun - NO. Urut
-        $nomor_caa = $PIC->id_cabang.'-'.$JPIC->nama_jenis.'-'.$month.'-'.$year.'-'.$lastNumb;
+        $nomor_caa = $pic->id_cabang.'-'.$JPIC->nama_jenis.'-'.$month.'-'.$year.'-'.$lastNumb;
 
         $check = TransSO::where('id',$id)->where('status_das', 1)->where('status_hm', 1)->first();
 
@@ -429,9 +429,9 @@ class MasterCAA_Controller extends BaseController
             'nomor_caa'          => $nomor_caa,
             'user_id'            => $user_id,
             'id_trans_so'        => $id,
-            'id_pic'             => $PIC->id,
-            'id_area'            => $PIC->id_area,
-            'id_cabang'          => $PIC->id_cabang,
+            'id_pic'             => $pic->id,
+            'id_area'            => $pic->id_area,
+            'id_cabang'          => $pic->id_cabang,
             'penyimpangan'       => $req->input('penyimpangan'),
             'pic_team_caa'       => $team_caa,
             'rincian'            => $req->input('rincian'),
@@ -470,9 +470,9 @@ class MasterCAA_Controller extends BaseController
 
             TransSO::where('id', $id)->update(['id_trans_caa' => $CAA->id]);
 
-            $PIC_app = PIC::whereIn('id', explode(",", $team_caa))->get()->toArray();
+            $pic_app = PIC::whereIn('id', explode(",", $team_caa))->get()->toArray();
 
-            if($PIC_app == []){
+            if($pic_app == []){
                 return response()->json([
                     'code'    => 404,
                     'status'  => 'not found',
@@ -486,7 +486,7 @@ class MasterCAA_Controller extends BaseController
                 $approval[] = Approval::create([
                     'id_trans_so'  => $id,
                     'id_trans_caa' => $CAA->id,
-                    'user_id'      => $PIC_app[$i]['user_id'],
+                    'user_id'      => $pic_app[$i]['user_id'],
                     'id_pic'       => $teamS[$i],
                     'status'       => 'waiting'
                 ]);
