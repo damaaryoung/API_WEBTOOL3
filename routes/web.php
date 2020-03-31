@@ -1,7 +1,7 @@
 <?php
 
 $router->get('/', function () use ($router) {
-    return 'API - DEVIS' ;
+    return 'API - SEFIN' ;
 });
 
 $router->get('/api', function () use ($router) {

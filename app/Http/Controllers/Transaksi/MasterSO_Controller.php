@@ -111,7 +111,7 @@ class MasterSO_Controller extends BaseController
         $vals = Helper::checkDir($scope, $query_dir, $id_area, $id_cabang);
         $val  = $vals->first();
 
-        if ($val->first() == null) {
+        if (!$val) {
             return response()->json([
                 "code"    => 404,
                 "status"  => "not found",
@@ -133,15 +133,6 @@ class MasterSO_Controller extends BaseController
         }
 
         $pen = Penjamin::whereIn('id', explode(",", $val->id_penjamin))->get();
-        // $pen = array();
-        // foreach ($id_penj as $value) {
-        //     $pen[] = array(
-        //         'id' => (int) $value
-        //     );
-        // }
-
-        // $pen = Penjamin::select('id', 'nama_ktp as nama')->whereIn('id', $id_penj)->get()->toArray();
-
 
         if ($val->status_das == 1) {
             $status_das = 'complete';
@@ -264,18 +255,18 @@ class MasterSO_Controller extends BaseController
         $year  = $now->year;
         $month = $now->month;
 
-        $JPIC   = JPIC::where('id', $PIC->id_mj_pic)->first();
+        $JPIC   = JPIC::where('id', $pic->id_mj_pic)->first();
 
         //  ID-Cabang - AO / CA / SO - Bulan - Tahun - NO. Urut
-        $nomor_so = $PIC->id_cabang.'-'.$JPIC->nama_jenis.'-'.$month.'-'.$year.'-'.$lastNumb; //  ID-Cabang - AO / CA / SO - Bulan - Tahun - NO. Urut
+        $nomor_so = $pic->id_cabang.'-'.$JPIC->nama_jenis.'-'.$month.'-'.$year.'-'.$lastNumb; //  ID-Cabang - AO / CA / SO - Bulan - Tahun - NO. Urut
 
         $trans_so = array(
             'nomor_so'       => $nomor_so,
             'user_id'        => $user_id,
-            'id_pic'         => $PIC->id,
-            'id_area'        => $PIC->id_area,
-            'id_cabang'      => $PIC->id_cabang,
-            'nama_so'        => $PIC->nama,
+            'id_pic'         => $pic->id,
+            'id_area'        => $pic->id_area,
+            'id_cabang'      => $pic->id_cabang,
+            'nama_so'        => $pic->nama,
             'id_asal_data'   => $req->input('id_asal_data'),
             'nama_marketing' => $req->input('nama_marketing')
         );

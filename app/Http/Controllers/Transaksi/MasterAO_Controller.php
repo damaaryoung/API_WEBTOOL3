@@ -76,7 +76,7 @@ class MasterAO_Controller extends BaseController
             }
 
             $data[$key] = [
-                'id'             => $val->id          == null ? null : (int) $val->id,
+                'id'             => $val->id == null ? null : (int) $val->id,
                 'nomor_so'       => $val->nomor_so,
                 'das'            => [
                     'status'  => $status_das,
