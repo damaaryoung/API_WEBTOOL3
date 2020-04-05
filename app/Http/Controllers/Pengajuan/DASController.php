@@ -10,6 +10,7 @@ use App\Models\Transaksi\TransSO;
 use App\Models\AreaKantor\PIC;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use Illuminate\Validation\Validator;
 
 class DASController extends BaseController
 {
@@ -38,9 +39,9 @@ class DASController extends BaseController
 
             if ($val->status_das == 1) {
                 $status = 'complete';
-            }elseif ($val->status_das == 2) {
+            } elseif ($val->status_das == 2) {
                 $status = 'not complete';
-            }else{
+            } else {
                 $status = 'waiting';
             }
 
@@ -78,11 +79,11 @@ class DASController extends BaseController
         }
     }
 
-    public function show($id)
+    public function show(Request $req, $id)
     {
         $pic = $req->pic; // From PIC middleware
 
-        $val = TransSO::with('asaldata','debt', 'pic')->where('id', $id)->first();
+        $val = TransSO::with('asaldata', 'debt', 'pic')->where('id', $id)->first();
         if ($val == null) {
             return response()->json([
                 'code'    => 404,
@@ -91,7 +92,7 @@ class DASController extends BaseController
             ], 404);
         }
 
-        $id_penj = explode (",",$val->id_penjamin);
+        $id_penj = explode(",", $val->id_penjamin);
 
         $pen = Penjamin::whereIn('id', $id_penj)->get();
 
@@ -118,16 +119,16 @@ class DASController extends BaseController
                     ]
                 ];
             }
-        }else{
+        } else {
             $penjamin = null;
         }
 
 
         if ($val->status_das == 1) {
             $status = 'complete';
-        }elseif ($val->status_das == 2) {
+        } elseif ($val->status_das == 2) {
             $status = 'not complete';
-        }else{
+        } else {
             $status = 'waiting';
         }
 
@@ -318,10 +319,10 @@ class DASController extends BaseController
         //   ]
         // );
 
-        $validator = \Validator::make($req->all(),[
-            'status_das'=> 'numeric'
-        ],$messages = [
-            'numeric'=> 'Status harus berupa digit'
+        $validator = Validator::make($req->all(), [
+            'status_das' => 'numeric'
+        ], $messages = [
+            'numeric' => 'Status harus berupa digit'
         ]);
 
         if ($validator->fails()) {
@@ -343,21 +344,19 @@ class DASController extends BaseController
         //     ], 422);
         // }
 
-        $lamp_dir = 'public/lamp_trans.'.$check_so->nomor_so;
+        $lamp_dir = 'public/lamp_trans.' . $check_so->nomor_so;
 
-        if($files = $req->file('lamp_ideb')){
-            
-            $path = $lamp_dir.'/ideb';
+        if ($files = $req->file('lamp_ideb')) {
+
+            $path = $lamp_dir . '/ideb';
 
             $check = $check_so->lamp_ideb;
 
             $arrayPath = array();
-            foreach($files as $file)
-            {
+            foreach ($files as $file) {
                 $exIdeb = $file->getClientOriginalExtension();
 
-                if ($exIdeb != 'ideb' && $exIdeb != 'pdf')
-                {
+                if ($exIdeb != 'ideb' && $exIdeb != 'pdf') {
                     return response()->json([
                         "code"    => 422,
                         "status"  => "not valid request",
@@ -366,13 +365,12 @@ class DASController extends BaseController
                 }
 
                 // Check Directory
-                if(!File::isDirectory($path)){
+                if (!File::isDirectory($path)) {
                     File::makeDirectory($path, 0777, true, true);
                 }
-                    
+
                 // Delete File is Exists
-                if(!empty($check))
-                {
+                if (!empty($check)) {
                     File::delete($check);
                 }
 
@@ -386,32 +384,30 @@ class DASController extends BaseController
             }
 
             $im_ideb = implode(";", $arrayPath);
-        }else{
+        } else {
             $im_ideb = null;
         }
 
-        if($files = $req->file('lamp_pefindo')){
-            
+        if ($files = $req->file('lamp_pefindo')) {
+
             $check = $check_so->lamp_pefindo;
-            $path = $lamp_dir.'/pefindo';
+            $path = $lamp_dir . '/pefindo';
             $name = '';
 
             $arrayPath = array();
-            foreach($files as $file)
-            {
+            foreach ($files as $file) {
                 $exIdeb = $file->getClientOriginalExtension();
 
                 if (
-                    $exIdeb != 'png' && 
+                    $exIdeb != 'png' &&
                     $exIdeb != 'jpg' &&
-                    $exIdeb != 'jpeg'&&
+                    $exIdeb != 'jpeg' &&
                     $exIdeb != 'PNG' &&
                     $exIdeb != 'JPG' &&
-                    $exIdeb != 'JPEG'&&
+                    $exIdeb != 'JPEG' &&
                     $exIdeb != 'pdf' &&
                     $exIdeb != 'PDF'
-                    )
-                {
+                ) {
                     return response()->json([
                         "code"    => 422,
                         "status"  => "not valid request",
@@ -423,7 +419,7 @@ class DASController extends BaseController
             }
 
             $im_pef = implode(";", $arrayPath);
-        }else{
+        } else {
             $im_pef = null;
         }
 
@@ -431,14 +427,14 @@ class DASController extends BaseController
             'catatan_das' => $req->input('catatan_das'),
             'status_das'  => $req->input('status_das'),
             'lamp_ideb'   => empty($im_ideb) ? null : $im_ideb,
-            'lamp_pefindo'=> empty($im_pef) ? null : $im_pef
+            'lamp_pefindo' => empty($im_pef) ? null : $im_pef
         );
 
         if ($data['status_das'] == 1) {
             $msg = 'data lengkap';
-        }else if($data['status_das'] == 2){
+        } else if ($data['status_das'] == 2) {
             $msg = 'data perlu ditinjau';
-        }else{
+        } else {
             $msg = 'waiting proccess';
         }
 
@@ -459,7 +455,7 @@ class DASController extends BaseController
         }
     }
 
-    public function search($param, $key, $value, $status, $orderVal, $orderBy, $limit)
+    public function search(Request $req, $param, $key, $value, $status, $orderVal, $orderBy, $limit)
     {
         $pic = $req->pic; // From PIC middleware
 
@@ -467,7 +463,7 @@ class DASController extends BaseController
             'id', 'nomor_so', 'user_id', 'id_pic', 'id_area', 'id_cabang', 'id_asal_data', 'nama_marketing', 'nama_so', 'id_fasilitas_pinjaman', 'id_calon_debitur', 'id_pasangan', 'id_penjamin', 'id_trans_ao', 'id_trans_ca', 'id_trans_caa', 'catatan_das', 'catatan_hm', 'status_das', 'status_hm', 'lamp_ideb', 'lamp_pefindo'
         );
 
-        if($param != 'filter' && $param != 'search'){
+        if ($param != 'filter' && $param != 'search') {
             return response()->json([
                 'code'    => 412,
                 'status'  => 'not valid',
@@ -475,28 +471,26 @@ class DASController extends BaseController
             ], 412);
         }
 
-        if (in_array($key, $column) == false)
-        {
+        if (in_array($key, $column) == false) {
             return response()->json([
                 'code'    => 412,
                 'status'  => 'not valid',
-                'message' => "gunakan key yang valid diantara berikut: ".implode(",", $column)
+                'message' => "gunakan key yang valid diantara berikut: " . implode(",", $column)
             ], 412);
         }
 
-        if (in_array($orderBy, $column) == false)
-        {
+        if (in_array($orderBy, $column) == false) {
             return response()->json([
                 'code'    => 412,
                 'status'  => 'not valid',
-                'message' => "gunakan order by yang valid diantara berikut: ".implode(",", $column)
+                'message' => "gunakan order by yang valid diantara berikut: " . implode(",", $column)
             ], 412);
         }
 
-        if($param == 'search'){
+        if ($param == 'search') {
             $operator   = "like";
             $func_value = "%{$value}%";
-        }else{
+        } else {
             $operator   = "=";
             $func_value = "{$value}";
         }
@@ -505,9 +499,9 @@ class DASController extends BaseController
         $id_cabang = $pic->id_cabang;
         $scope     = $pic->jpic['cakupan'];
 
-        $query_dir = TransSO::with('pic', 'cabang', 'asaldata','debt', 'faspin')
-        ->where('flg_aktif', $status)
-        ->orderBy($orderBy, $orderVal);
+        $query_dir = TransSO::with('pic', 'cabang', 'asaldata', 'debt', 'faspin')
+            ->where('flg_aktif', $status)
+            ->orderBy($orderBy, $orderVal);
 
         $query = Helper::checkDir($scope, $query_dir, $id_area, $id_cabang);
 
@@ -519,15 +513,15 @@ class DASController extends BaseController
             ], 404);
         }
 
-        if($value == 'default'){
+        if ($value == 'default') {
             $res = $query;
-        }else{
+        } else {
             $res = $query->where($key, $operator, $func_value);
         }
 
-        if($limit == 'default'){
+        if ($limit == 'default') {
             $result = $res;
-        }else{
+        } else {
             $result = $res->limit($limit);
         }
 
@@ -544,9 +538,9 @@ class DASController extends BaseController
 
             if ($val->status_das == 1) {
                 $status = 'complete';
-            }elseif ($val->status_das == 2) {
+            } elseif ($val->status_das == 2) {
                 $status = 'not complete';
-            }else{
+            } else {
                 $status = 'waiting';
             }
 
