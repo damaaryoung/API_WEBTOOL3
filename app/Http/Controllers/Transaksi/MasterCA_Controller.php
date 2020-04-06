@@ -30,7 +30,7 @@ use App\Models\AreaKantor\PIC;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 // use Image;
-use DB;
+use Illuminate\Support\Facades\DB;
 
 class MasterCA_Controller extends BaseController
 {
@@ -59,25 +59,25 @@ class MasterCA_Controller extends BaseController
 
             if ($val->status_ao == 1) {
                 $status_ao = 'recommend';
-            }elseif($val->status_ao == 2){
+            } elseif ($val->status_ao == 2) {
                 $status_ao = 'not recommend';
-            }else{
+            } else {
                 $status_ao = 'waiting';
             }
 
             if ($val->so['ca']['status_ca'] == 1) {
                 $status_ca = 'recommend';
-            }elseif($val->so['ca']['status_ca'] == 2){
+            } elseif ($val->so['ca']['status_ca'] == 2) {
                 $status_ca = 'not recommend';
-            }else{
+            } else {
                 $status_ca = 'waiting';
             }
 
             if ($val->so['caa']['status_caa'] == 1) {
                 $status_caa = 'recommend';
-            }elseif($val->so['caa']['status_caa'] == 2){
+            } elseif ($val->so['caa']['status_caa'] == 2) {
                 $status_caa = 'not recommend';
-            }else{
+            } else {
                 $status_caa = 'waiting';
             }
 
@@ -150,17 +150,17 @@ class MasterCA_Controller extends BaseController
 
             if ($val->status_ao == 1) {
                 $status_ao = 'recommend';
-            }elseif($val->status_ao == 2){
+            } elseif ($val->status_ao == 2) {
                 $status_ao = 'not recommend';
-            }else{
+            } else {
                 $status_ao = 'waiting';
             }
 
             if ($val->so['ca']['status_ca'] == 1) {
                 $status_ca = 'recommend';
-            }elseif($val->so['ca']['status_ca'] == 2){
+            } elseif ($val->so['ca']['status_ca'] == 2) {
                 $status_ca = 'not recommend';
-            }else{
+            } else {
                 $status_ca = 'waiting';
             }
 
@@ -194,17 +194,19 @@ class MasterCA_Controller extends BaseController
             }
             return false;
         });
-        
+
         try {
-            if($res == false){
+            if ($res == false) {
                 return response()->json([
                     'code'   => 404,
                     'status' => 'not found',
                     'count'  => 0,
-                    'message'=> 'data tidak ditemukan'
+                    'message' => 'data tidak ditemukan'
                 ], 404);
-            }else{
-                foreach($res as $val){$result[] = $val;}
+            } else {
+                foreach ($res as $val) {
+                    $result[] = $val;
+                }
                 return response()->json([
                     'code'   => 200,
                     'status' => 'success',
@@ -235,7 +237,7 @@ class MasterCA_Controller extends BaseController
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
-                'message' => 'Transaksi dengan id '.$id.' belum ada di SO atau belum komplit saat pemeriksaaan DAS dan HM'
+                'message' => 'Transaksi dengan id ' . $id . ' belum ada di SO atau belum komplit saat pemeriksaaan DAS dan HM'
             ], 404);
         }
 
@@ -248,11 +250,11 @@ class MasterCA_Controller extends BaseController
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
-                'message' => 'Transaksi dengan id '.$id.' belum sampai ke AO'
+                'message' => 'Transaksi dengan id ' . $id . ' belum sampai ke AO'
             ], 404);
         }
 
-        $idPen = Penjamin::whereIn('id',  explode (",", $val->so['id_penjamin']))->get();
+        $idPen = Penjamin::whereIn('id',  explode(",", $val->so['id_penjamin']))->get();
 
         $penjamin = array();
         foreach ($idPen as $pen) {
@@ -309,27 +311,27 @@ class MasterCA_Controller extends BaseController
             ];
         }
 
-        $idTan = AgunanTanah::whereIn('id', explode (",",$val->id_agunan_tanah))->get();
+        $idTan = AgunanTanah::whereIn('id', explode(",", $val->id_agunan_tanah))->get();
 
-        $idKen = AgunanKendaraan::whereIn('id', explode (",",$val->id_agunan_kendaraan))->get();
+        $idKen = AgunanKendaraan::whereIn('id', explode(",", $val->id_agunan_kendaraan))->get();
 
-        $idPeTan = PemeriksaanAgunTan::whereIn('id', explode (",",$val->id_periksa_agunan_tanah))->get();
+        $idPeTan = PemeriksaanAgunTan::whereIn('id', explode(",", $val->id_periksa_agunan_tanah))->get();
 
-        $idPeKen = PemeriksaanAgunKen::whereIn('id', explode (",",$val->id_periksa_agunan_kendaraan))->get();
+        $idPeKen = PemeriksaanAgunKen::whereIn('id', explode(",", $val->id_periksa_agunan_kendaraan))->get();
 
         if ($val->status_ao == 1) {
             $status_ao = 'recommend';
-        }elseif($val->status_ao == 2){
+        } elseif ($val->status_ao == 2) {
             $status_ao = 'not recommend';
-        }else{
+        } else {
             $status_ao = 'waiting';
         }
 
         if ($val->so['ca']['status_ca'] == 1) {
             $status_ca = 'recommend';
-        }elseif($val->so['ca']['status_ca'] == 2){
+        } elseif ($val->so['ca']['status_ca'] == 2) {
             $status_ca = 'not recommend';
-        }else{
+        } else {
             $status_ca = 'waiting';
         }
 
@@ -466,7 +468,14 @@ class MasterCA_Controller extends BaseController
                     'lamp_sertifikat'       => $val->so['debt']['lamp_sertifikat'],
                     'lamp_sttp_pbb'         => $val->so['debt']['lamp_sttp_pbb'],
                     'lamp_imb'              => $val->so['debt']['lamp_imb'],
-                    'foto_agunan_rumah'     => $val->so['debt']['foto_agunan_rumah']
+                    'lamp_surat_cerai'      => $val->so['debt']['lamp_surat_cerai'],
+                    'lamp_skk'              => $val->so['debt']['lamp_skk'],
+                    'lamp_sku'              => $val->so['debt']['lamp_sku'],
+                    'lamp_slip_gaji'        => $val->so['debt']['lamp_slip_gaji'],
+                    'lamp_foto_usaha'       => $val->so['debt']['lamp_foto_usaha'],
+                    'lamp_tempat_tinggal'   => $val->so['debt']['lamp_tempat_tinggal'],
+                    'foto_agunan_rumah'     => $val->so['debt']['foto_agunan_rumah'],
+                    'foto_pembukuan_usaha'  => $val->so['debt']['foto_pembukuan_usaha']
                 ]
             ],
 
@@ -486,7 +495,7 @@ class MasterCA_Controller extends BaseController
                 'tgl_lahir'             => $val->so['pas']['tgl_lahir'],
                 'alamat_ktp'            => $val->so['pas']['alamat_ktp'],
                 'no_telp'               => $val->so['pas']['no_telp'],
-                
+
                 "pekerjaan" => [
                     "nama_pekerjaan"        => $val->so['pas']['pekerjaan'],
                     "posisi_pekerjaan"      => $val->so['pas']['posisi_pekerjaan'],
@@ -538,6 +547,11 @@ class MasterCA_Controller extends BaseController
             'rekomendasi_ao'    => $val->recom_ao,
             'verifikasi'        => $val->verif,
             'validasi'          => $val->valid,
+            'lampiran_ao'       => [
+                'lamp_ideb'             => $val->so['lamp_ideb'],
+                'lamp_pefindo'          => $val->so['lamp_pefindo'],
+                'form_persetujuan_ideb' => $val->form_persetujuan_ideb
+            ],
             'tgl_transaksi'     => $val->created_at
         );
 
@@ -558,18 +572,19 @@ class MasterCA_Controller extends BaseController
 
     public function update($id, Request $request, BlankRequest $req)
     {
-        $pic = $request->pic; // From PIC middleware
+        $pic     = $request->pic; // From PIC middleware
+        $user_id = $request->auth->user_id;
 
-        $countCA = TransCA::latest('id','nomor_ca')->first();
+        $countCA = TransCA::latest('id', 'nomor_ca')->first();
 
         if (!$countCA) {
             $lastNumb = 1;
-        }else{
+        } else {
             $no = $countCA->nomor_ca;
 
             $arr = explode("-", $no, 5);
 
-            $lastNumb = str_replace(" [revisi]","",$arr[4]) + 1;
+            $lastNumb = str_replace(" [revisi]", "", $arr[4]) + 1;
         }
 
         //Data Transaksi SO
@@ -580,25 +595,25 @@ class MasterCA_Controller extends BaseController
         $JPIC   = JPIC::where('id', $pic->id_mj_pic)->first();
 
         //  ID-Cabang - AO / CA / SO - Bulan - Tahun - NO. Urut
-        $nomor_ca = $pic->id_cabang.'-'.$JPIC->nama_jenis.'-'.$month.'-'.$year.'-'.$lastNumb;
+        $nomor_ca = $pic->id_cabang . '-' . $JPIC->nama_jenis . '-' . $month . '-' . $year . '-' . $lastNumb;
 
-        $check_so = TransSO::where('id',$id)->where('status_das', 1)->where('status_hm', 1)->first();
+        $check_so = TransSO::where('id', $id)->where('status_das', 1)->where('status_hm', 1)->first();
 
         if (!$check_so) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
-                'message' => 'Transaksi dengan id '.$id.' belum ada di SO atau belum komplit saat pemeriksaan DAS dan HM'
+                'message' => 'Transaksi dengan id ' . $id . ' belum ada di SO atau belum komplit saat pemeriksaan DAS dan HM'
             ], 404);
         }
 
-        $check_ao = TransAO::where('id_trans_so',$id)->first();
+        $check_ao = TransAO::where('id_trans_so', $id)->first();
 
         if (!$check_ao) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
-                'message' => 'Transaksi dengan id '.$id.' belum sampai ke AO'
+                'message' => 'Transaksi dengan id ' . $id . ' belum sampai ke AO'
             ], 404);
         }
 
@@ -608,13 +623,13 @@ class MasterCA_Controller extends BaseController
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
-                'message' => 'Transaksi dengan id '.$id.' sudah ada di CA'
+                'message' => 'Transaksi dengan id ' . $id . ' sudah ada di CA'
             ], 404);
         }
 
         $transCA = array(
             'nomor_ca'    => $nomor_ca,
-            'user_id'     => $req->auth->user_id,
+            'user_id'     => $user_id,
             'id_trans_so' => $id,
             'id_pic'      => $pic->id,
             'id_area'     => $pic->id_area,
@@ -650,31 +665,31 @@ class MasterCA_Controller extends BaseController
         $inputKapBul = array(
 
             'pemasukan_cadebt'
-                => empty($req->input('pemasukan_debitur'))    ? 0 : $req->input('pemasukan_debitur'),
+            => empty($req->input('pemasukan_debitur'))    ? 0 : $req->input('pemasukan_debitur'),
 
             'pemasukan_pasangan'
-                => empty($req->input('pemasukan_pasangan'))   ? 0 : $req->input('pemasukan_pasangan'),
+            => empty($req->input('pemasukan_pasangan'))   ? 0 : $req->input('pemasukan_pasangan'),
 
             'pemasukan_penjamin'
-                => empty($req->input('pemasukan_penjamin'))   ? 0 : $req->input('pemasukan_penjamin'),
+            => empty($req->input('pemasukan_penjamin'))   ? 0 : $req->input('pemasukan_penjamin'),
 
             'biaya_rumah_tangga'
-                => empty($req->input('biaya_rumah_tangga'))   ? 0 : $req->input('biaya_rumah_tangga'),
+            => empty($req->input('biaya_rumah_tangga'))   ? 0 : $req->input('biaya_rumah_tangga'),
 
             'biaya_transport'
-                => empty($req->input('biaya_transport'))      ? 0 : $req->input('biaya_transport'),
+            => empty($req->input('biaya_transport'))      ? 0 : $req->input('biaya_transport'),
 
             'biaya_pendidikan'
-                => empty($req->input('biaya_pendidikan'))     ? 0 : $req->input('biaya_pendidikan'),
+            => empty($req->input('biaya_pendidikan'))     ? 0 : $req->input('biaya_pendidikan'),
 
             'telp_listr_air'
-                => empty($req->input('telp_listr_air'))       ? 0 : $req->input('telp_listr_air'),
+            => empty($req->input('telp_listr_air'))       ? 0 : $req->input('telp_listr_air'),
 
             'angsuran'
-                => empty($req->input('angsuran'))             ? 0 : $req->input('angsuran'),
+            => empty($req->input('angsuran'))             ? 0 : $req->input('angsuran'),
 
             'biaya_lain'
-                => empty($req->input('biaya_lain'))           ? 0 : $req->input('biaya_lain'),
+            => empty($req->input('biaya_lain'))           ? 0 : $req->input('biaya_lain'),
         );
 
         $total_KapBul = array(
@@ -686,39 +701,39 @@ class MasterCA_Controller extends BaseController
         // Ceiling Recomendasi Pinjaman
         $rekomPinjaman = array(
             'penyimpangan_struktur'
-                => empty($req->input('penyimpangan_struktur'))
+            => empty($req->input('penyimpangan_struktur'))
                 ? null : $req->input('penyimpangan_struktur'),
 
             'penyimpangan_dokumen'
-                => empty($req->input('penyimpangan_dokumen'))
+            => empty($req->input('penyimpangan_dokumen'))
                 ? null : $req->input('penyimpangan_dokumen'),
 
             'recom_nilai_pinjaman'
-                => empty($req->input('recom_nilai_pinjaman'))
+            => empty($req->input('recom_nilai_pinjaman'))
                 ? null : $req->input('recom_nilai_pinjaman'),
 
             'recom_tenor'
-                => empty($req->input('recom_tenor'))
+            => empty($req->input('recom_tenor'))
                 ? null : $req->input('recom_tenor'),
 
             'recom_angsuran'
-                => empty($req->input('recom_angsuran'))
+            => empty($req->input('recom_angsuran'))
                 ? null : $req->input('recom_angsuran'),
 
             'recom_produk_kredit'
-                => empty($req->input('recom_produk_kredit'))
+            => empty($req->input('recom_produk_kredit'))
                 ? null : $req->input('recom_produk_kredit'),
 
             'note_recom'
-                => empty($req->input('note_recom'))
+            => empty($req->input('note_recom'))
                 ? null : $req->input('note_recom'),
 
             'bunga_pinjaman'
-                => empty($req->input('bunga_pinjaman'))
+            => empty($req->input('bunga_pinjaman'))
                 ? null : $req->input('bunga_pinjaman'),
 
             'nama_ca'
-                => empty($req->input('nama_ca'))
+            => empty($req->input('nama_ca'))
                 ? $pic->nama : $req->input('nama_ca')
         );
 
@@ -733,10 +748,10 @@ class MasterCA_Controller extends BaseController
 
         if ($plafonCA == 0 && $tenorCA == 0 && $bunga == 0) {
             $recom_angs = 0;
-        }else{
+        } else {
             $recom_angs = Helper::recom_angs($plafonCA, $tenorCA, $bunga);
         }
-        
+
         $rekomen_pend_bersih = $rekomen_pendapatan - $rekomen_pengeluaran;
 
         $disposable_income   = $rekomen_pend_bersih - $recom_angs;
@@ -761,8 +776,8 @@ class MasterCA_Controller extends BaseController
 
         if (empty($PeriksaTanah)) {
             $sumTaksasiTan = 0;
-        }else{
-            $sumTaksasiTan = array_sum(array_column($PeriksaTanah,'nilai_taksasi_agunan')); //array_sum($PeriksaTanah);
+        } else {
+            $sumTaksasiTan = array_sum(array_column($PeriksaTanah, 'nilai_taksasi_agunan')); //array_sum($PeriksaTanah);
         }
 
         // $PeriksaKenda = PemeriksaanAgunTan::select('nilai_taksasi_agunan')->whereIn('id', explode(",", $id_pe_ta))->get()->toArray();
@@ -794,70 +809,70 @@ class MasterCA_Controller extends BaseController
 
 
             'kualitatif_analisa'
-                => empty($req->input('kualitatif_analisa'))
+            => empty($req->input('kualitatif_analisa'))
                 ? null : $req->input('kualitatif_analisa'),
 
             'kualitatif_strenght'
-                => empty($req->input('kualitatif_strenght'))
+            => empty($req->input('kualitatif_strenght'))
                 ? null : $req->input('kualitatif_strenght'),
 
             'kualitatif_weakness'
-                => empty($req->input('kualitatif_weakness'))
+            => empty($req->input('kualitatif_weakness'))
                 ? null : $req->input('kualitatif_weakness'),
 
             'kualitatif_opportunity'
-                => empty($req->input('kualitatif_opportunity'))
+            => empty($req->input('kualitatif_opportunity'))
                 ? null : $req->input('kualitatif_opportunity'),
 
             'kualitatif_threatness'
-                => empty($req->input('kualitatif_threatness'))
+            => empty($req->input('kualitatif_threatness'))
                 ? null : $req->input('kualitatif_threatness'),
         );
 
         // Mutasi Bank
-        if (!empty($req->input('no_rekening_mutasi'))){
+        if (!empty($req->input('no_rekening_mutasi'))) {
 
             for ($i = 0; $i < count($req->input('no_rekening_mutasi')); $i++) {
 
                 $dataMuBa[] = array(
                     'urutan_mutasi'
-                        => empty($req->input('urutan_mutasi')[$i])
+                    => empty($req->input('urutan_mutasi')[$i])
                         ? null : $req->urutan_mutasi[$i],
 
                     'nama_bank'
-                        => empty($req->input('nama_bank_mutasi')[$i])
+                    => empty($req->input('nama_bank_mutasi')[$i])
                         ? null : $req->nama_bank_mutasi[$i],
 
                     'no_rekening'
-                        => empty($req->input('no_rekening_mutasi')[$i])
+                    => empty($req->input('no_rekening_mutasi')[$i])
                         ? null : $req->no_rekening_mutasi[$i],
 
                     'nama_pemilik'
-                        => empty($req->input('nama_pemilik_mutasi')[$i])
+                    => empty($req->input('nama_pemilik_mutasi')[$i])
                         ? null : $req->nama_pemilik_mutasi[$i],
 
                     'periode'
-                        => empty($req->input('periode_mutasi')[$i])
+                    => empty($req->input('periode_mutasi')[$i])
                         ? null : implode(";", $req->periode_mutasi[$i]),
 
                     'frek_debet'
-                        => empty($req->input('frek_debet_mutasi')[$i])
+                    => empty($req->input('frek_debet_mutasi')[$i])
                         ? null : implode(";", $req->frek_debet_mutasi[$i]),
 
                     'nominal_debet'
-                        => empty($req->input('nominal_debet_mutasi')[$i])
+                    => empty($req->input('nominal_debet_mutasi')[$i])
                         ? null : implode(";", $req->nominal_debet_mutasi[$i]),
 
                     'frek_kredit'
-                        => empty($req->input('frek_kredit_mutasi')[$i])
+                    => empty($req->input('frek_kredit_mutasi')[$i])
                         ? null : implode(";", $req->frek_kredit_mutasi[$i]),
 
                     'nominal_kredit'
-                        => empty($req->input('nominal_kredit_mutasi')[$i])
+                    => empty($req->input('nominal_kredit_mutasi')[$i])
                         ? null : implode(";", $req->nominal_kredit_mutasi[$i]),
 
                     'saldo'
-                        => empty($req->input('saldo_mutasi')[$i])
+                    => empty($req->input('saldo_mutasi')[$i])
                         ? null : implode(";", $req->saldo_mutasi[$i])
                 );
             }
@@ -879,47 +894,47 @@ class MasterCA_Controller extends BaseController
         $dataTabUang = array(
 
             'no_rekening'
-                => empty($req->input('no_rekening'))
+            => empty($req->input('no_rekening'))
                 ? null : $req->input('no_rekening'),
 
             'nama_bank'
-                => empty($req->input('nama_bank'))
+            => empty($req->input('nama_bank'))
                 ? null : $req->input('nama_bank'),
 
             'tujuan_pembukaan_rek'
-                => empty($req->input('tujuan_pembukaan_rek'))
+            => empty($req->input('tujuan_pembukaan_rek'))
                 ? null : $req->input('tujuan_pembukaan_rek'),
 
             'penghasilan_per_tahun'
-                => empty($req->input('penghasilan_per_tahun'))
+            => empty($req->input('penghasilan_per_tahun'))
                 ? ($rekomen_pendapatan == 0 ? 0 : $rekomen_pendapatan * 12) : $req->input('penghasilan_per_tahun'),
 
             'sumber_penghasilan'
-                => empty($req->input('sumber_penghasilan'))
+            => empty($req->input('sumber_penghasilan'))
                 ? null : $req->input('sumber_penghasilan'),
 
             'pemasukan_per_bulan'
-                => empty($req->input('pemasukan_per_bulan'))
+            => empty($req->input('pemasukan_per_bulan'))
                 ? null : $req->input('pemasukan_per_bulan'),
 
             'frek_trans_pemasukan'
-                => empty($req->input('frek_trans_pemasukan'))
+            => empty($req->input('frek_trans_pemasukan'))
                 ? null : $req->input('frek_trans_pemasukan'),
 
             'pengeluaran_per_bulan'
-                => empty($req->input('pengeluaran_per_bulan'))
+            => empty($req->input('pengeluaran_per_bulan'))
                 ? null : $req->input('pengeluaran_per_bulan'),
 
             'frek_trans_pengeluaran'
-                => empty($req->input('frek_trans_pengeluaran'))
+            => empty($req->input('frek_trans_pengeluaran'))
                 ? null : $req->input('frek_trans_pengeluaran'),
 
             'sumber_dana_setoran'
-                => empty($req->input('sumber_dana_setoran'))
+            => empty($req->input('sumber_dana_setoran'))
                 ? null : $req->input('sumber_dana_setoran'),
 
             'tujuan_pengeluaran_dana'
-                => empty($req->input('tujuan_pengeluaran_dana'))
+            => empty($req->input('tujuan_pengeluaran_dana'))
                 ? null : $req->input('tujuan_pengeluaran_dana')
         );
 
@@ -936,7 +951,7 @@ class MasterCA_Controller extends BaseController
             'biaya_administrasi'    => $req->input('biaya_administrasi'),
             'biaya_credit_checking' => $req->input('biaya_credit_checking'),
             'biaya_asuransi_jiwa'   => $req->input('biaya_asuransi_jiwa'),
-            'biaya_asuransi_jaminan'=> $req->input('biaya_asuransi_jaminan'),
+            'biaya_asuransi_jaminan' => $req->input('biaya_asuransi_jaminan'),
             'notaris'               => $req->input('notaris'),
             'biaya_tabungan'        => $req->input('biaya_tabungan'),
 
@@ -960,26 +975,26 @@ class MasterCA_Controller extends BaseController
         );
 
 
-        if (!empty(  $req->input('jangka_waktu_as_jaminan'))) {
+        if (!empty($req->input('jangka_waktu_as_jaminan'))) {
 
             $asJaminan = array();
             for ($i = 0; $i < count($req->input('jangka_waktu_as_jaminan')); $i++) {
 
                 $asJaminan[] = array(
                     'nama_asuransi'
-                        => empty($req->input('nama_asuransi_jaminan')[$i])
+                    => empty($req->input('nama_asuransi_jaminan')[$i])
                         ? null : $req->nama_asuransi_jaminan[$i],
 
                     'jangka_waktu'
-                        => empty($req->input('jangka_waktu_as_jaminan')[$i])
+                    => empty($req->input('jangka_waktu_as_jaminan')[$i])
                         ? null : $req->jangka_waktu_as_jaminan[$i],
 
                     'nilai_pertanggungan'
-                        => empty($req->input('nilai_pertanggungan_as_jaminan')[$i])
+                    => empty($req->input('nilai_pertanggungan_as_jaminan')[$i])
                         ? null : $req->nilai_pertanggungan_as_jaminan[$i],
 
                     'jatuh_tempo'
-                        => empty($req->input('jatuh_tempo_as_jaminan')[$i])
+                    => empty($req->input('jatuh_tempo_as_jaminan')[$i])
                         ? null : Carbon::parse($req->jatuh_tempo_as_jaminan[$i])->format('Y-m-d')
                 );
             }
@@ -990,7 +1005,7 @@ class MasterCA_Controller extends BaseController
                 'nilai_pertanggungan' => implode(";", array_column($asJaminan, 'nilai_pertanggungan')),
                 'jatuh_tempo'         => implode(";", array_column($asJaminan, 'jatuh_tempo'))
             );
-        }else{
+        } else {
             $jaminanImplode = array(
                 'nama_asuransi'       => null,
                 'jangka_waktu'        => null,
@@ -999,7 +1014,7 @@ class MasterCA_Controller extends BaseController
             );
         }
 
-        try{
+        try {
             DB::connection('web')->beginTransaction();
 
             if (!empty($dataMuBa)) {
@@ -1010,7 +1025,7 @@ class MasterCA_Controller extends BaseController
                 }
 
                 $MutasiID   = implode(",", $id_mutasi['id']);
-            }else{
+            } else {
                 $MutasiID = null;
             }
 
@@ -1018,7 +1033,7 @@ class MasterCA_Controller extends BaseController
                 $tabungan = TabDebt::create($dataTabUang);
 
                 $idTabungan = $tabungan->id;
-            }else{
+            } else {
                 $idTabungan = null;
             }
 
@@ -1030,56 +1045,56 @@ class MasterCA_Controller extends BaseController
                 }
 
                 $idInfo = implode(",", $arrACC['id']);
-            }else{
+            } else {
                 $idInfo = null;
             }
 
             if (!empty($dataRingkasan)) {
                 $analisa = RingkasanAnalisa::create($dataRingkasan);
                 $idAnalisa = $analisa->id;
-            }else{
+            } else {
                 $idAnalisa = null;
             }
 
             if (!empty($rekomPinjaman)) {
                 $recomPin = RekomendasiPinjaman::create($rekomPinjaman);
                 $idrecomPin = $recomPin->id;
-            }else{
+            } else {
                 $idrecomPin = null;
             }
 
             if (!empty($asJiwa)) {
                 $jiwa = AsuransiJiwa::create($asJiwa);
                 $idJiwa = $jiwa->id;
-            }else{
+            } else {
                 $idJiwa = null;
             }
 
             if (!empty($jaminanImplode)) {
                 $jaminan = AsuransiJaminan::create($jaminanImplode);
                 $idJaminan = $jaminan->id;
-            }else{
+            } else {
                 $idJaminan = null;
             }
 
             if (!empty($recomCA)) {
                 $reCA = RekomendasiCA::create($recomCA);;
                 $idReCA = $reCA->id;
-            }else{
+            } else {
                 $idReCA = null;
             }
 
             if (!empty($Pendapatan)) {
                 $pend = PendapatanUsaha::create($Pendapatan);
                 $idPendUs = $pend->id;
-            }else{
+            } else {
                 $idPendUs = null;
             }
 
             if (!empty($kapBul)) {
                 $Q_Kapbul = KapBulanan::create($kapBul);
                 $idKapBul = $Q_Kapbul->id;
-            }else{
+            } else {
                 $idKapBul = null;
             }
 
@@ -1096,7 +1111,7 @@ class MasterCA_Controller extends BaseController
                 'id_pendapatan_usaha'     => $idPendUs
             );
 
-            
+
             $newTransCA = array_merge($transCA, $dataID);
 
             $CA = TransCA::create($newTransCA);
@@ -1107,7 +1122,7 @@ class MasterCA_Controller extends BaseController
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'message'=> 'Data untuk CA berhasil dikirim',
+                'message' => 'Data untuk CA berhasil dikirim',
                 'data'   => $CA
             ], 200);
         } catch (\Exception $e) {
@@ -1128,7 +1143,7 @@ class MasterCA_Controller extends BaseController
             'id', 'nomor_ao', 'id_trans_so', 'user_id', 'id_pic', 'id_area', 'id_cabang', 'id_validasi', 'id_verifikasi', 'id_agunan_tanah', 'id_agunan_kendaraan', 'id_periksa_agunan_tanah', 'id_periksa_agunan_kendaraan', 'id_kapasitas_bulanan', 'id_pendapatan_usaha', 'id_recom_ao', 'catatan_ao', 'status_ao', 'form_persetujuan_ideb'
         );
 
-        if($param != 'filter' && $param != 'search'){
+        if ($param != 'filter' && $param != 'search') {
             return response()->json([
                 'code'    => 412,
                 'status'  => 'not valid',
@@ -1136,28 +1151,26 @@ class MasterCA_Controller extends BaseController
             ], 412);
         }
 
-        if (in_array($key, $column) == false)
-        {
+        if (in_array($key, $column) == false) {
             return response()->json([
                 'code'    => 412,
                 'status'  => 'not valid',
-                'message' => 'gunakan key yang valid diantara berikut: '.implode(",", $column)
+                'message' => 'gunakan key yang valid diantara berikut: ' . implode(",", $column)
             ], 412);
         }
 
-        if (in_array($orderBy, $column) == false)
-        {
+        if (in_array($orderBy, $column) == false) {
             return response()->json([
                 'code'    => 412,
                 'status'  => 'not valid',
-                'message' => 'gunakan order by yang valid diantara berikut: '.implode(",", $column)
+                'message' => 'gunakan order by yang valid diantara berikut: ' . implode(",", $column)
             ], 412);
         }
 
-        if($param == 'search'){
+        if ($param == 'search') {
             $operator   = "like";
             $func_value = "%{$value}%";
-        }else{
+        } else {
             $operator   = "=";
             $func_value = "{$value}";
         }
@@ -1170,18 +1183,18 @@ class MasterCA_Controller extends BaseController
             ->where('status_ao', 1)
             ->where('flg_aktif', $status)
             ->orderBy($orderBy, $orderVal);
-        
+
         $query = Helper::checkDir($scope, $query_dir, $id_area, $id_cabang);
 
-        if($value == 'default'){
+        if ($value == 'default') {
             $res = $query;
-        }else{
+        } else {
             $res = $query->where($key, $operator, $func_value);
         }
 
-        if($limit == 'default'){
+        if ($limit == 'default') {
             $result = $res;
-        }else{
+        } else {
             $result = $res->limit($limit);
         }
 
@@ -1198,9 +1211,9 @@ class MasterCA_Controller extends BaseController
 
             if ($val->status_ao == 1) {
                 $status_ao = 'recommend';
-            }elseif($val->status_ao == 2){
+            } elseif ($val->status_ao == 2) {
                 $status_ao = 'not recommend';
-            }else{
+            } else {
                 $status_ao = 'waiting';
             }
 
@@ -1249,7 +1262,7 @@ class MasterCA_Controller extends BaseController
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
-                'message' => 'Transaksi dengan id '.$id_trans_so.' belum ada di SO atau belum komplit saat pemeriksaaan DAS dan HM'
+                'message' => 'Transaksi dengan id ' . $id_trans_so . ' belum ada di SO atau belum komplit saat pemeriksaaan DAS dan HM'
             ], 404);
         }
 
@@ -1259,7 +1272,7 @@ class MasterCA_Controller extends BaseController
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
-                'message' => 'Transaksi dengan id '.$id_trans_so.' belum sampai ke AO'
+                'message' => 'Transaksi dengan id ' . $id_trans_so . ' belum sampai ke AO'
             ], 404);
         }
 
@@ -1269,7 +1282,7 @@ class MasterCA_Controller extends BaseController
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
-                'message' => 'Transaksi dengan id '.$id_trans_so.' belum sampai ke CA'
+                'message' => 'Transaksi dengan id ' . $id_trans_so . ' belum sampai ke CA'
             ], 404);
         }
 
@@ -1312,31 +1325,31 @@ class MasterCA_Controller extends BaseController
         $inputKapBul = array(
 
             'pemasukan_cadebt'
-                => empty($req->input('pemasukan_debitur'))    ? $check_ca->usaha['pemasukan_debitur'] : $req->input('pemasukan_debitur'),
+            => empty($req->input('pemasukan_debitur'))    ? $check_ca->usaha['pemasukan_debitur'] : $req->input('pemasukan_debitur'),
 
             'pemasukan_pasangan'
-                => empty($req->input('pemasukan_pasangan'))   ? $check_ca->usaha['pemasukan_pasangan'] : $req->input('pemasukan_pasangan'),
+            => empty($req->input('pemasukan_pasangan'))   ? $check_ca->usaha['pemasukan_pasangan'] : $req->input('pemasukan_pasangan'),
 
             'pemasukan_penjamin'
-                => empty($req->input('pemasukan_penjamin'))   ? $check_ca->usaha['pemasukan_penjamin'] : $req->input('pemasukan_penjamin'),
+            => empty($req->input('pemasukan_penjamin'))   ? $check_ca->usaha['pemasukan_penjamin'] : $req->input('pemasukan_penjamin'),
 
             'biaya_rumah_tangga'
-                => empty($req->input('biaya_rumah_tangga'))   ? $check_ca->usaha['biaya_rumah_tangga'] : $req->input('biaya_rumah_tangga'),
+            => empty($req->input('biaya_rumah_tangga'))   ? $check_ca->usaha['biaya_rumah_tangga'] : $req->input('biaya_rumah_tangga'),
 
             'biaya_transport'
-                => empty($req->input('biaya_transport'))      ? $check_ca->usaha['biaya_transport'] : $req->input('biaya_transport'),
+            => empty($req->input('biaya_transport'))      ? $check_ca->usaha['biaya_transport'] : $req->input('biaya_transport'),
 
             'biaya_pendidikan'
-                => empty($req->input('biaya_pendidikan'))     ? $check_ca->usaha['biaya_pendidikan'] : $req->input('biaya_pendidikan'),
+            => empty($req->input('biaya_pendidikan'))     ? $check_ca->usaha['biaya_pendidikan'] : $req->input('biaya_pendidikan'),
 
             'telp_listr_air'
-                => empty($req->input('telp_listr_air'))       ? $check_ca->usaha['telp_listr_air'] : $req->input('telp_listr_air'),
+            => empty($req->input('telp_listr_air'))       ? $check_ca->usaha['telp_listr_air'] : $req->input('telp_listr_air'),
 
             'angsuran'
-                => empty($req->input('angsuran'))             ? $check_ca->usaha['angsuran'] : $req->input('angsuran'),
+            => empty($req->input('angsuran'))             ? $check_ca->usaha['angsuran'] : $req->input('angsuran'),
 
             'biaya_lain'
-                => empty($req->input('biaya_lain'))           ? $check_ca->usaha['biaya_lain'] : $req->input('biaya_lain'),
+            => empty($req->input('biaya_lain'))           ? $check_ca->usaha['biaya_lain'] : $req->input('biaya_lain'),
         );
 
         $total_KapBul = array(
@@ -1348,39 +1361,39 @@ class MasterCA_Controller extends BaseController
         // Ceiling Recomendasi Pinjaman
         $rekomPinjaman = array(
             'penyimpangan_struktur'
-                => empty($req->input('penyimpangan_struktur'))
+            => empty($req->input('penyimpangan_struktur'))
                 ? $check_ca->recom_pin['penyimpangan_struktur'] : $req->input('penyimpangan_struktur'),
 
             'penyimpangan_dokumen'
-                => empty($req->input('penyimpangan_dokumen'))
+            => empty($req->input('penyimpangan_dokumen'))
                 ? $check_ca->recom_pin['penyimpangan_dokumen'] : $req->input('penyimpangan_dokumen'),
 
             'recom_nilai_pinjaman'
-                => empty($req->input('recom_nilai_pinjaman'))
+            => empty($req->input('recom_nilai_pinjaman'))
                 ? $check_ca->recom_pin['recom_nilai_pinjaman'] : $req->input('recom_nilai_pinjaman'),
 
             'recom_tenor'
-                => empty($req->input('recom_tenor'))
+            => empty($req->input('recom_tenor'))
                 ? $check_ca->recom_pin['recom_tenor'] : $req->input('recom_tenor'),
 
             'recom_angsuran'
-                => empty($req->input('recom_angsuran'))
+            => empty($req->input('recom_angsuran'))
                 ? $check_ca->recom_pin['recom_angsuran'] : $req->input('recom_angsuran'),
 
             'recom_produk_kredit'
-                => empty($req->input('recom_produk_kredit'))
+            => empty($req->input('recom_produk_kredit'))
                 ? $check_ca->recom_pin['recom_produk_kredit'] : $req->input('recom_produk_kredit'),
 
             'note_recom'
-                => empty($req->input('note_recom'))
+            => empty($req->input('note_recom'))
                 ? $check_ca->recom_pin['note_recom'] : $req->input('note_recom'),
 
             'bunga_pinjaman'
-                => empty($req->input('bunga_pinjaman'))
+            => empty($req->input('bunga_pinjaman'))
                 ? $check_ca->recom_pin['bunga_pinjaman'] : $req->input('bunga_pinjaman'),
 
             'nama_ca'
-                => empty($req->input('nama_ca'))
+            => empty($req->input('nama_ca'))
                 ? $check_ca->recom_pin['nama'] : $req->input('nama_ca')
         );
 
@@ -1396,7 +1409,7 @@ class MasterCA_Controller extends BaseController
 
         if ($plafonCA == 0 && $tenorCA == 0 && $bunga == 0) {
             $recom_angs = 0;
-        }else{
+        } else {
             $recom_angs = Helper::recom_angs($plafonCA, $tenorCA, $bunga);
         }
 
@@ -1423,8 +1436,8 @@ class MasterCA_Controller extends BaseController
 
         if (empty($PeriksaTanah)) {
             $sumTaksasiTan = 0;
-        }else{
-            $sumTaksasiTan = array_sum(array_column($PeriksaTanah,'nilai_taksasi_agunan')); //array_sum($PeriksaTanah);
+        } else {
+            $sumTaksasiTan = array_sum(array_column($PeriksaTanah, 'nilai_taksasi_agunan')); //array_sum($PeriksaTanah);
         }
 
         // $PeriksaKenda = PemeriksaanAgunTan::select('nilai_taksasi_agunan')->whereIn('id', explode(",", $id_pe_ta))->get()->toArray();
@@ -1456,38 +1469,38 @@ class MasterCA_Controller extends BaseController
 
 
             'kualitatif_analisa'
-                => empty($req->input('kualitatif_analisa'))
+            => empty($req->input('kualitatif_analisa'))
                 ? $check_ca->recom_ca['kualitatif_analisa']
                 : $req->input('kualitatif_analisa'),
 
             'kualitatif_strenght'
-                => empty($req->input('kualitatif_strenght'))
+            => empty($req->input('kualitatif_strenght'))
                 ? $check_ca->recom_ca['kualitatif_strenght']
                 : $req->input('kualitatif_strenght'),
 
             'kualitatif_weakness'
-                => empty($req->input('kualitatif_weakness'))
+            => empty($req->input('kualitatif_weakness'))
                 ? $check_ca->recom_ca['kualitatif_weakness']
                 : $req->input('kualitatif_weakness'),
 
             'kualitatif_opportunity'
-                => empty($req->input('kualitatif_opportunity'))
+            => empty($req->input('kualitatif_opportunity'))
                 ? $check_ca->recom_ca['kualitatif_opportunity']
                 : $req->input('kualitatif_opportunity'),
 
             'kualitatif_threatness'
-                => empty($req->input('kualitatif_threatness'))
+            => empty($req->input('kualitatif_threatness'))
                 ? $check_ca->recom_ca['kualitatif_threatness']
                 : $req->input('kualitatif_threatness')
         );
 
-        try{
+        try {
             DB::connection('web')->beginTransaction();
 
             if (!empty($dataRingkasan)) {
                 $analisa = RingkasanAnalisa::create($dataRingkasan);
                 $idAnalisa = $analisa->id;
-            }else{
+            } else {
                 $idAnalisa = null;
             }
 
@@ -1496,14 +1509,14 @@ class MasterCA_Controller extends BaseController
 
                 $reCA = RekomendasiCA::create($newRecom);
                 $idReCA = $reCA->id;
-            }else{
+            } else {
                 $idReCA = null;
             }
 
             if (!empty($kapBul)) {
                 $Q_Kapbul = KapBulanan::create($kapBul);
                 $idKapBul = $Q_Kapbul->id;
-            }else{
+            } else {
                 $idKapBul = null;
             }
 
@@ -1529,7 +1542,7 @@ class MasterCA_Controller extends BaseController
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'message'=> 'Data untuk Revisi CA berhasil dikirim'
+                'message' => 'Data untuk Revisi CA berhasil dikirim'
             ], 200);
         } catch (\Exception $e) {
             $err = DB::connection('web')->rollback();
@@ -1549,13 +1562,13 @@ class MasterCA_Controller extends BaseController
     public function operator($id_trans_so, Request $req, Helper $help)
     {
 
-        $check = TransSO::where('id',$id_trans_so)->where('status_das', 1)->where('status_hm', 1)->first();
+        $check = TransSO::where('id', $id_trans_so)->where('status_das', 1)->where('status_hm', 1)->first();
 
         if (!$check) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
-                'message' => 'Transaksi dengan id '.$id_trans_so.' belum ada di SO atau saat pemeriksaaan DAS dan HM'
+                'message' => 'Transaksi dengan id ' . $id_trans_so . ' belum ada di SO atau saat pemeriksaaan DAS dan HM'
             ], 404);
         }
 
@@ -1565,7 +1578,7 @@ class MasterCA_Controller extends BaseController
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
-                'message' => 'Transaksi dengan id '.$id_trans_so.' belum sampai ke AO'
+                'message' => 'Transaksi dengan id ' . $id_trans_so . ' belum sampai ke AO'
             ], 404);
         }
 
@@ -1586,8 +1599,8 @@ class MasterCA_Controller extends BaseController
 
         if (empty($PeriksaTanah)) {
             $sumTaksasiTan = 0;
-        }else{
-            $sumTaksasiTan = array_sum(array_column($PeriksaTanah,'nilai_taksasi_agunan')); //array_sum($PeriksaTanah);
+        } else {
+            $sumTaksasiTan = array_sum(array_column($PeriksaTanah, 'nilai_taksasi_agunan')); //array_sum($PeriksaTanah);
         }
 
         // $PeriksaKenda = PemeriksaanAgunKen::select('nilai_taksasi_agunan')->whereIn('id', explode(",", $id_pe_ta))->get()->toArray();
@@ -1605,31 +1618,31 @@ class MasterCA_Controller extends BaseController
         $inputKapBul = array(
 
             'pemasukan_debitur'
-                => empty($req->input('pemasukan_debitur'))    ? 0 : (int) $req->input('pemasukan_debitur'),
+            => empty($req->input('pemasukan_debitur'))    ? 0 : (int) $req->input('pemasukan_debitur'),
 
             'pemasukan_pasangan'
-                => empty($req->input('pemasukan_pasangan'))   ? 0 : (int) $req->input('pemasukan_pasangan'),
+            => empty($req->input('pemasukan_pasangan'))   ? 0 : (int) $req->input('pemasukan_pasangan'),
 
             'pemasukan_penjamin'
-                => empty($req->input('pemasukan_penjamin'))   ? 0 : (int) $req->input('pemasukan_penjamin'),
+            => empty($req->input('pemasukan_penjamin'))   ? 0 : (int) $req->input('pemasukan_penjamin'),
 
             'biaya_rumah_tangga'
-                => empty($req->input('biaya_rumah_tangga'))   ? 0 : (int) $req->input('biaya_rumah_tangga'),
+            => empty($req->input('biaya_rumah_tangga'))   ? 0 : (int) $req->input('biaya_rumah_tangga'),
 
             'biaya_transport'
-                => empty($req->input('biaya_transport'))      ? 0 : (int) $req->input('biaya_transport'),
+            => empty($req->input('biaya_transport'))      ? 0 : (int) $req->input('biaya_transport'),
 
             'biaya_pendidikan'
-                => empty($req->input('biaya_pendidikan'))     ? 0 : (int) $req->input('biaya_pendidikan'),
+            => empty($req->input('biaya_pendidikan'))     ? 0 : (int) $req->input('biaya_pendidikan'),
 
             'telp_listr_air'
-                => empty($req->input('telp_listr_air'))       ? 0 : (int) $req->input('telp_listr_air'),
+            => empty($req->input('telp_listr_air'))       ? 0 : (int) $req->input('telp_listr_air'),
 
             'angsuran'
-                => empty($req->input('angsuran'))             ? 0 : (int) $req->input('angsuran'),
+            => empty($req->input('angsuran'))             ? 0 : (int) $req->input('angsuran'),
 
             'biaya_lain'
-                => empty($req->input('biaya_lain'))           ? 0 : (int) $req->input('biaya_lain'),
+            => empty($req->input('biaya_lain'))           ? 0 : (int) $req->input('biaya_lain'),
         );
 
         $total_KapBul = array(
@@ -1657,7 +1670,7 @@ class MasterCA_Controller extends BaseController
 
         if ($plafonCA == 0 && $tenorCA == 0 && $bunga == 0) {
             $recom_angs = 0;
-        }else{
+        } else {
             $recom_angs = Helper::recom_angs($plafonCA, $tenorCA, $bunga);
         }
 
@@ -1696,7 +1709,7 @@ class MasterCA_Controller extends BaseController
         );
 
         DB::connection('web')->beginTransaction();
-        try{
+        try {
 
             DB::connection('web')->commit();
 
@@ -1726,14 +1739,14 @@ class MasterCA_Controller extends BaseController
         if ($month == null) {
 
             $query_dir = TransAO::with('so', 'pic', 'cabang')->where('status_ao', 1)
-                    ->whereYear('created_at', '=', $year)
-                    ->orderBy('created_at', 'desc');
-        }else{
+                ->whereYear('created_at', '=', $year)
+                ->orderBy('created_at', 'desc');
+        } else {
 
             $query_dir = TransAO::with('so', 'pic', 'cabang')->where('status_ao', 1)
-                    ->whereYear('created_at', '=', $year)
-                    ->whereMonth('created_at', '=', $month)
-                    ->orderBy('created_at', 'desc');
+                ->whereYear('created_at', '=', $year)
+                ->whereMonth('created_at', '=', $month)
+                ->orderBy('created_at', 'desc');
         }
 
         $query = Helper::checkDir($scope, $query_dir, $id_area, $id_cabang);
@@ -1751,17 +1764,17 @@ class MasterCA_Controller extends BaseController
 
             if ($val->status_ao == 1) {
                 $status_ao = 'recommend';
-            }elseif($val->status_ao == 2){
+            } elseif ($val->status_ao == 2) {
                 $status_ao = 'not recommend';
-            }else{
+            } else {
                 $status_ao = 'waiting';
             }
 
             if ($val->so['ca']['status_ca'] == 1) {
                 $status_ca = 'recommend';
-            }elseif($val->so['ca']['status_ca'] == 2){
+            } elseif ($val->so['ca']['status_ca'] == 2) {
                 $status_ca = 'not recommend';
-            }else{
+            } else {
                 $status_ca = 'waiting';
             }
 
@@ -1821,21 +1834,21 @@ class MasterCA_Controller extends BaseController
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
-                'message' => 'Transaksi dengan id '.$id.' belum ada di SO atau belum komplit saat pemeriksaaan DAS dan HM'
+                'message' => 'Transaksi dengan id ' . $id . ' belum ada di SO atau belum komplit saat pemeriksaaan DAS dan HM'
             ], 404);
         }
 
-        
+
         $check_ao = TransAO::with('pic', 'cabang')->where('id_trans_so', $id)->where('status_ao', 1)->first();
-        
+
         if ($check_ao == null) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
-                'message' => 'Transaksi dengan id '.$id.' belum sampai ke AO'
+                'message' => 'Transaksi dengan id ' . $id . ' belum sampai ke AO'
             ], 404);
         }
-        
+
         $check_ca = TransCA::with('so', 'pic', 'cabang')->where('id_trans_so', $id)->where('status_ca', 1)->first();
 
 
@@ -1843,48 +1856,45 @@ class MasterCA_Controller extends BaseController
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
-                'message' => 'Transaksi dengan id '.$id.' belum sampai ke CA'
+                'message' => 'Transaksi dengan id ' . $id . ' belum sampai ke CA'
             ], 404);
         }
 
         if ($check_ca->status_ca == 1) {
             $status_ca = 'recommend';
-        }elseif($check_ca->status_ca == 2){
+        } elseif ($check_ca->status_ca == 2) {
             $status_ca = 'not recommend';
-        }else{
+        } else {
             $status_ca = 'waiting';
         }
 
         $mutasi = MutasiBank::whereIn('id', explode(",", $check_ca->id_mutasi_bank))->get()->toArray();
 
-        if($mutasi != []){
+        if ($mutasi != []) {
 
-            foreach($mutasi as $i => $mut){
+            foreach ($mutasi as $i => $mut) {
                 $doub[$i] = array_slice($mut, 0, 5);
             }
 
-            foreach($mutasi as $i => $mut){
+            foreach ($mutasi as $i => $mut) {
                 $slice[$i] = array_slice($mut, 5);
-                foreach($slice as $key => $val){
-                    foreach($val as $row => $col){
-                        $arr[$i][$row] = explode(";",$col);
+                foreach ($slice as $key => $val) {
+                    foreach ($val as $row => $col) {
+                        $arr[$i][$row] = explode(";", $col);
                     }
                 }
             }
 
-            foreach ($arr as $key => $subarr)
-            {
-                foreach ($subarr as $subkey => $subvalue)
-                {
-                    foreach($subvalue as $childkey => $childvalue)
-                    {   
+            foreach ($arr as $key => $subarr) {
+                foreach ($subarr as $subkey => $subvalue) {
+                    foreach ($subvalue as $childkey => $childvalue) {
                         $out[$key][$childkey][$subkey] = ($childvalue);
                     }
 
                     $dataMut[$key] = array_merge($doub[$key], array('table' => $out[$key]));
                 }
             }
-        }else{
+        } else {
             $dataMut = null;
         }
 
@@ -1900,10 +1910,10 @@ class MasterCA_Controller extends BaseController
             'data_keuangan'         => $check_ca->log_tab,
             'informasi_analisa_cc'  => array(
                 'table'         => $iac = InfoACC::whereIn('id', explode(",", $check_ca->id_info_analisa_cc))->get()->toArray(),
-                'total_plafon'  => array_sum(array_column($iac,'plafon')),
-                'total_baki_debet' => array_sum(array_column($iac,'baki_debet')),
-                'angsuran'         => array_sum(array_column($iac,'angsuran')),
-                'collectabitas_tertinggi' => max(array_column($iac,'collectabilitas'))
+                'total_plafon'  => array_sum(array_column($iac, 'plafon')),
+                'total_baki_debet' => array_sum(array_column($iac, 'baki_debet')),
+                'angsuran'         => array_sum(array_column($iac, 'angsuran')),
+                'collectabitas_tertinggi' => max(array_column($iac, 'collectabilitas'))
             ),
             'ringkasan_analisa'     => $check_ca->ringkasan,
             'rekomendasi_pinjaman'  => $check_ca->recom_pin,
