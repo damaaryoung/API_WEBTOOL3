@@ -30,7 +30,7 @@ use App\Models\AreaKantor\PIC;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 // use Image;
-use Illuminate\Support\Facades\DB;
+use DB;
 
 class MasterCA_Controller extends BaseController
 {
