@@ -479,8 +479,6 @@ class MasterCA_Controller extends BaseController
                 ]
             ],
 
-            // 'data_pasangan' => $val->so['pas'],
-
             'data_pasangan' => [
                 'id'                    => $val->so['id_pasangan'],
                 'nama_lengkap'          => $val->so['pas']['nama_lengkap'],
@@ -548,8 +546,8 @@ class MasterCA_Controller extends BaseController
             'verifikasi'        => $val->verif,
             'validasi'          => $val->valid,
             'lampiran_ao'       => [
-                'lamp_ideb'             => $val->so['lamp_ideb'],
-                'lamp_pefindo'          => $val->so['lamp_pefindo'],
+                'lamp_ideb'             => empty($val->so['lamp_ideb']) ? null : explode(";", $val->so['lamp_ideb']),
+                'lamp_pefindo'          => empty($val->so['lamp_pefindo']) ? null : explode(";", $val->so['lamp_pefindo']),
                 'form_persetujuan_ideb' => $val->form_persetujuan_ideb
             ],
             'tgl_transaksi'     => $val->created_at
