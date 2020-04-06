@@ -10,7 +10,7 @@ use App\Models\Transaksi\TransSO;
 use App\Models\AreaKantor\PIC;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
-use Illuminate\Validation\Validator;
+use Illuminate\Support\Facades\Validator;
 
 class DASController extends BaseController
 {
