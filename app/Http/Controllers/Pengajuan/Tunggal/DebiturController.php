@@ -14,14 +14,14 @@ use App\Models\Pengajuan\SO\Debitur;
 
 // use Illuminate\Support\Facades\File;
 use Carbon\Carbon;
-use DB;
+use Illuminate\Support\Facades\DB;
 
 class DebiturController extends BaseController
 {
 
     public function show($id)
     {
-        $val = Debitur::with('prov_ktp','kab_ktp','kec_ktp','kel_ktp','prov_dom','kab_dom','kec_dom','kel_dom','prov_kerja','kab_kerja','kec_kerja','kel_kerja')
+        $val = Debitur::with('prov_ktp', 'kab_ktp', 'kec_ktp', 'kel_ktp', 'prov_dom', 'kab_dom', 'kec_dom', 'kel_dom', 'prov_kerja', 'kab_kerja', 'kec_kerja', 'kel_kerja')
             ->where('id', $id)->first();
 
         if (empty($val)) {
@@ -177,7 +177,7 @@ class DebiturController extends BaseController
             ], 404);
         }
 
-        $check_lamp_ktp             = $check_debt->lamp_ktp; 
+        $check_lamp_ktp             = $check_debt->lamp_ktp;
         $check_lamp_kk              = $check_debt->lamp_kk;
         $check_lamp_sertifikat      = $check_debt->lamp_sertifikat;
         $check_lamp_sttp_pbb        = $check_debt->lamp_sttp_pbb;
@@ -189,82 +189,81 @@ class DebiturController extends BaseController
         $check_lamp_slip_gaji       = $check_debt->lamp_slip_gaji;
         $check_foto_pembukuan_usaha = $check_debt->foto_pembukuan_usaha;
         $check_lamp_foto_usaha      = $check_debt->lamp_foto_usaha;
-        $check_lamp_surat_cerai     = $check_debt->lamp_surat_cerai; 
+        $check_lamp_surat_cerai     = $check_debt->lamp_surat_cerai;
         $check_lamp_tempat_tinggal  = $check_debt->lamp_tempat_tinggal;
 
         $path = 'public/' . $check_debt->no_ktp . '/debitur';
 
         // Lampiran Debitur
-        if($file = $req->file('lamp_ktp')){
+        if ($file = $req->file('lamp_ktp')) {
             $name = 'ktp.';
             $check = $check_lamp_ktp;
-            
+
             $lamp_ktp = Helper::uploadImg($check, $file, $path, $name);
-        }else{
+        } else {
             $lamp_ktp = $check_lamp_ktp;
         }
-        
-        if($file = $req->file('lamp_kk')){
+
+        if ($file = $req->file('lamp_kk')) {
             $name = 'kk.';
             $check = $check_lamp_kk;
-            
+
             $lamp_kk = Helper::uploadImg($check, $file, $path, $name);
-        }else{
+        } else {
             $lamp_kk = $check_lamp_kk;
         }
 
-        if($file = $req->file('lamp_sertifikat')){
+        if ($file = $req->file('lamp_sertifikat')) {
             $name = 'sertifikat.';
             $check = $check_lamp_sertifikat;
 
             $lamp_sertifikat = Helper::uploadImg($check, $file, $path, $name);
-        }else{
+        } else {
             $lamp_sertifikat = $check_lamp_sertifikat;
         }
 
-        if($file = $req->file('lamp_pbb')){
+        if ($file = $req->file('lamp_pbb')) {
             $name = 'pbb.';
             $check = $check_lamp_sttp_pbb;
 
             $lamp_sttp_pbb = Helper::uploadImg($check, $file, $path, $name);
-        }else{
+        } else {
             $lamp_sttp_pbb = $check_lamp_sttp_pbb;
         }
 
-        if($file = $req->file('lamp_imb')){
+        if ($file = $req->file('lamp_imb')) {
             $name = 'imb.';
             $check = $check_lamp_imb;
 
             $lamp_imb = Helper::uploadImg($check, $file, $path, $name);
-        }else{
+        } else {
             $lamp_imb = $check_lamp_imb;
         }
 
-        if($file = $req->file('foto_agunan_rumah')){
+        if ($file = $req->file('foto_agunan_rumah')) {
             $name = 'foto_agunan_rumah.';
             $check = $check_foto_agunan_rumah;
 
             $foto_agunan_rumah = Helper::uploadImg($check, $file, $path, $name);
-        }else{
+        } else {
             $foto_agunan_rumah = $check_foto_agunan_rumah;
         }
-        
-        if($file = $req->file('lamp_skk')){
+
+        if ($file = $req->file('lamp_skk')) {
             $name = 'lamp_skk.';
             $check = $check_lamp_skk;
-            
+
             $lamp_skk = Helper::uploadImg($check, $file, $path, $name);
-        }else{
+        } else {
             $lamp_skk = $check_lamp_skk;
         }
 
-        if($file = $req->file('lamp_slip_gaji')){
+        if ($file = $req->file('lamp_slip_gaji')) {
             $name = 'lamp_slip_gaji.';
             $check = $check_lamp_slip_gaji;
 
             $lamp_slip_gaji = Helper::uploadImg($check, $file, $path, $name);
-
-        }else{
+        } else {
             $lamp_slip_gaji = $check_lamp_slip_gaji;
         }
 
@@ -273,7 +272,7 @@ class DebiturController extends BaseController
             $check = $check_lamp_surat_cerai;
 
             $lamp_surat_cerai = Helper::uploadImg($check, $file, $path, $name);
-        }else{
+        } else {
             $lamp_surat_cerai = $check_lamp_surat_cerai;
         }
 
@@ -282,76 +281,76 @@ class DebiturController extends BaseController
             $check = $check_lamp_tempat_tinggal;
 
             $lamp_tempat_tinggal = Helper::uploadImg($check, $file, $path, $name);
-        }else{
+        } else {
             $lamp_tempat_tinggal = $check_lamp_tempat_tinggal;
         }
-        
+
         if ($files = $req->file('lamp_buku_tabungan')) {
             $name = 'lamp_buku_tabungan.';
             $check = $check_lamp_buku_tabungan;
 
             $arrayPath = array();
-            foreach($files as $file){
+            foreach ($files as $file) {
                 $arrayPath[] = Helper::uploadImg($check, $file, $path, $name);
             }
 
             $lamp_buku_tabungan = implode(";", $arrayPath);
-        }else{
+        } else {
             $lamp_buku_tabungan = $check_lamp_buku_tabungan;
         }
 
-        if($files = $req->file('lamp_sku')){
+        if ($files = $req->file('lamp_sku')) {
             $name = 'lamp_sku.';
             $check = $check_lamp_sku;
 
             $arrayPath = array();
-            foreach($files as $file){
+            foreach ($files as $file) {
                 $arrayPath[] = Helper::uploadImg($check, $file, $path, $name);
             }
 
             $lamp_sku = implode(";", $arrayPath);
-
-        }else{
+        } else {
             $lamp_sku = $check_lamp_sku;
         }
 
-        if($files = $req->file('foto_pembukuan_usaha')){
+        if ($files = $req->file('foto_pembukuan_usaha')) {
             $name = 'foto_pembukuan_usaha.';
             $check = $check_foto_pembukuan_usaha;
 
             $arrayPath = array();
-            foreach($files as $file){
+            foreach ($files as $file) {
                 $arrayPath[] = Helper::uploadImg($check, $file, $path, $name);
             }
 
             $foto_pembukuan_usaha = implode(";", $arrayPath);
-        }else{
+        } else {
             $foto_pembukuan_usaha = $check_foto_pembukuan_usaha;
         }
 
-        if($files = $req->file('lamp_foto_usaha')){
+        if ($files = $req->file('lamp_foto_usaha')) {
             $name = 'lamp_foto_usaha.';
             $check = $check_lamp_foto_usaha;
 
             $arrayPath = array();
-            foreach($files as $file){
+            foreach ($files as $file) {
                 $arrayPath[] = Helper::uploadImg($check, $file, $path, $name);
             }
 
             $lamp_foto_usaha = implode(";", $arrayPath);
-
-        }else{
+        } else {
             $lamp_foto_usaha = $check_lamp_foto_usaha;
         }
 
         /** Nama dan Tgl Lahir Anak */
-        if(empty($req->input('nama_anak'))){
+        if (empty($req->input('nama_anak'))) {
             $nama_anak = $check_debt->nama_anak;
             $tgl_lhr_anak = $check_debt->tgl_lhr_anak;
-        }else{
-            for ($i = 0; $i < count($req->input('nama_anak')); $i++){
+        } else {
+            for ($i = 0; $i < count($req->input('nama_anak')); $i++) {
                 $namaAnak[] = empty($req->nama_anak[$i]) ? $check_debt->nama_anak[$i] : $req->nama_anak[$i];
+            }
 
+            for ($i = 0; $i < count($req->input('tgl_lahir_anak')); $i++) {
                 $tglLahirAnak[] = empty($req->tgl_lahir_anak[$i]) ? $check_debt->tgl_lahir_anak[$i] : Carbon::parse($req->tgl_lahir_anak[$i])->format('Y-m-d');
             }
 
@@ -363,148 +362,148 @@ class DebiturController extends BaseController
 
         // Data Debitur
         $dataDebitur = array(
-            'nama_lengkap'          => empty($req->input('nama_lengkap')) 
+            'nama_lengkap'          => empty($req->input('nama_lengkap'))
                 ? $check_debt->nama_lengkap : $req->input('nama_lengkap'),
 
-            'gelar_keagamaan'       => empty($req->input('gelar_keagamaan')) 
+            'gelar_keagamaan'       => empty($req->input('gelar_keagamaan'))
                 ? $check_debt->gelar_keagamaan : $req->input('gelar_keagamaan'),
 
-            'gelar_pendidikan'      => empty($req->input('gelar_pendidikan')) 
+            'gelar_pendidikan'      => empty($req->input('gelar_pendidikan'))
                 ? $check_debt->gelar_pendidikan : $req->input('gelar_pendidikan'),
 
-            'jenis_kelamin'         => empty($req->input('jenis_kelamin')) 
+            'jenis_kelamin'         => empty($req->input('jenis_kelamin'))
                 ? strtoupper($check_debt->jenis_kelamin) : strtoupper($req->input('jenis_kelamin')),
 
-            'status_nikah'          => empty($req->input('status_nikah')) 
+            'status_nikah'          => empty($req->input('status_nikah'))
                 ? strtoupper($check_debt->status_nikah) : $req->input('status_nikah'),
 
-            'ibu_kandung'           => empty($req->input('ibu_kandung')) 
+            'ibu_kandung'           => empty($req->input('ibu_kandung'))
                 ? $check_debt->ibu_kandung : $req->input('ibu_kandung'),
 
-            'no_ktp'                => empty($req->input('no_ktp')) 
+            'no_ktp'                => empty($req->input('no_ktp'))
                 ? $check_debt->no_ktp : $req->input('no_ktp'),
 
-            'no_ktp_kk'             => empty($req->input('no_ktp_kk')) 
+            'no_ktp_kk'             => empty($req->input('no_ktp_kk'))
                 ? $check_debt->no_ktp_kk : $req->input('no_ktp_kk'),
 
-            'no_kk'                 => empty($req->input('no_kk')) 
+            'no_kk'                 => empty($req->input('no_kk'))
                 ? $check_debt->no_kk : $req->input('no_kk'),
 
-            'no_npwp'               => empty($req->input('no_npwp')) 
+            'no_npwp'               => empty($req->input('no_npwp'))
                 ? $check_debt->no_npwp : $req->input('no_npwp'),
 
-            'tempat_lahir'          => empty($req->input('tempat_lahir')) 
+            'tempat_lahir'          => empty($req->input('tempat_lahir'))
                 ? $check_debt->tempat_lahir : $req->input('tempat_lahir'),
 
-            'tgl_lahir'             => empty($req->input('tgl_lahir')) 
+            'tgl_lahir'             => empty($req->input('tgl_lahir'))
                 ? $check_debt->tgl_lahir : Carbon::parse($req->input('tgl_lahir'))->format('Y-m-d'),
 
-            'agama'                 => empty($req->input('agama')) 
+            'agama'                 => empty($req->input('agama'))
                 ? $check_debt->agama : strtoupper($req->input('agama')),
 
-            'alamat_ktp'            => empty($req->input('alamat_ktp')) 
+            'alamat_ktp'            => empty($req->input('alamat_ktp'))
                 ? $check_debt->alamat_ktp : $req->input('alamat_ktp'),
 
-            'rt_ktp'                => empty($req->input('rt_ktp')) 
+            'rt_ktp'                => empty($req->input('rt_ktp'))
                 ? $check_debt->rt_ktp : $req->input('rt_ktp'),
 
-            'rw_ktp'                => empty($req->input('rw_ktp')) 
+            'rw_ktp'                => empty($req->input('rw_ktp'))
                 ? $check_debt->rw_ktp : $req->input('rw_ktp'),
 
-            'id_prov_ktp'           => empty($req->input('id_prov_ktp')) 
+            'id_prov_ktp'           => empty($req->input('id_prov_ktp'))
                 ? $check_debt->id_prov_ktp : $req->input('id_prov_ktp'),
 
-            'id_kab_ktp'            => empty($req->input('id_kab_ktp')) 
+            'id_kab_ktp'            => empty($req->input('id_kab_ktp'))
                 ? $check_debt->id_kab_ktp : $req->input('id_kab_ktp'),
 
-            'id_kec_ktp'            => empty($req->input('id_kec_ktp')) 
+            'id_kec_ktp'            => empty($req->input('id_kec_ktp'))
                 ? $check_debt->id_kec_ktp : $req->input('id_kec_ktp'),
 
-            'id_kel_ktp'            => empty($req->input('id_kel_ktp')) 
+            'id_kel_ktp'            => empty($req->input('id_kel_ktp'))
                 ? $check_debt->id_kel_ktp : $req->input('id_kel_ktp'),
 
-            'alamat_domisili'       => empty($req->input('alamat_domisili')) 
+            'alamat_domisili'       => empty($req->input('alamat_domisili'))
                 ? $check_debt->alamat_domisili : $req->input('alamat_domisili'),
-                
-            'rt_domisili'           => empty($req->input('rt_domisili')) 
+
+            'rt_domisili'           => empty($req->input('rt_domisili'))
                 ? $check_debt->rt_domisili : $req->input('rt_domisili'),
 
-            'rw_domisili'           => empty($req->input('rw_domisili')) 
+            'rw_domisili'           => empty($req->input('rw_domisili'))
                 ? $check_debt->rw_domisili : $req->input('rw_domisili'),
 
-            'id_prov_domisili'      => empty($req->input('id_prov_domisili')) 
+            'id_prov_domisili'      => empty($req->input('id_prov_domisili'))
                 ? $check_debt->id_prov_domisili : $req->input('id_prov_domisili'),
 
-            'id_kab_domisili'       => empty($req->input('id_kab_domisili')) 
+            'id_kab_domisili'       => empty($req->input('id_kab_domisili'))
                 ? $check_debt->id_kab_domisili : $req->input('id_kab_domisili'),
 
-            'id_kec_domisili'       => empty($req->input('id_kec_domisili')) 
+            'id_kec_domisili'       => empty($req->input('id_kec_domisili'))
                 ? $check_debt->id_kec_domisili : $req->input('id_kec_domisili'),
 
-            'id_kel_domisili'       => empty($req->input('id_kel_domisili')) 
+            'id_kel_domisili'       => empty($req->input('id_kel_domisili'))
                 ? $check_debt->id_kel_domisili : $req->input('id_kel_domisili'),
 
-            'pendidikan_terakhir'   => empty($req->input('pendidikan_terakhir')) 
+            'pendidikan_terakhir'   => empty($req->input('pendidikan_terakhir'))
                 ? $check_debt->pendidikan_terakhir : $req->input('pendidikan_terakhir'),
 
-            'jumlah_tanggungan'     => empty($req->input('jumlah_tanggungan')) 
+            'jumlah_tanggungan'     => empty($req->input('jumlah_tanggungan'))
                 ? $check_debt->jumlah_tanggungan : $req->input('jumlah_tanggungan'),
 
-            'no_telp'               => empty($req->input('no_telp')) 
+            'no_telp'               => empty($req->input('no_telp'))
                 ? $check_debt->no_telp : $req->input('no_telp'),
 
-            'no_hp'                 => empty($req->input('no_hp')) 
+            'no_hp'                 => empty($req->input('no_hp'))
                 ? $check_debt->no_hp : $req->input('no_hp'),
 
-            'alamat_surat'          => empty($req->input('alamat_surat')) 
+            'alamat_surat'          => empty($req->input('alamat_surat'))
                 ? $check_debt->alamat_surat : $req->input('alamat_surat'),
 
-            'tinggi_badan'          => empty($req->input('tinggi_badan')) 
+            'tinggi_badan'          => empty($req->input('tinggi_badan'))
                 ? $check_debt->tinggi_badan : $req->input('tinggi_badan'),
 
-            'berat_badan'           => empty($req->input('berat_badan')) 
+            'berat_badan'           => empty($req->input('berat_badan'))
                 ? $check_debt->berat_badan : $req->input('berat_badan'),
 
             'nama_anak'             => $nama_anak,
             'tgl_lahir_anak'        => $tgl_lhr_anak,
 
-            'pekerjaan'             => empty($req->input('pekerjaan')) 
+            'pekerjaan'             => empty($req->input('pekerjaan'))
                 ? $check_debt->pekerjaan : $req->input('pekerjaan'),
 
-            'posisi_pekerjaan'      => empty($req->input('posisi_pekerjaan')) 
+            'posisi_pekerjaan'      => empty($req->input('posisi_pekerjaan'))
                 ? $check_debt->posisi_pekerjaan : $req->input('posisi_pekerjaan'),
 
-            'nama_tempat_kerja'     => empty($req->input('nama_tempat_kerja')) 
+            'nama_tempat_kerja'     => empty($req->input('nama_tempat_kerja'))
                 ? $check_debt->nama_tempat_kerja : $req->input('nama_tempat_kerja'),
 
-            'jenis_pekerjaan'       => empty($req->input('jenis_pekerjaan')) 
+            'jenis_pekerjaan'       => empty($req->input('jenis_pekerjaan'))
                 ? $check_debt->jenis_pekerjaan : $req->input('jenis_pekerjaan'),
 
-            'alamat_tempat_kerja'   => empty($req->input('alamat_tempat_kerja')) 
+            'alamat_tempat_kerja'   => empty($req->input('alamat_tempat_kerja'))
                 ? $check_debt->alamat_tempat_kerja : $req->input('alamat_tempat_kerja'),
 
-            'id_prov_tempat_kerja'  => empty($req->input('id_prov_tempat_kerja')) 
+            'id_prov_tempat_kerja'  => empty($req->input('id_prov_tempat_kerja'))
                 ? $check_debt->id_prov_tempat_kerja : $req->input('id_prov_tempat_kerja'),
-                
-            'id_kab_tempat_kerja'   => empty($req->input('id_kab_tempat_kerja')) 
+
+            'id_kab_tempat_kerja'   => empty($req->input('id_kab_tempat_kerja'))
                 ? $check_debt->id_kab_tempat_kerja : $req->input('id_kab_tempat_kerja'),
 
-            'id_kec_tempat_kerja'   => empty($req->input('id_kec_tempat_kerja')) 
+            'id_kec_tempat_kerja'   => empty($req->input('id_kec_tempat_kerja'))
                 ? $check_debt->id_kec_tempat_kerja : $req->input('id_kec_tempat_kerja'),
 
-            'id_kel_tempat_kerja'   => empty($req->input('id_kel_tempat_kerja')) 
+            'id_kel_tempat_kerja'   => empty($req->input('id_kel_tempat_kerja'))
                 ? $check_debt->id_kel_tempat_kerja : $req->input('id_kel_tempat_kerja'),
 
-            'rt_tempat_kerja'       => empty($req->input('rt_tempat_kerja')) ? 
+            'rt_tempat_kerja'       => empty($req->input('rt_tempat_kerja')) ?
                 $check_debt->rt_tempat_usaha : $req->input('rt_tempat_kerja'),
 
-            'rw_tempat_kerja'       => empty($req->input('rw_tempat_kerja')) ? 
+            'rw_tempat_kerja'       => empty($req->input('rw_tempat_kerja')) ?
                 $check_debt->rw_tempat_usaha : $req->input('rw_tempat_kerja'),
 
-            'tgl_mulai_kerja'       => empty($req->input('tgl_mulai_kerja')) 
+            'tgl_mulai_kerja'       => empty($req->input('tgl_mulai_kerja'))
                 ? $check_debt->tgl_mulai_kerja : Carbon::parse($req->input('tgl_mulai_kerja'))->format('Y-m-d'),
 
-            'no_telp_tempat_kerja'  => empty($req->input('no_telp_tempat_kerja')) 
+            'no_telp_tempat_kerja'  => empty($req->input('no_telp_tempat_kerja'))
                 ? $check_debt->no_telp_tempat_kerja : $req->input('no_telp_tempat_kerja'),
 
             'lamp_ktp'              => $lamp_ktp,
@@ -534,7 +533,7 @@ class DebiturController extends BaseController
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'message'=> 'Update Debitur Berhasil',
+                'message' => 'Update Debitur Berhasil',
                 'data'   => $dataDebitur
             ], 200);
         } catch (\Exception $e) {
