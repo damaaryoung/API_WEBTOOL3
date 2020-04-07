@@ -30,7 +30,8 @@ use App\Models\AreaKantor\PIC;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 // use Image;
-use DB;
+//use DB;
+use Illuminate\Support\Facades\DB;
 
 class MasterCA_Controller extends BaseController
 {
@@ -789,10 +790,10 @@ class MasterCA_Controller extends BaseController
         $sumAllTaksasi = $sumTaksasiTan; // Semua Nilai Taksasi dari semua agunan
 
 
-        $recom_ltv   = Helper::recom_ltv($plafonCA, $sumAllTaksasi);
-        $recom_idir  = Helper::recom_idir($recom_angs, $rekomen_pendapatan, $rekomen_pengeluaran);
-        $recom_dsr   = Helper::recom_dsr($recom_angs, $rekomen_pendapatan, $rekomen_angsuran);
-        $recom_hasil = Helper::recom_hasil($recom_dsr, $recom_ltv, $recom_idir);
+        // $recom_ltv   = Helper::recom_ltv($plafonCA, $sumAllTaksasi);
+        // $recom_idir  = Helper::recom_idir($recom_angs, $rekomen_pendapatan, $rekomen_pengeluaran);
+        // $recom_dsr   = Helper::recom_dsr($recom_angs, $rekomen_pendapatan, $rekomen_angsuran);
+        // $recom_hasil = Helper::recom_hasil($recom_dsr, $recom_ltv, $recom_idir);
 
         // Data Ringkasan Analisa CA
         $dataRingkasan = array(
@@ -800,10 +801,10 @@ class MasterCA_Controller extends BaseController
             'kuantitatif_ttl_pengeluaran'   => $rekomen_pengeluaran,
             'kuantitatif_pendapatan_bersih' => $rekomen_pend_bersih,
             'kuantitatif_angsuran'          => $recom_angs,
-            'kuantitatif_ltv'               => $recom_ltv,
-            'kuantitatif_dsr'               => $recom_dsr,
-            'kuantitatif_idir'              => $recom_idir,
-            'kuantitatif_hasil'             => $recom_hasil,
+            'kuantitatif_ltv'               => $req->input('kuantitatif_ltv'),
+            'kuantitatif_dsr'               => $req->input('kuantitatif_dsr'),
+            'kuantitatif_idir'              => $req->input('kuantitatif_idir'),
+            'kuantitatif_hasil'             => $req->input('kuantitatif_hasil'),
 
 
             'kualitatif_analisa'
