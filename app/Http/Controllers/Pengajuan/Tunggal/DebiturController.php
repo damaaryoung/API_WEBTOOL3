@@ -348,9 +348,9 @@ class DebiturController extends BaseController
         } else {
             for ($i = 0; $i < count($req->input('nama_anak')); $i++) {
                 $namaAnak[] = empty($req->nama_anak[$i]) ? $check_debt->nama_anak[$i] : $req->nama_anak[$i];
-            }
+                //     }
 
-            for ($i = 0; $i < count($req->input('tgl_lahir_anak')); $i++) {
+                // for ($i = 0; $i < count($req->input('tgl_lahir_anak')); $i++) {
                 $tglLahirAnak[] = empty($req->tgl_lahir_anak[$i]) ? $check_debt->tgl_lahir_anak[$i] : Carbon::parse($req->tgl_lahir_anak[$i])->format('Y-m-d');
             }
 
