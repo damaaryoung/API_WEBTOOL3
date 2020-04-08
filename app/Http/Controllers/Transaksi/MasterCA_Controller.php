@@ -797,10 +797,14 @@ class MasterCA_Controller extends BaseController
 
         // Data Ringkasan Analisa CA
         $dataRingkasan = array(
-            'kuantitatif_ttl_pendapatan'    => $rekomen_pendapatan,
-            'kuantitatif_ttl_pengeluaran'   => $rekomen_pengeluaran,
-            'kuantitatif_pendapatan_bersih' => $rekomen_pend_bersih,
-            'kuantitatif_angsuran'          => $recom_angs,
+            'kuantitatif_ttl_pendapatan'    => $req->input('kuantitatif_ttl_pendapatan'),
+            'kuantitatif_ttl_pengeluaran'   => $req->input('kuantitatif_ttl_pengeluaran'),
+            'kuantitatif_pendapatan_bersih' => $req->input('kuantitatif_pendapatan'),
+            'kuantitatif_angsuran'          => $req->input('kuantitatif_angsuran'),
+            // 'kuantitatif_ttl_pendapatan'    => $rekomen_pendapatan,
+            // 'kuantitatif_ttl_pengeluaran'   => $rekomen_pengeluaran,
+            // 'kuantitatif_pendapatan_bersih' => $rekomen_pend_bersih,
+            // 'kuantitatif_angsuran'          => $recom_angs,
             'kuantitatif_ltv'               => $req->input('kuantitatif_ltv'),
             'kuantitatif_dsr'               => $req->input('kuantitatif_dsr'),
             'kuantitatif_idir'              => $req->input('kuantitatif_idir'),
