@@ -53,23 +53,23 @@ class MasterCAA_Controller extends BaseController
 
             if ($val->status_ca == 1) {
                 $status_ca = 'recommend';
-            }elseif($val->status_ca == 2){
+            } elseif ($val->status_ca == 2) {
                 $status_ca = 'not recommend';
-            }else{
+            } else {
                 $status_ca = 'waiting';
             }
 
-            if($val->so['caa']['status_caa'] == 0){
+            if ($val->so['caa']['status_caa'] == 0) {
                 $status_caa = 'waiting';
-            }elseif ($val->so['caa']['status_caa'] == 1) {
+            } elseif ($val->so['caa']['status_caa'] == 1) {
                 $status_caa = 'recommend';
-            }elseif($val->so['caa']['status_caa'] == 2){
+            } elseif ($val->so['caa']['status_caa'] == 2) {
                 $status_caa = 'not recommend';
-            }elseif ($val->so['caa']['status_caa'] == null || $val->so['caa']['status_caa'] == "") {
+            } elseif ($val->so['caa']['status_caa'] == null || $val->so['caa']['status_caa'] == "") {
                 $status_caa = 'null';
             }
 
-            $id_agu_ta = explode (",",$val->so['ao']['id_agunan_tanah']);
+            $id_agu_ta = explode(",", $val->so['ao']['id_agunan_tanah']);
             $AguTa = AgunanTanah::whereIn('id', $id_agu_ta)->get();
 
             $Tan = array();
@@ -80,12 +80,12 @@ class MasterCAA_Controller extends BaseController
                 );
             }
 
-            $id_agu_ke = explode (",",$val->so['ao']['id_agunan_kendaraan']);
+            $id_agu_ke = explode(",", $val->so['ao']['id_agunan_kendaraan']);
             $AguKe = AgunanKendaraan::whereIn('id', $id_agu_ke)->get();
 
             if ($AguKe == '[]') {
                 $Ken = null;
-            }else{
+            } else {
                 $Ken = array();
                 foreach ($AguKe as $key => $value) {
                     $Ken[$key] = array(
@@ -100,9 +100,9 @@ class MasterCAA_Controller extends BaseController
             $id_komisi = explode(",", $val->so['caa']['pic_team_caa']);
 
             $check_approval = Approval::whereIn("id_pic", $id_komisi)
-                    ->where('id_trans_so', $val->id_trans_so)
-                    ->select("id_pic","id","plafon","tenor","rincian", "status", "updated_at as tgl_approve")
-                    ->get();
+                ->where('id_trans_so', $val->id_trans_so)
+                ->select("id_pic", "id", "plafon", "tenor", "rincian", "status", "updated_at as tgl_approve")
+                ->get();
 
             $Appro = array();
             foreach ($check_approval as $key => $cap) {
@@ -187,11 +187,11 @@ class MasterCAA_Controller extends BaseController
         $pic     = $request->pic; // From PIC middleware
         $user_id = $request->auth->user_id;
 
-        $countCAA = TransCAA::latest('id','nomor_caa')->first();
+        $countCAA = TransCAA::latest('id', 'nomor_caa')->first();
 
         if (!$countCAA) {
             $lastNumb = 1;
-        }else{
+        } else {
             $no = $countCAA->nomor_caa;
 
             $arr = explode("-", $no, 5);
@@ -207,15 +207,15 @@ class MasterCAA_Controller extends BaseController
         $JPIC   = JPIC::where('id', $pic->id_mj_pic)->first();
 
         //  ID-Cabang - AO / CA / SO - Bulan - Tahun - NO. Urut
-        $nomor_caa = $pic->id_cabang.'-'.$JPIC->nama_jenis.'-'.$month.'-'.$year.'-'.$lastNumb;
+        $nomor_caa = $pic->id_cabang . '-' . $JPIC->nama_jenis . '-' . $month . '-' . $year . '-' . $lastNumb;
 
-        $check = TransSO::where('id',$id)->where('status_das', 1)->where('status_hm', 1)->first();
+        $check = TransSO::where('id', $id)->where('status_das', 1)->where('status_hm', 1)->first();
 
         if (!$check) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
-                'message' => 'Transaksi dengan id '.$id.' belum ada di SO atau belum komplit saat pemeriksaaan DAS dan HM'
+                'message' => 'Transaksi dengan id ' . $id . ' belum ada di SO atau belum komplit saat pemeriksaaan DAS dan HM'
             ], 404);
         }
 
@@ -226,7 +226,7 @@ class MasterCAA_Controller extends BaseController
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
-                'message' => 'Transaksi dengan id '.$id.' belum sampai ke AO'
+                'message' => 'Transaksi dengan id ' . $id . ' belum sampai ke AO'
             ], 404);
         }
 
@@ -236,7 +236,7 @@ class MasterCAA_Controller extends BaseController
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
-                'message' => 'Transaksi dengan id '.$id.' belum sampai ke CA'
+                'message' => 'Transaksi dengan id ' . $id . ' belum sampai ke CA'
             ], 404);
         }
 
@@ -246,7 +246,7 @@ class MasterCAA_Controller extends BaseController
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
-                'message' => 'Transaksi dengan id '.$id.' sudah ada di CAA'
+                'message' => 'Transaksi dengan id ' . $id . ' sudah ada di CAA'
             ], 404);
         }
 
@@ -259,35 +259,33 @@ class MasterCAA_Controller extends BaseController
         $check_file_agunan          = $check->caa['file_agunan'];
         /** */
 
-        $lamp_dir = 'public/'.$check->debt['no_ktp'];
+        $lamp_dir = 'public/' . $check->debt['no_ktp'];
 
         // file_report_mao
-        if($file = $req->file('file_report_mao')){
+        if ($file = $req->file('file_report_mao')) {
 
-            $path = $lamp_dir.'/mcaa/file_report_mao';
+            $path = $lamp_dir . '/mcaa/file_report_mao';
 
             $name = ''; //$file->getClientOriginalName();
 
             $check_file = $check_file_report_mao;
-            
-            $file_report_mao = Helper::uploadImg($check_file, $file, $path, $name);
 
-        }else{
+            $file_report_mao = Helper::uploadImg($check_file, $file, $path, $name);
+        } else {
             $file_report_mao = $check_file_report_mao;
         }
 
         // file_report_mca
-        if($file = $req->file('file_report_mca')){
+        if ($file = $req->file('file_report_mca')) {
 
-            $path = $lamp_dir.'/mcaa/file_report_mca';
+            $path = $lamp_dir . '/mcaa/file_report_mca';
 
             $name = '';
-            
-            $check_file = $check_file_report_mca;
-            
-            $file_report_mao = Helper::uploadImg($check_file, $file, $path, $name);
 
-        }else{
+            $check_file = $check_file_report_mca;
+
+            $file_report_mao = Helper::uploadImg($check_file, $file, $path, $name);
+        } else {
             $file_report_mca = $check_file_report_mca;
         }
 
@@ -295,35 +293,34 @@ class MasterCAA_Controller extends BaseController
         $statusFileAgunan = $req->input('status_file_agunan');
 
         if ($statusFileAgunan == 'ORIGINAL') {
-            for ($i = 0; $i < count($req->file_agunan); $i++){
+            for ($i = 0; $i < count($req->file_agunan); $i++) {
                 $listAgunan[] = $req->file_agunan;
             }
 
             $file_agunan = implode(";", $listAgunan);
-        }elseif($statusFileAgunan == 'CUSTOM'){
+        } elseif ($statusFileAgunan == 'CUSTOM') {
 
-            if($files = $req->file('file_agunan')){
+            if ($files = $req->file('file_agunan')) {
 
                 $check_file = $check_file_agunan;
-                $path = $lamp_dir.'/mcaa/file_agunan';
+                $path = $lamp_dir . '/mcaa/file_agunan';
                 $i = 0;
-                
+
                 $name = '';
 
                 $arrayPath = array();
-                foreach($files as $file)
-                {
+                foreach ($files as $file) {
                     if (
                         $file->getClientOriginalExtension() != 'pdf'  &&
                         $file->getClientOriginalExtension() != 'jpg'  &&
                         $file->getClientOriginalExtension() != 'jpeg' &&
                         $file->getClientOriginalExtension() != 'png'  &&
                         $file->getClientOriginalExtension() != 'gif'
-                    ){
+                    ) {
                         return response()->json([
                             "code"    => 422,
                             "status"  => "not valid request",
-                            "message" => ["file_usaha.".$i => ["file_usaha.".$i." harus bertipe jpg, jpeg, png, pdf"]]
+                            "message" => ["file_usaha." . $i => ["file_usaha." . $i . " harus bertipe jpg, jpeg, png, pdf"]]
                         ], 422);
                     }
 
@@ -331,45 +328,43 @@ class MasterCAA_Controller extends BaseController
                 }
 
                 $file_agunan = implode(";", $arrayPath);
-            }else{
+            } else {
                 $file_agunan = $check_file_agunan;
             }
-        }else{
+        } else {
             $file_agunan = null;
         }
 
         // Usaha Files Condition
         $statusFileUsaha = $req->input('status_file_usaha');
         if ($statusFileUsaha == 'ORIGINAL') {
-            for ($i = 0; $i < count($req->input('file_usaha')); $i++){
+            for ($i = 0; $i < count($req->input('file_usaha')); $i++) {
                 $listUsaha[] = $req->input('file_usaha');
             }
 
             $file_usaha = implode(";", $listUsaha);
+        } elseif ($statusFileUsaha == 'CUSTOM') {
 
-        }elseif ($statusFileUsaha == 'CUSTOM') {
-
-            if($files = $req->file('file_usaha')){
+            if ($files = $req->file('file_usaha')) {
                 $i = 0;
-                $path = $lamp_dir.'/mcaa/file_usaha';
+                $path = $lamp_dir . '/mcaa/file_usaha';
                 $name = '';
-                
+
                 $check_file = $check_file_usaha;
 
                 $arrayPath = array();
-                foreach($files as $file)
-                {
+                foreach ($files as $file) {
                     if (
                         $file->getClientOriginalExtension() != 'pdf'  &&
                         $file->getClientOriginalExtension() != 'jpg'  &&
                         $file->getClientOriginalExtension() != 'jpeg' &&
                         $file->getClientOriginalExtension() != 'png'  &&
                         $file->getClientOriginalExtension() != 'gif'
-                    ){
+                    ) {
                         return response()->json([
                             "code"    => 422,
                             "status"  => "not valid request",
-                            "message" => ["file_usaha.".$i => ["file_usaha.".$i." harus bertipe jpg, jpeg, png, pdf"]]
+                            "message" => ["file_usaha." . $i => ["file_usaha." . $i . " harus bertipe jpg, jpeg, png, pdf"]]
                         ], 422);
                     }
 
@@ -377,40 +372,38 @@ class MasterCAA_Controller extends BaseController
                 }
 
                 $file_usaha = implode(";", $arrayPath);
-            }else{
+            } else {
                 $file_usaha = $check_file_usaha;
             }
-        }else{
+        } else {
             $file_usaha = null;
         }
 
         // Home File
-        if($file = $req->file('file_tempat_tinggal')){
+        if ($file = $req->file('file_tempat_tinggal')) {
 
-            $path = $lamp_dir.'/mcaa/file_tempat_tinggal';
+            $path = $lamp_dir . '/mcaa/file_tempat_tinggal';
 
             $name = '';
-            
-            $check_file = $check_file_tempat_tinggal;
-            
-            $file_report_mao = Helper::uploadImg($check_file, $file, $path, $name);
 
-        }else{
+            $check_file = $check_file_tempat_tinggal;
+
+            $file_report_mao = Helper::uploadImg($check_file, $file, $path, $name);
+        } else {
             $file_tempat_tinggal = $check_file_tempat_tinggal;
         }
 
         // Othe File
-        if($file = $req->file('file_lain')){
+        if ($file = $req->file('file_lain')) {
 
-            $path = $lamp_dir.'/mcaa/file_lain';
+            $path = $lamp_dir . '/mcaa/file_lain';
 
             $name = '';
-            
-            $check_file = $check_file_lain;
-            
-            $file_report_mao = Helper::uploadImg($check_file, $file, $path, $name);
 
-        }else{
+            $check_file = $check_file_lain;
+
+            $file_report_mao = Helper::uploadImg($check_file, $file, $path, $name);
+        } else {
             $file_lain = $check_file_lain;
         }
 
@@ -421,8 +414,7 @@ class MasterCAA_Controller extends BaseController
             }
 
             $team_caa = implode(",", $arrTeam['team']);
-
-        }else{
+        } else {
             $team_caa = null;
         }
 
@@ -442,7 +434,7 @@ class MasterCAA_Controller extends BaseController
             'file_agunan'        => $file_agunan,
             'status_file_usaha'  => $req->input('status_file_usaha'),
             'file_usaha'         => $file_usaha,
-            'file_tempat_tinggal'=> $file_tempat_tinggal,
+            'file_tempat_tinggal' => $file_tempat_tinggal,
             'file_lain'          => $file_lain,
             'status_caa'         => 1
         );
@@ -473,7 +465,7 @@ class MasterCAA_Controller extends BaseController
 
             $pic_app = PIC::whereIn('id', explode(",", $team_caa))->get()->toArray();
 
-            if($pic_app == []){
+            if ($pic_app == []) {
                 return response()->json([
                     'code'    => 404,
                     'status'  => 'not found',
@@ -482,7 +474,7 @@ class MasterCAA_Controller extends BaseController
             }
 
             $approval = array();
-            for ($i=0; $i < count($teamS); $i++){
+            for ($i = 0; $i < count($teamS); $i++) {
 
                 $approval[] = Approval::create([
                     'id_trans_so'  => $id,
@@ -503,7 +495,7 @@ class MasterCAA_Controller extends BaseController
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'message'=> 'Data untuk CAA berhasil dikirim',
+                'message' => 'Data untuk CAA berhasil dikirim',
                 'data'   => $approval
             ], 200);
         } catch (\Exception $e) {
@@ -530,7 +522,7 @@ class MasterCAA_Controller extends BaseController
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
-                'message' => 'Transaksi dengan id '.$id.' belum ada di SO atatu belum komplit saat pemeriksaaan DAS dan HM'
+                'message' => 'Transaksi dengan id ' . $id . ' belum ada di SO atatu belum komplit saat pemeriksaaan DAS dan HM'
             ], 404);
         }
 
@@ -540,7 +532,7 @@ class MasterCAA_Controller extends BaseController
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
-                'message' => 'Transaksi dengan id '.$id.' belum sampai ke AO'
+                'message' => 'Transaksi dengan id ' . $id . ' belum sampai ke AO'
             ], 404);
         }
 
@@ -554,18 +546,18 @@ class MasterCAA_Controller extends BaseController
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
-                'message' => 'Transaksi dengan id '.$id.' belum sampai ke CA'
+                'message' => 'Transaksi dengan id ' . $id . ' belum sampai ke CA'
             ], 404);
         }
 
 
-        $id_agu_ta = explode (",",$check_ao->id_agunan_tanah);
+        $id_agu_ta = explode(",", $check_ao->id_agunan_tanah);
 
         $AguTa = AgunanTanah::whereIn('id', $id_agu_ta)->get();
 
         if (empty($AguTa)) {
             $idTan = null;
-        }else{
+        } else {
             $idTan = array();
             foreach ($AguTa as $key => $value) {
                 $idTan[$key] = array(
@@ -590,12 +582,12 @@ class MasterCAA_Controller extends BaseController
             }
         }
 
-        $id_agu_ke = explode (",",$check_ao->id_agunan_kendaraan);
+        $id_agu_ke = explode(",", $check_ao->id_agunan_kendaraan);
         $AguKe = AgunanKendaraan::whereIn('id', $id_agu_ke)->get();
 
         if (empty($AguKe)) {
             $idKen = null;
-        }else{
+        } else {
             $idKen = array();
             foreach ($AguKe as $key => $value) {
                 $idKen[$key] = array(
@@ -617,7 +609,7 @@ class MasterCAA_Controller extends BaseController
                         'agunan_dalam'    => $value->lamp_agunan_dalam,
                     ]
                 );
-            }  
+            }
         }
 
 
@@ -625,53 +617,47 @@ class MasterCAA_Controller extends BaseController
 
         if ($check_ca->status_ca == 1) {
             $status_ca = 'recommend';
-        }elseif($check_ca->status_ca == 2){
+        } elseif ($check_ca->status_ca == 2) {
             $status_ca = 'not recommend';
-        }else{
+        } else {
             $status_ca = 'waiting';
         }
         $mutasi = MutasiBank::whereIn('id', explode(",", $check_ca->id_mutasi_bank))->get()->toArray();
-           
-        if($mutasi != []){
-            foreach($mutasi as $i => $mut){
+
+        if ($mutasi != []) {
+            foreach ($mutasi as $i => $mut) {
                 $doub[$i] = array_slice($mut, 0, 5);
             }
 
             // $arr = array();
-            foreach($mutasi as $i => $mut){
+            foreach ($mutasi as $i => $mut) {
                 $slice[$i] = array_slice($mut, 5);
-                foreach($slice as $key => $val){
-                    foreach($val as $row => $col){
-                        $arr[$i][$row] = explode(";",$col);
+                foreach ($slice as $key => $val) {
+                    foreach ($val as $row => $col) {
+                        $arr[$i][$row] = explode(";", $col);
                     }
                 }
             }
 
             // $dataMut = array();
-            foreach ($arr as $key => $subarr)
-            {
-                foreach ($subarr as $subkey => $subvalue)
-                {
-                    foreach($subvalue as $childkey => $childvalue)
-                    {   
+            foreach ($arr as $key => $subarr) {
+                foreach ($subarr as $subkey => $subvalue) {
+                    foreach ($subvalue as $childkey => $childvalue) {
                         $out[$key][$childkey][$subkey] = ($childvalue);
                     }
 
                     $dataMutasi[$key] = array_merge($doub[$key], array('table' => $out[$key]));
                 }
             }
-        }else{
+        } else {
             $dataMutasi = null;
         }
 
         $jaminan = DB::connection('web')->table('asuransi_jaminan')->where('id', $check_ca->id_asuransi_jaminan)->first();
 
-        if($jaminan == null)
-        {
+        if ($jaminan == null) {
             $asuransi_jaminan = null;
-        }
-        else
-        {
+        } else {
             $aj = array(
                 'id'                    => explode(';', $jaminan->id),
                 'nama_asuransi'         => explode(';', $jaminan->nama_asuransi),
@@ -681,7 +667,7 @@ class MasterCAA_Controller extends BaseController
             );
 
             $asuransi_jaminan = array();
-            for ($i=0; $i < count($aj['nama_asuransi']); $i++) { 
+            for ($i = 0; $i < count($aj['nama_asuransi']); $i++) {
                 $asuransi_jaminan[] = array(
                     'id'                    => $aj['id'][0],
                     'nama_asuransi'         => $aj['nama_asuransi'][$i],
@@ -696,7 +682,7 @@ class MasterCAA_Controller extends BaseController
 
         if (!$penj) {
             $penjamin = null;
-        }else{
+        } else {
             $penjamin = array();
             foreach ($penj as $pen) {
                 $penjamin[] = [
@@ -711,7 +697,7 @@ class MasterCAA_Controller extends BaseController
                     'alamat_ktp'        => $pen->alamat_ktp,
                     'no_telp'           => $pen->no_telp,
                     'hubungan_debitur'  => $pen->hubungan_debitur,
-    
+
                     "pekerjaan" => [
                         "nama_pekerjaan"        => $pen->pekerjaan,
                         "posisi_pekerjaan"      => $pen->posisi_pekerjaan,
@@ -742,7 +728,7 @@ class MasterCAA_Controller extends BaseController
                             'kode_pos'  => $pen->kel_kerja['kode_pos'] == null ? null : (int) $pen->kel_kerja['kode_pos']
                         ]
                     ],
-    
+
                     'lampiran' => [
                         'lamp_ktp' => $pen->lamp_ktp,
                         'lamp_ktp_pasangan' => $pen->lamp_ktp_pasangan,
@@ -908,7 +894,7 @@ class MasterCAA_Controller extends BaseController
                 'tgl_lahir'             => $check_so->pas['tgl_lahir'],
                 'alamat_ktp'            => $check_so->pas['alamat_ktp'],
                 'no_telp'               => $check_so->pas['no_telp'],
-                
+
                 "pekerjaan" => [
                     "nama_pekerjaan"        => $check_so->pas['pekerjaan'],
                     "posisi_pekerjaan"      => $check_so->pas['posisi_pekerjaan'],
@@ -961,7 +947,7 @@ class MasterCAA_Controller extends BaseController
                 'id'        => $check_ca->id_pendapatan_usaha == null ? null : (int) $check_ao->id_pendapatan_usaha,
                 'pemasukan' => array(
                     'tunai' => $check_ca->usaha['pemasukan_tunai'],
-                    'kredit'=> $check_ca->usaha['pemasukan_kredit'],
+                    'kredit' => $check_ca->usaha['pemasukan_kredit'],
                     'total' => $check_ca->usaha['total_pemasukan']
                 ),
                 'pengeluaran' => array(
@@ -1017,7 +1003,7 @@ class MasterCAA_Controller extends BaseController
                 'ttl_plafon'               => array_sum(array_column($infoCC, 'plafon')),
                 'ttl_debet'                => array_sum(array_column($infoCC, 'baki_debet')),
                 'ttl_angsuran'             => array_sum(array_column($infoCC, 'angsuran')),
-                'collectabilitas_terendah' => max(array_column($infoCC, 'collectabilitas')),
+                'collectabilitas_terendah' => max(array($infoCC, 'collectabilitas')),
                 'table'                    => $infoCC
             ],
             'mutasi_bank' => $dataMutasi,
@@ -1027,6 +1013,7 @@ class MasterCAA_Controller extends BaseController
             'asuransi_jaminan' => $asuransi_jaminan,
             'tgl_transaksi' => $check_ca->updated_at
         );
+
 
         try {
             return response()->json([
@@ -1057,7 +1044,7 @@ class MasterCAA_Controller extends BaseController
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
-                'message' => 'Transaksi dengan id '.$id.' belum ada di SO atau belum komplit saat pemeriksaan DAS da HM'
+                'message' => 'Transaksi dengan id ' . $id . ' belum ada di SO atau belum komplit saat pemeriksaan DAS da HM'
             ], 404);
         }
 
@@ -1067,7 +1054,7 @@ class MasterCAA_Controller extends BaseController
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
-                'message' => 'Transaksi dengan id '.$id.' belum sampai ke AO'
+                'message' => 'Transaksi dengan id ' . $id . ' belum sampai ke AO'
             ], 404);
         }
 
@@ -1077,7 +1064,7 @@ class MasterCAA_Controller extends BaseController
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
-                'message' => 'Transaksi dengan id '.$id.' belum sampai ke CA'
+                'message' => 'Transaksi dengan id ' . $id . ' belum sampai ke CA'
             ], 404);
         }
 
@@ -1090,17 +1077,17 @@ class MasterCAA_Controller extends BaseController
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
-                'message' => 'Transaksi dengan id '.$id.' belum di cek dan di kalkulasi oleh caa'
+                'message' => 'Transaksi dengan id ' . $id . ' belum di cek dan di kalkulasi oleh caa'
             ], 404);
         }
 
-        $id_agu_ta = explode (",",$check_ao->id_agunan_tanah);
+        $id_agu_ta = explode(",", $check_ao->id_agunan_tanah);
 
         $AguTa = AgunanTanah::whereIn('id', $id_agu_ta)->get();
 
         if (empty($AguTa)) {
             $idTan = null;
-        }else{
+        } else {
             $idTan = array();
             foreach ($AguTa as $key => $value) {
                 $idTan[$key] = array(
@@ -1122,17 +1109,17 @@ class MasterCAA_Controller extends BaseController
                         'agunan_bag_dapur'      => $value->agunan_bag_dapur
                     ]
                 );
-            }  
+            }
         }
 
 
-        $id_agu_ke = explode (",",$check_ao->id_agunan_kendaraan);
+        $id_agu_ke = explode(",", $check_ao->id_agunan_kendaraan);
 
         $AguKe = AgunanKendaraan::whereIn('id', $id_agu_ke)->get();
 
         if (empty($AguKe)) {
             $idKen = null;
-        }else{
+        } else {
             $idKen = array();
             foreach ($AguKe as $key => $value) {
                 $idKen[$key] = array(
@@ -1159,9 +1146,9 @@ class MasterCAA_Controller extends BaseController
 
         $get_pic = PIC::with('jpic')->whereIn('id', explode(",", $check_caa->pic_team_caa))->get();
 
-        if(empty($get_pic)){
+        if (empty($get_pic)) {
             $ptc = null;
-        }else{
+        } else {
             $ptc = array();
             for ($i = 0; $i < count($get_pic); $i++) {
                 $ptc[] = [
@@ -1176,9 +1163,9 @@ class MasterCAA_Controller extends BaseController
 
         if ($check_caa->status_caa == 1) {
             $status_caa = 'recommend';
-        }elseif($check_caa->status_caa == 2){
+        } elseif ($check_caa->status_caa == 2) {
             $status_caa = 'not recommend';
-        }else{
+        } else {
             $status_caa = 'waiting';
         }
 
@@ -1256,7 +1243,7 @@ class MasterCAA_Controller extends BaseController
                 'id'        => $check_ao->id_pendapatan_usaha == null ? null : (int) $check_ao->id_pendapatan_usaha,
                 'pemasukan' => array(
                     'tunai' => $check_ao->usaha['pemasukan_tunai'],
-                    'kredit'=> $check_ao->usaha['pemasukan_kredit'],
+                    'kredit' => $check_ao->usaha['pemasukan_kredit'],
                     'total' => $check_ao->usaha['total_pemasukan']
                 ),
                 'pengeluaran' => array(
@@ -1365,7 +1352,7 @@ class MasterCAA_Controller extends BaseController
             'id', 'nomor_ca', 'user_id', 'id_trans_so', 'id_pic', 'id_area', 'id_cabang', 'id_mutasi_bank', 'id_log_tabungan', 'id_info_analisa_cc', 'id_ringkasan_analisa', 'id_recom_ca', 'id_rekomendasi_pinjaman', 'id_asuransi_jiwa', 'id_asuransi_jaminan', 'id_kapasitas_bulanan', 'id_pendapatan_usaha', 'catatan_ca', 'status_ca', 'revisi'
         );
 
-        if($param != 'filter' && $param != 'search'){
+        if ($param != 'filter' && $param != 'search') {
             return response()->json([
                 'code'    => 412,
                 'status'  => 'not valid',
@@ -1373,28 +1360,26 @@ class MasterCAA_Controller extends BaseController
             ], 412);
         }
 
-        if (in_array($key, $column) == false)
-        {
+        if (in_array($key, $column) == false) {
             return response()->json([
                 'code'    => 412,
                 'status'  => 'not valid',
-                'message' => 'gunakan key yang valid diantara berikut: '.implode(",", $column)
+                'message' => 'gunakan key yang valid diantara berikut: ' . implode(",", $column)
             ], 412);
         }
 
-        if (in_array($orderBy, $column) == false)
-        {
+        if (in_array($orderBy, $column) == false) {
             return response()->json([
                 'code'    => 412,
                 'status'  => 'not valid',
-                'message' => 'gunakan order by yang valid diantara berikut: '.implode(",", $column)
+                'message' => 'gunakan order by yang valid diantara berikut: ' . implode(",", $column)
             ], 412);
         }
 
-        if($param == 'search'){
+        if ($param == 'search') {
             $operator   = "like";
             $func_value = "%{$value}%";
-        }else{
+        } else {
             $operator   = "=";
             $func_value = "{$value}";
         }
@@ -1407,18 +1392,18 @@ class MasterCAA_Controller extends BaseController
             ->where('status_ca', 1)
             ->where('flg_aktif', $status)
             ->orderBy($orderBy, $orderVal);
-        
+
         $query = Helper::checkDir($scope, $query_dir, $id_area, $id_cabang);
 
-        if($value == 'default'){
+        if ($value == 'default') {
             $res = $query;
-        }else{
+        } else {
             $res = $query->where($key, $operator, $func_value);
         }
 
-        if($limit == 'default'){
+        if ($limit == 'default') {
             $result = $res;
-        }else{
+        } else {
             $result = $res->limit($limit);
         }
 
@@ -1435,9 +1420,9 @@ class MasterCAA_Controller extends BaseController
 
             if ($val->status_ca == 1) {
                 $status_ca = 'recommend';
-            }elseif($val->status_ca == 2){
+            } elseif ($val->status_ca == 2) {
                 $status_ca = 'not recommend';
-            }else{
+            } else {
                 $status_ca = 'waiting';
             }
 
@@ -1490,14 +1475,14 @@ class MasterCAA_Controller extends BaseController
 
         if ($month == null) {
             $query_dir = TransCA::with('so', 'pic', 'cabang')->where('status_ca', 1)
-                    ->whereYear('created_at', '=', $year)
-                    ->orderBy('created_at', 'desc');
-        }else{
+                ->whereYear('created_at', '=', $year)
+                ->orderBy('created_at', 'desc');
+        } else {
 
             $query_dir = TransCA::with('so', 'pic', 'cabang')->where('status_ca', 1)
-                    ->whereYear('created_at', '=', $year)
-                    ->whereMonth('created_at', '=', $month)
-                    ->orderBy('created_at', 'desc');
+                ->whereYear('created_at', '=', $year)
+                ->whereMonth('created_at', '=', $month)
+                ->orderBy('created_at', 'desc');
         }
 
         $query = Helper::checkDir($scope, $query_dir, $id_area, $id_cabang);
@@ -1515,26 +1500,23 @@ class MasterCAA_Controller extends BaseController
 
             if ($val->status_ca == 1) {
                 $status_ca = 'recommend';
-            }elseif($val->status_ca == 2){
+            } elseif ($val->status_ca == 2) {
                 $status_ca = 'not recommend';
-            }else{
+            } else {
                 $status_ca = 'waiting';
             }
 
-            if($val->so['caa']['status_caa'] == 0){
+            if ($val->so['caa']['status_caa'] == 0) {
                 $status_caa = 'waiting';
-
-            }elseif ($val->so['caa']['status_caa'] == 1) {
+            } elseif ($val->so['caa']['status_caa'] == 1) {
                 $status_caa = 'recommend';
-
-            }elseif($val->so['caa']['status_caa'] == 2){
+            } elseif ($val->so['caa']['status_caa'] == 2) {
                 $status_caa = 'not recommend';
-
-            }elseif ($val->so['caa']['status_caa'] == null || $val->so['caa']['status_caa'] == "") {
+            } elseif ($val->so['caa']['status_caa'] == null || $val->so['caa']['status_caa'] == "") {
                 $status_caa = 'null';
             }
 
-            $id_agu_ta = explode (",",$val->so['ao']['id_agunan_tanah']);
+            $id_agu_ta = explode(",", $val->so['ao']['id_agunan_tanah']);
             $AguTa = AgunanTanah::whereIn('id', $id_agu_ta)->get();
 
             $Tan = array();
@@ -1545,12 +1527,12 @@ class MasterCAA_Controller extends BaseController
                 );
             }
 
-            $id_agu_ke = explode (",",$val->so['ao']['id_agunan_kendaraan']);
+            $id_agu_ke = explode(",", $val->so['ao']['id_agunan_kendaraan']);
             $AguKe = AgunanKendaraan::whereIn('id', $id_agu_ke)->get();
 
             if ($AguKe == '[]') {
                 $Ken = null;
-            }else{
+            } else {
                 $Ken = array();
                 foreach ($AguKe as $key => $value) {
                     $Ken[$key] = array(
@@ -1565,9 +1547,9 @@ class MasterCAA_Controller extends BaseController
             $id_komisi = explode(",", $val->so['caa']['pic_team_caa']);
 
             $check_approval = Approval::whereIn("id_pic", $id_komisi)
-                    ->where('id_trans_so', $val->id_trans_so)
-                    ->select("id_pic","id","plafon","tenor","rincian", "status", "updated_at as tgl_approve")
-                    ->get();
+                ->where('id_trans_so', $val->id_trans_so)
+                ->select("id_pic", "id", "plafon", "tenor", "rincian", "status", "updated_at as tgl_approve")
+                ->get();
 
             $Appro = array();
             foreach ($check_approval as $key => $cap) {
