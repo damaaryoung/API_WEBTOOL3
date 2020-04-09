@@ -348,9 +348,9 @@ class DebiturController extends BaseController
         } else {
             for ($i = 0; $i < count($req->input('nama_anak')); $i++) {
                 $namaAnak[] = empty($req->nama_anak[$i]) ? $check_debt->nama_anak[$i] : $req->nama_anak[$i];
-                //     }
+            }
 
-                // for ($i = 0; $i < count($req->input('tgl_lahir_anak')); $i++) {
+            for ($i = 0; $i < count($req->input('tgl_lahir_anak')); $i++) {
                 $tglLahirAnak[] = empty($req->tgl_lahir_anak[$i]) ? $check_debt->tgl_lahir_anak[$i] : Carbon::parse($req->tgl_lahir_anak[$i])->format('Y-m-d');
             }
 
@@ -359,7 +359,7 @@ class DebiturController extends BaseController
         }
         /** */
 
-
+        // dd($tgl_lhr_anak);
         // Data Debitur
         $dataDebitur = array(
             'nama_lengkap'          => empty($req->input('nama_lengkap'))
@@ -465,7 +465,7 @@ class DebiturController extends BaseController
                 ? $check_debt->berat_badan : $req->input('berat_badan'),
 
             'nama_anak'             => $nama_anak,
-            'tgl_lahir_anak'        => $tgl_lhr_anak,
+            'tgl_lahir_anak'        =>  $tgl_lhr_anak == null ? $check_debt->tgl_lahir_anak : implode(",", $req->input('tgl_lahir_anak')),
 
             'pekerjaan'             => empty($req->input('pekerjaan'))
                 ? $check_debt->pekerjaan : $req->input('pekerjaan'),
