@@ -23,6 +23,7 @@ use App\Models\AreaKantor\JPIC;
 use App\Models\AreaKantor\PIC;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use App\Models\Pengajuan\CA\RingkasanAnalisa;
 use Image;
 use Illuminate\Support\Facades\DB;
 
@@ -1052,7 +1053,8 @@ class MasterCAA_Controller extends BaseController
         }
 
         $check_ao = TransAO::where('id_trans_so', $id)->where('status_ao', 1)->first();
-
+        $check_penyimpangan = Penyimpangan::where('id_trans_so', $id)->first();
+        // dd($check_penyimpangan);
         if (!$check_ao) {
             return response()->json([
                 'code'    => 404,
@@ -1320,6 +1322,8 @@ class MasterCAA_Controller extends BaseController
                     'jml_total'         => $ttl1 + $ttl2
                 )
             ],
+
+            'penyimpangan' => $check_penyimpangan,
             'lampiran' => [
                 'file_report_mao'     => $check_caa->file_report_mao,
                 'file_report_mca'     => $check_caa->file_report_mca,
@@ -1329,7 +1333,8 @@ class MasterCAA_Controller extends BaseController
                 'file_lain'           => empty($check_caa->file_lain) ? null : explode(";", $check_caa->file_lain)
             ],
             'rincian'       => $check_caa->rincian,
-            'tgl_transaksi' => $check_caa->created_at
+            'tgl_transaksi' => $check_caa->created_at,
+
         );
 
         try {
