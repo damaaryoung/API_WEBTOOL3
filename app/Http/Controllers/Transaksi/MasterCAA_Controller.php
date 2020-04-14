@@ -528,6 +528,7 @@ class MasterCAA_Controller extends BaseController
         }
 
         $check_ao = TransAO::with('pic', 'cabang')->where('id_trans_so', $id)->where('status_ao', 1)->first();
+        //  dd($check_ao->recom_ao);
         $check_catatan = TransCA::select('catatan_ca')->where('id_trans_so', $id)->where('status_ca', 1)->first();
         //  dd($check_ca->catatan_ca);
         if (empty($check_ao)) {
@@ -1053,6 +1054,9 @@ class MasterCAA_Controller extends BaseController
         }
 
         $check_ao = TransAO::where('id_trans_so', $id)->where('status_ao', 1)->first();
+        $check_ao_cat = TransAO::where('id_trans_so', $id)->where('status_ao', 1)->first();
+        // dd($check_ao_cat);
+
         $check_penyimpangan = Penyimpangan::where('id_trans_so', $id)->first();
         // dd($check_penyimpangan);
         if (!$check_ao) {
@@ -1280,7 +1284,7 @@ class MasterCAA_Controller extends BaseController
                 'tenor'            => $check_ao->recom_ao['jangka_waktu'],
                 'suku_bunga'       => $check_ao->recom_ao['suku_bunga'],
                 'pembayaran_bunga' => $check_ao->recom_ao['pembayaran_bunga'],
-                'catatan'          => $check_ao->catatan_ao
+                'catatan'          => $check_ao_cat->recom_ao,
             ],
             'rekomendasi_ca' => [
                 'id'                   => $check_ca->id_recom_ca == null ? null : (int) $check_ca->id_recom_ca,
