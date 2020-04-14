@@ -24,7 +24,7 @@ use App\Models\AreaKantor\PIC;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Image;
-use DB;
+use Illuminate\Support\Facades\DB;
 
 class MasterCAA_Controller extends BaseController
 {
@@ -527,7 +527,8 @@ class MasterCAA_Controller extends BaseController
         }
 
         $check_ao = TransAO::with('pic', 'cabang')->where('id_trans_so', $id)->where('status_ao', 1)->first();
-
+        $check_catatan = TransCA::select('catatan_ca')->where('id_trans_so', $id)->where('status_ca', 1)->first();
+        //  dd($check_ca->catatan_ca);
         if (empty($check_ao)) {
             return response()->json([
                 'code'    => 404,
@@ -539,9 +540,11 @@ class MasterCAA_Controller extends BaseController
         $query_dir = TransCA::with('pic', 'cabang')->where('id_trans_so', $id)
             ->where('status_ca', 1);
 
+
+
         $ca = Helper::checkDir($scope, $query_dir, $id_area, $id_cabang);
         $check_ca = $ca->first();
-
+        //   dd($check_ca->recom_ca);
         if (empty($check_ca)) {
             return response()->json([
                 'code'    => 404,
@@ -966,7 +969,7 @@ class MasterCAA_Controller extends BaseController
             ],
             'pengajuan' => $check_so->faspin,
             'rekomendasi_ao' => $check_ao->recom_ao,
-            'rekomendasi_ca' => $check_ca->recom_ca,
+            'rekomendasi_ca' => array($check_ca->recom_ca, $check_catatan),
             'rekomendasi_pinjaman' => $check_ca->recom_pin,
             'kapasitas_bulanan' => $check_ca->kapbul,
             // 'data_biaya' => [

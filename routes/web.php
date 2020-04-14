@@ -356,6 +356,7 @@ $router->group(['middleware' => ['jwt.auth', 'log'], 'prefix' => 'api'], functio
                 $router->post('/{id}', ['subject' => 'Create Trans_CAA', 'uses' => 'MasterCAA_Controller@update']);
                 $router->get('/',      ['subject' => 'Read Trans_CAA',   'uses' => 'MasterCAA_Controller@index']);
                 $router->get('/{id}',  ['subject' => 'Detail Trans_CAA', 'uses' => 'MasterCAA_Controller@show']);
+                // $router->get('/mca/{id}',  ['subject' => 'Detail Trans_CAA', 'uses' => 'MasterCAA2_Controller@show']);
 
                 // Tahap 2 - Team CAA
                 $router->get('/{id}/detail', ['subject' => 'Detail Trans_CAA', 'uses' => 'MasterCAA_Controller@detail']);
