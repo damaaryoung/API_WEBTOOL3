@@ -3,18 +3,18 @@
 $production = '103.31.232.146';
 $office     = '103.234.254.186';
 
-$url_production = $production.':4100';
+$url_production = $production . ':4100';
 
-if(isset($_SERVER['HTTP_HOST']) && !empty($_SERVER['HTTP_HOST'])){
-    $gethost = explode(".",$_SERVER['HTTP_HOST']);
+if (isset($_SERVER['HTTP_HOST']) && !empty($_SERVER['HTTP_HOST'])) {
+    $gethost = explode(".", $_SERVER['HTTP_HOST']);
     $domain = array_shift($gethost);
-}else{
+} else {
     $domain = $production;
 }
 
-if($domain == $production){
+if ($domain == $production) {
     $app = [
-    
+
         /*
         |--------------------------------------------------------------------------
         | Application Name
@@ -25,9 +25,9 @@ if($domain == $production){
         | any other location as required by the application or its packages.
         |
         */
-    
+
         'name' => env('APP_NAME'),
-    
+
         /*
         |--------------------------------------------------------------------------
         | Application Environment
@@ -38,9 +38,9 @@ if($domain == $production){
         | services the application utilizes. Set this in your ".env" file.
         |
         */
-    
+
         'env' => env('APP_ENV', 'production'),
-    
+
         /*
         |--------------------------------------------------------------------------
         | Application Debug Mode
@@ -51,9 +51,9 @@ if($domain == $production){
         | application. If disabled, a simple generic error page is shown.
         |
         */
-    
+
         'debug' => false,
-    
+
         /*
         |--------------------------------------------------------------------------
         | Application URL
@@ -64,9 +64,9 @@ if($domain == $production){
         | your application so that it is used when running Artisan tasks.
         |
         */
-    
+
         'url' => $url_production,
-    
+
         /*
         |--------------------------------------------------------------------------
         | Application Timezone
@@ -77,10 +77,10 @@ if($domain == $production){
         | ahead and set this to a sensible default for you out of the box.
         |
         */
-    
+
         // 'timezone' => 'UTC',
         'timezone' => env('APP_TIMEZONE', 'UTC'),
-    
+
         /*
         |--------------------------------------------------------------------------
         | Application Locale Configuration
@@ -91,9 +91,9 @@ if($domain == $production){
         | to any of the locales which will be supported by the application.
         |
         */
-    
+
         'locale' => env('APP_LOCALE', 'en'),
-    
+
         /*
         |--------------------------------------------------------------------------
         | Application Fallback Locale
@@ -104,9 +104,9 @@ if($domain == $production){
         | the language folders that are provided through your application.
         |
         */
-    
+
         'fallback_locale' => env('APP_FALLBACK_LOCALE', 'en'),
-    
+
         /*
         |--------------------------------------------------------------------------
         | Encryption Key
@@ -117,37 +117,36 @@ if($domain == $production){
         | will not be safe. Please do this before deploying an application!
         |
         */
-    
+
         'key' => env('APP_KEY'),
-    
+
         'cipher' => 'AES-256-CBC',
-    
+
         'cache_exp' => 12 * 60 // 12 Hours
-    
+
     ];
-}else{
+} else {
     $app = [
-    
+
         'name' => env('APP_NAME'),
-    
+
         'env' => 'local',
-    
+
         'debug' => true,
-    
+
         'url' => env('APP_URL', 'http://localhost'),
-    
+
         'timezone' => env('APP_TIMEZONE'),
-    
+
         'locale' => env('APP_LOCALE', 'en'),
-    
+
         'fallback_locale' => env('APP_FALLBACK_LOCALE', 'en'),
-    
+
         'key' => env('APP_KEY'),
-    
+
         'cipher' => 'AES-256-CBC',
-    
+
         'cache_exp' => 12 * 60 // 12 Hours
-    
     ];
 }
 

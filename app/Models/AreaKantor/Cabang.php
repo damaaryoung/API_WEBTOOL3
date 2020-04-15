@@ -29,7 +29,7 @@ class Cabang extends Model implements AuthenticatableContract, AuthorizableContr
     protected $primaryKey = 'id';
 
     protected $fillable = [
-        'id_area', 'nama', 'id_provinsi', 'id_kabupaten', 'id_kecamatan', 'id_kelurahan', 'jenis_kantor', 'flg_aktif', 'iks'
+        'id_area', 'nama', 'id_provinsi', 'id_kabupaten', 'id_kecamatan', 'id_kelurahan', 'jenis_kantor', 'flg_aktif', 'kode_kantor', 'iks'
     ];
 
     protected $casts = [
@@ -38,35 +38,40 @@ class Cabang extends Model implements AuthenticatableContract, AuthorizableContr
         'updated_at' => 'date:m-d-Y H:i:s'
     ];
 
-    public function area(){
+    public function area()
+    {
         return $this->belongsTo(Area::class, 'id_area')->select('id', 'nama')
             ->withDefault(function () {
                 return new Area();
             });
     }
 
-    public function prov(){
+    public function prov()
+    {
         return $this->belongsTo(Provinsi::class, 'id_provinsi')->select(['id', 'nama'])
             ->withDefault(function () {
                 return new Provinsi();
             });
     }
 
-    public function kab(){
+    public function kab()
+    {
         return $this->belongsTo(Kabupaten::class, 'id_kabupaten')->select(['id', 'nama'])
             ->withDefault(function () {
                 return new Kabupaten();
             });
     }
 
-    public function kec(){
+    public function kec()
+    {
         return $this->belongsTo(Kecamatan::class, 'id_kecamatan')->select(['id', 'nama'])
             ->withDefault(function () {
                 return new Kecamatan();
             });
     }
 
-    public function kel(){
+    public function kel()
+    {
         return $this->belongsTo(Kelurahan::class, 'id_kelurahan')->select(['id', 'nama', 'kode_pos'])
             ->withDefault(function () {
                 return new Kelurahan();

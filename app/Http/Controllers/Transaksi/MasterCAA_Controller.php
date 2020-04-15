@@ -1052,7 +1052,6 @@ class MasterCAA_Controller extends BaseController
                 'message' => 'Transaksi dengan id ' . $id . ' belum ada di SO atau belum komplit saat pemeriksaan DAS da HM'
             ], 404);
         }
-
         $check_ao = TransAO::where('id_trans_so', $id)->where('status_ao', 1)->first();
         $check_ao_cat = TransAO::where('id_trans_so', $id)->where('status_ao', 1)->first();
         // dd($check_ao_cat);

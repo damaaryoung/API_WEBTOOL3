@@ -18,33 +18,34 @@ use DB;
 
 class CabangController extends BaseController
 {
-    public function __construct() {
+    public function __construct()
+    {
         $this->time_cache = config('app.cache_exp');
     }
 
-    public function index() 
+    public function index()
     {
         $data = array();
 
         // $query = Cache::remember('cabang.index', $this->time_cache, function () use ($data) {
 
-            Cabang::select('id', 'nama as nama_cabang', 'jenis_kantor')
-                ->addSelect([
-                    'nama_area'      => Area::select('nama')->whereColumn('id_area', 'mk_area.id'),
-                    'nama_provinsi'  => Provinsi::select('nama')->whereColumn('id_provinsi', 'master_provinsi.id'),
-                    'nama_kabupaten' => Kabupaten::select('nama')->whereColumn('id_kabupaten', 'master_kabupaten.id'),
-                    'nama_kecamatan' => Kecamatan::select('nama')->whereColumn('id_kecamatan', 'master_kecamatan.id'),
-                    'nama_kelurahan' => Kelurahan::select('nama')->whereColumn('id_kelurahan', 'master_kelurahan.id')
-                ])
-                ->where('flg_aktif', 1)
-                ->orderBy('nama', 'asc')
-                ->chunk(50, function($chunks) use (&$data) {
-                    foreach($chunks as $chunk) {
-                        $data[] = $chunk;
-                    }
-                });
+        Cabang::select('id', 'nama as nama_cabang', 'jenis_kantor', 'kode_kantor')
+            ->addSelect([
+                'nama_area'      => Area::select('nama')->whereColumn('id_area', 'mk_area.id'),
+                'nama_provinsi'  => Provinsi::select('nama')->whereColumn('id_provinsi', 'master_provinsi.id'),
+                'nama_kabupaten' => Kabupaten::select('nama')->whereColumn('id_kabupaten', 'master_kabupaten.id'),
+                'nama_kecamatan' => Kecamatan::select('nama')->whereColumn('id_kecamatan', 'master_kecamatan.id'),
+                'nama_kelurahan' => Kelurahan::select('nama')->whereColumn('id_kelurahan', 'master_kelurahan.id'),
+            ])
+            ->where('flg_aktif', 1)
+            ->orderBy('nama', 'asc')
+            ->chunk(50, function ($chunks) use (&$data) {
+                foreach ($chunks as $chunk) {
+                    $data[] = $chunk;
+                }
+            });
 
-            // return $data;
+        // return $data;
         // });
 
         if (empty($data)) {
@@ -71,7 +72,7 @@ class CabangController extends BaseController
         }
     }
 
-    public function store(CabangRequest $req) 
+    public function store(CabangRequest $req)
     {
         $data = array(
             'id_area'      => $req->input('id_mk_area'),
@@ -102,7 +103,7 @@ class CabangController extends BaseController
         }
     }
 
-    public function show($id) 
+    public function show($id)
     {
         $check = Cabang::where('id', $id)->first();
 
@@ -149,7 +150,7 @@ class CabangController extends BaseController
         }
     }
 
-    public function update($id, CabangRequest $req) 
+    public function update($id, CabangRequest $req)
     {
         $check = Cabang::where('id', $id)->first();
 
@@ -191,7 +192,7 @@ class CabangController extends BaseController
         }
     }
 
-    public function delete($id) 
+    public function delete($id)
     {
         Cabang::where('id', $id)->update(['flg_aktif' => 0]);
 
@@ -199,7 +200,7 @@ class CabangController extends BaseController
             return response()->json([
                 'code'    => 200,
                 'status'  => 'success',
-                'message' => 'Data dengan id '.$id.' berhasil dihapus'
+                'message' => 'Data dengan id ' . $id . ' berhasil dihapus'
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
@@ -210,24 +211,24 @@ class CabangController extends BaseController
         }
     }
 
-    public function trash() 
+    public function trash()
     {
         $data = array();
 
         Cabang::select('id', 'nama as nama_cabang', 'jenis_kantor')
-        ->addSelect([
-            'nama_provinsi'  => Provinsi::select('nama')->whereColumn('id_provinsi', 'master_provinsi.id'),
-            'nama_kabupaten' => Kabupaten::select('nama')->whereColumn('id_kabupaten', 'master_kabupaten.id'),
-            'nama_kecamatan' => Kecamatan::select('nama')->whereColumn('id_kecamatan', 'master_kecamatan.id'),
-            'nama_kelurahan' => Kelurahan::select('nama')->whereColumn('id_kelurahan', 'master_kelurahan.id')
-        ])
-        ->where('flg_aktif', 0)
-        ->orderBy('nama', 'asc')
-        ->chunk(50, function($chunks) use (&$data) {
-            foreach($chunks as $chunk) {
-                $data[] = $chunk;
-            }
-        });
+            ->addSelect([
+                'nama_provinsi'  => Provinsi::select('nama')->whereColumn('id_provinsi', 'master_provinsi.id'),
+                'nama_kabupaten' => Kabupaten::select('nama')->whereColumn('id_kabupaten', 'master_kabupaten.id'),
+                'nama_kecamatan' => Kecamatan::select('nama')->whereColumn('id_kecamatan', 'master_kecamatan.id'),
+                'nama_kelurahan' => Kelurahan::select('nama')->whereColumn('id_kelurahan', 'master_kelurahan.id')
+            ])
+            ->where('flg_aktif', 0)
+            ->orderBy('nama', 'asc')
+            ->chunk(50, function ($chunks) use (&$data) {
+                foreach ($chunks as $chunk) {
+                    $data[] = $chunk;
+                }
+            });
 
         if (empty($data)) {
             return response()->json([
@@ -253,7 +254,7 @@ class CabangController extends BaseController
         }
     }
 
-    public function restore($id) 
+    public function restore($id)
     {
         Cabang::where('id', $id)->update(['flg_aktif' => 1]);
 
@@ -276,7 +277,7 @@ class CabangController extends BaseController
     {
         $column = array('id', 'id_area', 'nama', 'id_provinsi', 'id_kabupaten', 'id_kecamatan', 'id_kelurahan', 'jenis_kantor');
 
-        if($param != 'filter' && $param != 'search'){
+        if ($param != 'filter' && $param != 'search') {
             return response()->json([
                 'code'    => 412,
                 'status'  => 'not valid',
@@ -284,43 +285,41 @@ class CabangController extends BaseController
             ], 412);
         }
 
-        if (in_array($key, $column) == false)
-        {
+        if (in_array($key, $column) == false) {
             return response()->json([
                 'code'    => 412,
                 'status'  => 'not valid',
-                'message' => 'gunakan key yang valid diantara berikut: '.implode(",", $column)
+                'message' => 'gunakan key yang valid diantara berikut: ' . implode(",", $column)
             ], 412);
         }
 
-        if (in_array($orderBy, $column) == false)
-        {
+        if (in_array($orderBy, $column) == false) {
             return response()->json([
                 'code'    => 412,
                 'status'  => 'not valid',
-                'message' => 'gunakan order by yang valid diantara berikut: '.implode(",", $column)
+                'message' => 'gunakan order by yang valid diantara berikut: ' . implode(",", $column)
             ], 412);
         }
 
-        if($param == 'search'){
+        if ($param == 'search') {
             $operator   = "like";
             $func_value = "%{$value}%";
-        }else{
+        } else {
             $operator   = "=";
             $func_value = "{$value}";
         }
 
         $query = Cabang::where('flg_aktif', $status)->orderBy($orderBy, $orderVal);
 
-        if($value == 'default'){
+        if ($value == 'default') {
             $res = $query;
-        }else{
+        } else {
             $res = $query->where($key, $operator, $func_value);
         }
 
-        if($limit == 'default'){
+        if ($limit == 'default') {
             $result = $res->get();
-        }else{
+        } else {
             $result = $res->limit($limit)->get();
         }
 
