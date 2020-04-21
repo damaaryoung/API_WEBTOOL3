@@ -1853,7 +1853,7 @@ class MasterCA_Controller extends BaseController
         }
 
         $check_ca = TransCA::with('so', 'pic', 'cabang')->where('id_trans_so', $id)->where('status_ca', 1)->first();
-
+        //  dd($check_ca->recom_ca);
 
         if ($check_ca == null) {
             return response()->json([

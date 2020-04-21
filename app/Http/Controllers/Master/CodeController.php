@@ -12,9 +12,9 @@ class CodeController extends BaseController
     public function produk()
     {
         $query = Cache::rememberForever('produk', function () {
-            return DB::connection('web')->select("SELECT kode_produk, `DESKRIPSI_PRODUK` AS nama_produk FROM view_produk");
+            return DB::connection('web')->select("SELECT kode_produk, `DESKRIPSI_PRODUK` AS nama_produk FROM kre_produk");
         });
-        
+
         if (empty($query)) {
             return response()->json([
                 'code'    => 404,
