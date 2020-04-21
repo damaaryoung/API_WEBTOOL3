@@ -596,7 +596,7 @@ class Approval_Controller extends BaseController
         $user_id = $request->auth->user_id;
 
         $countTAO = TransAO::latest('id', 'nomor_ao')->first();
-
+        //   dd($countTAO);
         if (!$countTAO) {
             $lastNumb = 1;
         } else {
@@ -618,7 +618,7 @@ class Approval_Controller extends BaseController
         $nomor_ao = $pic->id_cabang . '-' . $JPIC->nama_jenis . '-' . $month . '-' . $year . '-' . $lastNumb;
 
         $check_so = TransSO::where('id', $id)->where('status_das', 1)->where('status_hm', 1)->first();
-
+        // dd($check_so);
         if (empty($check_so)) {
             return response()->json([
                 'code'    => 404,
