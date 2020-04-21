@@ -9,6 +9,7 @@ use App\Models\Pengajuan\AO\AgunanTanah;
 use App\Models\Pengajuan\AO\AgunanKendaraan;
 use App\Models\Pengajuan\AO\PemeriksaanAgunTan;
 use App\Models\Pengajuan\AO\PemeriksaanAgunKen;
+use App\Models\Pengajuan\SO\FasilitasPinjaman;
 
 use App\Models\Pengajuan\CA\AsuransiJaminan;
 use App\Models\Pengajuan\AO\PendapatanUsaha;
@@ -246,7 +247,8 @@ class MasterCA_Controller extends BaseController
 
         $vals = Helper::checkDir($scope, $query_dir, $id_area, $id_cabang);
         $val = $vals->first();
-        // dd($val->valid);
+        $data_faspin = FasilitasPinjaman::select('id', 'jenis_pinjaman', 'tujuan_pinjaman', 'plafon', 'tenor', 'segmentasi_bpr')->where('id', $val->so['id_fasilitas_pinjaman'])->first();
+        //  dd($data_faspin);
         if (empty($val)) {
             return response()->json([
                 'code'    => 404,
@@ -362,9 +364,8 @@ class MasterCA_Controller extends BaseController
                 'id'   => $val->so['id_asal_data'] == null ? null : (int) $val->so['id_asal_data'],
                 'nama' => $val->so['asaldata']['nama']
             ],
-            'fasilitas_pinjaman'  => [
-                'id'   => $val->so['id_fasilitas_pinjaman'] == null ? null : (int) $val->so['id_fasilitas_pinjaman']
-            ],
+            'fasilitas_pinjaman'  =>
+            $val->so['id_fasilitas_pinjaman'] == null ? null : $data_faspin,
 
             'data_debitur' => [
                 'id'                    => $val->so['id_calon_debitur'],
