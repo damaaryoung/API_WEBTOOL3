@@ -645,15 +645,15 @@ class Approval_Controller extends BaseController
             ], 404);
         }
 
-        $check_ca = TransCA::where('id_trans_so', $id)->first();
+        // $check_ca = TransCA::where('id_trans_so', $id)->first();
 
-        if ($check_ca != null) {
-            return response()->json([
-                'code'    => 404,
-                'status'  => 'not found',
-                'message' => 'Transaksi dengan id ' . $id . ' sudah ada di CA'
-            ], 404);
-        }
+        // if ($check_ca != null) {
+        //     return response()->json([
+        //         'code'    => 404,
+        //         'status'  => 'not found',
+        //         'message' => 'Transaksi dengan id ' . $id . ' sudah ada di CA'
+        //     ], 404);
+        // }
 
         $transCA = array(
             'nomor_ca'    => $nomor_ca,
