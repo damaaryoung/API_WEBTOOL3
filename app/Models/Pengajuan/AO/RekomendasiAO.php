@@ -23,7 +23,7 @@ class RekomendasiAO extends Model implements AuthenticatableContract, Authorizab
     protected $primaryKey = 'id';
 
     protected $fillable = [
-       'produk', 'plafon_kredit', 'jangka_waktu', 'suku_bunga', 'pembayaran_bunga', 'akad_kredit', 'ikatan_agunan', 'analisa_ao', 'biaya_provisi', 'biaya_administrasi', 'biaya_credit_checking', 'biaya_tabungan'
+        'produk', 'plafon_kredit', 'jangka_waktu', 'suku_bunga', 'pembayaran_bunga', 'akad_kredit', 'ikatan_agunan', 'analisa_ao', 'biaya_provisi', 'biaya_administrasi', 'biaya_credit_checking', 'biaya_tabungan', 'tujuan_pinjaman', 'jenis_pinjaman'
     ];
 
     protected $casts = [
