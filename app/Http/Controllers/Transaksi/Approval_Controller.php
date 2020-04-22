@@ -1143,18 +1143,20 @@ class Approval_Controller extends BaseController
                 'id_pendapatan_usaha'     => $idPendUs
             );
 
-
+            $so_trans = TransSO::select('nomor_so')->where('id', $id)->first();
+            $rev = "Rev" . "-" . $so_trans->nomor_so;
+            //  dd($rev);
             $newTransCA = array_merge($transCA, $dataID);
 
             $CA = TransCA::create($newTransCA);
-            TransSO::where('id', $id)->update(['id_trans_ca' => $CA->id]);
+            TransSO::where('id', $id)->update(['id_trans_ca' => $CA->id, 'norev_so' => $rev]);
 
             DB::connection('web')->commit();
 
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'message' => 'Data untuk CA berhasil dikirim',
+                'message' => 'Data Revisi OL berhasil dikirim',
                 'data'   => $CA
             ], 200);
         } catch (\Exception $e) {

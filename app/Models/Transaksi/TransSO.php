@@ -38,7 +38,7 @@ class TransSO extends Model implements AuthenticatableContract, AuthorizableCont
     protected $primaryKey = 'id';
 
     protected $fillable = [
-        'nomor_so', 'user_id', 'id_pic', 'id_area', 'id_cabang', 'id_asal_data', 'nama_marketing', 'nama_so', 'id_fasilitas_pinjaman', 'id_calon_debitur', 'id_pasangan', 'id_penjamin', 'id_trans_ao', 'id_trans_ca', 'id_trans_caa', 'catatan_das', 'catatan_hm', 'status_das', 'status_hm', 'lamp_ideb', 'lamp_pefindo', 'flg_aktif'
+        'nomor_so', 'norev_so', 'user_id', 'id_pic', 'id_area', 'id_cabang', 'id_asal_data', 'nama_marketing', 'nama_so', 'id_fasilitas_pinjaman', 'id_calon_debitur', 'id_pasangan', 'id_penjamin', 'id_trans_ao', 'id_trans_ca', 'id_trans_caa', 'catatan_das', 'catatan_hm', 'status_das', 'status_hm', 'lamp_ideb', 'lamp_pefindo', 'flg_aktif'
     ];
 
     protected $casts = [
@@ -47,84 +47,96 @@ class TransSO extends Model implements AuthenticatableContract, AuthorizableCont
         'updated_at' => 'date:m-d-Y H:i:s'
     ];
 
-    public function pic(){
+    public function pic()
+    {
         return $this->belongsTo(PIC::class, 'id_pic')
             ->withDefault(function () {
                 return new PIC();
             });
     }
 
-    public function user(){
+    public function user()
+    {
         return $this->belongsTo(User::class, 'user_id')
             ->withDefault(function () {
                 return new User();
             });
     }
 
-    public function area(){
+    public function area()
+    {
         return $this->belongsTo(Area::class, 'id_area')
             ->withDefault(function () {
                 return new Area();
             });
     }
 
-    public function cabang(){
+    public function cabang()
+    {
         return $this->belongsTo(Cabang::class, 'id_cabang')
             ->withDefault(function () {
                 return new Cabang();
             });
     }
 
-    public function asaldata(){
+    public function asaldata()
+    {
         return $this->belongsTo(AsalData::class, 'id_asal_data')
             ->withDefault(function () {
                 return new AsalData();
             });
     }
 
-    public function debt(){
+    public function debt()
+    {
         return $this->belongsTo(Debitur::class, 'id_calon_debitur')
             ->withDefault(function () {
                 return new Debitur();
             });
     }
 
-    public function pas(){
+    public function pas()
+    {
         return $this->belongsTo(Pasangan::class, 'id_pasangan')
             ->withDefault(function () {
                 return new Pasangan();
             });
     }
 
-    public function penjamin(){
-         return $this->belongsTo(Penjamin::class, 'id_penjamin')
-        ->withDefault(function () {
+    public function penjamin()
+    {
+        return $this->belongsTo(Penjamin::class, 'id_penjamin')
+            ->withDefault(function () {
                 return new Penjamin();
             });
     }
 
-    public function faspin(){
+    public function faspin()
+    {
         return $this->belongsTo(FasilitasPinjaman::class, 'id_fasilitas_pinjaman')
             ->withDefault(function () {
                 return new FasilitasPinjaman();
             });
     }
 
-    public function ao(){
+    public function ao()
+    {
         return $this->belongsTo(TransAO::class, 'id_trans_ao')
             ->withDefault(function () {
                 return new TransAO();
             });
     }
 
-    public function ca(){
+    public function ca()
+    {
         return $this->belongsTo(TransCA::class, 'id_trans_ca')
             ->withDefault(function () {
                 return new TransCA();
             });
     }
 
-    public function caa(){
+    public function caa()
+    {
         return $this->belongsTo(TransCAA::class, 'id_trans_caa')
             ->withDefault(function () {
                 return new TransCAA();

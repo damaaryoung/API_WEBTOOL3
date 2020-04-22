@@ -58,7 +58,7 @@ class MasterCA_Controller extends BaseController
 
         $data = array();
         foreach ($query->get() as $key => $val) {
-
+            //   dd($val->so);
             if ($val->status_ao == 1) {
                 $status_ao = 'recommend';
             } elseif ($val->status_ao == 2) {
@@ -86,6 +86,7 @@ class MasterCA_Controller extends BaseController
             $data[$key] = [
                 'id_trans_so'    => $val->id_trans_so == null ? null : (int) $val->id_trans_so,
                 'nomor_so'       => $val->so['nomor_so'],
+                'norev_so'       => $val->so['norev_so'],
                 'nama_so'        => $val->so['nama_so'],
                 "ao" => [
                     'status_ao'     => $status_ao,
@@ -342,6 +343,7 @@ class MasterCA_Controller extends BaseController
         $data = array(
             'id_trans_so'    => $val->id_trans_so == null ? null : (int) $val->id_trans_so,
             'nomor_so'       => $val->so['nomor_so'],
+            'norev_so'       => $val->so['norev_so'],
             'nama_so'        => $val->so['nama_so'],
             'nomor_ao'       => $val->nomor_ao,
             'status_ao'      => $status_ao,
