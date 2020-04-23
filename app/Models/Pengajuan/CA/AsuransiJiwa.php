@@ -23,13 +23,14 @@ class AsuransiJiwa extends Model implements AuthenticatableContract, Authorizabl
     protected $primaryKey = 'id';
 
     protected $fillable = [
-       'nama_asuransi', 'jangka_waktu', 'nilai_pertanggungan', 'jatuh_tempo', 'berat_badan', 'tinggi_badan', 'umur_nasabah'
+        'nama_asuransi', 'jangka_waktu', 'nilai_pertanggungan', 'jatuh_tempo', 'berat_badan', 'tinggi_badan', 'umur_nasabah'
     ];
 
     protected $casts = [
         'jangka_waktu' => 'integer',
         'berat_badan'  => 'integer',
-        'tinggi_badan' => 'integer'
+        'tinggi_badan' => 'integer',
+        'jatuh_tempo' => 'date:d-m-Y'
     ];
 
     public $timestamps = false;

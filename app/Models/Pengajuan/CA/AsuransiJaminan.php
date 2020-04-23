@@ -23,11 +23,12 @@ class AsuransiJaminan extends Model implements AuthenticatableContract, Authoriz
     protected $primaryKey = 'id';
 
     protected $fillable = [
-       'nama_asuransi', 'jangka_waktu', 'nilai_pertanggungan', 'jatuh_tempo'
+        'nama_asuransi', 'jangka_waktu', 'nilai_pertanggungan', 'jatuh_tempo'
     ];
 
     protected $casts = [
-        'jangka_waktu' => 'integer'
+        'jangka_waktu' => 'integer',
+        'jatuh_tempo' => 'date:d-m-Y'
     ];
 
     public $timestamps = false;
