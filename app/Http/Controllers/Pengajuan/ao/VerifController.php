@@ -41,31 +41,31 @@ class VerifController extends BaseController
         }
         //  dd($req->input('ver_ktp_debt'));
         $dataVerifikasi = array(
-            'ver_ktp_debt'            => empty($req->input('ver_ktp_debt')) ? $check->ver_ktp_debt : $req->input('ver_ktp_debt'),
+            'ver_ktp_debt'            => $req->input('ver_ktp_debt'),
 
-            'ver_kk_debt'             => empty($req->input('ver_kk_debt')) ? $check->ver_kk_debt :  $req->input('ver_kk_debt'),
+            'ver_kk_debt'             =>   $req->input('ver_kk_debt'),
 
-            'ver_akta_cerai_debt'     => empty($req->input('ver_akta_cerai_debt')) ? $check->ver_akta_cerai_debt : $req->input('ver_akta_cerai_debt'),
+            'ver_akta_cerai_debt'     =>  $req->input('ver_akta_cerai_debt'),
 
-            'ver_akta_kematian_debt'  => empty($req->input('ver_akta_kematian_debt')) ? $check->ver_akta_kematian_debt : $req->input('ver_akta_kematian_debt'),
+            'ver_akta_kematian_debt'  =>  $req->input('ver_akta_kematian_debt'),
 
-            'ver_rek_tabungan_debt'   => empty($req->input('ver_rek_tabungan_debt')) ? $check->ver_rek_tabungan_debt : $req->input('ver_rek_tabungan_debt'),
+            'ver_rek_tabungan_debt'   =>  $req->input('ver_rek_tabungan_debt'),
 
-            'ver_sertifikat_debt'     => empty($req->input('ver_sertifikat_debt')) ? $check->ver_sertifikat_debt : $req->input('ver_sertifikat_debt'),
+            'ver_sertifikat_debt'     =>  $req->input('ver_sertifikat_debt'),
 
-            'ver_sttp_pbb_debt'       => empty($req->input('ver_sttp_pbb_debt')) ? $check->ver_sttp_pbb_debt : $req->input('ver_sttp_pbb_debt'),
+            'ver_sttp_pbb_debt'       =>  $req->input('ver_sttp_pbb_debt'),
 
-            'ver_imb_debt'            => empty($req->input('ver_imb_debt')) ? $check->ver_imb_debt : $req->input('ver_imb_debt'),
+            'ver_imb_debt'            => $req->input('ver_imb_debt'),
 
-            'ver_ktp_pasangan'        => empty($req->input('ver_ktp_pasangan')) ? $check->ver_ktp_pasangan : $req->input('ver_ktp_pasangan'),
+            'ver_ktp_pasangan'        =>  $req->input('ver_ktp_pasangan'),
 
-            'ver_akta_nikah_pasangan' => empty($req->input('ver_akta_nikah_pasangan')) ? $check->ver_akta_nikah_pasangan : $req->input('ver_ktp_pasangan'),
+            'ver_akta_nikah_pasangan' =>  $req->input('ver_ktp_pasangan'),
 
-            'ver_data_penjamin'       => empty($req->input('ver_data_penjamin')) ? $check->ver_data_penjamin : $req->input('ver_data_penjamin'),
+            'ver_data_penjamin'       =>  $req->input('ver_data_penjamin'),
 
-            'ver_sku_debt'            => empty($req->input('ver_sku_debt')) ? $check->ver_sku_debt : $req->input('ver_sku_debt'),
+            'ver_sku_debt'            =>  $req->input('ver_sku_debt'),
 
-            'ver_pembukuan_usaha_debt' => empty($req->input('ver_pembukuan_usaha_debt')) ? $check->ver_pembukuan_usaha_debt : $req->input('ver_pembukuan_usaha_debt'),
+            'ver_pembukuan_usaha_debt' =>  $req->input('ver_pembukuan_usaha_debt'),
 
             'catatan'                 => empty($req->input('catatan')) ? $check->catatan : $req->input('catatan')
         );
