@@ -1092,7 +1092,7 @@ class MasterCAA_Controller extends BaseController
         $id_agu_ta = explode(",", $check_ao->id_agunan_tanah);
 
         $AguTa = AgunanTanah::whereIn('id', $id_agu_ta)->get();
-
+        //  dd($AguTa);
         if (empty($AguTa)) {
             $idTan = null;
         } else {
@@ -1108,6 +1108,7 @@ class MasterCAA_Controller extends BaseController
                     ],
                     'tgl_berlaku_shgb'        => Carbon::parse($value->tgl_berlaku_shgb)->format("d-m-Y"),
                     'nama_pemilik_sertifikat' => $value->nama_pemilik_sertifikat,
+                    'no_sertifikat'             => $value->no_sertifikat,
                     'tgl_atau_no_ukur'        => $value->tgl_ukur_sertifikat,
                     'lampiran' => [
                         'agunan_bag_depan'      => $value->agunan_bag_depan,

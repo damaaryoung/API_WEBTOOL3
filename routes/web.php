@@ -585,5 +585,10 @@ $router->group(['middleware' => ['jwt.auth', 'log'], 'prefix' => 'api'], functio
             // $router->get('/{id}', ['subject' => 'Detail - Rekomendasi AO', 'uses' => 'ValidController@show']);
             $router->put('/{id}', ['subject' => 'Update - Rekomendasi AO', 'uses' => 'ValidController@update']);
         });
+        $router->group(['prefix' => '/recomAo'], function () use ($router) {
+            // $router->get('/',     ['subject' => 'Read - Rekomendasi AO',   'uses' => 'ValidController@index']);
+            // $router->get('/{id}', ['subject' => 'Detail - Rekomendasi AO', 'uses' => 'ValidController@show']);
+            $router->put('/{id}', ['subject' => 'Update - Rekomendasi AO', 'uses' => 'RecomAoController@update']);
+        });
     });
 });

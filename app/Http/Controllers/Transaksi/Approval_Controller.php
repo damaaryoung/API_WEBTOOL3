@@ -1147,8 +1147,8 @@ class Approval_Controller extends BaseController
             $rev = "Rev" . "-" . $so_trans->nomor_so;
             //  dd($rev);
             $newTransCA = array_merge($transCA, $dataID);
-
-            $CA = TransCA::create($newTransCA);
+            // dd($newTransCA  );
+            $CA = TransCA::create($newTransCA)->update();
             TransSO::where('id', $id)->update(['id_trans_ca' => $CA->id, 'norev_so' => $rev]);
 
             DB::connection('web')->commit();
