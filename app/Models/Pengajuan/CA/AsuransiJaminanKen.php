@@ -8,7 +8,7 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Lumen\Auth\Authorizable;
 
-class AsuransiJaminan extends Model implements AuthenticatableContract, AuthorizableContract
+class AsuransiJaminanKen extends Model implements AuthenticatableContract, AuthorizableContract
 {
     use Authenticatable, Authorizable;
 
@@ -19,7 +19,7 @@ class AsuransiJaminan extends Model implements AuthenticatableContract, Authoriz
      */
     protected $connection = 'web';
 
-    protected $table = 'asuransi_jaminan';
+    protected $table = 'asuransi_jaminan_kendaraan';
     protected $primaryKey = 'id';
 
     protected $fillable = [

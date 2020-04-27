@@ -377,6 +377,7 @@ $router->group(['middleware' => ['jwt.auth', 'log'], 'prefix' => 'api'], functio
             $router->get('/team_caa/{id_team}', ['subject' => 'Detail Komite_CAA', 'uses' => 'Approval_Controller@detail_team']);  // Get List Team CAA
             $router->get('/report/approval/{id_trans_so}', ['subject' => 'Report Approval', 'uses' => 'Approval_Controller@report_approval']);
             $router->post('/report/approval/{id}', ['subject' => 'Edit Report Approval', 'uses' => 'Approval_Controller@update']);
+            $router->get('/get/rev/{id}', ['subject' => 'Get Data Revisi', 'uses' => 'Approval_Controller@getRev']);
         });
     });
 

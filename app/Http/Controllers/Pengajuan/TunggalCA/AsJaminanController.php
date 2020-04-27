@@ -11,12 +11,14 @@ use App\Http\Requests\Pengajuan\AsJaminanReq;
 use App\Models\Pengajuan\CA\AsuransiJaminan;
 
 use Carbon\Carbon;
-use DB;
+use Exception;
+use Illuminate\Support\Facades\DB;
 
 class AsJaminanController extends BaseController
 {
-    public function index(){
-        $query = AsuransiJaminan::get()->toArray();
+    public function index()
+    {
+        $query = AsuransiJaminan::get();
 
         try {
             return response()->json([
@@ -33,10 +35,11 @@ class AsJaminanController extends BaseController
         }
     }
 
-    public function show($id){
+    public function show($id)
+    {
         $query = AsuransiJaminan::where('id', $id)->first();
 
-        if($query == null){
+        if ($query == null) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
@@ -59,7 +62,8 @@ class AsJaminanController extends BaseController
         }
     }
 
-    public function update($id, AsJaminanReq $req){
+    public function update($id, AsJaminanReq $req)
+    {
         $check = AsuransiJaminan::where('id', $id)->first();
 
         if ($check == null) {
@@ -72,20 +76,16 @@ class AsJaminanController extends BaseController
 
         $asJaminan = array(
             'nama_asuransi'
-                => empty($req->input('nama_asuransi_jaminan'))
-                ? $check->nama_asuransi : $req->input('nama_asuransi_jaminan'),
+            => $req->input('nama_asuransi_jaminan'),
 
             'jangka_waktu'
-                => empty($req->input('jangka_waktu_as_jaminan'))
-                ? $check->jangka_waktu : $req->input('jangka_waktu_as_jaminan'),
+            => $req->input('jangka_waktu_as_jaminan'),
 
             'nilai_pertanggungan'
-                => empty($req->input('nilai_pertanggungan_as_jaminan'))
-                ? $check->nilai_pertanggungan : $req->input('nilai_pertanggungan_as_jaminan'),
+            => $req->input('nilai_pertanggungan_as_jaminan'),
 
             'jatuh_tempo'
-                => empty($req->input('jatuh_tempo_as_jaminan'))
-                ? $check->jatuh_tempo : Carbon::parse($req->input('jatuh_tempo_as_jaminan'))->format('Y-m-d')
+            => Carbon::parse($req->input('jatuh_tempo_as_jaminan'))->format('d-m-Y')
         );
 
         DB::connection('web')->beginTransaction();
@@ -98,7 +98,7 @@ class AsJaminanController extends BaseController
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'message'=> 'Update Data Berhasil',
+                'message' => 'Update Data Berhasil',
                 'data'   => $asJaminan
             ], 200);
         } catch (Exception $e) {

@@ -1046,125 +1046,166 @@ class Approval_Controller extends BaseController
             );
         }
 
+        //  try {
+        DB::connection('web')->beginTransaction();
+
+        if (!empty($dataMuBa)) {
+            for ($i = 0; $i < count($dataMuBa); $i++) {
+                $mutasi = MutasiBank::create($dataMuBa[$i]);
+
+                $id_mutasi['id'][$i] = $mutasi->id;
+            }
+
+            $MutasiID   = implode(",", $id_mutasi['id']);
+        } else {
+            $MutasiID = null;
+        }
+
+        if (!empty($dataTabUang)) {
+            $tabungan = TabDebt::create($dataTabUang);
+
+            $idTabungan = $tabungan->id;
+        } else {
+            $idTabungan = null;
+        }
+
+        if (!empty($dataACC)) {
+            for ($i = 0; $i < count($dataACC); $i++) {
+                $IACC = InfoACC::create($dataACC[$i]);
+
+                $arrACC['id'][$i] = $IACC->id;
+            }
+
+            $idInfo = implode(",", $arrACC['id']);
+        } else {
+            $idInfo = null;
+        }
+
+        if (!empty($dataRingkasan)) {
+            $analisa = RingkasanAnalisa::create($dataRingkasan);
+            $idAnalisa = $analisa->id;
+        } else {
+            $idAnalisa = null;
+        }
+
+        if (!empty($rekomPinjaman)) {
+            $recomPin = RekomendasiPinjaman::create($rekomPinjaman);
+            $idrecomPin = $recomPin->id;
+        } else {
+            $idrecomPin = null;
+        }
+
+        if (!empty($asJiwa)) {
+            $jiwa = AsuransiJiwa::create($asJiwa);
+            $idJiwa = $jiwa->id;
+        } else {
+            $idJiwa = null;
+        }
+
+        if (!empty($jaminanImplode)) {
+            $jaminan = AsuransiJaminan::create($jaminanImplode);
+            $idJaminan = $jaminan->id;
+        } else {
+            $idJaminan = null;
+        }
+
+        if (!empty($recomCA)) {
+            $reCA = RekomendasiCA::create($recomCA);;
+            $idReCA = $reCA->id;
+        } else {
+            $idReCA = null;
+        }
+
+        if (!empty($Pendapatan)) {
+            $pend = PendapatanUsaha::create($Pendapatan);
+            $idPendUs = $pend->id;
+        } else {
+            $idPendUs = null;
+        }
+
+        if (!empty($kapBul)) {
+            $Q_Kapbul = KapBulanan::create($kapBul);
+            $idKapBul = $Q_Kapbul->id;
+        } else {
+            $idKapBul = null;
+        }
+
+        $so_trans = TransSO::select('nomor_so')->where('id', $id)->first();
+        $rev = "Rev" . "-" . $so_trans->nomor_so;
+        $dataID = array(
+            'id_mutasi_bank'          => $MutasiID,
+            'id_log_tabungan'         => $idTabungan,
+            'id_info_analisa_cc'      => $idInfo,
+            'id_ringkasan_analisa'    => $idAnalisa,
+            'id_recom_ca'             => $idReCA,
+            'id_rekomendasi_pinjaman' => $idrecomPin,
+            'id_asuransi_jiwa'        => $idJiwa,
+            'id_asuransi_jaminan'     => $idJaminan,
+            'id_kapasitas_bulanan'    => $idKapBul,
+            'id_pendapatan_usaha'     => $idPendUs,
+            'revisi'                   => $rev,
+        );
+
+
+        //  dd($rev);
+        $newTransCA = array_merge($transCA, $dataID);
+        // dd($newTransCA  );
+        $CA = TransCA::create($newTransCA);
+
+
+        TransSO::where('id', $id)->update(['id_trans_ca' => $CA->id, 'norev_so' => $rev]);
+        DB::connection('web')->commit();
+
+        return response()->json([
+            'code'   => 200,
+            'status' => 'success',
+            'message' => 'Data Revisi OL berhasil dikirim',
+            'data'   => $CA
+        ], 200);
+        // } catch (\Exception $e) {
+        //     $err = DB::connection('web')->rollback();
+        //     return response()->json([
+        //         'code'    => 501,
+        //         'status'  => 'error',
+        //         'message' => $err
+        //     ], 501);
+        // }
+    }
+
+    public function getRev($id, Request $req)
+    {
+        $getRev_first = TransCA::where('id_trans_so', $id)->first();
+        $getRev = TransCA::where('id_trans_so', $id)->get();
+
+        if ($getRev_first === null) {
+            return response()->json([
+                'code'   => 404,
+                'status' => 'not found',
+                'message' => 'data tidak di temukan',
+            ], 404);
+        }
+
         try {
-            DB::connection('web')->beginTransaction();
-
-            if (!empty($dataMuBa)) {
-                for ($i = 0; $i < count($dataMuBa); $i++) {
-                    $mutasi = MutasiBank::create($dataMuBa[$i]);
-
-                    $id_mutasi['id'][$i] = $mutasi->id;
-                }
-
-                $MutasiID   = implode(",", $id_mutasi['id']);
-            } else {
-                $MutasiID = null;
+            if (!$getRev_first->id_trans_so) {
+                return response()->json([
+                    'code'   => 403,
+                    'status' => 'bad request',
+                    'message' => 'Data Tidak valid',
+                ], 403);
             }
-
-            if (!empty($dataTabUang)) {
-                $tabungan = TabDebt::create($dataTabUang);
-
-                $idTabungan = $tabungan->id;
-            } else {
-                $idTabungan = null;
-            }
-
-            if (!empty($dataACC)) {
-                for ($i = 0; $i < count($dataACC); $i++) {
-                    $IACC = InfoACC::create($dataACC[$i]);
-
-                    $arrACC['id'][$i] = $IACC->id;
-                }
-
-                $idInfo = implode(",", $arrACC['id']);
-            } else {
-                $idInfo = null;
-            }
-
-            if (!empty($dataRingkasan)) {
-                $analisa = RingkasanAnalisa::create($dataRingkasan);
-                $idAnalisa = $analisa->id;
-            } else {
-                $idAnalisa = null;
-            }
-
-            if (!empty($rekomPinjaman)) {
-                $recomPin = RekomendasiPinjaman::create($rekomPinjaman);
-                $idrecomPin = $recomPin->id;
-            } else {
-                $idrecomPin = null;
-            }
-
-            if (!empty($asJiwa)) {
-                $jiwa = AsuransiJiwa::create($asJiwa);
-                $idJiwa = $jiwa->id;
-            } else {
-                $idJiwa = null;
-            }
-
-            if (!empty($jaminanImplode)) {
-                $jaminan = AsuransiJaminan::create($jaminanImplode);
-                $idJaminan = $jaminan->id;
-            } else {
-                $idJaminan = null;
-            }
-
-            if (!empty($recomCA)) {
-                $reCA = RekomendasiCA::create($recomCA);;
-                $idReCA = $reCA->id;
-            } else {
-                $idReCA = null;
-            }
-
-            if (!empty($Pendapatan)) {
-                $pend = PendapatanUsaha::create($Pendapatan);
-                $idPendUs = $pend->id;
-            } else {
-                $idPendUs = null;
-            }
-
-            if (!empty($kapBul)) {
-                $Q_Kapbul = KapBulanan::create($kapBul);
-                $idKapBul = $Q_Kapbul->id;
-            } else {
-                $idKapBul = null;
-            }
-
-            $dataID = array(
-                'id_mutasi_bank'          => $MutasiID,
-                'id_log_tabungan'         => $idTabungan,
-                'id_info_analisa_cc'      => $idInfo,
-                'id_ringkasan_analisa'    => $idAnalisa,
-                'id_recom_ca'             => $idReCA,
-                'id_rekomendasi_pinjaman' => $idrecomPin,
-                'id_asuransi_jiwa'        => $idJiwa,
-                'id_asuransi_jaminan'     => $idJaminan,
-                'id_kapasitas_bulanan'    => $idKapBul,
-                'id_pendapatan_usaha'     => $idPendUs
-            );
-
-            $so_trans = TransSO::select('nomor_so')->where('id', $id)->first();
-            $rev = "Rev" . "-" . $so_trans->nomor_so;
-            //  dd($rev);
-            $newTransCA = array_merge($transCA, $dataID);
-            // dd($newTransCA  );
-            $CA = TransCA::create($newTransCA)->update();
-            TransSO::where('id', $id)->update(['id_trans_ca' => $CA->id, 'norev_so' => $rev]);
-
-            DB::connection('web')->commit();
 
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'message' => 'Data Revisi OL berhasil dikirim',
-                'data'   => $CA
+                'message' => 'List Data CA Revisi OL',
+                'data'   => $getRev
             ], 200);
         } catch (\Exception $e) {
-            $err = DB::connection('web')->rollback();
+            // $err = DB::connection('web')->rollback();
             return response()->json([
                 'code'    => 501,
                 'status'  => 'error',
-                'message' => $err
+                'message' => $e
             ], 501);
         }
     }

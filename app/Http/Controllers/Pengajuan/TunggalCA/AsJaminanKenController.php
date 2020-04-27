@@ -5,20 +5,20 @@ namespace App\Http\Controllers\Pengajuan\TunggalCA;
 use Laravel\Lumen\Routing\Controller as BaseController;
 
 // Form Request
-use App\Http\Requests\Pengajuan\AsJiwaReq;
+use App\Http\Requests\Pengajuan\AsJaminanReq;
 
 // Models
-use App\Models\Pengajuan\CA\AsuransiJiwa;
-
+use App\Models\Pengajuan\CA\AsuransiJaminan;
+use App\Models\Pengajuan\CA\AsuransiJaminanKen;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\DB;
 
-class AsJiwaController extends BaseController
+class AsJaminanKenController extends BaseController
 {
     public function index()
     {
-        $query = AsuransiJiwa::get()->toArray();
+        $query = AsuransiJaminanKen::get();
 
         try {
             return response()->json([
@@ -37,7 +37,7 @@ class AsJiwaController extends BaseController
 
     public function show($id)
     {
-        $query = AsuransiJiwa::where('id', $id)->first();
+        $query = AsuransiJaminanKen::where('id', $id)->first();
 
         if ($query == null) {
             return response()->json([
@@ -62,9 +62,9 @@ class AsJiwaController extends BaseController
         }
     }
 
-    public function update($id, AsJiwaReq $req)
+    public function update($id, AsJaminanReq $req)
     {
-        $check = AsuransiJiwa::where('id', $id)->first();
+        $check = AsuransiJaminanKen::where('id', $id)->first();
 
         if ($check == null) {
             return response()->json([
@@ -74,40 +74,24 @@ class AsJiwaController extends BaseController
             ], 404);
         }
 
-        $asJiwa = array(
+        $asJaminan = array(
             'nama_asuransi'
-            => empty($req->input('nama_asuransi_jiwa'))
-                ? $check->nama_asuransi : $req->input('nama_asuransi_jiwa'),
+            => $req->input('nama_asuransi_jaminan'),
 
             'jangka_waktu'
-            => empty($req->input('jangka_waktu_as_jiwa'))
-                ? $check->jangka_waktu : $req->input('jangka_waktu_as_jiwa'),
+            => $req->input('jangka_waktu_as_jaminan'),
 
             'nilai_pertanggungan'
-            => empty($req->input('nilai_pertanggungan_as_jiwa'))
-                ? $check->nilai_pertanggungan : $req->input('nilai_pertanggungan_as_jiwa'),
+            => $req->input('nilai_pertanggungan_as_jaminan'),
 
             'jatuh_tempo'
-            => empty($req->input('jatuh_tempo_as_jiwa'))
-                ? $check->jatuh_tempo : Carbon::parse($req->input('jatuh_tempo_as_jiwa'))->format('Y-m-d'),
-
-            'berat_badan'
-            => empty($req->input('berat_badan_as_jiwa'))
-                ? $check->berat_badan : $req->input('berat_badan_as_jiwa'),
-
-            'tinggi_badan'
-            => empty($req->input('tinggi_badan_as_jiwa'))
-                ? $check->tinggi_badan : $req->input('tinggi_badan_as_jiwa'),
-
-            'umur_nasabah'
-            => empty($req->input('umur_nasabah_as_jiwa'))
-                ? $check->umur_nasabah : $req->input('umur_nasabah_as_jiwa')
+            => Carbon::parse($req->input('jatuh_tempo_as_jaminan'))->format('Y-m-d')
         );
 
         DB::connection('web')->beginTransaction();
 
         try {
-            AsuransiJiwa::where('id', $id)->update($asJiwa);
+            AsuransiJaminanKen::where('id', $id)->update($asJaminan);
 
             DB::connection('web')->commit();
 
@@ -115,7 +99,7 @@ class AsJiwaController extends BaseController
                 'code'   => 200,
                 'status' => 'success',
                 'message' => 'Update Data Berhasil',
-                'data'   => $asJiwa
+                'data'   => $asJaminan
             ], 200);
         } catch (Exception $e) {
 
