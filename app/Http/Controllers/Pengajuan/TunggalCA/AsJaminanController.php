@@ -18,7 +18,16 @@ class AsJaminanController extends BaseController
 {
     public function index()
     {
+        $check = AsuransiJaminan::first();
         $query = AsuransiJaminan::get();
+        //dd($query);
+        if (!$check) {
+            return response()->json([
+                'code'  => 404,
+                'status'   => 'not found',
+                'message'   => 'data not found'
+            ], 404);
+        }
 
         try {
             return response()->json([
@@ -65,7 +74,7 @@ class AsJaminanController extends BaseController
     public function update($id, AsJaminanReq $req)
     {
         $check = AsuransiJaminan::where('id', $id)->first();
-
+        //    dd($check);
         if ($check == null) {
             return response()->json([
                 'code'    => 404,
@@ -85,7 +94,7 @@ class AsJaminanController extends BaseController
             => $req->input('nilai_pertanggungan_as_jaminan'),
 
             'jatuh_tempo'
-            => Carbon::parse($req->input('jatuh_tempo_as_jaminan'))->format('d-m-Y')
+            => Carbon::parse($req->input('jatuh_tempo_as_jaminan'))->format('Y-m-d')
         );
 
         DB::connection('web')->beginTransaction();

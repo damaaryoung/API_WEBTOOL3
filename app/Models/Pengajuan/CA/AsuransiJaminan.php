@@ -19,7 +19,7 @@ class AsuransiJaminan extends Model implements AuthenticatableContract, Authoriz
      */
     protected $connection = 'web';
 
-    protected $table = 'asuransi_jaminan';
+    protected $table = 'asuransi_jaminan_kebakaran';
     protected $primaryKey = 'id';
 
     protected $fillable = [

@@ -18,8 +18,16 @@ class AsJaminanKenController extends BaseController
 {
     public function index()
     {
+        $check = AsuransiJaminanKen::first();
         $query = AsuransiJaminanKen::get();
-
+        //dd($query);
+        if (!$check) {
+            return response()->json([
+                'code'  => 404,
+                'status'   => 'not found',
+                'message'   => 'data not found'
+            ], 404);
+        }
         try {
             return response()->json([
                 'code'   => 200,

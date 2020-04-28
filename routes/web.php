@@ -542,11 +542,18 @@ $router->group(['middleware' => ['jwt.auth', 'log'], 'prefix' => 'api'], functio
             $router->put('/{id}', ['subject' => 'Update - Asuransi Jiwa', 'uses' => 'AsJiwaController@update']);
         });
 
-        // Asuransi Jaminan
-        $router->group(['prefix' => '/asuransi_jaminan'], function () use ($router) {
+        // Asuransi Jaminan Kebakaran
+        $router->group(['prefix' => '/asuransi_jaminan_kebakaran'], function () use ($router) {
             $router->get('/',     ['subject' => 'Read - Asuransi Jaminan',   'uses' => 'AsJaminanController@index']);
             $router->get('/{id}', ['subject' => 'Detail - Asuransi Jaminan', 'uses' => 'AsJaminanController@show']);
             $router->put('/{id}', ['subject' => 'Update - Asuransi Jaminan', 'uses' => 'AsJaminanController@update']);
+        });
+
+        // Asuransi Jaminan Kendaraan
+        $router->group(['prefix' => '/asuransi_jaminan_kendaraan'], function () use ($router) {
+            $router->get('/',     ['subject' => 'Read - Asuransi Jaminan',   'uses' => 'AsJaminanKenController@index']);
+            $router->get('/{id}', ['subject' => 'Detail - Asuransi Jaminan', 'uses' => 'AsJaminanKenController@show']);
+            $router->put('/{id}', ['subject' => 'Update - Asuransi Jaminan', 'uses' => 'AsJaminanKenController@update']);
         });
     });
 

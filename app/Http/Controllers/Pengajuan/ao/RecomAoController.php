@@ -65,6 +65,8 @@ class RecomAoController extends BaseController
             'biaya_credit_checking'       =>  $req->input('biaya_credit_checking'),
 
             'biaya_tabungan'            => $req->input('biaya_tabungan'),
+            'tujuan_pinjaman'            => $req->input('tujuan_pinjaman'),
+            'jenis_pinjaman'            => $req->input('jenis_pinjaman'),
 
         );
 

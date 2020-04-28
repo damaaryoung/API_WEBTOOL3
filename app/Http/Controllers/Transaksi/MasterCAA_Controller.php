@@ -1067,7 +1067,6 @@ class MasterCAA_Controller extends BaseController
         }
 
         $check_ca = TransCA::where('id_trans_so', $id)->where('status_ca', 1)->first();
-
         if (!$check_ca) {
             return response()->json([
                 'code'    => 404,

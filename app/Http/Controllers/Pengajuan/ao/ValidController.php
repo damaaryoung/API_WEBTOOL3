@@ -14,7 +14,7 @@ use DB;
 
 class ValidController extends BaseController
 {
-    public function update($id, Request $req) 
+    public function update($id, Request $req)
     {
         $user_id  = $req->auth->user_id;
 
@@ -24,7 +24,7 @@ class ValidController extends BaseController
             return response()->json([
                 "code"    => 404,
                 "status"  => "not found",
-                "message" => "User_ID anda adalah '".$user_id."'. Namun anda belum terdaftar sebagai PIC. Harap daftarkan diri sebagai PIC pada form PIC atau hubungi bagian IT"
+                "message" => "User_ID anda adalah '" . $user_id . "'. Namun anda belum terdaftar sebagai PIC. Harap daftarkan diri sebagai PIC pada form PIC atau hubungi bagian IT"
             ], 404);
         }
 
@@ -50,7 +50,7 @@ class ValidController extends BaseController
         );
 
         DB::connection('web')->beginTransaction();
-        try{
+        try {
 
             ValidModel::where('id', $id)->update($dataValidasi);
 
@@ -59,7 +59,7 @@ class ValidController extends BaseController
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'message'=> 'Data untuk AO berhasil dikirim',
+                'message' => 'Data untuk AO berhasil dikirim',
                 'data'   => $dataValidasi
                 // 'message'=> $msg
             ], 200);
