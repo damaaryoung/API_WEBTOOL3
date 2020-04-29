@@ -657,30 +657,33 @@ class MasterCAA_Controller extends BaseController
         } else {
             $dataMutasi = null;
         }
+        //  dd($check_ca);
+        $jaminan_keb = DB::connection('web')->table('asuransi_jaminan_kebakaran')->where('id', $check_ca->id_asuransi_jaminan_kebakaran)->first();
 
-        $jaminan = DB::connection('web')->table('asuransi_jaminan')->where('id', $check_ca->id_asuransi_jaminan)->first();
+        $jaminan_ken = DB::connection('web')->table('asuransi_jaminan_kendaraan')->where('id', $check_ca->id_asuransi_jaminan_kendaraan)->first();
 
-        if ($jaminan == null) {
-            $asuransi_jaminan = null;
+        if ($jaminan_keb == null) {
+            $asuransi_jaminan_keb = null;
         } else {
-            $aj = array(
-                'id'                    => explode(';', $jaminan->id),
-                'nama_asuransi'         => explode(';', $jaminan->nama_asuransi),
-                'jangka_waktu'          => explode(';', $jaminan->jangka_waktu),
-                'nilai_pertanggungan'   => explode(';', $jaminan->nilai_pertanggungan),
-                'jatuh_tempo'           => explode(';', $jaminan->jatuh_tempo)
+            $jamkeb = array(
+                'id'                    => $jaminan_keb->id,
+                'nama_asuransi'         => $jaminan_keb->nama_asuransi,
+                'jangka_waktu'          => $jaminan_keb->jangka_waktu,
+                'nilai_pertanggungan'   => $jaminan_keb->nilai_pertanggungan,
+                'jatuh_tempo'           => $jaminan_keb->jatuh_tempo
             );
+        }
 
-            $asuransi_jaminan = array();
-            for ($i = 0; $i < count($aj['nama_asuransi']); $i++) {
-                $asuransi_jaminan[] = array(
-                    'id'                    => $aj['id'][0],
-                    'nama_asuransi'         => $aj['nama_asuransi'][$i],
-                    'jangka_waktu'          => $aj['jangka_waktu'][$i],
-                    'nilai_pertanggungan'   => $aj['nilai_pertanggungan'][$i],
-                    'jatuh_tempo'           => $aj['jatuh_tempo'][$i]
-                );
-            }
+        if ($jaminan_ken == null) {
+            $asuransi_jaminan_ken = null;
+        } else {
+            $jamken = array(
+                'id'                    => $jaminan_ken->id,
+                'nama_asuransi'         => $jaminan_ken->nama_asuransi,
+                'jangka_waktu'          => $jaminan_ken->jangka_waktu,
+                'nilai_pertanggungan'   => $jaminan_ken->nilai_pertanggungan,
+                'jatuh_tempo'           => $jaminan_ken->jatuh_tempo
+            );
         }
 
         $penj = Penjamin::whereIn('id', explode(",", $check_so->id_penjamin))->get();
@@ -743,7 +746,8 @@ class MasterCAA_Controller extends BaseController
                 ];
             }
         }
-
+        $cek_agu_tanah = DB::connection('web')->table('periksa_agunan_tanah')->where('id_agunan_tanah', $check_ao->id_agunan_tanah)->get();
+        $cek_agu_ken = DB::connection('web')->table('periksa_agunan_kendaraan')->where('id_agunan_kendaraan', $check_ao->id_agunan_kendaraan)->get();
 
         $data = array(
             'status_revisi' => $check_ca->revisi >= 1 ? 'Y' : 'N',
@@ -943,8 +947,8 @@ class MasterCAA_Controller extends BaseController
                 'agunan_kendaraan' => $idKen
             ],
             'pemeriksaan' => [
-                'agunan_tanah' => DB::connection('web')->table('periksa_agunan_tanah')->where('id_agunan_tanah', $check_ao->id_agunan_tanah)->get(),
-                'agunan_kendaraan' => DB::connection('web')->table('periksa_agunan_kendaraan')->where('id_agunan_kendaraan', $check_ao->id_agunan_kendaraan)->get(),
+                'agunan_tanah' => empty($cek_agu_tanah) ? $cek_agu_tanah : null,
+                'agunan_kendaraan' => empty($cek_agu_ken) ? $cek_agu_ken : null,
             ],
             'verifikasi'    => DB::connection('web')->table('tb_verifikasi')->where('id', $check_ao->id_verifikasi)->first(),
             'validasi'      => DB::connection('web')->table('tb_validasi')->where('id', $check_ao->id_validasi)->first(),
@@ -1015,7 +1019,8 @@ class MasterCAA_Controller extends BaseController
             'data_keuangan' => DB::connection('web')->table('log_tabungan_debt')->where('id', $check_ca->id_log_tabungan)->get(),
             'ringkasan_analisa' => $check_ca->ringkasan,
             'asuransi_jiwa'   => DB::connection('web')->table('asuransi_jiwa')->where('id', $check_ca->id_asuransi_jiwa)->first(),
-            'asuransi_jaminan' => $asuransi_jaminan,
+            'asuransi_jaminan_kebakaran' => $jaminan_keb,
+            'asuransi_jaminan_kendaraan' => $jaminan_ken,
             'tgl_transaksi' => $check_ca->updated_at
         );
 

@@ -42,7 +42,7 @@ class TransCA extends Model implements AuthenticatableContract, AuthorizableCont
     protected $primaryKey = 'id';
 
     protected $fillable = [
-        'nomor_ca', 'user_id', 'id_trans_so', 'id_pic', 'id_area', 'id_cabang', 'id_mutasi_bank', 'id_log_tabungan', 'id_info_analisa_cc', 'id_ringkasan_analisa', 'id_recom_ca', 'id_rekomendasi_pinjaman', 'id_asuransi_jiwa', 'id_asuransi_jaminan', 'id_kapasitas_bulanan', 'id_pendapatan_usaha', 'catatan_ca', 'status_ca', 'revisi', 'flg_aktif'
+        'nomor_ca', 'user_id', 'id_trans_so', 'id_pic', 'id_area', 'id_cabang', 'id_mutasi_bank', 'id_log_tabungan', 'id_info_analisa_cc', 'id_ringkasan_analisa', 'id_recom_ca', 'id_rekomendasi_pinjaman', 'id_asuransi_jiwa', 'id_asuransi_jaminan_kebakaran', 'id_asuransi_jaminan_kendaraan', 'id_kapasitas_bulanan', 'id_pendapatan_usaha', 'catatan_ca', 'status_ca', 'revisi', 'flg_aktif'
     ];
 
     protected $casts = [
@@ -51,105 +51,120 @@ class TransCA extends Model implements AuthenticatableContract, AuthorizableCont
         'updated_at' => 'date:m-d-Y H:i:s'
     ];
 
-    public function so(){
+    public function so()
+    {
         return $this->belongsTo(TransSO::class, 'id_trans_so')
             ->withDefault(function () {
                 return new TransSO();
             });
     }
 
-    public function user(){
+    public function user()
+    {
         return $this->belongsTo(User::class, 'user_id')
             ->withDefault(function () {
                 return new User();
             });
     }
 
-    public function pic(){
+    public function pic()
+    {
         return $this->belongsTo(PIC::class, 'id_pic')
             ->withDefault(function () {
                 return new PIC();
             });
     }
 
-    public function area(){
+    public function area()
+    {
         return $this->belongsTo(Area::class, 'id_area')
             ->withDefault(function () {
                 return new Area();
             });
     }
 
-    public function cabang(){
+    public function cabang()
+    {
         return $this->belongsTo(Cabang::class, 'id_cabang')
             ->withDefault(function () {
                 return new Cabang();
             });
     }
 
-    public function mutasi(){
+    public function mutasi()
+    {
         return $this->belongsTo(MutasiBank::class, 'id_mutasi_bank')
             ->withDefault(function () {
                 return new MutasiBank();
             });
     }
 
-    public function log_tab(){
+    public function log_tab()
+    {
         return $this->belongsTo(TabDebt::class, 'id_log_tabungan')
             ->withDefault(function () {
                 return new TabDebt();
             });
     }
 
-    public function info_acc(){
+    public function info_acc()
+    {
         return $this->belongsTo(InfoACC::class, 'id_info_analisa_cc')
             ->withDefault(function () {
                 return new InfoACC();
             });
     }
 
-    public function ringkasan(){
+    public function ringkasan()
+    {
         return $this->belongsTo(RingkasanAnalisa::class, 'id_ringkasan_analisa')
             ->withDefault(function () {
                 return new RingkasanAnalisa();
             });
     }
 
-    public function recom_ca(){
+    public function recom_ca()
+    {
         return $this->belongsTo(RekomendasiCA::class, 'id_recom_ca')
             ->withDefault(function () {
                 return new RekomendasiCA();
             });
     }
 
-    public function recom_pin(){
+    public function recom_pin()
+    {
         return $this->belongsTo(RekomendasiPinjaman::class, 'id_rekomendasi_pinjaman')
             ->withDefault(function () {
                 return new RekomendasiPinjaman();
             });
     }
 
-    public function as_jiwa(){
+    public function as_jiwa()
+    {
         return $this->belongsTo(AsuransiJiwa::class, 'id_asuransi_jiwa')
             ->withDefault(function () {
                 return new AsuransiJiwa();
             });
     }
 
-    public function as_jaminan(){
+    public function as_jaminan()
+    {
         return $this->belongsTo(AsuransiJaminan::class, 'id_asuransi_jaminan')
             ->withDefault(function () {
                 return new AsuransiJaminan();
             });
     }
 
-    public function kapbul(){
+    public function kapbul()
+    {
         return $this->belongsTo(KapBulanan::class, 'id_kapasitas_bulanan')
             ->withDefault(function () {
                 return new KapBulanan();
             });
     }
 
-    public function usaha(){
+    public function usaha()
+    {
         return $this->belongsTo(PendapatanUsaha::class, 'id_pendapatan_usaha')
             ->withDefault(function () {
                 return new PendapatanUsaha();

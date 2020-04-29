@@ -4,12 +4,14 @@ namespace App\Http\Controllers;
 
 use Laravel\Lumen\Routing\Controller as BaseController;
 use Illuminate\Support\Facades\File;
-use Image;
+//use Intervention\Image\Facades\Image;
+use intervention\image\Imagick;
+
 class Controller extends BaseController
 {
     public static function push_notif($fcm_token, $title, $msg)
     {
-        define('API_ACCESS_KEY','AAAAt-7q_AI:APA91bH6xE4YaKuoiKoHqBIJY3O3vN9nvwZByWKi8UIoPrleakjmMK2wYg8AkISiuj4zEyiuHn5PjCxV2dV3ZYQfLDhXA7QZVoBCp5v_vbK3SbbpgseuIgb8qhBVzc48dEa8PXjQ_423');
+        define('API_ACCESS_KEY', 'AAAAt-7q_AI:APA91bH6xE4YaKuoiKoHqBIJY3O3vN9nvwZByWKi8UIoPrleakjmMK2wYg8AkISiuj4zEyiuHn5PjCxV2dV3ZYQfLDhXA7QZVoBCp5v_vbK3SbbpgseuIgb8qhBVzc48dEa8PXjQ_423');
 
         $url = 'https://fcm.googleapis.com/fcm/send';
 
@@ -87,7 +89,8 @@ class Controller extends BaseController
         return $result;
     }
 
-    public static function img64enc($file) {
+    public static function img64enc($file)
+    {
         $type = pathinfo($file, PATHINFO_EXTENSION);
         $extention = $file->getClientOriginalExtension();
         $data = file_get_contents($file);
@@ -96,14 +99,15 @@ class Controller extends BaseController
         return $base64;
     }
 
-    public static function group_by($key, $array) {
+    public static function group_by($key, $array)
+    {
         $result = array();
         $q = 0;
-        foreach($array as $keys =>  $val) {
-            if(array_key_exists($key, $val)){
+        foreach ($array as $keys =>  $val) {
+            if (array_key_exists($key, $val)) {
                 $result[$val[$key]]['tgl'] = $val[$key];
                 $result[$val[$key]]['list'][] = $val;
-            }else{
+            } else {
                 $result[""][] = $val;
             }
         }
@@ -111,17 +115,16 @@ class Controller extends BaseController
         return $result;
     }
 
-    public static function checkDir($scope, $query_dir, $id_area, $id_cabang){
+    public static function checkDir($scope, $query_dir, $id_area, $id_cabang)
+    {
 
-        if($scope == 'PUSAT'){
+        if ($scope == 'PUSAT') {
 
             $query = $query_dir;
-
-        }elseif($scope == 'AREA'){
+        } elseif ($scope == 'AREA') {
 
             $query = $query_dir->where('id_area', $id_area);
-
-        }else{
+        } else {
 
             $query = $query_dir->where('id_cabang', $id_cabang);
         }
@@ -129,10 +132,11 @@ class Controller extends BaseController
         return $query;
     }
 
-    public static function recom_angs($plafon, $tenor, $bunga){
+    public static function recom_angs($plafon, $tenor, $bunga)
+    {
         if ($plafon == 0 || $tenor == 0 || $bunga == 0) {
             $result = 0;
-        }else{
+        } else {
             $exec   = ($plafon + ($plafon * $tenor * $bunga)) / $tenor;
             $result = ceil($exec / 1000) * 1000;
         }
@@ -140,41 +144,45 @@ class Controller extends BaseController
         return (int) $result;
     }
 
-    public static function recom_ltv($plafon, $sumAllTaksasi){
+    public static function recom_ltv($plafon, $sumAllTaksasi)
+    {
         if ($sumAllTaksasi == 0) {
             $result = 0.00;
-        }else{
+        } else {
             $result = ($plafon / $sumAllTaksasi) * 100;
         }
 
         return round($result, 2);
     }
 
-    public static function recom_idir($recom_angs, $rekomen_pendapatan, $rekomen_pengeluaran){
+    public static function recom_idir($recom_angs, $rekomen_pendapatan, $rekomen_pengeluaran)
+    {
         $selisih = $rekomen_pendapatan - $rekomen_pengeluaran;
 
         if ($recom_angs == 0 || $selisih == 0) {
             $result = 0.00;
-        }else{
+        } else {
             $result = ($recom_angs / $selisih) * 100;
         }
 
         return round($result, 2);
     }
 
-    public static function recom_dsr($recom_angs, $rekomen_pendapatan, $rekomen_angsuran){
+    public static function recom_dsr($recom_angs, $rekomen_pendapatan, $rekomen_angsuran)
+    {
         $selisih = $rekomen_pendapatan - $rekomen_angsuran;
 
         if ($recom_angs == 0 || $selisih == 0) {
             $result = 0.00;
-        }else{
+        } else {
             $result = ($recom_angs / ($rekomen_pendapatan - $rekomen_angsuran)) * 100;
         }
 
         return round($result, 2);
     }
 
-    public static function recom_hasil($recom_dsr, $recom_ltv, $recom_idir){
+    public static function recom_hasil($recom_dsr, $recom_ltv, $recom_idir)
+    {
         $staticMin    = 35;
         $staticMax    = 80;
         $ltvMax       = 70;
@@ -182,33 +190,27 @@ class Controller extends BaseController
         if ($recom_dsr <= $staticMin && $recom_ltv <= $ltvMax && $recom_idir > 0 && $recom_idir < $staticMax) {
 
             $result = 'LAYAK';
-
-        }elseif ($recom_dsr <= $staticMin && $recom_ltv > $ltvMax) {
-
-            $result = 'DIPERTIMBANGKAN';
-
-        }elseif ($recom_dsr > $staticMin && $recom_ltv <= $ltvMax) {
+        } elseif ($recom_dsr <= $staticMin && $recom_ltv > $ltvMax) {
 
             $result = 'DIPERTIMBANGKAN';
-
-        }elseif ($recom_dsr <= $staticMin && $recom_ltv <= $ltvMax) {
+        } elseif ($recom_dsr > $staticMin && $recom_ltv <= $ltvMax) {
 
             $result = 'DIPERTIMBANGKAN';
+        } elseif ($recom_dsr <= $staticMin && $recom_ltv <= $ltvMax) {
 
-        }else{
+            $result = 'DIPERTIMBANGKAN';
+        } else {
 
             $result = 'RESIKO TINGGI';
-
         }
 
         return $result;
     }
 
-    public static function second_flip_array($array){
-        foreach ($array as $key => $subarr)
-        {
-            foreach ($subarr as $subkey => $subvalue)
-            {
+    public static function second_flip_array($array)
+    {
+        foreach ($array as $key => $subarr) {
+            foreach ($subarr as $subkey => $subvalue) {
                 $out[$subkey][$key] = ($subvalue);
             }
         }
@@ -216,13 +218,11 @@ class Controller extends BaseController
         return $out;
     }
 
-    public static function third_flip_array($array){
-        foreach ($array as $key => $subarr)
-        {
-            foreach ($subarr as $subkey => $subvalue)
-            {
-                foreach($subvalue as $childkey => $childvalue)
-                {
+    public static function third_flip_array($array)
+    {
+        foreach ($array as $key => $subarr) {
+            foreach ($subarr as $subkey => $subvalue) {
+                foreach ($subvalue as $childkey => $childvalue) {
                     $out[$key][$childkey][$subkey] = ($childvalue);
                 }
             }
@@ -234,27 +234,26 @@ class Controller extends BaseController
     public static function uploadImg($check, $file, $path, $name)
     {
         // Check Directory
-        if(!File::isDirectory($path)){
+        if (!File::isDirectory($path)) {
             File::makeDirectory($path, 0777, true, true);
         }
-        
+
         // Delete File is Exists
-        if(!empty($check))
-        {
+        if (!empty($check)) {
             File::delete($check);
         }
 
-        if($name != ''){
+        if ($name != '') {
             $namefile = $name . '.' . $file->getClientOriginalName();
-        }else{
+        } else {
             $namefile = $file->getClientOriginalName();
         }
 
-        $fullPath = $path.'/'.$namefile;
-        
-        if($file->getClientMimeType() == "application/pdf"){
+        $fullPath = $path . '/' . $namefile;
+
+        if ($file->getClientMimeType() == "application/pdf") {
             $file->move($path, $namefile);
-        }else{
+        } else {
             // cut size image
             Image::make(realpath($file))->save($fullPath);
 
@@ -266,7 +265,7 @@ class Controller extends BaseController
             //     return $image->make($file)->resize(480, 360)->save($fullPath);
             // });
         }
-        
+
         return $fullPath;
     }
 }

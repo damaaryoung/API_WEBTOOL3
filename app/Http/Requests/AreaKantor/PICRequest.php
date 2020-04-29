@@ -28,7 +28,7 @@ class PICRequest extends FormRequest
 
         switch ($method) {
             case 'POST':
-                $user_id      = 'required|integer|unique:web.m_pic,user_id';
+                $user_id      = 'required|integer';
                 $email        = 'email|unique:web.m_pic,email';
                 $nama         = 'required|unique:web.m_pic,nama';
                 $id_mk_area   = 'required|integer';
@@ -37,9 +37,9 @@ class PICRequest extends FormRequest
                 break;
 
             case 'PUT':
-                $user_id = ($check==null ? 'integer|unique:web.m_pic,user_id' : 'integer|unique:web.m_pic,user_id,'.$check->id);
-                $email   = ($check==null ? 'email|unique:web.m_pic,email'     : 'email|unique:web.m_pic,email,'.$check->id);
-                $nama    = ($check==null ? 'unique:web.m_pic,nama'            : 'unique:web.m_pic,nama,'.$check->id);
+                $user_id = ($check == null ? 'integer|unique:web.m_pic,user_id' : 'integer|unique:web.m_pic,user_id,' . $check->id);
+                $email   = ($check == null ? 'email|unique:web.m_pic,email'     : 'email|unique:web.m_pic,email,' . $check->id);
+                $nama    = ($check == null ? 'unique:web.m_pic,nama'            : 'unique:web.m_pic,nama,' . $check->id);
                 $id_mk_area   = 'integer';
                 $id_mk_cabang = 'integer';
                 $id_mj_pic    = 'integer';
@@ -53,10 +53,11 @@ class PICRequest extends FormRequest
             'id_mk_cabang' => $id_mk_cabang,
             'id_mj_pic'    => $id_mj_pic,
             'nama'         => $nama
-       ];
+        ];
     }
 
-    public function messages(){
+    public function messages()
+    {
         return [
             'user_id.required'      => ':attribute wajib diisi',
             'id_mk_area.required'   => ':attribute wajib diisi',

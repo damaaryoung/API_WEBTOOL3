@@ -10,8 +10,9 @@ use App\Models\Pengajuan\AO\AgunanKendaraan;
 use App\Models\Pengajuan\AO\PemeriksaanAgunTan;
 use App\Models\Pengajuan\AO\PemeriksaanAgunKen;
 use App\Models\Pengajuan\SO\FasilitasPinjaman;
-
+use App\Models\Pengajuan\SO\Debitur;
 use App\Models\Pengajuan\CA\AsuransiJaminan;
+use App\Models\Pengajuan\CA\AsuransiJaminanKen;
 use App\Models\Pengajuan\AO\PendapatanUsaha;
 use App\Models\Pengajuan\SO\Penjamin;
 use App\Http\Controllers\Controller as Helper;
@@ -248,6 +249,7 @@ class MasterCA_Controller extends BaseController
 
         $vals = Helper::checkDir($scope, $query_dir, $id_area, $id_cabang);
         $val = $vals->first();
+        // dd($val->so['debt']);
         $data_faspin = FasilitasPinjaman::select('id', 'jenis_pinjaman', 'tujuan_pinjaman', 'plafon', 'tenor', 'segmentasi_bpr')->where('id', $val->so['id_fasilitas_pinjaman'])->first();
         //  dd($data_faspin);
         if (empty($val)) {
@@ -339,7 +341,28 @@ class MasterCA_Controller extends BaseController
             $status_ca = 'waiting';
         }
 
+        $value = Debitur::with('prov_ktp', 'kab_ktp', 'kec_ktp', 'kel_ktp', 'prov_dom', 'kab_dom', 'kec_dom', 'kel_dom', 'prov_kerja', 'kab_kerja', 'kec_kerja', 'kel_kerja')
+            ->where('id', $id)->first();
 
+        if (empty($val)) {
+            return response()->json([
+                'code'    => 404,
+                'status'  => 'not found',
+                'message' => 'Data Debitur Kosong'
+            ], 404);
+        }
+
+        $nama_anak = explode(",", $value->nama_anak);
+        $tgl_anak  = explode(",", $value->tgl_lahir_anak);
+
+        for ($i = 0; $i < count($nama_anak); $i++) {
+            $anak[] = array(
+                'nama'      => $nama_anak[$i],
+                'tgl_lahir' => empty($tgl_anak[$i]) ? null : Carbon::parse($tgl_anak[$i])->format("d-m-Y")
+            );
+        }
+
+        //   dd($val->so['debt']);
         $data = array(
             'id_trans_so'    => $val->id_trans_so == null ? null : (int) $val->id_trans_so,
             'nomor_so'       => $val->so['nomor_so'],
@@ -386,6 +409,7 @@ class MasterCA_Controller extends BaseController
                 'tempat_lahir'          => $val->so['debt']['tempat_lahir'],
                 'tgl_lahir'             => $val->so['debt']['tgl_lahir'],
                 'agama'                 => $val->so['debt']['agama'],
+                'anak'             => $anak,
                 'alamat_ktp' => [
                     'alamat_singkat' => $val->so['debt']['alamat_ktp'],
                     'rt'     => $val->so['debt']['rt_ktp'] == null ? null : (int) $val->so['debt']['rt_ktp'],
@@ -980,45 +1004,59 @@ class MasterCA_Controller extends BaseController
             'umur_nasabah'        => $req->input('umur_nasabah_as_jiwa')
         );
 
+        $asjaminanKeb = array(
+            'nama_asuransi'       => $req->input('nama_asuransi_keb'),
+            'jangka_waktu'        => $req->input('jangka_waktu_asuransi_keb'),
+            'nilai_pertanggungan' => $req->input('nilai_pertanggungan_keb'),
+            'jatuh_tempo'         => $req->input('jatuh_tempo_keb'),
+        );
 
-        if (!empty($req->input('jangka_waktu_as_jaminan'))) {
+        $asjaminanKen = array(
+            'nama_asuransi'       => $req->input('nama_asuransi_ken'),
+            'jangka_waktu'        => $req->input('jangka_waktu_asuransi_ken'),
+            'nilai_pertanggungan' => $req->input('nilai_pertanggungan_ken'),
+            'jatuh_tempo'         => $req->input('jatuh_tempo_ken'),
+        );
 
-            $asJaminan = array();
-            for ($i = 0; $i < count($req->input('jangka_waktu_as_jaminan')); $i++) {
 
-                $asJaminan[] = array(
-                    'nama_asuransi'
-                    => empty($req->input('nama_asuransi_jaminan')[$i])
-                        ? null : $req->nama_asuransi_jaminan[$i],
+        // if (!empty($req->input('jangka_waktu_as_jaminan'))) {
 
-                    'jangka_waktu'
-                    => empty($req->input('jangka_waktu_as_jaminan')[$i])
-                        ? null : $req->jangka_waktu_as_jaminan[$i],
+        //     $asJaminan = array();
+        //     for ($i = 0; $i < count($req->input('jangka_waktu_as_jaminan')); $i++) {
 
-                    'nilai_pertanggungan'
-                    => empty($req->input('nilai_pertanggungan_as_jaminan')[$i])
-                        ? null : $req->nilai_pertanggungan_as_jaminan[$i],
+        //         $asJaminan[] = array(
+        //             'nama_asuransi'
+        //             => empty($req->input('nama_asuransi_jaminan')[$i])
+        //                 ? null : $req->nama_asuransi_jaminan[$i],
 
-                    'jatuh_tempo'
-                    => empty($req->input('jatuh_tempo_as_jaminan')[$i])
-                        ? null : Carbon::parse($req->jatuh_tempo_as_jaminan[$i])->format('Y-m-d')
-                );
-            }
+        //             'jangka_waktu'
+        //             => empty($req->input('jangka_waktu_as_jaminan')[$i])
+        //                 ? null : $req->jangka_waktu_as_jaminan[$i],
 
-            $jaminanImplode = array(
-                'nama_asuransi'       => implode(";", array_column($asJaminan, 'nama_asuransi')),
-                'jangka_waktu'        => implode(";", array_column($asJaminan, 'jangka_waktu')),
-                'nilai_pertanggungan' => implode(";", array_column($asJaminan, 'nilai_pertanggungan')),
-                'jatuh_tempo'         => implode(";", array_column($asJaminan, 'jatuh_tempo'))
-            );
-        } else {
-            $jaminanImplode = array(
-                'nama_asuransi'       => null,
-                'jangka_waktu'        => null,
-                'nilai_pertanggungan' => null,
-                'jatuh_tempo'         => null
-            );
-        }
+        //             'nilai_pertanggungan'
+        //             => empty($req->input('nilai_pertanggungan_as_jaminan')[$i])
+        //                 ? null : $req->nilai_pertanggungan_as_jaminan[$i],
+
+        //             'jatuh_tempo'
+        //             => empty($req->input('jatuh_tempo_as_jaminan')[$i])
+        //                 ? null : Carbon::parse($req->jatuh_tempo_as_jaminan[$i])->format('Y-m-d')
+        //         );
+        //     }
+
+        //     $jaminanImplode = array(
+        //         'nama_asuransi'       => implode(";", array_column($asJaminan, 'nama_asuransi')),
+        //         'jangka_waktu'        => implode(";", array_column($asJaminan, 'jangka_waktu')),
+        //         'nilai_pertanggungan' => implode(";", array_column($asJaminan, 'nilai_pertanggungan')),
+        //         'jatuh_tempo'         => implode(";", array_column($asJaminan, 'jatuh_tempo'))
+        //     );
+        // } else {
+        //     $jaminanImplode = array(
+        //         'nama_asuransi'       => null,
+        //         'jangka_waktu'        => null,
+        //         'nilai_pertanggungan' => null,
+        //         'jatuh_tempo'         => null
+        //     );
+        // }
 
         try {
             DB::connection('web')->beginTransaction();
@@ -1076,12 +1114,20 @@ class MasterCA_Controller extends BaseController
                 $idJiwa = null;
             }
 
-            if (!empty($jaminanImplode)) {
-                $jaminan = AsuransiJaminan::create($jaminanImplode);
-                $idJaminan = $jaminan->id;
+            if (!empty($asjaminanKeb)) {
+                $jaminan = AsuransiJaminan::create($asjaminanKeb);
+                $idJaminanKeb = $jaminan->id;
             } else {
-                $idJaminan = null;
+                $idJaminanKeb = null;
             }
+
+            if (!empty($asjaminanKen)) {
+                $jaminan = AsuransiJaminanKen::create($asjaminanKen);
+                $idJaminanKen = $jaminan->id;
+            } else {
+                $idJaminanKen = null;
+            }
+
 
             if (!empty($recomCA)) {
                 $reCA = RekomendasiCA::create($recomCA);;
@@ -1112,7 +1158,8 @@ class MasterCA_Controller extends BaseController
                 'id_recom_ca'             => $idReCA,
                 'id_rekomendasi_pinjaman' => $idrecomPin,
                 'id_asuransi_jiwa'        => $idJiwa,
-                'id_asuransi_jaminan'     => $idJaminan,
+                'id_asuransi_jaminan_kebakaran'     => $idJaminanKeb,
+                'id_asuransi_jaminan_kendaraan'     => $idJaminanKen,
                 'id_kapasitas_bulanan'    => $idKapBul,
                 'id_pendapatan_usaha'     => $idPendUs
             );
@@ -1906,7 +1953,7 @@ class MasterCA_Controller extends BaseController
 
         // $check_ca->getRelations(); // get all the related models
         // $check_ca->getRelation('author'); // to get only related author model
-
+        //     dd($check_ca->id_asuransi_jaminan_kendaraan);
         $data[] = [
             'id_trans_so'           => $check_so->id == null ? null : (int) $check_so->id,
             'nomor_so'              => $check_so->nomor_so,
@@ -1925,7 +1972,8 @@ class MasterCA_Controller extends BaseController
             'rekomendasi_pinjaman'  => $check_ca->recom_pin,
             'rekomendasi_ca'        => $check_ca->recom_ca,
             'asuransi_jiwa'         => $check_ca->as_jiwa,
-            'asuransi_jaminan'      => AsuransiJaminan::whereIn('id', explode(";", $check_ca->id_asuransi_jaminan))->get()->toArray(),
+            'asuransi_jaminan_kebakaran'      => AsuransiJaminan::where('id', $check_ca->id_asuransi_jaminan_kebakaran)->get(),
+            'asuransi_jaminan_kendaraan'      => AsuransiJaminanKen::whereIn('id', explode(";", $check_ca->id_asuransi_jaminan_kendaraan))->get(),
             'status_ca'             => $status_ca,
             'tgl_transaksi'         => $check_ca->created_at
         ];

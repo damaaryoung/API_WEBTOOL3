@@ -140,12 +140,19 @@ class DebiturController extends BaseController
             'no_hp'                 => $val->no_hp,
             'alamat_surat'          => $val->alamat_surat,
             'lampiran' => [
+                'lamp_surat_cerai'  => $val->lamp_surat_cerai,
                 'lamp_ktp'              => $val->lamp_ktp,
                 'lamp_kk'               => $val->lamp_kk,
-                'lamp_buku_tabungan'    => $val->lamp_buku_tabungan,
-                'lamp_sertifikat'       => $val->lamp_sertifikat,
+                'lamp_slip_gaji'        => $val->lamp_slip_gaji,
                 'lamp_sttp_pbb'         => $val->lamp_sttp_pbb,
+                'lamp_sertifikat'       => $val->lamp_sertifikat,
                 'lamp_imb'              => $val->lamp_imb,
+                'lamp_skk'              => $val->lamp_skk,
+                'lamp_sku'              => $val->lamp_sku,
+                'lamp_foto_usaha'       => $val->lamp_foto_usaha,
+                'foto_pembukuan_usaha'  => $val->foto_pembukuan_usaha,
+                'lamp_tempat_tinggal'   => $val->lamp_tempat_tinggal,
+                'lamp_buku_tabungan'    => $val->lamp_buku_tabungan,
                 'foto_agunan_rumah'     => $val->foto_agunan_rumah
             ]
         );
@@ -495,10 +502,10 @@ class DebiturController extends BaseController
                 ? $check_debt->id_kel_tempat_kerja : $req->input('id_kel_tempat_kerja'),
 
             'rt_tempat_kerja'       => empty($req->input('rt_tempat_kerja')) ?
-                $check_debt->rt_tempat_usaha : $req->input('rt_tempat_kerja'),
+                $check_debt->rt_tempat_kerja : $req->input('rt_tempat_kerja'),
 
             'rw_tempat_kerja'       => empty($req->input('rw_tempat_kerja')) ?
-                $check_debt->rw_tempat_usaha : $req->input('rw_tempat_kerja'),
+                $check_debt->rw_tempat_kerja : $req->input('rw_tempat_kerja'),
 
             'tgl_mulai_kerja'       => empty($req->input('tgl_mulai_kerja'))
                 ? $check_debt->tgl_mulai_kerja : Carbon::parse($req->input('tgl_mulai_kerja'))->format('Y-m-d'),

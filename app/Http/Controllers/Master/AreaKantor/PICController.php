@@ -16,18 +16,19 @@ use Cache;
 
 class PICController extends BaseController
 {
-    public function __construct() {
+    public function __construct()
+    {
         $this->time_cache = config('app.cache_exp');
         $this->chunk      = 50;
     }
 
-    public function index() 
+    public function index()
     {
         $data = array();
 
         // $query = Cache::remember('pic.index', $this->time_cache, function () use ($data) {
-            
-            PIC::select('id', 'nama', 'email', 'user_id', 'id_area', 'id_cabang', 'plafon_caa as plafon_max')
+
+        PIC::select('id', 'nama', 'email', 'user_id', 'id_area', 'id_cabang', 'plafon_caa as plafon_max')
             ->addSelect([
                 'jenis_pic'   => JPIC::select('nama_jenis')->whereColumn('id_mj_pic', 'mj_pic.id'),
                 'nama_area'   => Area::select('nama')->whereColumn('id_area', 'mk_area.id'),
@@ -35,15 +36,13 @@ class PICController extends BaseController
             ])
             ->where('flg_aktif', 1)
             ->orderBy('nama', 'asc')
-            ->chunk($this->chunk, function($chunks) use (&$data) 
-            {
-               foreach($chunks as $chunk)
-               {
-                   $data[] = $chunk;
-               }
+            ->chunk($this->chunk, function ($chunks) use (&$data) {
+                foreach ($chunks as $chunk) {
+                    $data[] = $chunk;
+                }
             });
 
-            // return $data;
+        // return $data;
         // });
 
         if (empty($data)) {
@@ -99,10 +98,19 @@ class PICController extends BaseController
         }
     }
 
-    public function show($id) 
+    public function show($id)
     {
         $query = PIC::select(
-            "id","nama","email","user_id","id_mj_pic as id_jenis_pic","id_area","id_cabang","plafon_caa as plafon_max","flg_aktif", "created_at"
+            "id",
+            "nama",
+            "email",
+            "user_id",
+            "id_mj_pic as id_jenis_pic",
+            "id_area",
+            "id_cabang",
+            "plafon_caa as plafon_max",
+            "flg_aktif",
+            "created_at"
         )->addSelect([
             'nama_jenis_pic' => JPIC::select('nama_jenis')->whereColumn('id_mj_pic', 'mj_pic.id'),
             'nama_area'      => Area::select('nama')->whereColumn('id_area', 'mk_area.id'),
@@ -116,7 +124,7 @@ class PICController extends BaseController
                 'message' => 'Data tidak ada'
             ], 404);
         }
-    
+
         try {
             return response()->json([
                 'code'   => 200,
@@ -132,10 +140,10 @@ class PICController extends BaseController
         }
     }
 
-    public function update($id, PICRequest $req) 
+    public function update($id, PICRequest $req)
     {
         $check = PIC::where('id', $id)->first();
-
+        //dd($check);
         if (empty($check)) {
             return response()->json([
                 'code'    => 404,
@@ -172,7 +180,7 @@ class PICController extends BaseController
         }
     }
 
-    public function delete($id) 
+    public function delete($id)
     {
         PIC::where('id', $id)->update(['flg_aktif' => 0]);
 
@@ -180,7 +188,7 @@ class PICController extends BaseController
             return response()->json([
                 'code'    => 200,
                 'status'  => 'success',
-                'message' => 'Data dengan id '.$id.' berhasil dihapus'
+                'message' => 'Data dengan id ' . $id . ' berhasil dihapus'
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
@@ -191,27 +199,25 @@ class PICController extends BaseController
         }
     }
 
-    public function trash() 
+    public function trash()
     {
         $data = array();
 
         PIC::select('id', 'nama', 'email', 'user_id', 'id_area', 'id_cabang', 'plafon_caa as plafon_max')
-        ->addSelect([
-            'jenis_pic'   => JPIC::select('nama_jenis')->whereColumn('id_mj_pic', 'mj_pic.id'),
-            'nama_area'   => Area::select('nama')->whereColumn('id_area', 'mk_area.id'),
-            'nama_cabang' => Cabang::select('nama')->whereColumn('id_cabang', 'mk_cabang.id'),
-        ])
-        ->where('flg_aktif', 1)
-        ->orderBy('nama', 'asc')
-        ->chunk($this->chunk, function($chunks) use (&$data) 
-        {
-            foreach($chunks as $chunk)
-            {
-                $data[] = $chunk;
-            }
-        });
+            ->addSelect([
+                'jenis_pic'   => JPIC::select('nama_jenis')->whereColumn('id_mj_pic', 'mj_pic.id'),
+                'nama_area'   => Area::select('nama')->whereColumn('id_area', 'mk_area.id'),
+                'nama_cabang' => Cabang::select('nama')->whereColumn('id_cabang', 'mk_cabang.id'),
+            ])
+            ->where('flg_aktif', 1)
+            ->orderBy('nama', 'asc')
+            ->chunk($this->chunk, function ($chunks) use (&$data) {
+                foreach ($chunks as $chunk) {
+                    $data[] = $chunk;
+                }
+            });
 
-        if (empty($data)){
+        if (empty($data)) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
@@ -235,7 +241,7 @@ class PICController extends BaseController
         }
     }
 
-    public function restore($id) 
+    public function restore($id)
     {
         PIC::where('id', $id)->update(['flg_aktif' => 1]);
 
@@ -260,7 +266,7 @@ class PICController extends BaseController
             'id', 'user_id', 'id_area', 'id_cabang', 'id_mj_pic', 'nama', 'email'
         );
 
-        if($param != 'filter' && $param != 'search'){
+        if ($param != 'filter' && $param != 'search') {
             return response()->json([
                 'code'    => 412,
                 'status'  => 'not valid',
@@ -268,45 +274,43 @@ class PICController extends BaseController
             ], 412);
         }
 
-        if (in_array($key, $column) == false)
-        {
+        if (in_array($key, $column) == false) {
             return response()->json([
                 'code'    => 412,
                 'status'  => 'not valid',
-                'message' => 'gunakan key yang valid diantara berikut: '.implode(",", $column)
+                'message' => 'gunakan key yang valid diantara berikut: ' . implode(",", $column)
             ], 412);
         }
 
-        if (in_array($orderBy, $column) == false)
-        {
+        if (in_array($orderBy, $column) == false) {
             return response()->json([
                 'code'    => 412,
                 'status'  => 'not valid',
-                'message' => 'gunakan order by yang valid diantara berikut: '.implode(",", $column)
+                'message' => 'gunakan order by yang valid diantara berikut: ' . implode(",", $column)
             ], 412);
         }
 
-        if($param == 'search'){
+        if ($param == 'search') {
             $operator   = "like";
             $func_value = "%{$value}%";
-        }else{
+        } else {
             $operator   = "=";
             $func_value = "{$value}";
         }
 
-        $query = PIC::with('jpic','area','cabang')
+        $query = PIC::with('jpic', 'area', 'cabang')
             ->where('flg_aktif', $status)
             ->orderBy($orderBy, $orderVal);
 
-        if($value == 'default'){
+        if ($value == 'default') {
             $res = $query;
-        }else{
+        } else {
             $res = $query->where($key, $operator, $func_value);
         }
 
-        if($limit == 'default'){
+        if ($limit == 'default') {
             $result = $res->get();
-        }else{
+        } else {
             $result = $res->limit($limit)->get();
         }
 
@@ -321,7 +325,7 @@ class PICController extends BaseController
         $data = array();
 
         foreach ($result as $key => $val) {
-            $data[$key]= [
+            $data[$key] = [
                 "id"          => $val->id,
                 "nama"        => $val->nama,
                 "email"       => $val->email,

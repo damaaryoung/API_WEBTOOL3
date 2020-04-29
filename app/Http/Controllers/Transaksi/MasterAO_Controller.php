@@ -21,6 +21,7 @@ use App\Models\Transaksi\TransSO;
 use App\Models\Transaksi\TransAO;
 use App\Models\AreaKantor\JPIC;
 use App\Models\AreaKantor\PIC;
+use App\Models\Pengajuan\SO\FasilitasPinjaman;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Image;
@@ -290,6 +291,7 @@ class MasterAO_Controller extends BaseController
             $status_ao = 'waiting';
         }
 
+        $faspin = FasilitasPinjaman::where('id', $val->id_fasilitas_pinjaman)->first();
         $data = array(
             'id'          => $val->id == null ? null : (int) $val->id,
             'nomor_so'    => $val->nomor_so,
@@ -324,7 +326,7 @@ class MasterAO_Controller extends BaseController
             ],
             'nama_marketing' => $val->nama_marketing,
             'fasilitas_pinjaman'  => [
-                'id'              => $val->id_fasilitas_pinjaman == null ? null : (int) $val->id_fasilitas_pinjaman
+                $faspin
             ],
 
             'data_debitur' => [
