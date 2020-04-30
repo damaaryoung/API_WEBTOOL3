@@ -109,7 +109,7 @@ class DebiturController extends BaseController
                 "posisi_pekerjaan"      => $val->posisi_pekerjaan,
                 "nama_tempat_kerja"     => $val->nama_tempat_kerja,
                 "jenis_pekerjaan"       => $val->jenis_pekerjaan,
-                "tgl_mulai_kerja"       => $val->tgl_mulai_kerja, //Carbon::parse($val->tgl_mulai_kerja)->format('d-m-Y'),
+                "tgl_mulai_kerja"       => Carbon::parse($val->tgl_mulai_kerja)->format('d-m-Y'),
                 "no_telp_tempat_kerja"  => $val->no_telp_tempat_kerja,
                 'alamat' => [
                     'alamat_singkat' => $val->alamat_tempat_kerja,

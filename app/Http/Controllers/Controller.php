@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Laravel\Lumen\Routing\Controller as BaseController;
 use Illuminate\Support\Facades\File;
-//use Intervention\Image\Facades\Image;
+use Intervention\Image\Facades\Image;
 use intervention\image\Imagick;
 
 class Controller extends BaseController

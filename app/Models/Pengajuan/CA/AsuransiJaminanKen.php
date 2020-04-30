@@ -26,10 +26,10 @@ class AsuransiJaminanKen extends Model implements AuthenticatableContract, Autho
         'nama_asuransi', 'jangka_waktu', 'nilai_pertanggungan', 'jatuh_tempo'
     ];
 
-    // protected $casts = [
-    //     'jangka_waktu' => 'integer',
-    //     'jatuh_tempo' => 'date:d-m-Y'
-    // ];
+    protected $casts = [
+        'jangka_waktu' => 'integer',
+        'jatuh_tempo' => 'date:d-m-Y'
+    ];
 
     public $timestamps = false;
 }

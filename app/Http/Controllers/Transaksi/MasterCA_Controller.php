@@ -362,7 +362,7 @@ class MasterCA_Controller extends BaseController
             );
         }
 
-        //   dd($val->so['debt']);
+        //  dd($val);
         $data = array(
             'id_trans_so'    => $val->id_trans_so == null ? null : (int) $val->id_trans_so,
             'nomor_so'       => $val->so['nomor_so'],
@@ -1904,7 +1904,7 @@ class MasterCA_Controller extends BaseController
 
         $check_ca = TransCA::with('so', 'pic', 'cabang')->where('id_trans_so', $id)->where('status_ca', 1)->first();
         //  dd(date("d-m-Y", strtotime($check_ca->as_jiwa)));
-
+        //dd($check_ca->log_tab);
         if ($check_ca == null) {
             return response()->json([
                 'code'    => 404,
@@ -1953,14 +1953,14 @@ class MasterCA_Controller extends BaseController
 
         // $check_ca->getRelations(); // get all the related models
         // $check_ca->getRelation('author'); // to get only related author model
-        //     dd($check_ca->id_asuransi_jaminan_kendaraan);
+        //dd($check_ca->log_tab);
         $data[] = [
             'id_trans_so'           => $check_so->id == null ? null : (int) $check_so->id,
             'nomor_so'              => $check_so->nomor_so,
             'kapasitas_bulanan'     => $check_ca->kapbul,
             'pendapatan_usaha'      => $check_ca->usaha,
             'mutasi_bank'           => $dataMut,
-            'data_keuangan'         => $check_ca->log_tab,
+            'data_keuangan'         => DB::connection('web')->table('log_tabungan_debt')->where('id', $check_ca->log_tab['id'])->first(),
             'informasi_analisa_cc'  => array(
                 'table'         => $iac = InfoACC::whereIn('id', explode(",", $check_ca->id_info_analisa_cc))->get()->toArray(),
                 'total_plafon'  => array_sum(array_column($iac, 'plafon')),

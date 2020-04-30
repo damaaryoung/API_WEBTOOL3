@@ -232,7 +232,7 @@ class MasterAO_Controller extends BaseController
 
         $vals = Helper::checkDir($scope, $query_dir, $id_area, $id_cabang);
         $val  = $vals->first();
-
+        //    dd($val);
         if (empty($val)) {
             return response()->json([
                 'code'    => 404,

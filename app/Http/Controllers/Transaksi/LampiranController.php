@@ -4,11 +4,11 @@ namespace App\Http\Controllers\Transaksi;
 
 use Laravel\Lumen\Routing\Controller as BaseController;
 use App\Http\Controllers\Controller as Helper;
+use App\Models\Transaksi\TransAO;
 use Illuminate\Support\Facades\File;
 use App\Models\Transaksi\TransSO;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
-use Intervention\Image\ImageManagerStatic as Image;
 use Illuminate\Support\Facades\DB;
 
 class LampiranController extends BaseController
@@ -24,6 +24,8 @@ class LampiranController extends BaseController
                 'message' => 'Transaksi dengan id ' . $id_transaksi . ' tidak ditemukan'
             ], 404);
         }
+
+        $lamp_dir = 'public/' . $check_so->debt['no_ktp'];
 
         if ($file = $req->file('form_persetujuan_ideb')) {
             $formP = $file->getClientOriginalExtension();
@@ -45,39 +47,40 @@ class LampiranController extends BaseController
                 ], 422);
             }
 
-            $lamp_dir = public_path() . "/" . $check_so->debt['no_ktp'];
-            $path = $lamp_dir;
-            $image =  Image::make($file)->save($path);
+            $path = $lamp_dir . '/ideb';
+            $name = 'form_persetujuan_ideb';
 
-            //     $name = 'form_persetujuan_ideb';
-
-            //     $check_file = $check_so->form_persetujuan_ideb;
-            //     // dd($check_file);
-            //       $form_persetujuan_ideb = Helper::uploadImg($check_file, $file, $path, $name);
+            $check_file = $check_so->form_persetujuan_ideb;
+            $form_persetujuan_ideb = Helper::uploadImg($check_file, $file, $path, $name);
+            //  dd($form_persetujuan_ideb);
         } else {
             $form_persetujuan_ideb = $check_so->form_persetujuan_ideb;
         }
 
         DB::connection('web')->beginTransaction();
-        // try {
-        TransSO::where('id', $id_transaksi)->update([
-            'form_persetujuan_ideb' => $path
-        ]);
+        try {
+            TransSO::where('id', $id_transaksi)->update([
+                'form_persetujuan_ideb' => $form_persetujuan_ideb
+            ]);
+            $dd =   TransAO::where('id_trans_so', $id_transaksi)->update([
+                'form_persetujuan_ideb' => $form_persetujuan_ideb
+            ]);
+            //  dd($dd);
 
-        DB::connection('web')->commit();
-        return response()->json([
-            'code'    => 200,
-            'status'  => 'success',
-            'message' => 'lampiran berhasil di unggah',
-            'data'    => $path
-        ], 200);
-        // } catch (\Exception $e) {
-        //     DB::connection('web')->rollback();
-        //     return response()->json([
-        //         "code"    => 501,
-        //         "status"  => "error",
-        //         "message" => $e
-        //     ], 501);
-        // }
+            DB::connection('web')->commit();
+            return response()->json([
+                'code'    => 200,
+                'status'  => 'success',
+                'message' => 'lampiran berhasil di unggah',
+                'data'    => $form_persetujuan_ideb
+            ], 200);
+        } catch (\Exception $e) {
+            DB::connection('web')->rollback();
+            return response()->json([
+                "code"    => 501,
+                "status"  => "error",
+                "message" => $e
+            ], 501);
+        }
     }
 }

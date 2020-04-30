@@ -38,13 +38,14 @@ class TransSO extends Model implements AuthenticatableContract, AuthorizableCont
     protected $primaryKey = 'id';
 
     protected $fillable = [
-        'nomor_so', 'norev_so', 'user_id', 'id_pic', 'id_area', 'id_cabang', 'id_asal_data', 'nama_marketing', 'nama_so', 'id_fasilitas_pinjaman', 'id_calon_debitur', 'id_pasangan', 'id_penjamin', 'id_trans_ao', 'id_trans_ca', 'id_trans_caa', 'catatan_das', 'catatan_hm', 'status_das', 'status_hm', 'lamp_ideb', 'lamp_pefindo', 'flg_aktif'
+        'nomor_so', 'norev_so', 'user_id', 'id_pic', 'id_area', 'id_cabang', 'id_asal_data', 'nama_marketing', 'nama_so', 'id_fasilitas_pinjaman', 'id_calon_debitur', 'id_pasangan', 'id_penjamin', 'id_trans_ao', 'id_trans_ca', 'id_trans_caa', 'catatan_das', 'catatan_hm', 'status_das', 'status_hm', 'lamp_ideb', 'lamp_pefindo', 'form_persetujuan_ideb', 'flg_aktif'
     ];
 
     protected $casts = [
         'flg_aktif'  => 'boolean',
         'created_at' => 'date:m-d-Y H:i:s',
         'updated_at' => 'date:m-d-Y H:i:s'
+
     ];
 
     public function pic()
