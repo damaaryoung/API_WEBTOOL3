@@ -24,7 +24,7 @@ class HMController extends BaseController
 
         $query = Helper::checkDir($scope, $query_dir, $id_area, $id_cabang);
 
-        if ($query->get() == '[]') {
+        if ($query->get() === '[]') {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
@@ -37,25 +37,25 @@ class HMController extends BaseController
 
             if ($val->status_das == 1) {
                 $status_das = 'complete';
-            }elseif($val->status_das == 2){
+            } elseif ($val->status_das == 2) {
                 $status_das = 'not complete';
-            }else{
+            } else {
                 $status_das = 'waiting';
             }
 
             if ($val->status_hm == 1) {
                 $status_hm = 'complete';
-            }elseif ($val->status_hm == 2) {
+            } elseif ($val->status_hm == 2) {
                 $status_hm = 'not complete';
-            }else{
+            } else {
                 $status_hm = 'waiting';
             }
 
             if ($val->ao['status_ao'] == 1) {
                 $status_ao = 'recommend';
-            }elseif ($val->ao['status_ao'] == 2) {
+            } elseif ($val->ao['status_ao'] == 2) {
                 $status_ao = 'not recommend';
-            }else{
+            } else {
                 $status_ao = 'waiting';
             }
 
@@ -97,7 +97,7 @@ class HMController extends BaseController
 
     public function show($id, Request $req)
     {
-        $val = TransSO::with('asaldata','debt', 'pic')->where('id', $id)->first();
+        $val = TransSO::with('asaldata', 'debt', 'pic')->where('id', $id)->first();
         if ($val == null) {
             return response()->json([
                 'code'    => 404,
@@ -106,7 +106,7 @@ class HMController extends BaseController
             ], 404);
         }
 
-        $id_penj = explode (",",$val->id_penjamin);
+        $id_penj = explode(",", $val->id_penjamin);
 
         $pen = Penjamin::whereIn('id', $id_penj)->get();
 
@@ -132,24 +132,24 @@ class HMController extends BaseController
                     ]
                 ];
             }
-        }else{
+        } else {
             $penjamin = null;
         }
 
 
         if ($val->status_das == 1) {
             $status_das = 'complete';
-        }elseif($val->status_das == 2){
+        } elseif ($val->status_das == 2) {
             $status_das = 'not complete';
-        }else{
+        } else {
             $status_das = 'waiting';
         }
 
         if ($val->status_hm == 1) {
             $status_hm = 'complete';
-        }elseif ($val->status_hm == 2) {
+        } elseif ($val->status_hm == 2) {
             $status_hm = 'not complete';
-        }else{
+        } else {
             $status_hm = 'waiting';
         }
 
@@ -394,7 +394,7 @@ class HMController extends BaseController
             'status_hm'  => $req->input('status_hm')
         );
 
-        if($data['catatan_hm'] == null){
+        if ($data['catatan_hm'] == null) {
             return response()->json([
                 "code"    => 422,
                 "status"  => "bad request",
@@ -402,7 +402,7 @@ class HMController extends BaseController
             ], 422);
         }
 
-        if($data['status_hm'] == null){
+        if ($data['status_hm'] == null) {
             return response()->json([
                 "code"    => 422,
                 "status"  => "bad request",
@@ -420,9 +420,9 @@ class HMController extends BaseController
 
         if ($data['status_hm'] == 1) {
             $msg = 'berhasil menyetujui data';
-        }else if ($data['status_hm'] == 2) {
+        } else if ($data['status_hm'] == 2) {
             $msg = 'berhasil menolak data';
-        }else{
+        } else {
             $msg = 'waiting proccess';
         }
 
@@ -451,7 +451,7 @@ class HMController extends BaseController
             'id', 'nomor_so', 'user_id', 'id_pic', 'id_area', 'id_cabang', 'id_asal_data', 'nama_marketing', 'nama_so', 'id_fasilitas_pinjaman', 'id_calon_debitur', 'id_pasangan', 'id_penjamin', 'id_trans_ao', 'id_trans_ca', 'id_trans_caa', 'catatan_das', 'catatan_hm', 'status_das', 'status_hm', 'lamp_ideb', 'lamp_pefindo'
         );
 
-        if($param != 'filter' && $param != 'search'){
+        if ($param != 'filter' && $param != 'search') {
             return response()->json([
                 'code'    => 412,
                 'status'  => 'not valid',
@@ -459,45 +459,43 @@ class HMController extends BaseController
             ], 412);
         }
 
-        if (in_array($key, $column) == false)
-        {
+        if (in_array($key, $column) == false) {
             return response()->json([
                 'code'    => 412,
                 'status'  => 'not valid',
-                'message' => 'gunakan key yang valid diantara berikut: '.implode(",", $column)
+                'message' => 'gunakan key yang valid diantara berikut: ' . implode(",", $column)
             ], 412);
         }
 
-        if (in_array($orderBy, $column) == false)
-        {
+        if (in_array($orderBy, $column) == false) {
             return response()->json([
                 'code'    => 412,
                 'status'  => 'not valid',
-                'message' => 'gunakan order by yang valid diantara berikut: '.implode(",", $column)
+                'message' => 'gunakan order by yang valid diantara berikut: ' . implode(",", $column)
             ], 412);
         }
 
-        if($param == 'search'){
+        if ($param == 'search') {
             $operator   = "like";
             $func_value = "%{$value}%";
-        }else{
+        } else {
             $operator   = "=";
             $func_value = "{$value}";
         }
 
-        $query = TransSO::with('pic', 'cabang', 'asaldata','debt', 'faspin')
-        ->where('flg_aktif', $status)
-        ->orderBy($orderBy, $orderVal);
+        $query = TransSO::with('pic', 'cabang', 'asaldata', 'debt', 'faspin')
+            ->where('flg_aktif', $status)
+            ->orderBy($orderBy, $orderVal);
 
-        if($value == 'default'){
+        if ($value == 'default') {
             $res = $query;
-        }else{
+        } else {
             $res = $query->where($key, $operator, $func_value);
         }
 
-        if($limit == 'default'){
+        if ($limit == 'default') {
             $result = $res;
-        }else{
+        } else {
             $result = $res->limit($limit);
         }
 
@@ -514,17 +512,17 @@ class HMController extends BaseController
 
             if ($val->status_das == 1) {
                 $status_das = 'complete';
-            }elseif($val->status_das == 2){
+            } elseif ($val->status_das == 2) {
                 $status_das = 'not complete';
-            }else{
+            } else {
                 $status_das = 'waiting';
             }
 
             if ($val->status_hm == 1) {
                 $status_hm = 'complete';
-            }elseif ($val->status_hm == 2) {
+            } elseif ($val->status_hm == 2) {
                 $status_hm = 'not complete';
-            }else{
+            } else {
                 $status_hm = 'waiting';
             }
 

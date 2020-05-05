@@ -28,12 +28,19 @@ class AsJaminanController extends BaseController
                 'message'   => 'data not found'
             ], 404);
         }
+        $arrData = array();
+        foreach ($query as $key => $val) {
+            $arrData[$key]['nama_asuransi']       = $val->nama_asuransi;
+            $arrData[$key]['jangka_waktu']   = $val->jangka_waktu;
+            $arrData[$key]['nilai_pertanggungan']    = $val->nilai_pertanggungan;
+            $arrData[$key]['jatuh_tempo']   = Carbon::parse($val->jatuh_tempo)->format('d-m-Y');
+        }
 
         try {
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'data'   => $query
+                'data'   => $arrData
             ], 200);
         } catch (Exception $e) {
             return response()->json([

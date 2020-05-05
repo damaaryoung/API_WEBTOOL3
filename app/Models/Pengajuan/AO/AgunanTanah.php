@@ -33,33 +33,39 @@ class AgunanTanah extends Model implements AuthenticatableContract, Authorizable
 
     protected $casts = [
         'luas_tanah'    => 'integer',
-        'luas_bangunan' => 'integer'
+        'luas_bangunan' => 'integer',
+        'tgl_berlaku_shgb'  => 'date:d-m-Y'
+
     ];
 
     public $timestamps = false;
 
-    public function prov(){
+    public function prov()
+    {
         return $this->belongsTo(Provinsi::class, 'id_provinsi')->select(['id', 'nama'])
             ->withDefault(function () {
                 return new Provinsi();
             });
     }
 
-    public function kab(){
+    public function kab()
+    {
         return $this->belongsTo(Kabupaten::class, 'id_kabupaten')->select(['id', 'nama'])
             ->withDefault(function () {
                 return new Kabupaten();
             });
     }
 
-    public function kec(){
+    public function kec()
+    {
         return $this->belongsTo(Kecamatan::class, 'id_kecamatan')->select(['id', 'nama'])
             ->withDefault(function () {
                 return new Kecamatan();
             });
     }
 
-    public function kel(){
+    public function kel()
+    {
         return $this->belongsTo(Kelurahan::class, 'id_kelurahan')->select(['id', 'nama', 'kode_pos'])
             ->withDefault(function () {
                 return new Kelurahan();

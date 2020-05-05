@@ -252,7 +252,7 @@ class MasterAO_Controller extends BaseController
                 'no_ktp'            => $pen->no_ktp,
                 'no_npwp'           => $pen->no_npwp,
                 'tempat_lahir'      => $pen->tempat_lahir,
-                'tgl_lahir'         => $pen->tgl_lahir,
+                'tgl_lahir'         => Carbon::parse($pen->tgl_lahir)->format('d-m-Y'),
                 'jenis_kelamin'     => $pen->jenis_kelamin,
                 'alamat_ktp'        => $pen->alamat_ktp,
                 'no_telp'           => $pen->no_telp,
@@ -344,7 +344,7 @@ class MasterAO_Controller extends BaseController
                 'no_kk'                 => $val->debt['no_kk'],
                 'no_npwp'               => $val->debt['no_npwp'],
                 'tempat_lahir'          => $val->debt['tempat_lahir'],
-                'tgl_lahir'             => $val->debt['tgl_lahir'],
+                'tgl_lahir'             => Carbon::parse($val->debt['tgl_lahir'])->format('d-m-Y'),
                 'agama'                 => $val->debt['agama'],
                 'alamat_ktp' => [
                     'alamat_singkat' => $val->debt['alamat_ktp'],
@@ -395,7 +395,7 @@ class MasterAO_Controller extends BaseController
                     "posisi_pekerjaan"      => $val->debt['posisi_pekerjaan'],
                     "nama_tempat_kerja"     => $val->debt['nama_tempat_kerja'],
                     "jenis_pekerjaan"       => $val->debt['jenis_pekerjaan'],
-                    "tgl_mulai_kerja"       => $val->debt['tgl_mulai_kerja'], //Carbon::parse($val->tgl_mulai_kerja)->format('d-m-Y'),
+                    "tgl_mulai_kerja"       => Carbon::parse($val->debt['tgl_mulai_kerja'])->format('d-m-Y'), //Carbon::parse($val->tgl_mulai_kerja)->format('d-m-Y'),
                     "no_telp_tempat_kerja"  => $val->debt['no_telp_tempat_kerja'],
                     'alamat' => [
                         'alamat_singkat' => $val->debt['alamat_tempat_kerja'],
@@ -926,7 +926,7 @@ class MasterAO_Controller extends BaseController
 
                     'nilai_agunan_independen'
                     => empty($req->nilai_agunan_independen[$i])
-                        ? null : $req->nilai_agunan_independen[$i],
+                        ? 0 : $req->nilai_agunan_independen[$i],
 
                     'perusahaan_penilai_independen'
                     => empty($req->perusahaan_penilai_independen[$i])
@@ -1201,62 +1201,62 @@ class MasterAO_Controller extends BaseController
         // End Kapasitas Bulanan
 
 
-        if (!empty($req->input('pemasukan_tunai'))) {
-            // $dataKeUsaha = array(
-            $inputKeUsaha = array(
-                'pemasukan_tunai'
-                => empty($req->input('pemasukan_tunai')) ? null
-                    : (int) $req->input('pemasukan_tunai'),
+        //   if (!empty($req->input('pemasukan_tunai'))) {
+        // $dataKeUsaha = array(
+        $inputKeUsaha = array(
+            'pemasukan_tunai'
+            => empty($req->input('pemasukan_tunai')) ? 0
+                :  $req->input('pemasukan_tunai'),
 
-                'pemasukan_kredit'
-                => empty($req->input('pemasukan_kredit')) ? null
-                    : (int) $req->input('pemasukan_kredit'),
+            'pemasukan_kredit'
+            => empty($req->input('pemasukan_kredit')) ? 0
+                :  $req->input('pemasukan_kredit'),
 
-                'biaya_sewa'
-                => empty($req->input('biaya_sewa')) ? null
-                    : (int) $req->input('biaya_sewa'),
+            'biaya_sewa'
+            => empty($req->input('biaya_sewa')) ? 0
+                :  $req->input('biaya_sewa'),
 
-                'biaya_gaji_pegawai'
-                => empty($req->input('biaya_gaji_pegawai')) ? null
-                    : (int) $req->input('biaya_gaji_pegawai'),
+            'biaya_gaji_pegawai'
+            => empty($req->input('biaya_gaji_pegawai')) ? 0
+                :  $req->input('biaya_gaji_pegawai'),
 
-                'biaya_belanja_brg'
-                => empty($req->input('biaya_belanja_brg')) ? null
-                    : (int) $req->input('biaya_belanja_brg'),
+            'biaya_belanja_brg'
+            => empty($req->input('biaya_belanja_brg')) ? 0
+                :  $req->input('biaya_belanja_brg'),
 
-                'biaya_telp_listr_air'
-                => empty($req->input('biaya_telp_listr_air')) ? null
-                    : (int) $req->input('biaya_telp_listr_air'),
+            'biaya_telp_listr_air'
+            => empty($req->input('biaya_telp_listr_air')) ? 0
+                :  $req->input('biaya_telp_listr_air'),
 
-                'biaya_sampah_kemanan'
-                => empty($req->input('biaya_sampah_kemanan')) ? null
-                    : (int) $req->input('biaya_sampah_kemanan'),
+            'biaya_sampah_kemanan'
+            => empty($req->input('biaya_sampah_kemanan')) ? 0
+                :  $req->input('biaya_sampah_kemanan'),
 
-                'biaya_kirim_barang'
-                => empty($req->input('biaya_kirim_barang')) ? null
-                    : (int) $req->input('biaya_kirim_barang'),
+            'biaya_kirim_barang'
+            => empty($req->input('biaya_kirim_barang')) ? 0
+                :  $req->input('biaya_kirim_barang'),
 
-                'biaya_hutang_dagang'
-                => empty($req->input('biaya_hutang_dagang')) ? null
-                    : (int) $req->input('biaya_hutang_dagang'),
+            'biaya_hutang_dagang'
+            => empty($req->input('biaya_hutang_dagang')) ? 0
+                :  $req->input('biaya_hutang_dagang'),
 
-                'biaya_angsuran'
-                => empty($req->input('biaya_angsuran')) ? null
-                    : (int) $req->input('biaya_angsuran'),
+            'biaya_angsuran'
+            => empty($req->input('biaya_angsuran')) ? 0
+                :  $req->input('biaya_angsuran'),
 
-                'biaya_lain_lain'
-                => empty($req->input('biaya_lain_lain')) ? null
-                    : (int) $req->input('biaya_lain_lain')
-            );
+            'biaya_lain_lain'
+            => empty($req->input('biaya_lain_lain')) ? 0
+                :  $req->input('biaya_lain_lain')
+        );
 
-            $total_KeUsaha = array(
-                'total_pemasukan'      => $ttl1 = array_sum(array_slice($inputKeUsaha, 0, 2)),
-                'total_pengeluaran'    => $ttl2 = array_sum(array_slice($inputKeUsaha, 2)),
-                'laba_usaha'           => $ttl1 - $ttl2
-            );
+        $total_KeUsaha = array(
+            'total_pemasukan'      => $ttl1 = array_sum(array_slice($inputKeUsaha, 0, 2)),
+            'total_pengeluaran'    => $ttl2 = array_sum(array_slice($inputKeUsaha, 2)),
+            'laba_usaha'           => $ttl1 - $ttl2
+        );
 
-            $dataKeUsaha = array_merge($inputKeUsaha, $total_KeUsaha);
-        }
+        $dataKeUsaha = array_merge($inputKeUsaha, $total_KeUsaha);
+        //  }
 
         // Lampiran Debitur
         if ($file = $req->file('lamp_ktp')) {

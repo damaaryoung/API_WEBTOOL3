@@ -26,7 +26,7 @@ class DASController extends BaseController
 
         $query = Helper::checkDir($scope, $query_dir, $id_area, $id_cabang);
 
-        if ($query->get() == '[]') {
+        if ($query->get() === '[]') {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',

@@ -271,7 +271,7 @@ class MasterCA_Controller extends BaseController
                 'no_ktp'            => $pen->no_ktp,
                 'no_npwp'           => $pen->no_npwp,
                 'tempat_lahir'      => $pen->tempat_lahir,
-                'tgl_lahir'         => $pen->tgl_lahir,
+                'tgl_lahir'         => Carbon::parse($pen->tgl_lahir)->format('d-m-Y'),
                 'jenis_kelamin'     => $pen->jenis_kelamin,
                 'alamat_ktp'        => $pen->alamat_ktp,
                 'no_telp'           => $pen->no_telp,
@@ -282,7 +282,7 @@ class MasterCA_Controller extends BaseController
                     "posisi_pekerjaan"      => $pen->posisi_pekerjaan,
                     "nama_tempat_kerja"     => $pen->nama_tempat_kerja,
                     "jenis_pekerjaan"       => $pen->jenis_pekerjaan,
-                    "tgl_mulai_kerja"       => $pen->tgl_mulai_kerja,
+                    "tgl_mulai_kerja"       => Carbon::parse($pen->tgl_mulai_kerja)->format('d-m-Y'),
                     "no_telp_tempat_kerja"  => $pen->no_telp_tempat_kerja,
                     'alamat' => [
                         'alamat_singkat' => $pen->alamat_tempat_kerja,
@@ -407,7 +407,7 @@ class MasterCA_Controller extends BaseController
                 'no_kk'                 => $val->so['debt']['no_kk'],
                 'no_npwp'               => $val->so['debt']['no_npwp'],
                 'tempat_lahir'          => $val->so['debt']['tempat_lahir'],
-                'tgl_lahir'             => $val->so['debt']['tgl_lahir'],
+                'tgl_lahir'             => Carbon::parse($val->so['debt']['tgl_lahir'])->format('d-m-Y'),
                 'agama'                 => $val->so['debt']['agama'],
                 'anak'             => $anak,
                 'alamat_ktp' => [
@@ -459,7 +459,7 @@ class MasterCA_Controller extends BaseController
                     "posisi_pekerjaan"      => $val->so['debt']['posisi_pekerjaan'],
                     "nama_tempat_kerja"     => $val->so['debt']['nama_tempat_kerja'],
                     "jenis_pekerjaan"       => $val->so['debt']['jenis_pekerjaan'],
-                    "tgl_mulai_kerja"       => $val->so['debt']['tgl_mulai_kerja'],
+                    "tgl_mulai_kerja"       => Carbon::parse($val->so['debt']['tgl_mulai_kerja'])->format('d-m-Y'),
                     "no_telp_tempat_kerja"  => $val->so['debt']['no_telp_tempat_kerja'],
                     'alamat' => [
                         'alamat_singkat' => $val->so['debt']['alamat_tempat_kerja'],
@@ -518,7 +518,7 @@ class MasterCA_Controller extends BaseController
                 'no_ktp_kk'             => $val->so['pas']['no_ktp_kk'],
                 'no_npwp'               => $val->so['pas']['no_npwp'],
                 'tempat_lahir'          => $val->so['pas']['tempat_lahir'],
-                'tgl_lahir'             => $val->so['pas']['tgl_lahir'],
+                'tgl_lahir'             => Carbon::parse($val->so['pas']['tgl_lahir'])->format('d-m-Y'),
                 'alamat_ktp'            => $val->so['pas']['alamat_ktp'],
                 'no_telp'               => $val->so['pas']['no_telp'],
 
@@ -527,7 +527,7 @@ class MasterCA_Controller extends BaseController
                     "posisi_pekerjaan"      => $val->so['pas']['posisi_pekerjaan'],
                     "nama_tempat_kerja"     => $val->so['pas']['nama_tempat_kerja'],
                     "jenis_pekerjaan"       => $val->so['pas']['jenis_pekerjaan'],
-                    "tgl_mulai_kerja"       => $val->so['pas']['tgl_mulai_kerja'],
+                    "tgl_mulai_kerja"       => Carbon::parse($val->so['pas']['tgl_mulai_kerja'])->format('d-m-Y'),
                     "no_telp_tempat_kerja"  => $val->so['pas']['no_telp_tempat_kerja'],
                     'alamat' => [
                         'alamat_singkat' => $val->so['pas']['alamat_tempat_kerja'],
@@ -766,7 +766,7 @@ class MasterCA_Controller extends BaseController
         // Rekomendasi Angsuran pada table rrekomendasi_pinjaman
         $plafonCA = $rekomPinjaman['recom_nilai_pinjaman'] == null ? 0 : $rekomPinjaman['recom_nilai_pinjaman'];
         $tenorCA  = $rekomPinjaman['recom_tenor']          == null ? 0 : $rekomPinjaman['recom_tenor'];
-        $bunga    = $rekomPinjaman['bunga_pinjaman']       == null ? 0 : ($rekomPinjaman['bunga_pinjaman'] / 100);
+        $bunga    = $rekomPinjaman['bunga_pinjaman']       == null ? 0 : ($rekomPinjaman['bunga_pinjaman']);
 
         $rekomen_pendapatan  = $total_KapBul['total_pemasukan']   == null ? 0 : $total_KapBul['total_pemasukan'];
         $rekomen_pengeluaran = $total_KapBul['total_pengeluaran'] == null ? 0 : $total_KapBul['total_pengeluaran'];
@@ -911,12 +911,12 @@ class MasterCA_Controller extends BaseController
         if (!empty($req->input('nama_bank_acc'))) {
             for ($i = 0; $i < count($req->input('nama_bank_acc')); $i++) {
                 $dataACC[] = array(
-                    'nama_bank'       => empty($req->input('nama_bank_acc')[$i])       ? null : $req->nama_bank_acc[$i],
-                    'plafon'          => empty($req->input('plafon_acc')[$i])          ? null : $req->plafon_acc[$i],
-                    'baki_debet'      => empty($req->input('baki_debet_acc')[$i])      ? null : $req->baki_debet_acc[$i],
-                    'angsuran'        => empty($req->input('angsuran_acc')[$i])        ? null : $req->angsuran_acc[$i],
-                    'collectabilitas' => empty($req->input('collectabilitas_acc')[$i]) ? null : $req->collectabilitas_acc[$i],
-                    'jenis_kredit'    => empty($req->input('jenis_kredit_acc')[$i])    ? null : $req->jenis_kredit_acc[$i]
+                    'nama_bank'       => empty($req->input('nama_bank_acc')[$i])       ? "" : $req->nama_bank_acc[$i],
+                    'plafon'          => empty($req->input('plafon_acc')[$i])          ? 0 : $req->plafon_acc[$i],
+                    'baki_debet'      => empty($req->input('baki_debet_acc')[$i])      ? 0 : $req->baki_debet_acc[$i],
+                    'angsuran'        => empty($req->input('angsuran_acc')[$i])        ? 0 : $req->angsuran_acc[$i],
+                    'collectabilitas' => empty($req->input('collectabilitas_acc')[$i]) ? 0 : $req->collectabilitas_acc[$i],
+                    'jenis_kredit'    => empty($req->input('jenis_kredit_acc')[$i])    ? "" : $req->jenis_kredit_acc[$i]
                 );
             }
         }
@@ -1008,14 +1008,14 @@ class MasterCA_Controller extends BaseController
             'nama_asuransi'       => $req->input('nama_asuransi_keb'),
             'jangka_waktu'        => $req->input('jangka_waktu_asuransi_keb'),
             'nilai_pertanggungan' => $req->input('nilai_pertanggungan_keb'),
-            'jatuh_tempo'         => $req->input('jatuh_tempo_keb'),
+            'jatuh_tempo'         => Carbon::parse($req->input('jatuh_tempo_keb'))->format('Y-m-d'),
         );
 
         $asjaminanKen = array(
             'nama_asuransi'       => $req->input('nama_asuransi_ken'),
             'jangka_waktu'        => $req->input('jangka_waktu_asuransi_ken'),
             'nilai_pertanggungan' => $req->input('nilai_pertanggungan_ken'),
-            'jatuh_tempo'         => $req->input('jatuh_tempo_ken'),
+            'jatuh_tempo'         => Carbon::parse($req->input('jatuh_tempo_ken'))->format('Y-m-d'),
         );
 
 

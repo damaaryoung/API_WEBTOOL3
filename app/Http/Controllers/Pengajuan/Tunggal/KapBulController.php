@@ -37,8 +37,8 @@ class KapBulController extends BaseController
         $data = array(
             'pemasukan' => array(
                 'debitur' => $check->pemasukan_cadebt,
-                'pasangan'=> $check->pemasukan_pasangan,
-                'penjamin'=> $check->pemasukan_penjamin,
+                'pasangan' => $check->pemasukan_pasangan,
+                'penjamin' => $check->pemasukan_penjamin,
                 'total'   => $check->total_pemasukan
             ),
             'pengeluaran' => array(
@@ -93,23 +93,23 @@ class KapBulController extends BaseController
 
         // KapBulanan
         $dataKapBulanan = array(
-            'pemasukan_cadebt'      => empty($req->input('pemasukan_debitur')) ? $check->pemasukan_cadebt : $req->input('pemasukan_debitur'),
+            'pemasukan_cadebt'      => $req->input('pemasukan_debitur') ? $check->pemasukan_cadebt : $req->input('pemasukan_debitur'),
 
-            'pemasukan_pasangan'    => empty($req->input('pemasukan_pasangan')) ? $check->pemasukan_pasangan : $req->input('pemasukan_pasangan'),
+            'pemasukan_pasangan'    => $req->input('pemasukan_pasangan') ? $check->pemasukan_pasangan : $req->input('pemasukan_pasangan'),
 
-            'pemasukan_penjamin'    => empty($req->input('pemasukan_penjamin')) ? $check->pemasukan_penjamin : $req->input('pemasukan_penjamin'),
+            'pemasukan_penjamin'    => $req->input('pemasukan_penjamin') ? $check->pemasukan_penjamin : $req->input('pemasukan_penjamin'),
 
-            'biaya_rumah_tangga'    => empty($req->input('biaya_rumah_tangga')) ? $check->biaya_rumah_tangga : $req->input('biaya_rumah_tangga'),
+            'biaya_rumah_tangga'    => $req->input('biaya_rumah_tangga') ? $check->biaya_rumah_tangga : $req->input('biaya_rumah_tangga'),
 
-            'biaya_transport'       => empty($req->input('biaya_transport')) ? $check->biaya_transport : $req->input('biaya_transport'),
+            'biaya_transport'       => $req->input('biaya_transport') ? $check->biaya_transport : $req->input('biaya_transport'),
 
-            'biaya_pendidikan'      => empty($req->input('biaya_pendidikan')) ? $check->biaya_pendidikan : $req->input('biaya_pendidikan'),
+            'biaya_pendidikan'      => $req->input('biaya_pendidikan') ? $check->biaya_pendidikan : $req->input('biaya_pendidikan'),
 
-            'telp_listr_air'        => empty($req->input('telp_listr_air')) ? $check->telp_listr_air : $req->input('telp_listr_air'),
+            'telp_listr_air'        => $req->input('telp_listr_air') ? $check->telp_listr_air : $req->input('telp_listr_air'),
 
-            'angsuran'              => empty($req->input('angsuran')) ? $check->angsuran : $req->input('angsuran'),
+            'angsuran'              => $req->input('angsuran') ? $check->angsuran : $req->input('angsuran'),
 
-            'biaya_lain'            => empty($req->input('biaya_lain')) ? $check->biaya_lain : $req->input('biaya_lain')
+            'biaya_lain'            => $req->input('biaya_lain') ? $check->biaya_lain : $req->input('biaya_lain')
         );
 
         $total_KapBul = array(
@@ -131,7 +131,7 @@ class KapBulController extends BaseController
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'message'=> 'Update Kapasitas Bulanan Berhasil',
+                'message' => 'Update Kapasitas Bulanan Berhasil',
                 'data'   => $KapBUl
             ], 200);
         } catch (\Exception $e) {

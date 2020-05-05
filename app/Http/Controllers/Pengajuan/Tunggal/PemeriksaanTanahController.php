@@ -22,7 +22,8 @@ use DB;
 class PemeriksaanTanahController extends BaseController
 {
 
-    public function show($id){
+    public function show($id)
+    {
         $check = PemeriksaanAgunTan::where('id', $id)->first();
 
         if ($check == null) {
@@ -44,7 +45,7 @@ class PemeriksaanTanahController extends BaseController
             'listrik'                       => $check->listrik,
             'nilai_taksasi_agunan'          => (int) $check->nilai_taksasi_agunan,
             'nilai_taksasi_bangunan'        => (int) $check->nilai_taksasi_bangunan,
-            'tgl_taksasi'                   => $check->tgl_taksasi,
+            'tgl_taksasi'                   => Carbon::parse($check->tgl_taksasi)->format('d-m-Y'),
             'nilai_likuidasi'               => (int) $check->nilai_likuidasi,
             'nilai_agunan_independen'       => $check->nilai_agunan_independen,
             'perusahaan_penilai_independen' => $check->perusahaan_penilai_independen
@@ -65,7 +66,8 @@ class PemeriksaanTanahController extends BaseController
         }
     }
 
-    public function update($id, Pe_TanahRequest $req){
+    public function update($id, Pe_TanahRequest $req)
+    {
         $check = PemeriksaanAgunTan::where('id', $id)->first();
 
         if ($check == null) {
@@ -76,7 +78,7 @@ class PemeriksaanTanahController extends BaseController
             ], 404);
         }
 
-        $ao = TransAO::where('id_periksa_agunan_tanah', 'like', '%'.$id.'%')->first();
+        $ao = TransAO::where('id_periksa_agunan_tanah', 'like', '%' . $id . '%')->first();
 
         if ($ao == null) {
             return response()->json([
@@ -112,7 +114,7 @@ class PemeriksaanTanahController extends BaseController
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'message'=> 'Update Pemeriksaaan Agunan Tanah Berhasil',
+                'message' => 'Update Pemeriksaaan Agunan Tanah Berhasil',
                 'data'   => $dataPemeriksaanAgunTan
             ], 200);
         } catch (Exception $e) {

@@ -21,8 +21,10 @@ use App\Models\Pengajuan\CA\RekomendasiPinjaman;
 use App\Models\Pengajuan\CA\AsuransiJiwa;
 use App\Models\Pengajuan\CA\AsuransiJaminan;
 use App\Models\Pengajuan\CA\RekomendasiCA;
+use App\Models\Transaksi\LogRekomCA;
 // use Illuminate\Support\Facades\File;
 use App\Models\Pengajuan\AO\KapBulanan;
+use App\Models\Pengajuan\CA\AsuransiJaminanKen;
 use App\Models\Transaksi\Approval;
 use App\Models\Transaksi\TransCAA;
 use App\Models\Transaksi\TransCA;
@@ -313,139 +315,6 @@ class Approval_Controller extends BaseController
         }
     }
 
-    public function approve($id, $id_approval, Request $req, ApprovalReq $request)
-    {
-        $pic     = $req->pic; // From PIC middleware
-        $user_id = $req->auth->user_id;
-
-        $check_so = TransSO::where('id', $id)->first();
-
-        if ($check_so == null) {
-            return response()->json([
-                "code"    => 404,
-                "status"  => "not found",
-                "message" => "Transaksi dengan id " . $id . " belum ada di SO"
-            ], 404);
-        }
-
-        $check_ao = TransAO::where('id_trans_so', $id)->where('status_ao', 1)->first();
-
-        if ($check_ao == null) {
-            return response()->json([
-                "code"    => 404,
-                "status"  => "not found",
-                "message" => "Transaksi dengan id " . $id . " belum sampai ke AO"
-            ], 404);
-        }
-
-        $check_ca = TransCA::where('id_trans_so', $id)->where('status_ca', 1)->first();
-
-        if ($check_ca == null) {
-            return response()->json([
-                "code"    => 404,
-                "status"  => "not found",
-                "message" => "Transaksi dengan id " . $id . " belum sampai ke ca"
-            ], 404);
-        }
-
-        $check_caa = TransCAA::where('id_trans_so', $id)->where('status_caa', 1)->first();
-
-        if ($check_caa == null) {
-            return response()->json([
-                "code"    => 404,
-                "status"  => "not found",
-                "message" => "Transaksi dengan id " . $id . " belum sampai ke caa"
-            ], 404);
-        }
-
-        $check = Approval::where('id', $id_approval)->where('id_trans_so', $id)->first();
-
-        if ($check == null) {
-            return response()->json([
-                "code"    => 404,
-                "status"  => "not found",
-                "message" => "Transaksi dengan id " . $id . " dan dengan id approval " . $id_approval . " tidak ada di daftar antrian Approval"
-            ], 404);
-        }
-
-        if ($check->status != 'waiting') {
-            return response()->json([
-                "code"    => 404,
-                "status"  => "not found",
-                "message" => "Transaksi dengan id `{$id}` dan dengan id approval `{$id_approval}` sudah sudah dalam proses dengan status `{$check->status}`"
-            ], 404);
-        }
-
-        $forward_q = Approval::where('id_trans_so', $id)->where('id', '>', $id_approval)->first();
-
-        if ($forward_q == null) {
-            $to_forward = null;
-        } else {
-            $to_forward = $forward_q->id_pic;
-        }
-
-        $id_area   = $pic->id_area;
-        $id_cabang = $pic->id_cabang;
-
-        $form = array(
-            'user_id'       => $user_id,
-            'id_area'       => $id_area,
-            'id_cabang'     => $id_cabang,
-            'plafon'        => $request->input('plafon'),
-            'tenor'         => $request->input('tenor'),
-            'rincian'       => $request->input('rincian'),
-            'status'        => $st = $request->input('status'),
-            'tujuan_forward' => $st == 'forward' ? $to_forward : null //$request->input('tujuan_forward'),
-            // 'tanggal'       => Carbon::now()->toDateTimeString()
-        );
-
-        DB::connection('web')->beginTransaction();
-
-        try {
-
-
-            if ($form['status'] == 'accept' || $form['status'] == 'reject' || $form['status'] == 'return') {
-                $status = $form['status'] . " by picID {$pic->id}";
-                // TransCAA::where('id_trans_so', $id)->update(['status_team_caa' => $form['status'].' by user '.$user_id]);
-            } elseif ($form['status'] == 'forward') {
-                $status = $form['status'] . " by picID {$pic->id} to picID {$form['tujuan_forward']}";
-            }
-
-            if ($form['status'] === 'return') {
-                TransCAA::where('id_trans_so', $id)->where('id_trans_so', $id)->delete();
-                Approval::where('id_trans_so', $id)->delete();
-
-                $check_nst = Penyimpangan::where('id_trans_so', $id)->first();
-
-                if ($check_nst != null) {
-                    Penyimpangan::where('id_trans_so', $id)->delete();
-                }
-            }
-
-            $trans_caa = TransCAA::where('id_trans_so', $check->id_trans_so)->update(['status_team_caa' => $status]);
-
-            $approval = Approval::where('id', $id_approval)->update($form);
-
-            DB::connection('web')->commit();
-
-            return response()->json([
-                'code'   => 200,
-                'status' => 'success',
-                'message' => 'Data untuk berhasil di - ' . $form['status'],
-                'data'   => array(
-                    'approval'  => $approval,
-                    'transaksi' => $trans_caa
-                )
-            ], 200);
-        } catch (\Exception $e) {
-            $err = DB::connection('web')->rollback();
-            return response()->json([
-                'code'    => 501,
-                'status'  => 'error',
-                'message' => $err
-            ], 501);
-        }
-    }
 
     // Team Caa
     public function report_approval($id)
@@ -615,6 +484,7 @@ class Approval_Controller extends BaseController
             $lastNumb = str_replace(" [revisi]", "", $arr[4]) + 1;
         }
 
+
         //Data Transaksi SO
         $nows  = Carbon::now();
         $year  = $nows->year;
@@ -645,8 +515,8 @@ class Approval_Controller extends BaseController
             ], 404);
         }
 
-        // $check_ca = TransCA::where('id_trans_so', $id)->first();
-
+        $check_ca = TransCA::where('id_trans_so', $id)->first();
+        // dd($check_ca->id_pendapatan_usaha);
         // if ($check_ca != null) {
         //     return response()->json([
         //         'code'    => 404,
@@ -655,6 +525,10 @@ class Approval_Controller extends BaseController
         //     ], 404);
         // }
 
+        $dataCA = RekomendasiCA::where('id', $check_ca->id_recom_ca)->first()->toArray();
+        //dd($dataCA);
+        $logRekom = LogRekomCA::create($dataCA);
+
         $transCA = array(
             'nomor_ca'    => $nomor_ca,
             'user_id'     => $user_id,
@@ -662,151 +536,159 @@ class Approval_Controller extends BaseController
             'id_pic'      => $pic->id,
             'id_area'     => $pic->id_area,
             'id_cabang'   => $pic->id_cabang,
-            'catatan_ca'  => $req->input('catatan_ca'),
-            'status_ca'   => empty($req->input('status_ca')) ? 1 : $req->input('status_ca')
+            'catatan_ca'  => $check_ca->catatan_ca,
+            'status_ca'   => $check_ca->status_ca
         );
+
+        $pen = PendapatanUsaha::where('id', $check_ca->id_pendapatan_usaha)->first();
 
         // Pendapatan Usaha Cadebt
         $dataPendapatanUsaha = array(
-            'pemasukan_tunai'      => empty($req->input('pemasukan_tunai'))     ? 0 : $req->input('pemasukan_tunai'),
-            'pemasukan_kredit'     => empty($req->input('pemasukan_kredit'))    ? 0 : $req->input('pemasukan_kredit'),
-            'biaya_sewa'           => empty($req->input('biaya_sewa'))          ? 0 : $req->input('biaya_sewa'),
-            'biaya_gaji_pegawai'   => empty($req->input('biaya_gaji_pegawai'))  ? 0 : $req->input('biaya_gaji_pegawai'),
-            'biaya_belanja_brg'    => empty($req->input('biaya_belanja_brg'))   ? 0 : $req->input('biaya_belanja_brg'),
-            'biaya_telp_listr_air' => empty($req->input('biaya_telp_listr_air')) ? 0 : $req->input('biaya_telp_listr_air'),
-            'biaya_sampah_kemanan' => empty($req->input('biaya_sampah_kemanan')) ? 0 : $req->input('biaya_sampah_kemanan'),
-            'biaya_kirim_barang'   => empty($req->input('biaya_kirim_barang'))  ? 0 : $req->input('biaya_kirim_barang'),
-            'biaya_hutang_dagang'  => empty($req->input('biaya_hutang_dagang')) ? 0 : $req->input('biaya_hutang_dagang'),
-            'biaya_angsuran'       => empty($req->input('biaya_angsuran'))      ? 0 : $req->input('biaya_angsuran'),
-            'biaya_lain_lain'      => empty($req->input('biaya_lain_lain'))     ? 0 : $req->input('biaya_lain_lain')
+            'id'                    => $pen->id,
+            'pemasukan_tunai'      => $pen->pemasukan_tunai,
+            'pemasukan_kredit'     => $pen->pemasukan_kredit,
+            'biaya_sewa'           => $pen->biaya_sewa,
+            'biaya_gaji_pegawai'   => $pen->biaya_gaji_pegawai,
+            'biaya_belanja_brg'    => $pen->biaya_belanja_brg,
+            'biaya_telp_listr_air' => $pen->biaya_telp_listr_air,
+            'biaya_sampah_kemanan' => $pen->biaya_sampah_keamanan,
+            'biaya_kirim_barang'   => $pen->biaya_kirim_barang,
+            'biaya_hutang_dagang'  => $pen->biaya_hutang_dagang,
+            'biaya_angsuran'       => $pen->biaya_angsuran,
+            'biaya_lain_lain'      => $pen->biaya_lain_lain,
+            'total_pemasukan'      => $pen->total_pemasukan,
+            'total_pengeluaran'      => $pen->total_pengeluaran,
+            'laba_usaha'      => $pen->laba_usaha,
         );
 
-        $totalPendapatan = array(
-            'total_pemasukan'    => $ttl1 = array_sum(array_slice($dataPendapatanUsaha, 0, 2)),
-            'total_pengeluaran'  => $ttl2 = array_sum(array_slice($dataPendapatanUsaha, 2)),
-            'laba_usaha'         => $ttl1 - $ttl2
-        );
-
-        $Pendapatan = array_merge($dataPendapatanUsaha, $totalPendapatan, array('ao_ca' => 'CA'));
 
         // Start Kapasitas Bulanan
-        $inputKapBul = array(
-
-            'pemasukan_cadebt'
-            => empty($req->input('pemasukan_debitur'))    ? 0 : $req->input('pemasukan_debitur'),
+        $kap = KapBulanan::where('id', $check_ca->id_kapasitas_bulanan)->first();
+        $KapBul = array(
+            'id'    => $kap->id,
+            'pemasukan_cadebt' => $kap->pemasukan_cadebt,
 
             'pemasukan_pasangan'
-            => empty($req->input('pemasukan_pasangan'))   ? 0 : $req->input('pemasukan_pasangan'),
+            => $kap->pemasukan_pasangan,
 
             'pemasukan_penjamin'
-            => empty($req->input('pemasukan_penjamin'))   ? 0 : $req->input('pemasukan_penjamin'),
+            => $kap->pemasukan_penjamin,
 
             'biaya_rumah_tangga'
-            => empty($req->input('biaya_rumah_tangga'))   ? 0 : $req->input('biaya_rumah_tangga'),
+            => $kap->biaya_rumah_tangga,
 
             'biaya_transport'
-            => empty($req->input('biaya_transport'))      ? 0 : $req->input('biaya_transport'),
+            => $kap->biaya_transport,
 
             'biaya_pendidikan'
-            => empty($req->input('biaya_pendidikan'))     ? 0 : $req->input('biaya_pendidikan'),
+            => $kap->biaya_pendidikan,
 
             'telp_listr_air'
-            => empty($req->input('telp_listr_air'))       ? 0 : $req->input('telp_listr_air'),
+            => $kap->telp_listr_air,
 
             'angsuran'
-            => empty($req->input('angsuran'))             ? 0 : $req->input('angsuran'),
+            => $kap->angsuran,
 
             'biaya_lain'
-            => empty($req->input('biaya_lain'))           ? 0 : $req->input('biaya_lain'),
+            => $kap->biaya_lain,
+
+
+            'total_pemasukan'
+            => $kap->total_pemasukan,
+
+            'total_pengeluaran'
+            => $kap->total_pengeluaran,
+
+            'penghasilan_bersih'
+            => $kap->penghasilan_bersih,
+
+            'disposable_income'
+            => $kap->disposable_income,
+
+            'ao_ca'
+            => $kap->ao_ca,
+
+            // $total_KapBul = array(
+            //     'total_pemasukan'    => $ttl1 = array_sum(array_slice($inputKapBul, 0, 3)),
+            //     'total_pengeluaran'  => $ttl2 = array_sum(array_slice($inputKapBul, 3)),
+            //     'penghasilan_bersih' => $ttl1 - $ttl2
         );
 
-        $total_KapBul = array(
-            'total_pemasukan'    => $ttl1 = array_sum(array_slice($inputKapBul, 0, 3)),
-            'total_pengeluaran'  => $ttl2 = array_sum(array_slice($inputKapBul, 3)),
-            'penghasilan_bersih' => $ttl1 - $ttl2
-        );
+        $rekom = RekomendasiPinjaman::where('id', $check_ca->id_rekomendasi_pinjaman)->first();
 
         // Ceiling Recomendasi Pinjaman
         $rekomPinjaman = array(
+            'id' => $rekom->id,
             'penyimpangan_struktur'
-            => empty($req->input('penyimpangan_struktur'))
-                ? null : $req->input('penyimpangan_struktur'),
+            => $rekom->penyimpangan_struktur,
 
             'penyimpangan_dokumen'
-            => empty($req->input('penyimpangan_dokumen'))
-                ? null : $req->input('penyimpangan_dokumen'),
+            => $rekom->penyimpangan_dokumen,
 
             'recom_nilai_pinjaman'
-            => empty($req->input('recom_nilai_pinjaman'))
-                ? null : $req->input('recom_nilai_pinjaman'),
+            => $rekom->recom_nilai_pinjaman,
 
             'recom_tenor'
-            => empty($req->input('recom_tenor'))
-                ? null : $req->input('recom_tenor'),
+            => $rekom->recom_tenor,
 
             'recom_angsuran'
-            => empty($req->input('recom_angsuran'))
-                ? null : $req->input('recom_angsuran'),
+            => $rekom->recom_angsuran,
 
             'recom_produk_kredit'
-            => empty($req->input('recom_produk_kredit'))
-                ? null : $req->input('recom_produk_kredit'),
+            => $rekom->recom_produk_kredit,
 
             'note_recom'
-            => empty($req->input('note_recom'))
-                ? null : $req->input('note_recom'),
+            => $rekom->note_recom,
 
             'bunga_pinjaman'
-            => empty($req->input('bunga_pinjaman'))
-                ? null : $req->input('bunga_pinjaman'),
+            => $rekom->bunga_pinjaman,
 
             'nama_ca'
-            => empty($req->input('nama_ca'))
-                ? $pic->nama : $req->input('nama_ca')
+            => $rekom->nama_ca,
         );
 
         // Rekomendasi Angsuran pada table rrekomendasi_pinjaman
-        $plafonCA = $rekomPinjaman['recom_nilai_pinjaman'] == null ? 0 : $rekomPinjaman['recom_nilai_pinjaman'];
-        $tenorCA  = $rekomPinjaman['recom_tenor']          == null ? 0 : $rekomPinjaman['recom_tenor'];
-        $bunga    = $rekomPinjaman['bunga_pinjaman']       == null ? 0 : ($rekomPinjaman['bunga_pinjaman'] / 100);
+        // $plafonCA = $rekomPinjaman['recom_nilai_pinjaman'] == null ? 0 : $rekomPinjaman['recom_nilai_pinjaman'];
+        // $tenorCA  = $rekomPinjaman['recom_tenor']          == null ? 0 : $rekomPinjaman['recom_tenor'];
+        // $bunga    = $rekomPinjaman['bunga_pinjaman']       == null ? 0 : ($rekomPinjaman['bunga_pinjaman'] / 100);
 
-        $rekomen_pendapatan  = $total_KapBul['total_pemasukan']   == null ? 0 : $total_KapBul['total_pemasukan'];
-        $rekomen_pengeluaran = $total_KapBul['total_pengeluaran'] == null ? 0 : $total_KapBul['total_pengeluaran'];
-        $rekomen_angsuran    = $inputKapBul['angsuran']           == null ? 0 : $inputKapBul['angsuran'];
+        // $rekomen_pendapatan  = $total_KapBul['total_pemasukan']   == null ? 0 : $total_KapBul['total_pemasukan'];
+        // $rekomen_pengeluaran = $total_KapBul['total_pengeluaran'] == null ? 0 : $total_KapBul['total_pengeluaran'];
+        // $rekomen_angsuran    = $inputKapBul['angsuran']           == null ? 0 : $inputKapBul['angsuran'];
 
-        if ($plafonCA == 0 && $tenorCA == 0 && $bunga == 0) {
-            $recom_angs = 0;
-        } else {
-            $recom_angs = Helper::recom_angs($plafonCA, $tenorCA, $bunga);
-        }
+        // if ($plafonCA == 0 && $tenorCA == 0 && $bunga == 0) {
+        //     $recom_angs = 0;
+        // } else {
+        //     $recom_angs = Helper::recom_angs($plafonCA, $tenorCA, $bunga);
+        // }
 
-        $rekomen_pend_bersih = $rekomen_pendapatan - $rekomen_pengeluaran;
+        // $rekomen_pend_bersih = $rekomen_pendapatan - $rekomen_pengeluaran;
 
-        $disposable_income   = $rekomen_pend_bersih - $recom_angs;
+        // $disposable_income   = $rekomen_pend_bersih - $recom_angs;
 
-        $kapBul = array_merge($inputKapBul, $total_KapBul, array('disposable_income'  => $disposable_income, 'ao_ca' => 'CA'));
-        // End Kapasitas Bulanan
+        // $kapBul = array_merge($inputKapBul, $total_KapBul, array('disposable_income'  => $disposable_income, 'ao_ca' => 'CA'));
+        // // End Kapasitas Bulanan
 
-        // Check Pemeriksaan
+        // // Check Pemeriksaan
         $id_pe_ta = $check_ao->id_periksa_agunan_tanah;
 
         if (empty($id_pe_ta)) {
             $PeriksaTanah = null;
         }
 
-        // $id_pe_ke = $check_ao->id_periksa_agunan_kendaraan;
+        $id_pe_ke = $check_ao->id_periksa_agunan_kendaraan;
 
-        // if ($id_pe_ke == null) {
-        //     $PeriksaKenda = null;
-        // }
+        if ($id_pe_ke == null) {
+            $PeriksaKenda = null;
+        }
 
         $PeriksaTanah = PemeriksaanAgunTan::select('nilai_taksasi_agunan')->whereIn('id', explode(",", $id_pe_ta))->get()->toArray();
 
-        if (empty($PeriksaTanah)) {
-            $sumTaksasiTan = 0;
-        } else {
-            $sumTaksasiTan = array_sum(array_column($PeriksaTanah, 'nilai_taksasi_agunan')); //array_sum($PeriksaTanah);
-        }
+        // if (empty($PeriksaTanah)) {
+        //     $sumTaksasiTan = 0;
+        // } else {
+        //     $sumTaksasiTan = array_sum(array_column($PeriksaTanah, 'nilai_taksasi_agunan')); //array_sum($PeriksaTanah);
+        // }
 
         // $PeriksaKenda = PemeriksaanAgunTan::select('nilai_taksasi_agunan')->whereIn('id', explode(",", $id_pe_ta))->get()->toArray();
 
@@ -816,7 +698,7 @@ class Approval_Controller extends BaseController
         //     $sumTaksasiKen = array_sum(array_column($PeriksaTanah,'nilai_taksasi_agunan')); //array_sum($PeriksaTanah);
         // }
         // $sumAllTaksasi = $sumTaksasiTan + $sumTaksasiKen; // Semua Nilai Taksasi dari semua agunan
-        $sumAllTaksasi = $sumTaksasiTan; // Semua Nilai Taksasi dari semua agunan
+        //   $sumAllTaksasi = $sumTaksasiTan; // Semua Nilai Taksasi dari semua agunan
 
 
         // $recom_ltv   = Helper::recom_ltv($plafonCA, $sumAllTaksasi);
@@ -824,343 +706,240 @@ class Approval_Controller extends BaseController
         // $recom_dsr   = Helper::recom_dsr($recom_angs, $rekomen_pendapatan, $rekomen_angsuran);
         // $recom_hasil = Helper::recom_hasil($recom_dsr, $recom_ltv, $recom_idir);
 
+        $kuantitatif = RingkasanAnalisa::where('id', $check_ca->id_ringkasan_analisa)->first();
         // Data Ringkasan Analisa CA
         $dataRingkasan = array(
-            'kuantitatif_ttl_pendapatan'    => $req->input('kuantitatif_ttl_pendapatan'),
-            'kuantitatif_ttl_pengeluaran'   => $req->input('kuantitatif_ttl_pengeluaran'),
-            'kuantitatif_pendapatan_bersih' => $req->input('kuantitatif_pendapatan'),
-            'kuantitatif_angsuran'          => $req->input('kuantitatif_angsuran'),
+            'kuantitatif_ttl_pendapatan'    => $kuantitatif->kuantitatif_ttl_pendapatan,
+            'kuantitatif_ttl_pengeluaran'   => $kuantitatif->kuantitatif_ttl_pengeluaran,
+            'kuantitatif_pendapatan_bersih' => $kuantitatif->kuantitatif_pendapatan_bersih,
+            'kuantitatif_angsuran'          => $kuantitatif->kuantitatif_angsuran,
             // 'kuantitatif_ttl_pendapatan'    => $rekomen_pendapatan,
             // 'kuantitatif_ttl_pengeluaran'   => $rekomen_pengeluaran,
             // 'kuantitatif_pendapatan_bersih' => $rekomen_pend_bersih,
             // 'kuantitatif_angsuran'          => $recom_angs,
-            'kuantitatif_ltv'               => $req->input('kuantitatif_ltv'),
-            'kuantitatif_dsr'               => $req->input('kuantitatif_dsr'),
-            'kuantitatif_idir'              => $req->input('kuantitatif_idir'),
-            'kuantitatif_hasil'             => $req->input('kuantitatif_hasil'),
+            'kuantitatif_ltv'               => $kuantitatif->kuantitatif_ltv,
+            'kuantitatif_dsr'               => $kuantitatif->kuantitatif_dsr,
+            'kuantitatif_idir'              => $kuantitatif->kuantitatif_idir,
+            'kuantitatif_hasil'             => $kuantitatif->kuantitatif_hasil,
 
 
             'kualitatif_analisa'
-            => empty($req->input('kualitatif_analisa'))
-                ? null : $req->input('kualitatif_analisa'),
+            => $kuantitatif->kualitatif_analisa,
 
             'kualitatif_strenght'
-            => empty($req->input('kualitatif_strenght'))
-                ? null : $req->input('kualitatif_strenght'),
+            => $kuantitatif->kualitatif_strenght,
 
             'kualitatif_weakness'
-            => empty($req->input('kualitatif_weakness'))
-                ? null : $req->input('kualitatif_weakness'),
+            => $kuantitatif->kualitatif_weakness,
 
             'kualitatif_opportunity'
-            => empty($req->input('kualitatif_opportunity'))
-                ? null : $req->input('kualitatif_opportunity'),
+            => $kuantitatif->kualitatif_opportunity,
 
             'kualitatif_threatness'
-            => empty($req->input('kualitatif_threatness'))
-                ? null : $req->input('kualitatif_threatness'),
+            => $kuantitatif->kualitatif_threatness,
         );
 
+        $mut = MutasiBank::where('id', $check_ca->id_mutasi_bank)->first();
         // Mutasi Bank
-        if (!empty($req->input('no_rekening_mutasi'))) {
+        // if (!empty($req->input('no_rekening_mutasi'))) {
 
-            for ($i = 0; $i < count($req->input('no_rekening_mutasi')); $i++) {
+        //     for ($i = 0; $i < count($req->input('no_rekening_mutasi')); $i++) {
 
-                $dataMuBa[] = array(
-                    'urutan_mutasi'
-                    => empty($req->input('urutan_mutasi')[$i])
-                        ? null : $req->urutan_mutasi[$i],
+        $dataMuBa = array(
+            'urutan_mutasi'
+            => $mut->urutan_mutasi,
 
-                    'nama_bank'
-                    => empty($req->input('nama_bank_mutasi')[$i])
-                        ? null : $req->nama_bank_mutasi[$i],
+            'nama_bank'
+            => $mut->nama_bank,
 
-                    'no_rekening'
-                    => empty($req->input('no_rekening_mutasi')[$i])
-                        ? null : $req->no_rekening_mutasi[$i],
+            'no_rekening'
+            => $mut->no_rekening,
 
-                    'nama_pemilik'
-                    => empty($req->input('nama_pemilik_mutasi')[$i])
-                        ? null : $req->nama_pemilik_mutasi[$i],
+            'nama_pemilik'
+            => $mut->nama_pemilik,
 
-                    'periode'
-                    => empty($req->input('periode_mutasi')[$i])
-                        ? null : implode(";", $req->periode_mutasi[$i]),
+            'periode'
+            => $mut->periode,
 
-                    'frek_debet'
-                    => empty($req->input('frek_debet_mutasi')[$i])
-                        ? null : implode(";", $req->frek_debet_mutasi[$i]),
+            'frek_debet'
+            => $mut->frek_debet,
 
-                    'nominal_debet'
-                    => empty($req->input('nominal_debet_mutasi')[$i])
-                        ? null : implode(";", $req->nominal_debet_mutasi[$i]),
+            'nominal_debet'
+            => $mut->nominal_debet,
 
-                    'frek_kredit'
-                    => empty($req->input('frek_kredit_mutasi')[$i])
-                        ? null : implode(";", $req->frek_kredit_mutasi[$i]),
+            'frek_kredit'
+            => $mut->frek_kredit,
 
-                    'nominal_kredit'
-                    => empty($req->input('nominal_kredit_mutasi')[$i])
-                        ? null : implode(";", $req->nominal_kredit_mutasi[$i]),
+            'nominal_kredit'
+            => $mut->nominal_kredit,
 
-                    'saldo'
-                    => empty($req->input('saldo_mutasi')[$i])
-                        ? null : implode(";", $req->saldo_mutasi[$i])
-                );
-            }
-        }
+            'saldo'
+            => $mut->saldo,
+        );
 
-        if (!empty($req->input('nama_bank_acc'))) {
-            for ($i = 0; $i < count($req->input('nama_bank_acc')); $i++) {
-                $dataACC[] = array(
-                    'nama_bank'       => empty($req->input('nama_bank_acc')[$i])       ? null : $req->nama_bank_acc[$i],
-                    'plafon'          => empty($req->input('plafon_acc')[$i])          ? null : $req->plafon_acc[$i],
-                    'baki_debet'      => empty($req->input('baki_debet_acc')[$i])      ? null : $req->baki_debet_acc[$i],
-                    'angsuran'        => empty($req->input('angsuran_acc')[$i])        ? null : $req->angsuran_acc[$i],
-                    'collectabilitas' => empty($req->input('collectabilitas_acc')[$i]) ? null : $req->collectabilitas_acc[$i],
-                    'jenis_kredit'    => empty($req->input('jenis_kredit_acc')[$i])    ? null : $req->jenis_kredit_acc[$i]
-                );
-            }
-        }
 
+        $infoacc = InfoACC::where('id', $check_ca->id_info_analisa_cc)->first();
+        //   if (!empty($req->input('nama_bank_acc'))) {
+        //  for ($i = 0; $i < count($req->input('nama_bank_acc')); $i++) {
+        $dataACC = array(
+            'nama_bank'       => $infoacc->nama_bank,
+            'plafon'          => $infoacc->plafon,
+            'baki_debet'      => $infoacc->baki_debet,
+            'angsuran'        => $infoacc->angsuran,
+            'collectabilitas' => $infoacc->collectabilitas,
+            'jenis_kredit'    => $infoacc->jenis_kredit,
+        );
+        // }
+        //  }
+
+        $tabtdebt = TabDebt::where('id', $check_ca->id_log_tabungan)->first();
         $dataTabUang = array(
 
             'no_rekening'
-            => empty($req->input('no_rekening'))
-                ? null : $req->input('no_rekening'),
+            => $tabtdebt->no_rekening,
 
             'nama_bank'
-            => empty($req->input('nama_bank'))
-                ? null : $req->input('nama_bank'),
+            => $tabtdebt->nama_bank,
 
             'tujuan_pembukaan_rek'
-            => empty($req->input('tujuan_pembukaan_rek'))
-                ? null : $req->input('tujuan_pembukaan_rek'),
+            => $tabtdebt->tujuan_pembukaan_rek,
 
             'penghasilan_per_tahun'
-            => empty($req->input('penghasilan_per_tahun'))
-                ? ($rekomen_pendapatan == 0 ? 0 : $rekomen_pendapatan * 12) : $req->input('penghasilan_per_tahun'),
+            => $tabtdebt->penghasilan_per_tahun,
 
             'sumber_penghasilan'
-            => empty($req->input('sumber_penghasilan'))
-                ? null : $req->input('sumber_penghasilan'),
+            => $tabtdebt->sumber_penghasilan,
 
             'pemasukan_per_bulan'
-            => empty($req->input('pemasukan_per_bulan'))
-                ? null : $req->input('pemasukan_per_bulan'),
+            => $tabtdebt->pemasukan_per_bulan,
 
             'frek_trans_pemasukan'
-            => empty($req->input('frek_trans_pemasukan'))
-                ? null : $req->input('frek_trans_pemasukan'),
+            => $tabtdebt->frek_trans_pemasukan,
 
             'pengeluaran_per_bulan'
-            => empty($req->input('pengeluaran_per_bulan'))
-                ? null : $req->input('pengeluaran_per_bulan'),
+            => $tabtdebt->pengeluaran_per_bulan,
 
             'frek_trans_pengeluaran'
-            => empty($req->input('frek_trans_pengeluaran'))
-                ? null : $req->input('frek_trans_pengeluaran'),
+            => $tabtdebt->frek_trans_pengeluaran,
 
             'sumber_dana_setoran'
-            => empty($req->input('sumber_dana_setoran'))
-                ? null : $req->input('sumber_dana_setoran'),
+            => $tabtdebt->sumber_dana_setoran,
 
             'tujuan_pengeluaran_dana'
-            => empty($req->input('tujuan_pengeluaran_dana'))
-                ? null : $req->input('tujuan_pengeluaran_dana')
+            => $tabtdebt->tujuan_pengeluaran_dana,
         );
 
+        $rekom = RekomendasiCA::where('id', $check_ca->id_recom_ca)->first();
+        // dd($rekom->jangka_waktu);
         // Rekomendasi CA
         $recomCA = array(
-            'produk'                => $req->input('produk'),
-            'plafon_kredit'         => $req->input('plafon_kredit'),
-            'jangka_waktu'          => $req->input('jangka_waktu'),
-            'suku_bunga'            => $req->input('suku_bunga'),
-            'pembayaran_bunga'      => $req->input('pembayaran_bunga'),
-            'akad_kredit'           => $req->input('akad_kredit'),
-            'ikatan_agunan'         => $req->input('ikatan_agunan'),
-            'biaya_provisi'         => $req->input('biaya_provisi'),
-            'biaya_administrasi'    => $req->input('biaya_administrasi'),
-            'biaya_credit_checking' => $req->input('biaya_credit_checking'),
-            'biaya_asuransi_jiwa'   => $req->input('biaya_asuransi_jiwa'),
-            'biaya_asuransi_jaminan' => $req->input('biaya_asuransi_jaminan'),
-            'notaris'               => $req->input('notaris'),
-            'biaya_tabungan'        => $req->input('biaya_tabungan'),
+            // 'id'                    => empty($req->input('id')) ? $rekom->produk : $req->input('id'),
+            'produk'                => empty($req->input('produk')) ? $rekom->produk : $req->input('produk'),
+            'plafon_kredit'         => empty($req->input('plafon_kredit')) ? $rekom->plafon_kredit : $req->input('plafon_kredit'),
+            'jangka_waktu'          => empty($req->input('jangka_waktu')) ? $rekom->jangka_waktu : $req->input('jangka_waktu'),
+            'suku_bunga'            => empty($req->input('suku_bunga')) ? $rekom->suku_bunga : $req->input('suku_bunga'),
+            'pembayaran_bunga'      => empty($req->input('pembayaran_bunga')) ? $rekom->pembayaran_bunga : $req->input('pembayaran_bunga'),
+            'akad_kredit'           => empty($req->input('akad_kredit')) ? $rekom->akad_kredit : $req->input('akad_kredit'),
+            'ikatan_agunan'         => empty($req->input('ikatan_agunan')) ? $rekom->ikatan_agunan : $req->input('ikatan_agunan'),
+            'biaya_provisi'         => empty($req->input('biaya_provisi')) ? $rekom->biaya_provisi : $req->input('biaya_provisi'),
+            'biaya_administrasi'    => empty($req->input('biaya_administrasi')) ? $rekom->biaya_administrasi : $req->input('biaya_administrasi'),
+            'biaya_credit_checking' => empty($req->input('biaya_credit_checking')) ? $rekom->biaya_credit_checking : $req->input('biaya_credit_checking'),
+            // 'biaya_asuransi_jiwa'   => $req->input('biaya_asuransi_jiwa'),
+            // 'biaya_asuransi_jaminan' => $req->input('biaya_asuransi_jaminan'),
+            'notaris'               => empty($req->input('notaris')) ? $rekom->notaris : $req->input('notaris'),
+            'biaya_tabungan'        => empty($req->input('biaya_tabungan')) ? $rekom->biaya_tabungan : $req->input('biaya_tabungan'),
 
-            'rekom_angsuran'        => $recom_angs,
 
-            'angs_pertama_bunga_berjalan' => $req->input('angs_pertama_bunga_berjalan'),
-            'pelunasan_nasabah_ro'        => $req->input('pelunasan_nasabah_ro'),
-            'blokir_dana'                 => $req->input('blokir_dana'),
-            'pelunasan_tempat_lain'       => $req->input('pelunasan_tempat_lain'),
-            'blokir_angs_kredit'          => $req->input('blokir_angs_kredit')
+            // 'rekom_angsuran'        => $recom_angs,
+
+            // 'angs_pertama_bunga_berjalan' => $req->input('angs_pertama_bunga_berjalan'),
+            // 'pelunasan_nasabah_ro'        => $req->input('pelunasan_nasabah_ro'),
+            // 'blokir_dana'                 => $req->input('blokir_dana'),
+            // 'pelunasan_tempat_lain'       => $req->input('pelunasan_tempat_lain'),
+            // 'blokir_angs_kredit'          => $req->input('blokir_angs_kredit')
+        );
+        //   dd($recomCA);
+        $asJiwa = AsuransiJiwa::where('id', $check_ca->id_asuransi_jiwa)->first();
+        $asuransiJiwa = array(
+            'nama_asuransi'       => $asJiwa->nama_asuransi,
+            'jangka_waktu'        => $asJiwa->jangka_waktu,
+            'nilai_pertanggungan' => $asJiwa->nilai_pertanggungan,
+            'jatuh_tempo'         => Carbon::parse($asJiwa->jatuh_tempo)->format('d-m-Y'),
+            'berat_badan'         => $asJiwa->berat_badan,
+            'tinggi_badan'        => $asJiwa->tinggi_badan,
+            'umur_nasabah'        => $asJiwa->umur_nasabah,
         );
 
-        $asJiwa = array(
-            'nama_asuransi'       => $req->input('nama_asuransi_jiwa'),
-            'jangka_waktu'        => $req->input('jangka_waktu_as_jiwa'),
-            'nilai_pertanggungan' => $req->input('nilai_pertanggungan_as_jiwa'),
-            'jatuh_tempo'         => empty($req->input('jatuh_tempo_as_jiwa')) ? null : Carbon::parse($req->input('jatuh_tempo_as_jiwa'))->format('Y-m-d'),
-            'berat_badan'         => $req->input('berat_badan_as_jiwa'),
-            'tinggi_badan'        => $req->input('tinggi_badan_as_jiwa'),
-            'umur_nasabah'        => $req->input('umur_nasabah_as_jiwa')
+        $asKeb = AsuransiJaminan::where('id', $check_ca->id_asuransi_jaminan_kebakaran)->first();
+        $asjaminanKeb = array(
+            'nama_asuransi'       => $asKeb->nama_asuransi,
+            'jangka_waktu'        => $asKeb->jangka_waktu,
+            'nilai_pertanggungan' => $asKeb->nilai_pertanggungan,
+            'jatuh_tempo'         => Carbon::parse($asKeb->jatuh_tempo)->format('d-m-Y'),
         );
 
-
-        if (!empty($req->input('jangka_waktu_as_jaminan'))) {
-
-            $asJaminan = array();
-            for ($i = 0; $i < count($req->input('jangka_waktu_as_jaminan')); $i++) {
-
-                $asJaminan[] = array(
-                    'nama_asuransi'
-                    => empty($req->input('nama_asuransi_jaminan')[$i])
-                        ? null : $req->nama_asuransi_jaminan[$i],
-
-                    'jangka_waktu'
-                    => empty($req->input('jangka_waktu_as_jaminan')[$i])
-                        ? null : $req->jangka_waktu_as_jaminan[$i],
-
-                    'nilai_pertanggungan'
-                    => empty($req->input('nilai_pertanggungan_as_jaminan')[$i])
-                        ? null : $req->nilai_pertanggungan_as_jaminan[$i],
-
-                    'jatuh_tempo'
-                    => empty($req->input('jatuh_tempo_as_jaminan')[$i])
-                        ? null : Carbon::parse($req->jatuh_tempo_as_jaminan[$i])->format('Y-m-d')
-                );
-            }
-
-            $jaminanImplode = array(
-                'nama_asuransi'       => implode(";", array_column($asJaminan, 'nama_asuransi')),
-                'jangka_waktu'        => implode(";", array_column($asJaminan, 'jangka_waktu')),
-                'nilai_pertanggungan' => implode(";", array_column($asJaminan, 'nilai_pertanggungan')),
-                'jatuh_tempo'         => implode(";", array_column($asJaminan, 'jatuh_tempo'))
-            );
-        } else {
-            $jaminanImplode = array(
-                'nama_asuransi'       => null,
-                'jangka_waktu'        => null,
-                'nilai_pertanggungan' => null,
-                'jatuh_tempo'         => null
-            );
-        }
-
-        //  try {
+        $asKen = AsuransiJaminanKen::where('id', $check_ca->id_asuransi_jaminan_kendaraan)->first();
+        $asjaminanKen = array(
+            'nama_asuransi'       => $asKen->nama_asuransi,
+            'jangka_waktu'        => $asKen->jangka_waktu,
+            'nilai_pertanggungan' => $asKen->nilai_pertanggungan,
+            'jatuh_tempo'         => Carbon::parse($asKen->jatuh_tempo)->format('d-m-Y'),
+        );
+        //     try {
         DB::connection('web')->beginTransaction();
-
-        if (!empty($dataMuBa)) {
-            for ($i = 0; $i < count($dataMuBa); $i++) {
-                $mutasi = MutasiBank::create($dataMuBa[$i]);
-
-                $id_mutasi['id'][$i] = $mutasi->id;
-            }
-
-            $MutasiID   = implode(",", $id_mutasi['id']);
-        } else {
-            $MutasiID = null;
-        }
-
-        if (!empty($dataTabUang)) {
-            $tabungan = TabDebt::create($dataTabUang);
-
-            $idTabungan = $tabungan->id;
-        } else {
-            $idTabungan = null;
-        }
-
-        if (!empty($dataACC)) {
-            for ($i = 0; $i < count($dataACC); $i++) {
-                $IACC = InfoACC::create($dataACC[$i]);
-
-                $arrACC['id'][$i] = $IACC->id;
-            }
-
-            $idInfo = implode(",", $arrACC['id']);
-        } else {
-            $idInfo = null;
-        }
-
-        if (!empty($dataRingkasan)) {
-            $analisa = RingkasanAnalisa::create($dataRingkasan);
-            $idAnalisa = $analisa->id;
-        } else {
-            $idAnalisa = null;
-        }
-
-        if (!empty($rekomPinjaman)) {
-            $recomPin = RekomendasiPinjaman::create($rekomPinjaman);
-            $idrecomPin = $recomPin->id;
-        } else {
-            $idrecomPin = null;
-        }
-
-        if (!empty($asJiwa)) {
-            $jiwa = AsuransiJiwa::create($asJiwa);
-            $idJiwa = $jiwa->id;
-        } else {
-            $idJiwa = null;
-        }
-
-        if (!empty($jaminanImplode)) {
-            $jaminan = AsuransiJaminan::create($jaminanImplode);
-            $idJaminan = $jaminan->id;
-        } else {
-            $idJaminan = null;
-        }
-
-        if (!empty($recomCA)) {
-            $reCA = RekomendasiCA::create($recomCA);;
-            $idReCA = $reCA->id;
-        } else {
-            $idReCA = null;
-        }
-
-        if (!empty($Pendapatan)) {
-            $pend = PendapatanUsaha::create($Pendapatan);
-            $idPendUs = $pend->id;
-        } else {
-            $idPendUs = null;
-        }
-
-        if (!empty($kapBul)) {
-            $Q_Kapbul = KapBulanan::create($kapBul);
-            $idKapBul = $Q_Kapbul->id;
-        } else {
-            $idKapBul = null;
-        }
-
         $so_trans = TransSO::select('nomor_so')->where('id', $id)->first();
         $rev = "Rev" . "-" . $so_trans->nomor_so;
         $dataID = array(
-            'id_mutasi_bank'          => $MutasiID,
-            'id_log_tabungan'         => $idTabungan,
-            'id_info_analisa_cc'      => $idInfo,
-            'id_ringkasan_analisa'    => $idAnalisa,
-            'id_recom_ca'             => $idReCA,
-            'id_rekomendasi_pinjaman' => $idrecomPin,
-            'id_asuransi_jiwa'        => $idJiwa,
-            'id_asuransi_jaminan'     => $idJaminan,
-            'id_kapasitas_bulanan'    => $idKapBul,
-            'id_pendapatan_usaha'     => $idPendUs,
+            'trans_ca'          => $transCA,
+            'pendapatan_usaha'         => $dataPendapatanUsaha,
+            'kapasitas_bulanan'      => $KapBul,
+            'rekomendasi_pinjaman'    => $rekomPinjaman,
+            'pemeriksaan_tanah'             => $PeriksaTanah,
+            'data_ringkasan' => $dataRingkasan,
+            'mutasi_bank'        => $dataMuBa,
+            'data_acc'     => $dataACC,
+            'dataTabUang'     => $dataTabUang,
+            'recomCA'    => $recomCA,
+            'asuransi_jiwa'     => $asuransiJiwa,
+            'asuransi_kebakaran'     => $asjaminanKeb,
+            'asuransi_kendaraan'     => $asjaminanKen,
+            'asuransi_jiwa'     => $asuransiJiwa,
             'revisi'                   => $rev,
         );
 
 
-        //  dd($rev);
-        $newTransCA = array_merge($transCA, $dataID);
-        // dd($newTransCA  );
-        $CA = TransCA::create($newTransCA);
+        // dd($recomCA->produk);
+        // $newEditCA = array_merge($transCA, $dataPendapatanUsaha, $KapBul, $rekomPinjaman, $PeriksaTanah, $dataRingkasan, $dataMuBa, $dataACC, $dataTabUang, $recomCA, $asuransiJiwa, $asjaminanKeb, $asjaminanKen);
+        //  dd($newEditCA);
+        $CA = RekomendasiCA::where('id', $check_ca->id_recom_ca)
+            ->update([
+                'produk'                => $req->input('produk'),
+                'plafon_kredit'         =>  $req->input('plafon_kredit'),
+                'jangka_waktu'          =>  $req->input('jangka_waktu'),
+                'suku_bunga'            => $req->input('suku_bunga'),
+                'pembayaran_bunga'      =>  $req->input('pembayaran_bunga'),
+                'akad_kredit'           => $req->input('akad_kredit'),
+                'ikatan_agunan'         => $req->input('ikatan_agunan'),
+                'biaya_provisi'         => $req->input('biaya_provisi'),
+                'biaya_administrasi'    => $req->input('biaya_administrasi'),
+                'biaya_credit_checking' => $req->input('biaya_credit_checking'),
+                // 'biaya_asuransi_jiwa'   => $req->input('biaya_asuransi_jiwa'),
+                // 'biaya_asuransi_jaminan' => $req->input('biaya_asuransi_jaminan'),
+                'notaris'               => $req->input('notaris'),
+                'biaya_tabungan'        =>  $req->input('biaya_tabungan')
+
+            ]);
+        TransCA::where('id_trans_so', $id)->update(['revisi' => $rev]);
 
 
-        TransSO::where('id', $id)->update(['id_trans_ca' => $CA->id, 'norev_so' => $rev]);
+        //  TransSO::where('id', $id)->update(['id_trans_ca' => $CA->id, 'norev_so' => $rev]);
         DB::connection('web')->commit();
 
         return response()->json([
             'code'   => 200,
             'status' => 'success',
             'message' => 'Data Revisi OL berhasil dikirim',
-            'data'   => $CA
+            'data'   => $dataID
         ], 200);
         // } catch (\Exception $e) {
         //     $err = DB::connection('web')->rollback();
@@ -1206,6 +985,471 @@ class Approval_Controller extends BaseController
                 'code'    => 501,
                 'status'  => 'error',
                 'message' => $e
+            ], 501);
+        }
+    }
+
+    public function checkOL($id, Request $request, BlankRequest $req)
+    {
+        $pic     = $request->pic; // From PIC middleware
+        $user_id = $request->auth->user_id;
+
+        $countCA = TransCA::latest('id', 'nomor_ca')->first();
+
+        if (!$countCA) {
+            $lastNumb = 1;
+        } else {
+            $no = $countCA->nomor_ca;
+
+            $arr = explode("-", $no, 5);
+
+            $lastNumb = str_replace(" [revisi]", "", $arr[4]) + 1;
+        }
+
+
+        //Data Transaksi SO
+        $nows  = Carbon::now();
+        $year  = $nows->year;
+        $month = $nows->month;
+
+        $JPIC   = JPIC::where('id', $pic->id_mj_pic)->first();
+
+        //  ID-Cabang - AO / CA / SO - Bulan - Tahun - NO. Urut
+        $nomor_ca = $pic->id_cabang . '-' . $JPIC->nama_jenis . '-' . $month . '-' . $year . '-' . $lastNumb;
+
+        $check_so = TransSO::where('id', $id)->where('status_das', 1)->where('status_hm', 1)->first();
+
+        if (!$check_so) {
+            return response()->json([
+                'code'    => 404,
+                'status'  => 'not found',
+                'message' => 'Transaksi dengan id ' . $id . ' belum ada di SO atau belum komplit saat pemeriksaan DAS dan HM'
+            ], 404);
+        }
+
+        $check_ao = TransAO::where('id_trans_so', $id)->first();
+
+        if (!$check_ao) {
+            return response()->json([
+                'code'    => 404,
+                'status'  => 'not found',
+                'message' => 'Transaksi dengan id ' . $id . ' belum sampai ke AO'
+            ], 404);
+        }
+
+        $check_ca = TransCA::where('id_trans_so', $id)->first();
+        // dd($check_ca->id_pendapatan_usaha);
+        // if ($check_ca != null) {
+        //     return response()->json([
+        //         'code'    => 404,
+        //         'status'  => 'not found',
+        //         'message' => 'Transaksi dengan id ' . $id . ' sudah ada di CA'
+        //     ], 404);
+        // }
+
+        // $dataCA = RekomendasiCA::where('id', $check_ca->id_recom_ca)->first();
+        // dd($dataCA);
+        // $logRekom = LogRekomCA::create($dataCA);
+
+        $transCA = array(
+            'nomor_ca'    => $nomor_ca,
+            'user_id'     => $user_id,
+            'id_trans_so' => $id,
+            'id_pic'      => $pic->id,
+            'id_area'     => $pic->id_area,
+            'id_cabang'   => $pic->id_cabang,
+            'catatan_ca'  => $check_ca->catatan_ca,
+            'status_ca'   => $check_ca->status_ca
+        );
+
+        $pen = PendapatanUsaha::where('id', $check_ca->id_pendapatan_usaha)->first();
+
+        // Pendapatan Usaha Cadebt
+        $dataPendapatanUsaha = array(
+            'id'                    => $pen->id,
+            'pemasukan_tunai'      => $pen->pemasukan_tunai,
+            'pemasukan_kredit'     => $pen->pemasukan_kredit,
+            'biaya_sewa'           => $pen->biaya_sewa,
+            'biaya_gaji_pegawai'   => $pen->biaya_gaji_pegawai,
+            'biaya_belanja_brg'    => $pen->biaya_belanja_brg,
+            'biaya_telp_listr_air' => $pen->biaya_telp_listr_air,
+            'biaya_sampah_kemanan' => $pen->biaya_sampah_keamanan,
+            'biaya_kirim_barang'   => $pen->biaya_kirim_barang,
+            'biaya_hutang_dagang'  => $pen->biaya_hutang_dagang,
+            'biaya_angsuran'       => $pen->biaya_angsuran,
+            'biaya_lain_lain'      => $pen->biaya_lain_lain,
+            'total_pemasukan'      => $pen->total_pemasukan,
+            'total_pengeluaran'      => $pen->total_pengeluaran,
+            'laba_usaha'      => $pen->laba_usaha,
+        );
+
+
+        // Start Kapasitas Bulanan
+        $kap = KapBulanan::where('id', $check_ca->id_kapasitas_bulanan)->first();
+        $KapBul = array(
+            'id'    => $kap->id,
+            'pemasukan_cadebt' => $kap->pemasukan_cadebt,
+
+            'pemasukan_pasangan'
+            => $kap->pemasukan_pasangan,
+
+            'pemasukan_penjamin'
+            => $kap->pemasukan_penjamin,
+
+            'biaya_rumah_tangga'
+            => $kap->biaya_rumah_tangga,
+
+            'biaya_transport'
+            => $kap->biaya_transport,
+
+            'biaya_pendidikan'
+            => $kap->biaya_pendidikan,
+
+            'telp_listr_air'
+            => $kap->telp_listr_air,
+
+            'angsuran'
+            => $kap->angsuran,
+
+            'biaya_lain'
+            => $kap->biaya_lain,
+
+
+            'total_pemasukan'
+            => $kap->total_pemasukan,
+
+            'total_pengeluaran'
+            => $kap->total_pengeluaran,
+
+            'penghasilan_bersih'
+            => $kap->penghasilan_bersih,
+
+            'disposable_income'
+            => $kap->disposable_income,
+
+            'ao_ca'
+            => $kap->ao_ca,
+
+            // $total_KapBul = array(
+            //     'total_pemasukan'    => $ttl1 = array_sum(array_slice($inputKapBul, 0, 3)),
+            //     'total_pengeluaran'  => $ttl2 = array_sum(array_slice($inputKapBul, 3)),
+            //     'penghasilan_bersih' => $ttl1 - $ttl2
+        );
+
+        $rekom = RekomendasiPinjaman::where('id', $check_ca->id_rekomendasi_pinjaman)->first();
+
+        // Ceiling Recomendasi Pinjaman
+        $rekomPinjaman = array(
+            'id' => $rekom->id,
+            'penyimpangan_struktur'
+            => $rekom->penyimpangan_struktur,
+
+            'penyimpangan_dokumen'
+            => $rekom->penyimpangan_dokumen,
+
+            'recom_nilai_pinjaman'
+            => $rekom->recom_nilai_pinjaman,
+
+            'recom_tenor'
+            => $rekom->recom_tenor,
+
+            'recom_angsuran'
+            => $rekom->recom_angsuran,
+
+            'recom_produk_kredit'
+            => $rekom->recom_produk_kredit,
+
+            'note_recom'
+            => $rekom->note_recom,
+
+            'bunga_pinjaman'
+            => $rekom->bunga_pinjaman,
+
+            'nama_ca'
+            => $rekom->nama_ca,
+        );
+
+        // Rekomendasi Angsuran pada table rrekomendasi_pinjaman
+        // $plafonCA = $rekomPinjaman['recom_nilai_pinjaman'] == null ? 0 : $rekomPinjaman['recom_nilai_pinjaman'];
+        // $tenorCA  = $rekomPinjaman['recom_tenor']          == null ? 0 : $rekomPinjaman['recom_tenor'];
+        // $bunga    = $rekomPinjaman['bunga_pinjaman']       == null ? 0 : ($rekomPinjaman['bunga_pinjaman'] / 100);
+
+        // $rekomen_pendapatan  = $total_KapBul['total_pemasukan']   == null ? 0 : $total_KapBul['total_pemasukan'];
+        // $rekomen_pengeluaran = $total_KapBul['total_pengeluaran'] == null ? 0 : $total_KapBul['total_pengeluaran'];
+        // $rekomen_angsuran    = $inputKapBul['angsuran']           == null ? 0 : $inputKapBul['angsuran'];
+
+        // if ($plafonCA == 0 && $tenorCA == 0 && $bunga == 0) {
+        //     $recom_angs = 0;
+        // } else {
+        //     $recom_angs = Helper::recom_angs($plafonCA, $tenorCA, $bunga);
+        // }
+
+        // $rekomen_pend_bersih = $rekomen_pendapatan - $rekomen_pengeluaran;
+
+        // $disposable_income   = $rekomen_pend_bersih - $recom_angs;
+
+        // $kapBul = array_merge($inputKapBul, $total_KapBul, array('disposable_income'  => $disposable_income, 'ao_ca' => 'CA'));
+        // // End Kapasitas Bulanan
+
+        // // Check Pemeriksaan
+        $id_pe_ta = $check_ao->id_periksa_agunan_tanah;
+
+        if (empty($id_pe_ta)) {
+            $PeriksaTanah = null;
+        }
+
+        $id_pe_ke = $check_ao->id_periksa_agunan_kendaraan;
+
+        if ($id_pe_ke == null) {
+            $PeriksaKenda = null;
+        }
+
+        $PeriksaTanah = PemeriksaanAgunTan::select('nilai_taksasi_agunan')->whereIn('id', explode(",", $id_pe_ta))->get()->toArray();
+
+        // if (empty($PeriksaTanah)) {
+        //     $sumTaksasiTan = 0;
+        // } else {
+        //     $sumTaksasiTan = array_sum(array_column($PeriksaTanah, 'nilai_taksasi_agunan')); //array_sum($PeriksaTanah);
+        // }
+
+        // $PeriksaKenda = PemeriksaanAgunTan::select('nilai_taksasi_agunan')->whereIn('id', explode(",", $id_pe_ta))->get()->toArray();
+
+        // if ($PeriksaKenda == []) {
+        //     $sumTaksasiKen = 0;
+        // }else{
+        //     $sumTaksasiKen = array_sum(array_column($PeriksaTanah,'nilai_taksasi_agunan')); //array_sum($PeriksaTanah);
+        // }
+        // $sumAllTaksasi = $sumTaksasiTan + $sumTaksasiKen; // Semua Nilai Taksasi dari semua agunan
+        //   $sumAllTaksasi = $sumTaksasiTan; // Semua Nilai Taksasi dari semua agunan
+
+
+        // $recom_ltv   = Helper::recom_ltv($plafonCA, $sumAllTaksasi);
+        // $recom_idir  = Helper::recom_idir($recom_angs, $rekomen_pendapatan, $rekomen_pengeluaran);
+        // $recom_dsr   = Helper::recom_dsr($recom_angs, $rekomen_pendapatan, $rekomen_angsuran);
+        // $recom_hasil = Helper::recom_hasil($recom_dsr, $recom_ltv, $recom_idir);
+
+        $kuantitatif = RingkasanAnalisa::where('id', $check_ca->id_ringkasan_analisa)->first();
+        // Data Ringkasan Analisa CA
+        $dataRingkasan = array(
+            'kuantitatif_ttl_pendapatan'    => $kuantitatif->kuantitatif_ttl_pendapatan,
+            'kuantitatif_ttl_pengeluaran'   => $kuantitatif->kuantitatif_ttl_pengeluaran,
+            'kuantitatif_pendapatan_bersih' => $kuantitatif->kuantitatif_pendapatan_bersih,
+            'kuantitatif_angsuran'          => $kuantitatif->kuantitatif_angsuran,
+            // 'kuantitatif_ttl_pendapatan'    => $rekomen_pendapatan,
+            // 'kuantitatif_ttl_pengeluaran'   => $rekomen_pengeluaran,
+            // 'kuantitatif_pendapatan_bersih' => $rekomen_pend_bersih,
+            // 'kuantitatif_angsuran'          => $recom_angs,
+            'kuantitatif_ltv'               => $kuantitatif->kuantitatif_ltv,
+            'kuantitatif_dsr'               => $kuantitatif->kuantitatif_dsr,
+            'kuantitatif_idir'              => $kuantitatif->kuantitatif_idir,
+            'kuantitatif_hasil'             => $kuantitatif->kuantitatif_hasil,
+
+
+            'kualitatif_analisa'
+            => $kuantitatif->kualitatif_analisa,
+
+            'kualitatif_strenght'
+            => $kuantitatif->kualitatif_strenght,
+
+            'kualitatif_weakness'
+            => $kuantitatif->kualitatif_weakness,
+
+            'kualitatif_opportunity'
+            => $kuantitatif->kualitatif_opportunity,
+
+            'kualitatif_threatness'
+            => $kuantitatif->kualitatif_threatness,
+        );
+
+        $mut = MutasiBank::where('id', $check_ca->id_mutasi_bank)->first();
+        // Mutasi Bank
+        // if (!empty($req->input('no_rekening_mutasi'))) {
+
+        //     for ($i = 0; $i < count($req->input('no_rekening_mutasi')); $i++) {
+
+        $dataMuBa = array(
+            'urutan_mutasi'
+            => $mut->urutan_mutasi,
+
+            'nama_bank'
+            => $mut->nama_bank,
+
+            'no_rekening'
+            => $mut->no_rekening,
+
+            'nama_pemilik'
+            => $mut->nama_pemilik,
+
+            'periode'
+            => $mut->periode,
+
+            'frek_debet'
+            => $mut->frek_debet,
+
+            'nominal_debet'
+            => $mut->nominal_debet,
+
+            'frek_kredit'
+            => $mut->frek_kredit,
+
+            'nominal_kredit'
+            => $mut->nominal_kredit,
+
+            'saldo'
+            => $mut->saldo,
+        );
+
+
+        $infoacc = InfoACC::where('id', $check_ca->id_info_analisa_cc)->first();
+        //   if (!empty($req->input('nama_bank_acc'))) {
+        //  for ($i = 0; $i < count($req->input('nama_bank_acc')); $i++) {
+        $dataACC = array(
+            'nama_bank'       => $infoacc->nama_bank,
+            'plafon'          => $infoacc->plafon,
+            'baki_debet'      => $infoacc->baki_debet,
+            'angsuran'        => $infoacc->angsuran,
+            'collectabilitas' => $infoacc->collectabilitas,
+            'jenis_kredit'    => $infoacc->jenis_kredit,
+        );
+        // }
+        //  }
+
+        $tabtdebt = TabDebt::where('id', $check_ca->id_log_tabungan)->first();
+        $dataTabUang = array(
+
+            'no_rekening'
+            => $tabtdebt->no_rekening,
+
+            'nama_bank'
+            => $tabtdebt->nama_bank,
+
+            'tujuan_pembukaan_rek'
+            => $tabtdebt->tujuan_pembukaan_rek,
+
+            'penghasilan_per_tahun'
+            => $tabtdebt->penghasilan_per_tahun,
+
+            'sumber_penghasilan'
+            => $tabtdebt->sumber_penghasilan,
+
+            'pemasukan_per_bulan'
+            => $tabtdebt->pemasukan_per_bulan,
+
+            'frek_trans_pemasukan'
+            => $tabtdebt->frek_trans_pemasukan,
+
+            'pengeluaran_per_bulan'
+            => $tabtdebt->pengeluaran_per_bulan,
+
+            'frek_trans_pengeluaran'
+            => $tabtdebt->frek_trans_pengeluaran,
+
+            'sumber_dana_setoran'
+            => $tabtdebt->sumber_dana_setoran,
+
+            'tujuan_pengeluaran_dana'
+            => $tabtdebt->tujuan_pengeluaran_dana,
+        );
+
+        $rekom = RekomendasiCA::where('id', $check_ca->id_recom_ca)->first();
+        // dd($rekom->jangka_waktu);
+        // Rekomendasi CA
+        $recomCA = array(
+            'produk'                =>  $rekom->produk,
+            'plafon_kredit'         => $rekom->plafon_kredit,
+            'jangka_waktu'          => $rekom->jangka_waktu,
+            'suku_bunga'            =>  $rekom->suku_bunga,
+            'pembayaran_bunga'      =>  $rekom->pembayaran_bunga,
+            'akad_kredit'           => $rekom->akad_kredit,
+            'ikatan_agunan'         => $rekom->ikatan_agunan,
+            'biaya_provisi'         => $rekom->biaya_provisi,
+            'biaya_administrasi'    => $rekom->biaya_administrasi,
+            'biaya_credit_checking' => $rekom->biaya_credit_checking,
+            // 'biaya_asuransi_jiwa'   => $req->input('biaya_asuransi_jiwa'),
+            // 'biaya_asuransi_jaminan' => $req->input('biaya_asuransi_jaminan'),
+            'notaris'               => $rekom->notaris,
+            'biaya_tabungan'        => $rekom->biaya_tabungan,
+
+
+            // 'rekom_angsuran'        => $recom_angs,
+
+            // 'angs_pertama_bunga_berjalan' => $req->input('angs_pertama_bunga_berjalan'),
+            // 'pelunasan_nasabah_ro'        => $req->input('pelunasan_nasabah_ro'),
+            // 'blokir_dana'                 => $req->input('blokir_dana'),
+            // 'pelunasan_tempat_lain'       => $req->input('pelunasan_tempat_lain'),
+            // 'blokir_angs_kredit'          => $req->input('blokir_angs_kredit')
+        );
+        //   dd($recomCA);
+        $asJiwa = AsuransiJiwa::where('id', $check_ca->id_asuransi_jiwa)->first();
+        $asuransiJiwa = array(
+            'nama_asuransi'       => $asJiwa->nama_asuransi,
+            'jangka_waktu'        => $asJiwa->jangka_waktu,
+            'nilai_pertanggungan' => $asJiwa->nilai_pertanggungan,
+            'jatuh_tempo'         => Carbon::parse($asJiwa->jatuh_tempo)->format('d-m-Y'),
+            'berat_badan'         => $asJiwa->berat_badan,
+            'tinggi_badan'        => $asJiwa->tinggi_badan,
+            'umur_nasabah'        => $asJiwa->umur_nasabah,
+        );
+
+        $asKeb = AsuransiJaminan::where('id', $check_ca->id_asuransi_jaminan_kebakaran)->first();
+        $asjaminanKeb = array(
+            'nama_asuransi'       => $asKeb->nama_asuransi,
+            'jangka_waktu'        => $asKeb->jangka_waktu,
+            'nilai_pertanggungan' => $asKeb->nilai_pertanggungan,
+            'jatuh_tempo'         => Carbon::parse($asKeb->jatuh_tempo)->format('d-m-Y'),
+        );
+
+        $asKen = AsuransiJaminanKen::where('id', $check_ca->id_asuransi_jaminan_kendaraan)->first();
+        $asjaminanKen = array(
+            'nama_asuransi'       => $asKen->nama_asuransi,
+            'jangka_waktu'        => $asKen->jangka_waktu,
+            'nilai_pertanggungan' => $asKen->nilai_pertanggungan,
+            'jatuh_tempo'         => Carbon::parse($asKen->jatuh_tempo)->format('d-m-Y'),
+        );
+        try {
+            DB::connection('web')->beginTransaction();
+            $so_trans = TransSO::select('nomor_so')->where('id', $id)->first();
+            $rev = "Rev" . "-" . $so_trans->nomor_so;
+            $dataID = array(
+                'trans_ca'          => $transCA,
+                'pendapatan_usaha'         => $dataPendapatanUsaha,
+                'kapasitas_bulanan'      => $KapBul,
+                'rekomendasi_pinjaman'    => $rekomPinjaman,
+                'pemeriksaan_tanah'             => $PeriksaTanah,
+                'data_ringkasan' => $dataRingkasan,
+                'mutasi_bank'        => $dataMuBa,
+                'data_acc'     => $dataACC,
+                'dataTabUang'     => $dataTabUang,
+                'recomCA'    => $recomCA,
+                'asuransi_jiwa'     => $asuransiJiwa,
+                'asuransi_kebakaran'     => $asjaminanKeb,
+                'asuransi_kendaraan'     => $asjaminanKen,
+                'asuransi_jiwa'     => $asuransiJiwa,
+                'revisi'                   => $rev,
+            );
+
+
+            // dd($dataID);
+            // $newEditCA = array_merge($transCA, $dataPendapatanUsaha, $KapBul, $rekomPinjaman, $PeriksaTanah, $dataRingkasan, $dataMuBa, $dataACC, $dataTabUang, $recomCA, $asuransiJiwa, $asjaminanKeb, $asjaminanKen);
+            //  dd($newEditCA);
+            //   $CA = TransCA::update([$recomCA]);
+
+
+            // TransSO::where('id', $id)->update(['id_trans_ca' => $CA->id, 'norev_so' => $rev]);
+            DB::connection('web')->commit();
+
+            return response()->json([
+                'code'   => 200,
+                'status' => 'success',
+                'message' => 'Data Revisi OL',
+                'data'   => $dataID
+            ], 200);
+        } catch (\Exception $e) {
+            $err = DB::connection('web')->rollback();
+            return response()->json([
+                'code'    => 501,
+                'status'  => 'error',
+                'message' => $err
             ], 501);
         }
     }

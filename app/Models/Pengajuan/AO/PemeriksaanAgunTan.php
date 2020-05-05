@@ -30,12 +30,15 @@ class PemeriksaanAgunTan extends Model implements AuthenticatableContract, Autho
 
     protected $casts = [
         'nilai_taksasi_agunan'   => 'integer',
-        'nilai_taksasi_bangunan' => 'integer'
+        'nilai_taksasi_bangunan' => 'integer',
+        'tgl_taksasi'   => 'date:d-m-Y'
+
     ];
 
     public $timestamps = false;
 
-    public function tanah(){
+    public function tanah()
+    {
         return $this->belongsTo(AgunanTanah::class, 'id_agunan_tanah')
             ->withDefault(function () {
                 return new AgunanTanah();

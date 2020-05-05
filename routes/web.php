@@ -318,6 +318,7 @@ $router->group(['middleware' => ['jwt.auth', 'log'], 'prefix' => 'api'], functio
                 $router->get('/',      ['subject' => 'Read Trans_SO',   'uses' => 'MasterAO_Controller@index']);
                 $router->get('/{id}',  ['subject' => 'Detail Trans_SO', 'uses' => 'MasterAO_Controller@show']);
                 $router->post('/{id_transaksi}/pers_ideb',  ['subject' => 'persetujuan ideb Trans_SO', 'uses' => 'LampiranController@form_ideb']);
+                $router->get('/{id_transaksi}/id/pers_ideb',  ['subject' => 'persetujuan ideb Trans_SO', 'uses' => 'LampiranController@getDataIdebById']);
                 // Search
                 $router->get('/{param}/{key}={value}/status={status}/{orderVal}={orderBy}/limit={limit}', ['subject' => 'Search Trans_SO', 'uses' => 'MasterAO_Controller@search']);
 
@@ -376,8 +377,11 @@ $router->group(['middleware' => ['jwt.auth', 'log'], 'prefix' => 'api'], functio
             $router->get('/team_caa', ['subject' => 'Get Komite_CAA', 'uses' => 'Approval_Controller@list_team']);  // Get List Team CAA
             $router->get('/team_caa/{id_team}', ['subject' => 'Detail Komite_CAA', 'uses' => 'Approval_Controller@detail_team']);  // Get List Team CAA
             $router->get('/report/approval/{id_trans_so}', ['subject' => 'Report Approval', 'uses' => 'Approval_Controller@report_approval']);
-            $router->post('/report/approval/{id}', ['subject' => 'Edit Report Approval', 'uses' => 'Approval_Controller@update']);
+            $router->post('/update/OL/{id}', ['subject' => 'Edit Data OL', 'uses' => 'Approval_Controller@update']);
             $router->get('/get/rev/{id}', ['subject' => 'Get Data Revisi', 'uses' => 'Approval_Controller@getRev']);
+            $router->get('/get/OLrev/{id}', ['subject' => 'Get all Data Revisi OL', 'uses' => 'Approval_Controller@checkOL']);
+            $router->get('/get/OLrev/log_biaya/{id}', ['subject' => 'Get Data Biaya Revisi OL', 'uses' => 'LogEditOLController@show']);
+            $router->get('/get/OLrev/log/all', ['subject' => 'Get All Data Revisi OL', 'uses' => 'LogEditOLController@getAllLog']);
         });
     });
 

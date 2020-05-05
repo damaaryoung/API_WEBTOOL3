@@ -30,36 +30,36 @@ class BlankRequest extends FormRequest
 
             if ($trans != null) {
                 if ($trans->id_penjamin != null) {
-                    $id_penj = explode (",",$trans->id_penjamin);
+                    $id_penj = explode(",", $trans->id_penjamin);
 
                     for ($i = 0; $i < count($id_penj); $i++) {
-                        $rules['no_ktp_pen.'.$i]  = 'digits:16|unique:web.penjamin_calon_debitur,no_ktp,' . $id_penj[$i];
-                        $rules['no_npwp_pen.'.$i] = 'digits:15|unique:web.penjamin_calon_debitur,no_npwp,' . $id_penj[$i];
-                        $rules['no_telp_pen.'.$i] = 'between:9,13|unique:web.penjamin_calon_debitur,no_telp,' . $id_penj[$i];
+                        $rules['no_ktp_pen.' . $i]  = 'digits:16|unique:web.penjamin_calon_debitur,no_ktp,' . $id_penj[$i];
+                        $rules['no_npwp_pen.' . $i] = 'digits:15|unique:web.penjamin_calon_debitur,no_npwp,' . $id_penj[$i];
+                        $rules['no_telp_pen.' . $i] = 'between:9,13|unique:web.penjamin_calon_debitur,no_telp,' . $id_penj[$i];
                     }
                 }
 
                 if ($trans->id_pasangan != null) {
-                    $rules['no_ktp_pas']    = 'digits:16|unique:web.pasangan_calon_debitur,no_ktp,'.$trans->id_pasangan;
-                    $rules['no_ktp_kk_pas'] = 'digits:16|unique:web.pasangan_calon_debitur,no_ktp_kk,'.$trans->id_pasangan;
-                    $rules['no_kk_pas']     = 'digits:16|unique:web.pasangan_calon_debitur,no_kk,'.$trans->id_pasangan;
-                    $rules['no_npwp_pas']   = 'digits:15|unique:web.pasangan_calon_debitur,no_npwp,'.$trans->id_pasangan;
+                    $rules['no_ktp_pas']    = 'digits:16|unique:web.pasangan_calon_debitur,no_ktp,' . $trans->id_pasangan;
+                    $rules['no_ktp_kk_pas'] = 'digits:16|unique:web.pasangan_calon_debitur,no_ktp_kk,' . $trans->id_pasangan;
+                    $rules['no_kk_pas']     = 'digits:16|unique:web.pasangan_calon_debitur,no_kk,' . $trans->id_pasangan;
+                    $rules['no_npwp_pas']   = 'digits:15|unique:web.pasangan_calon_debitur,no_npwp,' . $trans->id_pasangan;
                     $rules['tgl_lahir_pas'] = 'date_format:d-m-Y';
-                    $rules['no_telp_pas']   = 'between:9,13|unique:web.pasangan_calon_debitur,no_telp,'.$trans->id_pasangan;
+                    $rules['no_telp_pas']   = 'between:9,13|unique:web.pasangan_calon_debitur,no_telp,' . $trans->id_pasangan;
                 }
 
                 if ($trans->id_calon_debt != null) {
-                    $rules['no_ktp']    = 'digits:16|unique:web.calon_debitur,no_ktp,'.$trans->id_calon_debt;
-                    $rules['no_ktp_kk'] = 'digits:16|unique:web.calon_debitur,no_ktp_kk,'.$trans->id_calon_debt;
-                    $rules['no_kk']     = 'digits:16|unique:web.calon_debitur,no_kk,'.$trans->id_calon_debt;
-                    $rules['no_npwp']   = 'digits:15|unique:web.calon_debitur,no_npwp,'.$trans->id_calon_debt;
-                    $rules['no_telp']   = 'between:9,13|unique:web.calon_debitur,no_telp,'.$trans->id_calon_debt;
-                    $rules['no_hp']     = 'between:9,13|unique:web.calon_debitur,no_hp,'.$trans->id_calon_debt;
+                    $rules['no_ktp']    = 'digits:16|unique:web.calon_debitur,no_ktp,' . $trans->id_calon_debt;
+                    $rules['no_ktp_kk'] = 'digits:16|unique:web.calon_debitur,no_ktp_kk,' . $trans->id_calon_debt;
+                    $rules['no_kk']     = 'digits:16|unique:web.calon_debitur,no_kk,' . $trans->id_calon_debt;
+                    $rules['no_npwp']   = 'digits:15|unique:web.calon_debitur,no_npwp,' . $trans->id_calon_debt;
+                    $rules['no_telp']   = 'between:9,13|unique:web.calon_debitur,no_telp,' . $trans->id_calon_debt;
+                    $rules['no_hp']     = 'between:9,13|unique:web.calon_debitur,no_hp,' . $trans->id_calon_debt;
                 }
             }
 
             $rules = [
-                'jenis_pinjaman'        => 'in:KONSUMTIF,MODAL,INVESTASI',
+                'jenis_pinjaman'        => 'in:KONSUMTIF,MODAL KERJA,INVESTASI',
                 'plafon_pinjaman'       => 'integer',
                 'tenor_pinjaman'        => 'integer',
 
@@ -138,7 +138,7 @@ class BlankRequest extends FormRequest
                 'ver_akta_nikah_pasangan' => 'integer',
                 'ver_data_penjamin'       => 'integer',
                 'ver_sku_debt'            => 'integer',
-                'ver_pembukuan_usaha_debt'=> 'integer',
+                'ver_pembukuan_usaha_debt' => 'integer',
 
                 // Validasi
                 'val_data_debt'       => 'integer',
@@ -209,7 +209,8 @@ class BlankRequest extends FormRequest
                 // 'nilai_taksasi_agunan.*'  => 'integer',
                 // 'nilai_taksasi_bangunan.*'=> 'integer',
                 'tgl_taksasi.*'           => 'date_format:d-m-Y',
-                // 'nilai_likuidasi.*'       => 'integer',
+                'nilai_likuidasi.*'       => 'integer',
+                //  'nilai_agunan_independen'  => 'integer',
 
                 // Mutasi Bank pada CA
                 'urutan_mutasi.*'           => 'integer',
@@ -228,7 +229,7 @@ class BlankRequest extends FormRequest
                 'pengeluaran_per_bulan'   => 'in:A,B,C,D,E',
                 'frek_trans_pengeluaran'  => 'in:A,B,C,D,E',
                 // 'sumber_dana_setoran'     =>
-                'tujuan_pengeluaran_dana' => 'in:KONSUMTIF,MODAL,INVESTASI',
+                'tujuan_pengeluaran_dana' => 'in:KONSUMTIF,MODAL KERJA,INVESTASI',
 
                 // Info ACC
                 'plafon_acc.*'          => 'integer',
@@ -280,11 +281,11 @@ class BlankRequest extends FormRequest
                 // 'file_usaha.*'       => 'mimes:jpg,jpeg,png,pdf',
                 'file_lain'          => 'image'
             ];
-        }else{
+        } else {
 
             // If Create
             $rules = [
-                'jenis_pinjaman'        => 'required|in:KONSUMTIF,MODAL,INVESTASI',
+                'jenis_pinjaman'        => 'required|in:KONSUMTIF,MODAL KERJA,INVESTASI',
                 'plafon_pinjaman'       => 'required|integer',
                 'tenor_pinjaman'        => 'required|integer',
 
@@ -403,7 +404,7 @@ class BlankRequest extends FormRequest
                 'ver_akta_nikah_pasangan' => 'integer',
                 'ver_data_penjamin'       => 'integer',
                 'ver_sku_debt'            => 'integer',
-                'ver_pembukuan_usaha_debt'=> 'integer',
+                'ver_pembukuan_usaha_debt' => 'integer',
 
                 // Validasi
                 'val_data_debt'       => 'integer',
@@ -493,7 +494,7 @@ class BlankRequest extends FormRequest
                 'pengeluaran_per_bulan'   => 'in:A,B,C,D,E',
                 'frek_trans_pengeluaran'  => 'in:A,B,C,D,E',
                 // 'sumber_dana_setoran'     =>
-                'tujuan_pengeluaran_dana' => 'in:KONSUMTIF,MODAL,INVESTASI',
+                'tujuan_pengeluaran_dana' => 'in:KONSUMTIF,MODAL KERJA,INVESTASI',
 
                 // Info ACC
                 'plafon_acc.*'          => 'integer',
@@ -550,7 +551,8 @@ class BlankRequest extends FormRequest
         return $rules;
     }
 
-    public function messages(){
+    public function messages()
+    {
 
         $required    = ':attribute wajib diisi';
         $in          = ':attribute harus bertipe :values';
@@ -726,7 +728,7 @@ class BlankRequest extends FormRequest
             'ver_akta_nikah_pasangan.integer' => $integer,
             'ver_data_penjamin.integer'       => $integer,
             'ver_sku_debt.integer'            => $integer,
-            'ver_pembukuan_usaha_debt.integer'=> $integer,
+            'ver_pembukuan_usaha_debt.integer' => $integer,
 
             // Validasi
             'val_data_debt.integer'       => $integer,
@@ -767,7 +769,7 @@ class BlankRequest extends FormRequest
             'lamp_agunan_depan_ken.*.mimes'   => $mimes,
             'lamp_agunan_kanan.ken.*.mimes'   => $mimes,
             'lamp_agunan_kiri.ken.*.mimes'    => $mimes,
-            'lamp_agunan_belakang.ken.*.mimes'=> $mimes,
+            'lamp_agunan_belakang.ken.*.mimes' => $mimes,
             'lamp_agunan_dalam.ken.*.mimes'   => $mimes,
 
             // 'lamp_agunan_depan.ken.*.max'     => $max,

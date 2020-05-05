@@ -29,11 +29,12 @@ class LogTabReq extends FormRequest
             'pengeluaran_per_bulan'   => 'in:A,B,C,D,E',
             'frek_trans_pengeluaran'  => 'in:A,B,C,D,E',
             // 'sumber_dana_setoran'     =>
-            'tujuan_pengeluaran_dana' => 'in:KONSUMTIF,MODAL,INVESTASI',
+            'tujuan_pengeluaran_dana' => 'in:KONSUMTIF,MODAL KERJA,INVESTASI',
         ];
     }
 
-    public function messages(){
+    public function messages()
+    {
         $in          = ':attribute harus bertipe :values';
         $integer     = ':attribute harus berupa angka / bilangan bulat dan tidak boleh dimulai dari 0';
         $numeric     = ':attribute harus berupa angka';

@@ -14,7 +14,7 @@ use App\Models\AreaKantor\JPIC;
 use App\Models\AreaKantor\PIC;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
-use DB;
+use Illuminate\Support\Facades\DB;
 
 class MasterSO_Controller extends BaseController
 {
@@ -26,11 +26,11 @@ class MasterSO_Controller extends BaseController
         $id_cabang = $pic->id_cabang;
         $scope     = $pic->jpic['cakupan'];
 
-        $query_dir = TransSO::with('pic', 'cabang', 'asaldata','debt', 'faspin')->orderBy('created_at', 'desc');
-
+        $query_dir = TransSO::with('pic', 'cabang', 'asaldata', 'debt', 'faspin')->orderBy('created_at', 'desc');
         $query = Helper::checkDir($scope, $query_dir, $id_area, $id_cabang);
+        // dd($query->get());
 
-        if ($query->get() == '[]') {
+        if ($query->get() === '[]') {
             return response()->json([
                 "code"    => 404,
                 "status"  => "not found",
@@ -42,17 +42,17 @@ class MasterSO_Controller extends BaseController
         foreach ($query->get() as $key => $val) {
             if ($val->status_das == 1) {
                 $status_das = 'complete';
-            }elseif($val->status_das == 2){
+            } elseif ($val->status_das == 2) {
                 $status_das = 'not complete';
-            }else{
+            } else {
                 $status_das = 'waiting';
             }
 
             if ($val->status_hm == 1) {
                 $status_hm = 'complete';
-            }elseif ($val->status_hm == 2) {
+            } elseif ($val->status_hm == 2) {
                 $status_hm = 'not complete';
-            }else{
+            } else {
                 $status_hm = 'waiting';
             }
 
@@ -78,7 +78,6 @@ class MasterSO_Controller extends BaseController
                 ],
                 'tgl_transaksi' => $val->created_at
             ];
-
         }
 
         try {
@@ -95,7 +94,6 @@ class MasterSO_Controller extends BaseController
                 "message" => $e
             ], 501);
         }
-
     }
 
     public function show($id, Request $req)
@@ -115,14 +113,14 @@ class MasterSO_Controller extends BaseController
             return response()->json([
                 "code"    => 404,
                 "status"  => "not found",
-                "message" => "Data dengan id ".$id." tidak ada di SO atau belum di rekomendasikan oleh bagian DAS dan HM"
+                "message" => "Data dengan id " . $id . " tidak ada di SO atau belum di rekomendasikan oleh bagian DAS dan HM"
             ], 404);
         }
 
         // $ao = TransAO::where('id_trans_so', $val->id)->first();
 
-        $nama_anak = explode (",",$val->nama_anak);
-        $tgl_anak  = explode (",",$val->tgl_lahir_anak);
+        $nama_anak = explode(",", $val->nama_anak);
+        $tgl_anak  = explode(",", $val->tgl_lahir_anak);
 
         $anak = array();
         for ($i = 0; $i < count($nama_anak); $i++) {
@@ -136,44 +134,44 @@ class MasterSO_Controller extends BaseController
 
         if ($val->status_das == 1) {
             $status_das = 'complete';
-        }elseif($val->status_das == 2){
+        } elseif ($val->status_das == 2) {
             $status_das = 'not complete';
-        }else{
+        } else {
             $status_das = 'waiting';
         }
 
         if ($val->status_hm == 1) {
             $status_hm = 'complete';
-        }elseif ($val->status_hm == 2) {
+        } elseif ($val->status_hm == 2) {
             $status_hm = 'not complete';
-        }else{
+        } else {
             $status_hm = 'waiting';
         }
 
 
         if ($val->ao['status_ao'] == 1) {
             $status_ao = 'complete';
-        }elseif ($val->ao['status_ao'] == 2) {
+        } elseif ($val->ao['status_ao'] == 2) {
             $status_ao = 'not complete';
-        }else{
+        } else {
             $status_ao = 'waiting';
         }
 
 
         if ($val->ca['status_ca'] == 1) {
             $status_ca = 'complete';
-        }elseif ($val->ca['status_ca'] == 2) {
+        } elseif ($val->ca['status_ca'] == 2) {
             $status_ca = 'not complete';
-        }else{
+        } else {
             $status_ca = 'waiting';
         }
 
 
         if ($val->caa['status_caa'] == 1) {
             $status_caa = 'complete';
-        }elseif ($val->caa['status_caa'] == 2) {
+        } elseif ($val->caa['status_caa'] == 2) {
             $status_caa = 'not complete';
-        }else{
+        } else {
             $status_caa = 'waiting';
         }
 
@@ -238,11 +236,11 @@ class MasterSO_Controller extends BaseController
         $pic = $request->pic; // From PIC middleware
         $user_id = $request->auth->user_id;
 
-        $countTSO = TransSO::latest('id','nomor_so')->first();
+        $countTSO = TransSO::latest('id', 'nomor_so')->first();
 
-        if ($countTSO == null) {
+        if ($countTSO === null) {
             $lastNumb = 1;
-        }else{
+        } else {
             $no = $countTSO->nomor_so;
 
             $arr = explode("-", $no, 5);
@@ -259,7 +257,7 @@ class MasterSO_Controller extends BaseController
         $JPIC   = JPIC::where('id', $pic->id_mj_pic)->first();
 
         //  ID-Cabang - AO / CA / SO - Bulan - Tahun - NO. Urut
-        $nomor_so = $pic->id_cabang.'-'.$JPIC->nama_jenis.'-'.$month.'-'.$year.'-'.$lastNumb; //  ID-Cabang - AO / CA / SO - Bulan - Tahun - NO. Urut
+        $nomor_so = $pic->id_cabang . '-' . $JPIC->nama_jenis . '-' . $month . '-' . $year . '-' . $lastNumb; //  ID-Cabang - AO / CA / SO - Bulan - Tahun - NO. Urut
 
         $trans_so = array(
             'nomor_so'       => $nomor_so,
@@ -274,7 +272,7 @@ class MasterSO_Controller extends BaseController
 
         // Data Fasilitas Pinjaman
         $dataFasPin = array(
-            'jenis_pinjaman'  => $req->input('jenis_pinjaman'),
+            'jenis_pinjaman'  => $request->input('jenis_pinjaman'),
             'tujuan_pinjaman' => $req->input('tujuan_pinjaman'),
             'plafon'          => $req->input('plafon_pinjaman'),
             'tenor'           => $req->input('tenor_pinjaman')
@@ -291,15 +289,15 @@ class MasterSO_Controller extends BaseController
 
         $check_ktp_dpm = DB::connection("web")->table("view_nasabah")->where("NO_ID", $ktp)->first();
 
-        if ($check_ktp_dpm == null) {
+        if ($check_ktp_dpm === null) {
             $NASABAH_ID = null;
-        }else{
+        } else {
             $NASABAH_ID = $check_ktp_dpm->NASABAH_ID;
         }
 
         $check_ktp_web = Debitur::select('id', 'no_ktp', 'nama_lengkap', 'created_at')->where('no_ktp', $ktp)->first();
 
-        if($check_ktp_web != null){
+        if ($check_ktp_web !== null) {
 
             $created_at = $check_ktp_web->created_at->timestamp;
 
@@ -309,17 +307,17 @@ class MasterSO_Controller extends BaseController
                 return response()->json([
                     "code"    => 403,
                     "status"  => "Expired",
-                    'message' => "Akun belum aktif kembali, belum ada 1 bulan yang lalu, tepatnya pada tanggal '".Carbon::parse($check_ktp_web->created_at)->format("d-m-Y")."' debitur dengan nama '{$check_ktp_web->nama_lengkap}' telah melakukan pengajuan"
+                    'message' => "Akun belum aktif kembali, belum ada 1 bulan yang lalu, tepatnya pada tanggal '" . Carbon::parse($check_ktp_web->created_at)->format("Y-m-d") . "' debitur dengan nama '{$check_ktp_web->nama_lengkap}' telah melakukan pengajuan"
                 ], 403);
-            }else{
+            } else {
                 return response()->json([
                     "code"    => 200,
                     "status"  => "success",
                     "message" => "Akun telah ada di sistem, gunakan endpoint berikut apabila ingin menggunakan datanya",
-                    "endpoint"=> "/api/debitur/".$check_ktp_web->id
+                    "endpoint" => "/api/debitur/" . $check_ktp_web->id
                 ], 200);
             }
-        }else{
+        } else {
             $check_ktp_debt = Debitur::where('no_ktp', $ktp)->first();
 
             if (!empty($check_ktp_debt) && !empty($check_ktp_debt->no_ktp)) {
@@ -401,66 +399,66 @@ class MasterSO_Controller extends BaseController
             $path_pas  = $lamp_dir . '/pasangan';
             $path_penj = $lamp_dir . '/penjamin';
 
-            if($file = $req->file('lamp_ktp')){
+            if ($file = $req->file('lamp_ktp')) {
                 $name       = 'ktp.';
                 $check_file = 'null';
 
                 $lamp_ktp = Helper::uploadImg($check_file, $file, $path_debt, $name);
-            }else{
+            } else {
                 $lamp_ktp = null;
             }
 
-            if($file = $req->file('lamp_kk')){
+            if ($file = $req->file('lamp_kk')) {
                 $name       = 'kk.';
                 $check_file = 'null';
-            
+
                 $lamp_kk = Helper::uploadImg($check_file, $file, $path_debt, $name);
-            }else{
+            } else {
                 $lamp_kk = null;
             }
 
-            if($file = $req->file('lamp_sertifikat')){
+            if ($file = $req->file('lamp_sertifikat')) {
                 $name       = 'sertifikat.';
                 $check_file = 'null';
-            
+
                 $lamp_sertifikat = Helper::uploadImg($check_file, $file, $path_debt, $name);
-            }else{
+            } else {
                 $lamp_sertifikat = null;
             }
 
-            if($file = $req->file('lamp_pbb')){
+            if ($file = $req->file('lamp_pbb')) {
                 $name       = 'pbb.';
                 $check_file = 'null';
-            
+
                 $lamp_sttp_pbb = Helper::uploadImg($check_file, $file, $path_debt, $name);
-            }else{
+            } else {
                 $lamp_sttp_pbb = null;
             }
 
-            if($file = $req->file('lamp_imb')){
+            if ($file = $req->file('lamp_imb')) {
                 $name       = 'imb.';
                 $check_file = 'null';
-            
+
                 $lamp_imb = Helper::uploadImg($check_file, $file, $path_debt, $name);
-            }else{
+            } else {
                 $lamp_imb = null;
             }
 
-            if($file = $req->file('foto_agunan_rumah')){
+            if ($file = $req->file('foto_agunan_rumah')) {
                 $name = 'foto_agunan_rumah.';
                 $check_file = 'null';
-            
+
                 $foto_agunan_rumah = Helper::uploadImg($check_file, $file, $path_debt, $name);
-            }else{
+            } else {
                 $foto_agunan_rumah = null;
             }
 
             if ($file = $req->file('lamp_surat_cerai')) {
                 $name       = 'lamp_surat_cerai.';
                 $check_file = 'null';
-            
+
                 $lamp_surat_cerai = Helper::uploadImg($check_file, $file, $path_debt, $name);
-            }else{
+            } else {
                 $lamp_surat_cerai = null;
             }
 
@@ -508,29 +506,28 @@ class MasterSO_Controller extends BaseController
                 'NASABAH_ID'            => $NASABAH_ID
             );
 
-            if($file = $req->file('lamp_ktp_pas')){
+            if ($file = $req->file('lamp_ktp_pas')) {
                 $name       = 'ktp.';
                 $check_file = 'null';
-            
+
                 $lamp_ktp_pas = Helper::uploadImg($check_file, $file, $path_pas, $name);
-            }else{
+            } else {
                 $lamp_ktp_pas = null;
             }
 
-            if($file = $req->file('lamp_buku_nikah_pas')){
+            if ($file = $req->file('lamp_buku_nikah_pas')) {
                 $name       = 'buku_nikah.';
                 $check_file = 'null';
-            
+
                 $lamp_buku_nikah_pas = Helper::uploadImg($check_file, $file, $path_pas, $name);
-            }else{
+            } else {
                 $lamp_buku_nikah_pas = null;
             }
 
             if (!empty($req->input('nama_lengkap_pas'))) {
 
                 $alamat_ktp_pas = empty($req->input('alamat_ktp_pas')) ? $dataDebitur['alamat_ktp'] : $req->input('alamat_ktp_pas');
-
-            }else{
+            } else {
                 $alamat_ktp_pas = null;
             }
 
@@ -551,63 +548,59 @@ class MasterSO_Controller extends BaseController
             );
 
             // Data Penjamin
-            if($files = $req->file('lamp_ktp_pen')){
+            if ($files = $req->file('lamp_ktp_pen')) {
                 $name       = 'ktp_penjamin.';
                 $check_file = 'null';
 
                 $arrayPath = array();
-                foreach($files as $file)
-                {
+                foreach ($files as $file) {
                     $arrayPath[] = Helper::uploadImg($check_file, $file, $path_penj, $name);
                 }
 
                 $lamp_ktp_pen = $arrayPath;
-            }else{
+            } else {
                 $lamp_ktp_pen = null;
             }
 
-            if($files = $req->file('lamp_ktp_pasangan_pen')){
+            if ($files = $req->file('lamp_ktp_pasangan_pen')) {
                 $name       = 'ktp_pasangan.';
                 $check_file = 'null';
 
                 $arrayPath = array();
-                foreach($files as $file)
-                {
+                foreach ($files as $file) {
                     $arrayPath[] = Helper::uploadImg($check_file, $file, $path_penj, $name);
                 }
 
                 $lamp_ktp_pasangan_pen = $arrayPath;
-            }else{
+            } else {
                 $lamp_ktp_pasangan_pen = null;
             }
 
-            if($files = $req->file('lamp_kk_pen')){
+            if ($files = $req->file('lamp_kk_pen')) {
                 $name       = 'kk_penjamin.';
                 $check_file = 'null';
 
                 $arrayPath = array();
-                foreach($files as $file)
-                {
+                foreach ($files as $file) {
                     $arrayPath[] = Helper::uploadImg($check_file, $file, $path_penj, $name);
                 }
 
                 $lamp_kk_pen = $arrayPath;
-            }else{
+            } else {
                 $lamp_kk_pen = null;
             }
 
-            if($files = $req->file('lamp_buku_nikah_pen')){
+            if ($files = $req->file('lamp_buku_nikah_pen')) {
                 $name       = 'buku_nikah_penjamin.';
                 $check_file = 'null';
 
                 $arrayPath = array();
-                foreach($files as $file)
-                {
+                foreach ($files as $file) {
                     $arrayPath[] = Helper::uploadImg($check_file, $file, $path_penj, $name);
                 }
 
                 $lamp_buku_nikah_pen = $arrayPath;
-            }else{
+            } else {
                 $lamp_buku_nikah_pen = null;
             }
 
@@ -626,7 +619,7 @@ class MasterSO_Controller extends BaseController
                         'no_telp'          => empty($req->no_telp_pen[$i])          ? null : $req->no_telp_pen[$i],
                         'hubungan_debitur' => empty($req->hubungan_debitur_pen[$i]) ? null : $req->hubungan_debitur_pen[$i],
                         'lamp_ktp'         => empty($lamp_ktp_pen[$i])              ? null : $lamp_ktp_pen[$i],
-                        'lamp_ktp_pasangan'=> empty($lamp_ktp_pasangan_pen[$i])     ? null : $lamp_ktp_pasangan_pen[$i],
+                        'lamp_ktp_pasangan' => empty($lamp_ktp_pasangan_pen[$i])     ? null : $lamp_ktp_pasangan_pen[$i],
                         'lamp_kk'          => empty($lamp_kk_pen[$i])               ? null : $lamp_kk_pen[$i],
                         'lamp_buku_nikah'  => empty($lamp_buku_nikah_pen[$i])       ? null : $lamp_buku_nikah_pen[$i]
                     ];
@@ -641,14 +634,14 @@ class MasterSO_Controller extends BaseController
             if ($dataFasPin) {
                 $FasPin    = FasilitasPinjaman::create($dataFasPin);
                 $id_faspin = $FasPin->id;
-            }else{
+            } else {
                 $id_faspin = null;
             }
 
             if ($dataDebitur['status_nikah'] == 'NIKAH') {
                 $pasangan    = Pasangan::create($dataPasangan);
                 $id_pasangan = $pasangan->id;
-            }else{
+            } else {
                 $id_pasangan = null;
             }
 
@@ -661,7 +654,7 @@ class MasterSO_Controller extends BaseController
                 }
 
                 $penID = implode(",", $id_penjamin['id']);
-            }else{
+            } else {
                 $penID = null;
             }
 
@@ -680,10 +673,10 @@ class MasterSO_Controller extends BaseController
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'message'=> 'Data berhasil dibuat',
+                'message' => 'Data berhasil dibuat',
                 'data'   => $transaksi
             ], 200);
-        }catch (\Exception $e) {
+        } catch (\Exception $e) {
             $err = DB::connection('web')->rollback();
             return response()->json([
                 'code'    => 501,
@@ -699,11 +692,11 @@ class MasterSO_Controller extends BaseController
 
         $check = TransSO::where('id', $id)->first();
 
-        if ($check == null) {
+        if ($check === null) {
             return response()->json([
                 "code"    => 404,
                 "status"  => "not found",
-                "message" => "Data dengan id ".$id." tida ada di SO atau belum di rekomendasikan oleh DAS dan HM"
+                "message" => "Data dengan id " . $id . " tida ada di SO atau belum di rekomendasikan oleh DAS dan HM"
             ], 404);
         }
 
@@ -715,29 +708,29 @@ class MasterSO_Controller extends BaseController
         // Data Fasilitas Pinjaman
         $dataFasPin = array(
             'jenis_pinjaman'
-                => empty($req->input('jenis_pinjaman'))
+            => empty($req->input('jenis_pinjaman'))
                 ? $trans->faspin['jenis_pinjaman']
                 : $req->input('jenis_pinjaman'),
 
             'tujuan_pinjaman'
-                => empty($req->input('tujuan_pinjaman'))
+            => empty($req->input('tujuan_pinjaman'))
                 ? $trans->faspin['tujuan_pinjaman']
                 : $req->input('tujuan_pinjaman'),
 
             'plafon'
-                => empty($req->input('plafon_pinjaman'))
+            => empty($req->input('plafon_pinjaman'))
                 ? $trans->faspin['plafon_pinjaman']
                 : $req->input('plafon_pinjaman'),
 
             'tenor'
-                => empty($req->input('tenor_pinjaman'))
+            => empty($req->input('tenor_pinjaman'))
                 ? $trans->faspin['tenor_pinjaman']
                 : $req->input('tenor_pinjaman')
         );
 
 
         DB::connection('web')->beginTransaction();
-        try{
+        try {
             TransSO::where('id', $id)->update($trans_so);
 
             FasilitasPinjaman::where('id', $check->id_fasilitas_pinjaman)->update($dataFasPin);
@@ -747,9 +740,9 @@ class MasterSO_Controller extends BaseController
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'message'=> 'Data berhasil diupdate'
+                'message' => 'Data berhasil diupdate'
             ], 200);
-        }catch (\Exception $e) {
+        } catch (\Exception $e) {
             $err = DB::connection('web')->rollback();
             return response()->json([
                 'code'    => 501,
@@ -767,7 +760,7 @@ class MasterSO_Controller extends BaseController
             'id', 'nomor_so', 'user_id', 'id_pic', 'id_area', 'id_cabang', 'id_asal_data', 'nama_marketing', 'nama_so', 'id_fasilitas_pinjaman', 'id_calon_debitur', 'id_pasangan', 'id_penjamin', 'id_trans_ao', 'id_trans_ca', 'id_trans_caa', 'catatan_das', 'catatan_hm', 'status_das', 'status_hm', 'lamp_ideb', 'lamp_pefindo'
         );
 
-        if($param != 'filter' && $param != 'search'){
+        if ($param != 'filter' && $param != 'search') {
             return response()->json([
                 'code'    => 412,
                 'status'  => 'not valid',
@@ -775,28 +768,26 @@ class MasterSO_Controller extends BaseController
             ], 412);
         }
 
-        if (in_array($key, $column) == false)
-        {
+        if (in_array($key, $column) == false) {
             return response()->json([
                 'code'    => 412,
                 'status'  => 'not valid',
-                'message' => 'gunakan key yang valid diantara berikut: '.implode(",", $column)
+                'message' => 'gunakan key yang valid diantara berikut: ' . implode(",", $column)
             ], 412);
         }
 
-        if (in_array($orderBy, $column) == false)
-        {
+        if (in_array($orderBy, $column) == false) {
             return response()->json([
                 'code'    => 412,
                 'status'  => 'not valid',
-                'message' => 'gunakan order by yang valid diantara berikut: '.implode(",", $column)
+                'message' => 'gunakan order by yang valid diantara berikut: ' . implode(",", $column)
             ], 412);
         }
 
-        if($param == 'search'){
+        if ($param == 'search') {
             $operator   = "like";
             $func_value = "%{$value}%";
-        }else{
+        } else {
             $operator   = "=";
             $func_value = "{$value}";
         }
@@ -805,21 +796,21 @@ class MasterSO_Controller extends BaseController
         $id_cabang = $pic->id_cabang;
         $scope     = $pic->jpic['cakupan'];
 
-        $query_dir = TransSO::with('pic', 'cabang', 'asaldata','debt', 'faspin')
+        $query_dir = TransSO::with('pic', 'cabang', 'asaldata', 'debt', 'faspin')
             ->where('flg_aktif', $status)
             ->orderBy($orderBy, $orderVal);
-        
+
         $query = Helper::checkDir($scope, $query_dir, $id_area, $id_cabang);
 
-        if($value == 'default'){
+        if ($value == 'default') {
             $res = $query;
-        }else{
+        } else {
             $res = $query->where($key, $operator, $func_value);
         }
 
-        if($limit == 'default'){
+        if ($limit == 'default') {
             $result = $res;
-        }else{
+        } else {
             $result = $res->limit($limit);
         }
 
@@ -863,7 +854,7 @@ class MasterSO_Controller extends BaseController
         }
     }
 
-    public function filter($year, $month=null, Request $req)
+    public function filter($year, $month = null, Request $req)
     {
         $pic = $req->pic; // From PIC middleware
 
@@ -873,13 +864,13 @@ class MasterSO_Controller extends BaseController
 
         if ($month == null) {
 
-            $query_dir = TransSO::with('pic', 'cabang', 'asaldata','debt', 'faspin')->orderBy('created_at', 'desc')
-                    ->whereYear('created_at', '=', $year);
-        }else{
+            $query_dir = TransSO::with('pic', 'cabang', 'asaldata', 'debt', 'faspin')->orderBy('created_at', 'desc')
+                ->whereYear('created_at', '=', $year);
+        } else {
 
-            $query_dir = TransSO::with('pic', 'cabang', 'asaldata','debt', 'faspin')->orderBy('created_at', 'desc')
-                    ->whereYear('created_at', '=', $year)
-                    ->whereMonth('created_at', '=', $month);
+            $query_dir = TransSO::with('pic', 'cabang', 'asaldata', 'debt', 'faspin')->orderBy('created_at', 'desc')
+                ->whereYear('created_at', '=', $year)
+                ->whereMonth('created_at', '=', $month);
         }
 
         $query = Helper::checkDir($scope, $query_dir, $id_area, $id_cabang);
@@ -896,17 +887,17 @@ class MasterSO_Controller extends BaseController
         foreach ($query->get() as $key => $val) {
             if ($val->status_das == 1) {
                 $status_das = 'complete';
-            }elseif($val->status_das == 2){
+            } elseif ($val->status_das == 2) {
                 $status_das = 'not complete';
-            }else{
+            } else {
                 $status_das = 'waiting';
             }
 
             if ($val->status_hm == 1) {
                 $status_hm = 'complete';
-            }elseif ($val->status_hm == 2) {
+            } elseif ($val->status_hm == 2) {
                 $status_hm = 'not complete';
-            }else{
+            } else {
                 $status_hm = 'waiting';
             }
 
@@ -932,7 +923,6 @@ class MasterSO_Controller extends BaseController
                 ],
                 'tgl_transaksi' => $val->created_at
             ];
-
         }
 
         try {

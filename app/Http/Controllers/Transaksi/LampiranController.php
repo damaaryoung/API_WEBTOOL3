@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Transaksi;
 use Laravel\Lumen\Routing\Controller as BaseController;
 use App\Http\Controllers\Controller as Helper;
 use App\Models\Transaksi\TransAO;
+use App\Models\Transaksi\TransCA;
 use Illuminate\Support\Facades\File;
 use App\Models\Transaksi\TransSO;
 use Illuminate\Http\Request;
@@ -76,6 +77,37 @@ class LampiranController extends BaseController
             ], 200);
         } catch (\Exception $e) {
             DB::connection('web')->rollback();
+            return response()->json([
+                "code"    => 501,
+                "status"  => "error",
+                "message" => $e
+            ], 501);
+        }
+    }
+    public function getDataIdebById($id_transaksi, Request $req)
+    {
+        $check_so = TransSO::where('id', $id_transaksi)->first();
+
+        if (empty($check_so)) {
+            return response()->json([
+                'code'    => 404,
+                'status'  => 'not found',
+                'message' => 'Transaksi dengan id ' . $id_transaksi . ' tidak ditemukan'
+            ], 404);
+        }
+
+        try {
+            $form_persetujuan_ideb =   TransSO::select('form_persetujuan_ideb')->where('id', $id_transaksi)->first();
+
+            //    DB::connection('web')->commit();
+            return response()->json([
+                'code'    => 200,
+                'status'  => 'success',
+                'message' => 'Data form Persetujuan ideb transaksi' . ' ' . $id_transaksi,
+                'data'    => $form_persetujuan_ideb
+            ], 200);
+        } catch (\Exception $e) {
+            //  DB::connection('web')->rollback();
             return response()->json([
                 "code"    => 501,
                 "status"  => "error",

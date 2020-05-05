@@ -19,12 +19,13 @@ use Illuminate\Http\Request;
 use App\Http\Requests;
 use Carbon\Carbon;
 use Image;
-use DB;
+use Illuminate\Support\Facades\DB;
 
 class KendaraanController extends BaseController
 {
 
-    public function show($id){
+    public function show($id)
+    {
         $check = AgunanKendaraan::where('id', $id)->first();
 
         if ($check == null) {
@@ -39,7 +40,7 @@ class KendaraanController extends BaseController
             'id'            => $check->id == null ? null : (int) $check->id,
             'no_bpkb'       => $check->no_bpkb,
             'nama_pemilik'  => $check->nama_pemilik,
-            'alamat_pemilik'=> $check->alamat_pemilik,
+            'alamat_pemilik' => $check->alamat_pemilik,
             'merk'          => $check->merk,
             'jenis'         => $check->jenis,
             'no_rangka'     => $check->no_rangka,
@@ -48,8 +49,8 @@ class KendaraanController extends BaseController
             'tahun'         => $check->id == null ? null : (int) $check->tahun,
             'no_polisi'     => $check->no_polisi,
             'no_stnk'       => $check->no_stnk,
-            'tgl_kadaluarsa_pajak'=> $check->tgl_kadaluarsa_pajak,
-            'tgl_kadaluarsa_stnk' => $check->tgl_kadaluarsa_stnk,
+            'tgl_kadaluarsa_pajak' => Carbon::parse($check->tgl_kadaluarsa_pajak)->format('d-m-Y'),
+            'tgl_kadaluarsa_stnk' => Carbon::parse($check->tgl_kadaluarsa_stnk)->format('d-m-Y'),
             'no_faktur'         => $check->no_faktur,
             'lampiran'  => [
                 'lamp_agunan_depan' => $check->lamp_agunan_depan,
@@ -75,7 +76,8 @@ class KendaraanController extends BaseController
         }
     }
 
-    public function update($id, A_KendaraanRequest $req){
+    public function update($id, A_KendaraanRequest $req)
+    {
         $check = AgunanKendaraan::where('id', $id)->first();
 
         if ($check == null) {
@@ -116,49 +118,49 @@ class KendaraanController extends BaseController
 
         $path = 'public/' . $so->debt['no_ktp'] . '/agunan_kendaraan';
 
-        if($file = $req->file('lamp_agunan_depan_ken')){
+        if ($file = $req->file('lamp_agunan_depan_ken')) {
             $check_file = $check_lamp_agunan_depan;
             $name       = 'agunan_depan.';
 
             $lamp_agunan_depan =  Helper::uploadImg($check_file, $file, $path, $name);
-        }else{
+        } else {
             $lamp_agunan_depan = $check_lamp_agunan_depan;
         }
 
-        if($file = $req->file('lamp_agunan_kanan_ken')){
+        if ($file = $req->file('lamp_agunan_kanan_ken')) {
             $check_file = $check_lamp_agunan_kanan;
             $name       = 'agunan_kanan.';
 
             $lamp_agunan_kanan = Helper::uploadImg($check_file, $file, $path, $name);
-        }else{
+        } else {
             $lamp_agunan_kanan = $check_lamp_agunan_kanan;
         }
 
-        if($file = $req->file('lamp_agunan_kiri_ken')){
+        if ($file = $req->file('lamp_agunan_kiri_ken')) {
             $check_file = $check_lamp_agunan_kiri;
             $name       = 'agunan_kiri.';
-           
+
             $lamp_agunan_kiri = Helper::uploadImg($check_file, $file, $path, $name);
-        }else{
+        } else {
             $lamp_agunan_kiri = $check_lamp_agunan_kiri;
         }
 
 
-        if($file = $req->file('lamp_agunan_belakang_ken')){
+        if ($file = $req->file('lamp_agunan_belakang_ken')) {
             $check_file = $check_lamp_agunan_belakang;
             $name       = 'agunan_belakang.';
 
             $lamp_agunan_belakang = Helper::uploadImg($check_file, $file, $path, $name);
-        }else{
+        } else {
             $lamp_agunan_belakang = $check_lamp_agunan_belakang;
         }
 
-        if($file = $req->file('lamp_agunan_dalam_ken')){
+        if ($file = $req->file('lamp_agunan_dalam_ken')) {
             $check_file = $check_lamp_agunan_dalam;
             $name = 'agunan_dalam.';
 
             $lamp_agunan_dalam = Helper::uploadImg($check_file, $file, $path, $name);
-        }else{
+        } else {
             $lamp_agunan_dalam = $check_lamp_agunan_dalam;
         }
 
@@ -195,7 +197,7 @@ class KendaraanController extends BaseController
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'message'=> 'Update Agunan Kendaraan Berhasil',
+                'message' => 'Update Agunan Kendaraan Berhasil',
                 'data'   => $dataAgunanKendaraan
             ], 200);
         } catch (Exception $e) {
