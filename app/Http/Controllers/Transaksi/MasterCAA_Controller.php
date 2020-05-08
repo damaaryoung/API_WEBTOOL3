@@ -1156,8 +1156,10 @@ class MasterCAA_Controller extends BaseController
                 );
             }
         }
-
-        $get_pic = PIC::with('jpic')->whereIn('id', explode(",", $check_caa->pic_team_caa))->get();
+        // dd($check_caa);
+        // $jpic = JPIC::with('pic')->whereIn('id', explode(",", $check_caa->pic_team_caa))->select('urutan_jabatan')->first();
+        // dd($jpic);
+        $get_pic = PIC::with('jpic')->whereIn('id', explode(",", $check_caa->pic_team_caa))->orderBy('id_mj_pic', 'ASC')->get();
 
         if (empty($get_pic)) {
             $ptc = null;
@@ -1168,12 +1170,12 @@ class MasterCAA_Controller extends BaseController
                     'id_pic'    => $get_pic[$i]['id'] == null ? null : (int) $get_pic[$i]['id'],
                     'nama'      => $get_pic[$i]['nama'],
                     'jabatan'   => $get_pic[$i]['jpic']['nama_jenis'],
+                    'urutan_jabatan'   => $get_pic[$i]['jpic']['urutan_jabatan'],
                     'user_id'   => $get_pic[$i]['user_id'] == null ? null : (int) $get_pic[$i]['user_id']
                 ];
             }
         }
-
-
+        //  dd($ptc);
         if ($check_caa->status_caa == 1) {
             $status_caa = 'recommend';
         } elseif ($check_caa->status_caa == 2) {

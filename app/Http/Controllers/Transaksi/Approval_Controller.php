@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Transaksi;
 
 use Laravel\Lumen\Routing\Controller as BaseController;
 use App\Http\Controllers\Controller as Helper;
+
+//Model
 use App\Models\Pengajuan\AO\PemeriksaanAgunTan;
 use App\Models\Pengajuan\AO\AgunanKendaraan;
 use App\Models\Pengajuan\AO\PemeriksaanAgunKen;
@@ -22,6 +24,10 @@ use App\Models\Pengajuan\CA\AsuransiJiwa;
 use App\Models\Pengajuan\CA\AsuransiJaminan;
 use App\Models\Pengajuan\CA\RekomendasiCA;
 use App\Models\Transaksi\LogRekomCA;
+use App\Models\Pengajuan\CA\LogRingkasanAnalisa;
+use App\Models\Pengajuan\CA\LogAsuransiJiwa;
+use App\Models\Pengajuan\CA\LogAsuransiJaminan;
+use App\Models\Pengajuan\CA\LogAsuransiJaminanKen;
 // use Illuminate\Support\Facades\File;
 use App\Models\Pengajuan\AO\KapBulanan;
 use App\Models\Pengajuan\CA\AsuransiJaminanKen;
@@ -35,6 +41,8 @@ use App\Models\Pengajuan\AO\VerifModel;
 use App\Models\Pengajuan\SO\Debitur;
 use App\Models\AreaKantor\JPIC;
 use App\Models\AreaKantor\PIC;
+
+//request
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -314,7 +322,139 @@ class Approval_Controller extends BaseController
             ], 501);
         }
     }
+    public function approve($id, $id_approval, Request $req, ApprovalReq $request)
+    {
+        $pic     = $req->pic; // From PIC middleware
+        $user_id = $req->auth->user_id;
 
+        $check_so = TransSO::where('id', $id)->first();
+
+        if ($check_so == null) {
+            return response()->json([
+                "code"    => 404,
+                "status"  => "not found",
+                "message" => "Transaksi dengan id " . $id . " belum ada di SO"
+            ], 404);
+        }
+
+        $check_ao = TransAO::where('id_trans_so', $id)->where('status_ao', 1)->first();
+
+        if ($check_ao == null) {
+            return response()->json([
+                "code"    => 404,
+                "status"  => "not found",
+                "message" => "Transaksi dengan id " . $id . " belum sampai ke AO"
+            ], 404);
+        }
+
+        $check_ca = TransCA::where('id_trans_so', $id)->where('status_ca', 1)->first();
+
+        if ($check_ca == null) {
+            return response()->json([
+                "code"    => 404,
+                "status"  => "not found",
+                "message" => "Transaksi dengan id " . $id . " belum sampai ke ca"
+            ], 404);
+        }
+
+        $check_caa = TransCAA::where('id_trans_so', $id)->where('status_caa', 1)->first();
+
+        if ($check_caa == null) {
+            return response()->json([
+                "code"    => 404,
+                "status"  => "not found",
+                "message" => "Transaksi dengan id " . $id . " belum sampai ke caa"
+            ], 404);
+        }
+
+        $check = Approval::where('id', $id_approval)->where('id_trans_so', $id)->first();
+
+        if ($check == null) {
+            return response()->json([
+                "code"    => 404,
+                "status"  => "not found",
+                "message" => "Transaksi dengan id " . $id . " dan dengan id approval " . $id_approval . " tidak ada di daftar antrian Approval"
+            ], 404);
+        }
+
+        if ($check->status != 'waiting') {
+            return response()->json([
+                "code"    => 404,
+                "status"  => "not found",
+                "message" => "Transaksi dengan id `{$id}` dan dengan id approval `{$id_approval}` sudah sudah dalam proses dengan status `{$check->status}`"
+            ], 404);
+        }
+
+        $forward_q = Approval::where('id_trans_so', $id)->where('id', '>', $id_approval)->first();
+
+        if ($forward_q == null) {
+            $to_forward = null;
+        } else {
+            $to_forward = $forward_q->id_pic;
+        }
+
+        $id_area   = $pic->id_area;
+        $id_cabang = $pic->id_cabang;
+
+        $form = array(
+            'user_id'       => $user_id,
+            'id_area'       => $id_area,
+            'id_cabang'     => $id_cabang,
+            'plafon'        => $request->input('plafon'),
+            'tenor'         => $request->input('tenor'),
+            'rincian'       => $request->input('rincian'),
+            'status'        => $st = $request->input('status'),
+            'tujuan_forward' => $st == 'forward' ? $to_forward : null //$request->input('tujuan_forward'),
+            // 'tanggal'       => Carbon::now()->toDateTimeString()
+        );
+
+        DB::connection('web')->beginTransaction();
+
+        try {
+
+
+            if ($form['status'] == 'accept' || $form['status'] == 'reject' || $form['status'] == 'return') {
+                $status = $form['status'] . " by picID {$pic->id}";
+                // TransCAA::where('id_trans_so', $id)->update(['status_team_caa' => $form['status'].' by user '.$user_id]);
+            } elseif ($form['status'] == 'forward') {
+                $status = $form['status'] . " by picID {$pic->id} to picID {$form['tujuan_forward']}";
+            }
+
+            if ($form['status'] === 'return') {
+                TransCAA::where('id_trans_so', $id)->where('id_trans_so', $id)->delete();
+                Approval::where('id_trans_so', $id)->delete();
+
+                $check_nst = Penyimpangan::where('id_trans_so', $id)->first();
+
+                if ($check_nst != null) {
+                    Penyimpangan::where('id_trans_so', $id)->delete();
+                }
+            }
+
+            $trans_caa = TransCAA::where('id_trans_so', $check->id_trans_so)->update(['status_team_caa' => $status]);
+
+            $approval = Approval::where('id', $id_approval)->update($form);
+
+            DB::connection('web')->commit();
+
+            return response()->json([
+                'code'   => 200,
+                'status' => 'success',
+                'message' => 'Data untuk berhasil di - ' . $form['status'],
+                'data'   => array(
+                    'approval'  => $approval,
+                    'transaksi' => $trans_caa
+                )
+            ], 200);
+        } catch (\Exception $e) {
+            $err = DB::connection('web')->rollback();
+            return response()->json([
+                'code'    => 501,
+                'status'  => 'error',
+                'message' => $err
+            ], 501);
+        }
+    }
 
     // Team Caa
     public function report_approval($id)
@@ -529,6 +669,22 @@ class Approval_Controller extends BaseController
         //dd($dataCA);
         $logRekom = LogRekomCA::create($dataCA);
 
+        $dataRingAnalisa = RingkasanAnalisa::where('id', $check_ca->id_ringkasan_analisa)->first()->toArray();
+
+        $logRingAnalisa = LogRingkasanAnalisa::create($dataRingAnalisa);
+
+        $dataAsuransiJiwa = AsuransiJiwa::where('id', $check_ca->id_asuransi_jiwa)->first()->toArray();
+
+        $logAsuransiJiwa = LogAsuransiJiwa::create($dataAsuransiJiwa);
+
+        $dataAsuransiKebakaran = AsuransiJaminan::where('id', $check_ca->id_asuransi_jaminan_kebakaran)->first()->toArray();
+
+        $logAsuransiKebakaran = LogAsuransiJaminan::create($dataAsuransiKebakaran);
+
+        $dataAsuransiKendaraan = AsuransiJaminanKen::where('id', $check_ca->id_asuransi_jaminan_kendaraan)->first()->toArray();
+
+        $logAsuransiKendaraan = LogAsuransiJaminanKen::create($dataAsuransiKendaraan);
+
         $transCA = array(
             'nomor_ca'    => $nomor_ca,
             'user_id'     => $user_id,
@@ -709,34 +865,34 @@ class Approval_Controller extends BaseController
         $kuantitatif = RingkasanAnalisa::where('id', $check_ca->id_ringkasan_analisa)->first();
         // Data Ringkasan Analisa CA
         $dataRingkasan = array(
-            'kuantitatif_ttl_pendapatan'    => $kuantitatif->kuantitatif_ttl_pendapatan,
-            'kuantitatif_ttl_pengeluaran'   => $kuantitatif->kuantitatif_ttl_pengeluaran,
-            'kuantitatif_pendapatan_bersih' => $kuantitatif->kuantitatif_pendapatan_bersih,
-            'kuantitatif_angsuran'          => $kuantitatif->kuantitatif_angsuran,
+            'kuantitatif_ttl_pendapatan'    => empty($req->input('kuantitatif_ttl_pendapatan')) ? $kuantitatif->kuantitatif_ttl_pendapatan : $req->input('kuantitatif_ttl_pendapatan'),
+            'kuantitatif_ttl_pengeluaran'   => empty($req->input('kuantitatif_ttl_pengeluaran')) ? $kuantitatif->kuantitatif_ttl_pengeluaran : $req->input('kuantitatif_ttl_pengeluaran'),
+            'kuantitatif_pendapatan_bersih' => empty($req->input('kuantitatif_pendapatan_bersih')) ? $kuantitatif->kuantitatif_pendapatan_bersih : $req->input('kuantitatif_pendapatan_bersih'),
+            'kuantitatif_angsuran'          => empty($req->input('kuantitatif_angsuran')) ? $kuantitatif->kuantitatif_angsuran : $req->input('kuantitatif_angsuran'),
             // 'kuantitatif_ttl_pendapatan'    => $rekomen_pendapatan,
             // 'kuantitatif_ttl_pengeluaran'   => $rekomen_pengeluaran,
             // 'kuantitatif_pendapatan_bersih' => $rekomen_pend_bersih,
             // 'kuantitatif_angsuran'          => $recom_angs,
-            'kuantitatif_ltv'               => $kuantitatif->kuantitatif_ltv,
-            'kuantitatif_dsr'               => $kuantitatif->kuantitatif_dsr,
-            'kuantitatif_idir'              => $kuantitatif->kuantitatif_idir,
-            'kuantitatif_hasil'             => $kuantitatif->kuantitatif_hasil,
+            'kuantitatif_ltv'               => empty($req->input('kuantitatif_ltv')) ? $kuantitatif->kuantitatif_ltv : $req->input('kuantitatif_ltv'),
+            'kuantitatif_dsr'               => empty($req->input('kuantitatif_dsr')) ? $kuantitatif->kuantitatif_dsr : $req->input('kuantitatif_dsr'),
+            'kuantitatif_idir'              => empty($req->input('kuantitatif_idir')) ? $kuantitatif->kuantitatif_idir : $req->input('kuantitatif_idir'),
+            'kuantitatif_hasil'             => empty($req->input('kuantitatif_hasil')) ? $kuantitatif->kuantitatif_hasil : $req->input('kuantitatif_hasil'),
 
 
             'kualitatif_analisa'
-            => $kuantitatif->kualitatif_analisa,
+            => empty($req->input('kualitatif_analisa')) ? $kuantitatif->kualitatif_analisa : $req->input('kualitatif_analisa'),
 
             'kualitatif_strenght'
-            => $kuantitatif->kualitatif_strenght,
+            => empty($req->input('kualitatif_strenght')) ? $kuantitatif->kualitatif_strenght : $req->input('kualitatif_strenght'),
 
             'kualitatif_weakness'
-            => $kuantitatif->kualitatif_weakness,
+            => empty($req->input('kualitatif_weakness')) ? $kuantitatif->kualitatif_weakness : $req->input('kualitatif_weakness'),
 
             'kualitatif_opportunity'
-            => $kuantitatif->kualitatif_opportunity,
+            => empty($req->input('kualitatif_opportunity')) ? $kuantitatif->kualitatif_opportunity : $req->input('kualitatif_opportunity'),
 
             'kualitatif_threatness'
-            => $kuantitatif->kualitatif_threatness,
+            => empty($req->input('kualitatif_threatness')) ? $kuantitatif->kualitatif_threatness : $req->input('kualitatif_threatness'),
         );
 
         $mut = MutasiBank::where('id', $check_ca->id_mutasi_bank)->first();
@@ -844,8 +1000,9 @@ class Approval_Controller extends BaseController
             'biaya_provisi'         => empty($req->input('biaya_provisi')) ? $rekom->biaya_provisi : $req->input('biaya_provisi'),
             'biaya_administrasi'    => empty($req->input('biaya_administrasi')) ? $rekom->biaya_administrasi : $req->input('biaya_administrasi'),
             'biaya_credit_checking' => empty($req->input('biaya_credit_checking')) ? $rekom->biaya_credit_checking : $req->input('biaya_credit_checking'),
-            // 'biaya_asuransi_jiwa'   => $req->input('biaya_asuransi_jiwa'),
-            // 'biaya_asuransi_jaminan' => $req->input('biaya_asuransi_jaminan'),
+            'biaya_asuransi_jiwa'   => empty($req->input('biaya_asuransi_jiwa')) ? $rekom->biaya_asuransi_jiwa : $req->input('biaya_asuransi_jiwa'),
+            'biaya_asuransi_jaminan_kebakaran' => empty($req->input('biaya_asuransi_jaminan_kebakaran')) ? $rekom->biaya_asuransi_jaminan_kebakaran : $req->input('biaya_asuransi_jaminan_kebakaran'),
+            'biaya_asuransi_jaminan_kendaraan' => empty($req->input('biaya_asuransi_jaminan_kendaraan')) ? $rekom->biaya_asuransi_jaminan_kendaraan : $req->input('biaya_asuransi_jaminan_kendaraan'),
             'notaris'               => empty($req->input('notaris')) ? $rekom->notaris : $req->input('notaris'),
             'biaya_tabungan'        => empty($req->input('biaya_tabungan')) ? $rekom->biaya_tabungan : $req->input('biaya_tabungan'),
 
@@ -861,94 +1018,133 @@ class Approval_Controller extends BaseController
         //   dd($recomCA);
         $asJiwa = AsuransiJiwa::where('id', $check_ca->id_asuransi_jiwa)->first();
         $asuransiJiwa = array(
-            'nama_asuransi'       => $asJiwa->nama_asuransi,
-            'jangka_waktu'        => $asJiwa->jangka_waktu,
-            'nilai_pertanggungan' => $asJiwa->nilai_pertanggungan,
-            'jatuh_tempo'         => Carbon::parse($asJiwa->jatuh_tempo)->format('d-m-Y'),
-            'berat_badan'         => $asJiwa->berat_badan,
-            'tinggi_badan'        => $asJiwa->tinggi_badan,
-            'umur_nasabah'        => $asJiwa->umur_nasabah,
+            'nama_asuransi'       => empty($req->input('nama_asuransi')) ? $asJiwa->nama_asuransi : $req->input('nama_asuransi'),
+            'jangka_waktu'        => empty($req->input('jangka_waktu')) ? $asJiwa->jangka_waktu : $req->input('jangka_waktu'),
+            'nilai_pertanggungan' => empty($req->input('nilai_pertanggungan')) ? $asJiwa->nilai_pertanggungan : $req->input('nilai_pertanggungan'),
+            'jatuh_tempo'         => empty($req->input('jatuh_tempo')) ? Carbon::parse($asJiwa->jatuh_tempo)->format('Y-m-d') : Carbon::parse($req->input('jatuh_tempo'))->format('Y-m-d'),
+            'berat_badan'         => empty($req->input('berat_badan')) ? $asJiwa->berat_badan : $req->input('berat_badan'),
+            'tinggi_badan'        => empty($req->input('tinggi_badan')) ? $asJiwa->tinggi_badan : $req->input('tinggi_badan'),
+            'umur_nasabah'        => empty($req->input('umur_nasabah')) ? $asJiwa->umur_nasabah : $req->input('umur_nasabah'),
         );
 
         $asKeb = AsuransiJaminan::where('id', $check_ca->id_asuransi_jaminan_kebakaran)->first();
         $asjaminanKeb = array(
-            'nama_asuransi'       => $asKeb->nama_asuransi,
-            'jangka_waktu'        => $asKeb->jangka_waktu,
-            'nilai_pertanggungan' => $asKeb->nilai_pertanggungan,
-            'jatuh_tempo'         => Carbon::parse($asKeb->jatuh_tempo)->format('d-m-Y'),
+            'nama_asuransi'       => empty($req->input('nama_asuransi_keb')) ? $asKeb->nama_asuransi : $req->input('nama_asuransi_keb'),
+            'jangka_waktu'        => empty($req->input('jangka_waktu_asuransi_keb')) ? $asKeb->jangka_waktu : $req->input('jangka_waktu_asuransi_keb'),
+            'nilai_pertanggungan' => empty($req->input('nilai_pertanggungan_keb')) ? $asKeb->nilai_pertanggungan : $req->input('nilai_pertanggungan_keb'),
+            'jatuh_tempo'         => empty($req->input('jatuh_tempo_keb')) ? Carbon::parse($asKeb->jatuh_tempo)->format('Y-m-d') : Carbon::parse($req->input('jatuh_tempo_keb'))->format('Y-m-d'),
         );
 
         $asKen = AsuransiJaminanKen::where('id', $check_ca->id_asuransi_jaminan_kendaraan)->first();
         $asjaminanKen = array(
-            'nama_asuransi'       => $asKen->nama_asuransi,
-            'jangka_waktu'        => $asKen->jangka_waktu,
-            'nilai_pertanggungan' => $asKen->nilai_pertanggungan,
-            'jatuh_tempo'         => Carbon::parse($asKen->jatuh_tempo)->format('d-m-Y'),
+            'nama_asuransi'       => empty($req->input('nama_asuransi_ken')) ? $asKen->nama_asuransi : $req->input('nama_asuransi_ken'),
+            'jangka_waktu'        => empty($req->input('jangka_waktu_asuransi_ken')) ?  $asKen->jangka_waktu : $req->input('jangka_waktu_asuransi_ken'),
+            'nilai_pertanggungan' => empty($req->input('nilai_pertanggungan_ken')) ? $asKen->nilai_pertanggungan : $req->input('nilai_pertanggungan_ken'),
+            'jatuh_tempo'         => empty($req->input('jatuh_tempo_ken')) ? Carbon::parse($asKen->jatuh_tempo)->format('Y-m-d') : Carbon::parse($req->input('jatuh_tempo_ken'))->format('Y-m-d'),
         );
-        //     try {
-        DB::connection('web')->beginTransaction();
-        $so_trans = TransSO::select('nomor_so')->where('id', $id)->first();
-        $rev = "Rev" . "-" . $so_trans->nomor_so;
-        $dataID = array(
-            'trans_ca'          => $transCA,
-            'pendapatan_usaha'         => $dataPendapatanUsaha,
-            'kapasitas_bulanan'      => $KapBul,
-            'rekomendasi_pinjaman'    => $rekomPinjaman,
-            'pemeriksaan_tanah'             => $PeriksaTanah,
-            'data_ringkasan' => $dataRingkasan,
-            'mutasi_bank'        => $dataMuBa,
-            'data_acc'     => $dataACC,
-            'dataTabUang'     => $dataTabUang,
-            'recomCA'    => $recomCA,
-            'asuransi_jiwa'     => $asuransiJiwa,
-            'asuransi_kebakaran'     => $asjaminanKeb,
-            'asuransi_kendaraan'     => $asjaminanKen,
-            'asuransi_jiwa'     => $asuransiJiwa,
-            'revisi'                   => $rev,
-        );
+        try {
+            DB::connection('web')->beginTransaction();
+            $so_trans = TransSO::select('nomor_so')->where('id', $id)->first();
+            $rev = "Rev" . "-" . $so_trans->nomor_so;
+            $dataID = array(
+                'trans_ca'          => $transCA,
+                'pendapatan_usaha'         => $dataPendapatanUsaha,
+                'kapasitas_bulanan'      => $KapBul,
+                'rekomendasi_pinjaman'    => $rekomPinjaman,
+                'pemeriksaan_tanah'             => $PeriksaTanah,
+                'data_ringkasan' => $dataRingkasan,
+                'mutasi_bank'        => $dataMuBa,
+                'data_acc'     => $dataACC,
+                'dataTabUang'     => $dataTabUang,
+                'recomCA'    => $recomCA,
+                'asuransi_jiwa'     => $asuransiJiwa,
+                'asuransi_kebakaran'     => $asjaminanKeb,
+                'asuransi_kendaraan'     => $asjaminanKen,
+                'revisi'                   => $rev,
+            );
 
 
-        // dd($recomCA->produk);
-        // $newEditCA = array_merge($transCA, $dataPendapatanUsaha, $KapBul, $rekomPinjaman, $PeriksaTanah, $dataRingkasan, $dataMuBa, $dataACC, $dataTabUang, $recomCA, $asuransiJiwa, $asjaminanKeb, $asjaminanKen);
-        //  dd($newEditCA);
-        $CA = RekomendasiCA::where('id', $check_ca->id_recom_ca)
-            ->update([
-                'produk'                => $req->input('produk'),
-                'plafon_kredit'         =>  $req->input('plafon_kredit'),
-                'jangka_waktu'          =>  $req->input('jangka_waktu'),
-                'suku_bunga'            => $req->input('suku_bunga'),
-                'pembayaran_bunga'      =>  $req->input('pembayaran_bunga'),
-                'akad_kredit'           => $req->input('akad_kredit'),
-                'ikatan_agunan'         => $req->input('ikatan_agunan'),
-                'biaya_provisi'         => $req->input('biaya_provisi'),
-                'biaya_administrasi'    => $req->input('biaya_administrasi'),
-                'biaya_credit_checking' => $req->input('biaya_credit_checking'),
-                // 'biaya_asuransi_jiwa'   => $req->input('biaya_asuransi_jiwa'),
-                // 'biaya_asuransi_jaminan' => $req->input('biaya_asuransi_jaminan'),
-                'notaris'               => $req->input('notaris'),
-                'biaya_tabungan'        =>  $req->input('biaya_tabungan')
+            // dd($recomCA->produk);
+            // $newEditCA = array_merge($transCA, $dataPendapatanUsaha, $KapBul, $rekomPinjaman, $PeriksaTanah, $dataRingkasan, $dataMuBa, $dataACC, $dataTabUang, $recomCA, $asuransiJiwa, $asjaminanKeb, $asjaminanKen);
+            //  dd($newEditCA);
+            $CA = RekomendasiCA::where('id', $check_ca->id_recom_ca)
+                ->update([
+                    'produk'                => empty($req->input('produk')) ? $rekom->produk : $req->input('produk'),
+                    'plafon_kredit'         => empty($req->input('plafon_kredit')) ? $rekom->plafon_kredit : $req->input('plafon_kredit'),
+                    'jangka_waktu'          => empty($req->input('jangka_waktu')) ? $rekom->jangka_waktu : $req->input('jangka_waktu'),
+                    'suku_bunga'            => empty($req->input('suku_bunga')) ? $rekom->suku_bunga : $req->input('suku_bunga'),
+                    'pembayaran_bunga'      => empty($req->input('pembayaran_bunga')) ? $rekom->pembayaran_bunga : $req->input('pembayaran_bunga'),
+                    'akad_kredit'           => empty($req->input('akad_kredit')) ? $rekom->akad_kredit : $req->input('akad_kredit'),
+                    'ikatan_agunan'         => empty($req->input('ikatan_agunan')) ? $rekom->ikatan_agunan : $req->input('ikatan_agunan'),
+                    'biaya_provisi'         => empty($req->input('biaya_provisi')) ? $rekom->biaya_provisi : $req->input('biaya_provisi'),
+                    'biaya_administrasi'    => empty($req->input('biaya_administrasi')) ? $rekom->biaya_administrasi : $req->input('biaya_administrasi'),
+                    'biaya_credit_checking' => empty($req->input('biaya_credit_checking')) ? $rekom->biaya_credit_checking : $req->input('biaya_credit_checking'),
+                    'biaya_asuransi_jiwa'   => $req->input('biaya_asuransi_jiwa'),
+                    'biaya_asuransi_jaminan_kebakaran' => $req->input('biaya_asuransi_jaminan_kebakaran'),
+                    'biaya_asuransi_jaminan_kendaraan' => $req->input('biaya_asuransi_jaminan_kendaraan'),
+                    'notaris'               => empty($req->input('notaris')) ? $rekom->notaris : $req->input('notaris'),
+                    'biaya_tabungan'        => empty($req->input('biaya_tabungan')) ? $rekom->biaya_tabungan : $req->input('biaya_tabungan'),
 
+                ]);
+
+            RingkasanAnalisa::where('id', $check_ca->id_ringkasan_analisa)->update([
+                'kuantitatif_ttl_pendapatan'    => empty($req->input('kuantitatif_ttl_pendapatan')) ? $kuantitatif->kuantitatif_ttl_pendapatan : $req->input('kuantitatif_ttl_pendapatan'),
+                'kuantitatif_ttl_pengeluaran'   => empty($req->input('kuantitatif_ttl_pengeluaran')) ? $kuantitatif->kuantitatif_ttl_pengeluaran : $req->input('kuantitatif_ttl_pengeluaran'),
+                'kuantitatif_pendapatan_bersih' => empty($req->input('kuantitatif_pendapatan_bersih')) ? $kuantitatif->kuantitatif_pendapatan_bersih : $req->input('kuantitatif_pendapatan_bersih'),
+                'kuantitatif_angsuran'          => empty($req->input('kuantitatif_angsuran')) ? $kuantitatif->kuantitatif_angsuran : $req->input('kuantitatif_angsuran'),
+                // 'kuantitatif_ttl_pendapatan'    => $rekomen_pendapatan,
+                // 'kuantitatif_ttl_pengeluaran'   => $rekomen_pengeluaran,
+                // 'kuantitatif_pendapatan_bersih' => $rekomen_pend_bersih,
+                // 'kuantitatif_angsuran'          => $recom_angs,
+                'kuantitatif_ltv'               => empty($req->input('kuantitatif_ltv')) ? $kuantitatif->kuantitatif_ltv : $req->input('kuantitatif_ltv'),
+                'kuantitatif_dsr'               => empty($req->input('kuantitatif_dsr')) ? $kuantitatif->kuantitatif_dsr : $req->input('kuantitatif_dsr'),
+                'kuantitatif_idir'              => empty($req->input('kuantitatif_idir')) ? $kuantitatif->kuantitatif_idir : $req->input('kuantitatif_idir'),
+                'kuantitatif_hasil'             => empty($req->input('kuantitatif_hasil')) ? $kuantitatif->kuantitatif_hasil : $req->input('kuantitatif_hasil'),
             ]);
-        TransCA::where('id_trans_so', $id)->update(['revisi' => $rev]);
+
+            AsuransiJiwa::where('id', $check_ca->id_asuransi_jiwa)->update([
+                'nama_asuransi'       => empty($req->input('nama_asuransi')) ? $asJiwa->nama_asuransi : $req->input('nama_asuransi'),
+                'jangka_waktu'        => empty($req->input('jangka_waktu')) ? $asJiwa->jangka_waktu : $req->input('jangka_waktu'),
+                'nilai_pertanggungan' => empty($req->input('nilai_pertanggungan')) ? $asJiwa->nilai_pertanggungan : $req->input('nilai_pertanggungan'),
+                'jatuh_tempo'         => empty($req->input('jatuh_tempo')) ? Carbon::parse($asJiwa->jatuh_tempo)->format('Y-m-d') : Carbon::parse($req->input('jatuh_tempo'))->format('Y-m-d'),
+                'berat_badan'         => empty($req->input('berat_badan')) ? $asJiwa->berat_badan : $req->input('berat_badan'),
+                'tinggi_badan'        => empty($req->input('tinggi_badan')) ? $asJiwa->tinggi_badan : $req->input('tinggi_badan'),
+                'umur_nasabah'        => empty($req->input('umur_nasabah')) ? $asJiwa->umur_nasabah : $req->input('umur_nasabah'),
+            ]);
+
+            AsuransiJaminan::where('id', $check_ca->id_asuransi_jaminan_kebakaran)->update([
+                'nama_asuransi'       => empty($req->input('nama_asuransi_keb')) ? $asKeb->nama_asuransi : $req->input('nama_asuransi_keb'),
+                'jangka_waktu'        => empty($req->input('jangka_waktu_asuransi_keb')) ? $asKeb->jangka_waktu : $req->input('jangka_waktu_asuransi_keb'),
+                'nilai_pertanggungan' => empty($req->input('nilai_pertanggungan_keb')) ? $asKeb->nilai_pertanggungan : $req->input('nilai_pertanggungan_keb'),
+                'jatuh_tempo'         => empty($req->input('jatuh_tempo_keb')) ? Carbon::parse($asKeb->jatuh_tempo)->format('Y-m-d') : Carbon::parse($req->input('jatuh_tempo_keb'))->format('Y-m-d'),
+            ]);
+
+            AsuransiJaminanKen::where('id', $check_ca->id_asuransi_jaminan_kendaraan)->update([
+                'nama_asuransi'       => empty($req->input('nama_asuransi_ken')) ? $asKen->nama_asuransi : $req->input('nama_asuransi_ken'),
+                'jangka_waktu'        => empty($req->input('jangka_waktu_asuransi_ken')) ?  $asKen->jangka_waktu : $req->input('jangka_waktu_asuransi_ken'),
+                'nilai_pertanggungan' => empty($req->input('nilai_pertanggungan_ken')) ? $asKen->nilai_pertanggungan : $req->input('nilai_pertanggungan_ken'),
+                'jatuh_tempo'         => empty($req->input('jatuh_tempo_ken')) ? Carbon::parse($asKen->jatuh_tempo)->format('Y-m-d') : Carbon::parse($req->input('jatuh_tempo_ken'))->format('Y-m-d'),
+            ]);
+            TransCA::where('id_trans_so', $id)->update(['revisi' => $rev]);
 
 
-        //  TransSO::where('id', $id)->update(['id_trans_ca' => $CA->id, 'norev_so' => $rev]);
-        DB::connection('web')->commit();
+            //  TransSO::where('id', $id)->update(['id_trans_ca' => $CA->id, 'norev_so' => $rev]);
+            DB::connection('web')->commit();
 
-        return response()->json([
-            'code'   => 200,
-            'status' => 'success',
-            'message' => 'Data Revisi OL berhasil dikirim',
-            'data'   => $dataID
-        ], 200);
-        // } catch (\Exception $e) {
-        //     $err = DB::connection('web')->rollback();
-        //     return response()->json([
-        //         'code'    => 501,
-        //         'status'  => 'error',
-        //         'message' => $err
-        //     ], 501);
-        // }
+            return response()->json([
+                'code'   => 200,
+                'status' => 'success',
+                'message' => 'Data Revisi OL berhasil dikirim',
+                'data'   => $dataID
+            ], 200);
+        } catch (\Exception $e) {
+            $err = DB::connection('web')->rollback();
+            return response()->json([
+                'code'    => 501,
+                'status'  => 'error',
+                'message' => $err
+            ], 501);
+        }
     }
 
     public function getRev($id, Request $req)

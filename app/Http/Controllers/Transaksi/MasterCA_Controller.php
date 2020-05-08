@@ -981,7 +981,8 @@ class MasterCA_Controller extends BaseController
             'biaya_administrasi'    => $req->input('biaya_administrasi'),
             'biaya_credit_checking' => $req->input('biaya_credit_checking'),
             'biaya_asuransi_jiwa'   => $req->input('biaya_asuransi_jiwa'),
-            'biaya_asuransi_jaminan' => $req->input('biaya_asuransi_jaminan'),
+            'biaya_asuransi_jaminan_kebakaran' => $req->input('biaya_asuransi_jaminan_kebakaran'),
+            'biaya_asuransi_jaminan_kendaraan' => $req->input('biaya_asuransi_jaminan_kendaraan'),
             'notaris'               => $req->input('notaris'),
             'biaya_tabungan'        => $req->input('biaya_tabungan'),
 
@@ -1951,6 +1952,20 @@ class MasterCA_Controller extends BaseController
             $dataMut = null;
         }
 
+        $id_pe_ta = $check_ao->id_periksa_agunan_tanah;
+
+        if (empty($id_pe_ta)) {
+            $PeriksaTanah = null;
+        }
+
+        $id_pe_ke = $check_ao->id_periksa_agunan_kendaraan;
+
+        if ($id_pe_ke == null) {
+            $PeriksaKenda = null;
+        }
+
+        $PeriksaTanah = PemeriksaanAgunTan::select('nilai_taksasi_agunan')->whereIn('id', explode(",", $id_pe_ta))->get()->toArray();
+
         // $check_ca->getRelations(); // get all the related models
         // $check_ca->getRelation('author'); // to get only related author model
         //dd($check_ca->log_tab);
@@ -1969,6 +1984,7 @@ class MasterCA_Controller extends BaseController
                 'collectabitas_tertinggi' => max(array_column($iac, 'collectabilitas'))
             ),
             'ringkasan_analisa'     => $check_ca->ringkasan,
+            'nilai_taksasi_agunan'  => $PeriksaTanah,
             'rekomendasi_pinjaman'  => $check_ca->recom_pin,
             'rekomendasi_ca'        => $check_ca->recom_ca,
             'asuransi_jiwa'         => $check_ca->as_jiwa,

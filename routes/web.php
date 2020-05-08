@@ -559,6 +559,13 @@ $router->group(['middleware' => ['jwt.auth', 'log'], 'prefix' => 'api'], functio
             $router->get('/{id}', ['subject' => 'Detail - Asuransi Jaminan', 'uses' => 'AsJaminanKenController@show']);
             $router->put('/{id}', ['subject' => 'Update - Asuransi Jaminan', 'uses' => 'AsJaminanKenController@update']);
         });
+
+        //form tunggal kapasitas bulanan
+        $router->group(['prefix' => '/kapasitas_bulanan'], function () use ($router) {
+            $router->get('/',     ['subject' => 'Read Kapasitas Bulanan',     'uses' => 'KapBulController@index']);
+            $router->get('/{id}', ['subject' => 'Detail Kapasitas Bulanan',   'uses' => 'KapBulController@show']);
+            $router->put('/{id}', ['subject' => 'Update Kapasitas Bulanan', 'uses' => 'KapBulController@update']);
+        });
     });
 
     $router->group(['namespace' => 'Pengajuan\Rekomendasi'], function () use ($router) {

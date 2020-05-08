@@ -28,5 +28,4 @@ class JPIC extends Model implements AuthenticatableContract, AuthorizableContrac
     ];
 
     protected $dates = ['deleted_at'];
-
 }

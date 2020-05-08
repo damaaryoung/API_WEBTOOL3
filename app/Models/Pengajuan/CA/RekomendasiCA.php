@@ -23,7 +23,7 @@ class RekomendasiCA extends Model implements AuthenticatableContract, Authorizab
     protected $primaryKey = 'id';
 
     protected $fillable = [
-       'produk', 'plafon_kredit', 'jangka_waktu', 'suku_bunga', 'pembayaran_bunga', 'akad_kredit', 'ikatan_agunan', 'biaya_provisi', 'biaya_administrasi', 'biaya_credit_checking', 'biaya_asuransi_jiwa', 'biaya_asuransi_jaminan', 'notaris', 'biaya_tabungan', 'rekom_angsuran', 'angs_pertama_bunga_berjalan', 'pelunasan_nasabah_ro', 'blokir_dana', 'pelunasan_tempat_lain', 'blokir_angs_kredit'
+        'produk', 'plafon_kredit', 'jangka_waktu', 'suku_bunga', 'pembayaran_bunga', 'akad_kredit', 'ikatan_agunan', 'biaya_provisi', 'biaya_administrasi', 'biaya_credit_checking', 'biaya_asuransi_jiwa', 'biaya_asuransi_jaminan_kebakaran', 'biaya_asuransi_jaminan_kendaraan', 'notaris', 'biaya_tabungan', 'rekom_angsuran', 'angs_pertama_bunga_berjalan', 'pelunasan_nasabah_ro', 'blokir_dana', 'pelunasan_tempat_lain', 'blokir_angs_kredit'
     ];
 
     protected $casts = [
@@ -35,7 +35,8 @@ class RekomendasiCA extends Model implements AuthenticatableContract, Authorizab
         'biaya_administrasi'          => 'integer',
         'biaya_credit_checking'       => 'integer',
         'biaya_asuransi_jiwa'         => 'integer',
-        'biaya_asuransi_jaminan'      => 'integer',
+        'biaya_asuransi_jaminan_kebakaran'      => 'integer',
+        'biaya_asuransi_jaminan_kendaraan'      => 'integer',
         'notaris'                     => 'integer',
         'biaya_tabungan'              => 'integer',
         'rekom_angsuran'              => 'integer',

@@ -19,68 +19,68 @@ use Illuminate\Http\Request;
 use App\Http\Requests;
 use Carbon\Carbon;
 use Image;
-use DB;
+use Illuminate\Support\Facades\DB;
 
 class TanahController extends BaseController
 {
     public function store($id_trans, A_TanahRequest $req)
     {
-        $check_so = TransSO::where('id', $id_trans)->first();
+        $check_ao = TransAO::where('id_agunan_tanah', $id_trans)->first();
 
-        if ($check_so == null) {
+        if ($check_ao === null) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
-                'message' => 'Data Transasksi dengan id-trans-so "'.$id_trans.'" tidak ada'
+                'message' => 'Data Agunan Tanah dengan id "' . $id_trans . '" tidak ada'
             ], 404);
         }
 
-        $path = 'public/' . $check_so->debt['no_ktp'] . '/agunan_tanah';
+        $path = 'public/' . $check_ao->debt['no_ktp'] . '/agunan_tanah';
 
         /** Lampiran Agunan Tanah */
-        if($file = $req->file('agunan_bag_depan')){
+        if ($file = $req->file('agunan_bag_depan')) {
             $name = 'bag_depan';
             $check = '';
-            
+
             $agunan_bag_depan = Helper::uploadImg($check, $file, $path, $name);
-        }else{
+        } else {
             $agunan_bag_depan = null;
         }
 
-        if($file = $req->file('agunan_bag_jalan')){
+        if ($file = $req->file('agunan_bag_jalan')) {
             $name  = 'bag_jalan';
             $check = '';
 
             $agunan_bag_jalan = Helper::uploadImg($check, $file, $path, $name);
-        }else{
+        } else {
             $agunan_bag_jalan = null;
         }
 
-        if($file = $req->file('agunan_bag_ruangtamu')){
+        if ($file = $req->file('agunan_bag_ruangtamu')) {
             $name = 'bag_ruangtamu';
             $check = '';
 
             $agunan_bag_ruangtamu = Helper::uploadImg($check, $file, $path, $name);
-        }else{
+        } else {
             $agunan_bag_ruangtamu = null;
         }
 
 
-        if($file = $req->file('agunan_bag_kamarmandi')){
+        if ($file = $req->file('agunan_bag_kamarmandi')) {
             $name = 'bag_kamarmandi';
             $check = '';
 
             $agunan_bag_kamarmandi = Helper::uploadImg($check, $file, $path, $name);
-        }else{
+        } else {
             $agunan_bag_kamarmandi = null;
         }
 
-        if($file = $req->file('agunan_bag_dapur')){
+        if ($file = $req->file('agunan_bag_dapur')) {
             $name = 'bag_dapur';
             $check = '';
 
             $agunan_bag_dapur = Helper::uploadImg($check, $file, $path, $name);
-        }else{
+        } else {
             $agunan_bag_dapur = null;
         }
 
@@ -89,7 +89,7 @@ class TanahController extends BaseController
             $check = '';
 
             $lamp_sertifikat = Helper::uploadImg($check, $file, $path, $name);
-        }else {
+        } else {
             $lamp_sertifikat = null;
         }
 
@@ -99,7 +99,7 @@ class TanahController extends BaseController
             $check = '';
 
             $lamp_imb = Helper::uploadImg($check, $file, $path, $name);
-        }else{
+        } else {
             $lamp_imb = null;
         }
 
@@ -108,7 +108,7 @@ class TanahController extends BaseController
             $check = '';
 
             $lamp_pbb = Helper::uploadImg($check, $file, $path, $name);
-        }else {
+        } else {
             $lamp_pbb = null;
         }
         /** */
@@ -163,10 +163,10 @@ class TanahController extends BaseController
 
             $query = AgunanTanah::create($data);
 
-            if($check_so->ao['id_agunan_tanah'] == null){
+            if ($check_ao->ao['id_agunan_tanah'] == null) {
                 $id_agunan = $query->id;
-            }else{
-                $id_agunan = $check_so->ao['id_agunan_tanah'].','.$query->id;
+            } else {
+                $id_agunan = $check_ao->ao['id_agunan_tanah'] . ',' . $query->id;
             }
 
             TransAO::where('id_trans_so', $id_trans)->update(['id_agunan_tanah' => $id_agunan]);
@@ -176,7 +176,7 @@ class TanahController extends BaseController
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'message'=> 'Update Agunan Tanah Berhasil',
+                'message' => 'Update Agunan Tanah Berhasil',
                 'data'   => $query
             ], 200);
         } catch (\Exception $e) {
@@ -193,7 +193,7 @@ class TanahController extends BaseController
 
     public function show($id)
     {
-        $check = AgunanTanah::with('prov', 'kab','kec','kel')
+        $check = AgunanTanah::with('prov', 'kab', 'kec', 'kel')
             ->where('id', $id)->first();
 
         if ($check == null) {
@@ -303,7 +303,7 @@ class TanahController extends BaseController
         $check_agunan_bag_depan     = $check_tan->agunan_bag_depan;
         $check_agunan_bag_jalan     = $check_tan->agunan_bag_jalan;
         $check_agunan_bag_ruangtamu = $check_tan->agunan_bag_ruangtamu;
-        $check_agunan_bag_kamarmandi= $check_tan->agunan_bag_kamarmandi;
+        $check_agunan_bag_kamarmandi = $check_tan->agunan_bag_kamarmandi;
         $check_agunan_bag_dapur     = $check_tan->agunan_bag_dapur;
         $check_lamp_sertifikat      = $check_tan->lamp_sertifikat;
         $check_lamp_imb             = $check_tan->lamp_imb;
@@ -312,49 +312,49 @@ class TanahController extends BaseController
 
         $path = 'public/' . $so->debt['no_ktp'] . '/agunan_tanah';
 
-        if($file = $req->file('agunan_bag_depan')){
+        if ($file = $req->file('agunan_bag_depan')) {
             $name = 'bag_depan.';
             $check = $check_agunan_bag_depan;
-            
+
             $agunan_bag_depan = Helper::uploadImg($check, $file, $path, $name);
-        }else{
+        } else {
             $agunan_bag_depan = $check_agunan_bag_depan;
         }
 
-        if($file = $req->file('agunan_bag_jalan')){
+        if ($file = $req->file('agunan_bag_jalan')) {
             $check = $check_agunan_bag_jalan;
             $name  = 'bag_jalan.';
 
             $agunan_bag_jalan = Helper::uploadImg($check, $file, $path, $name);
-        }else{
+        } else {
             $agunan_bag_jalan = $check_agunan_bag_jalan;
         }
 
-        if($file = $req->file('agunan_bag_ruangtamu')){
+        if ($file = $req->file('agunan_bag_ruangtamu')) {
             $check = $check_agunan_bag_ruangtamu;
             $name = 'bag_ruangtamu.';
 
             $agunan_bag_ruangtamu = Helper::uploadImg($check, $file, $path, $name);
-        }else{
+        } else {
             $agunan_bag_ruangtamu = $check_agunan_bag_ruangtamu;
         }
 
 
-        if($file = $req->file('agunan_bag_kamarmandi')){
+        if ($file = $req->file('agunan_bag_kamarmandi')) {
             $check = $check_agunan_bag_kamarmandi;
             $name = 'bag_kamarmandi.';
 
             $agunan_bag_kamarmandi = Helper::uploadImg($check, $file, $path, $name);
-        }else{
+        } else {
             $agunan_bag_kamarmandi = $check_agunan_bag_kamarmandi;
         }
 
-        if($file = $req->file('agunan_bag_dapur')){
+        if ($file = $req->file('agunan_bag_dapur')) {
             $check = $check_agunan_bag_dapur;
             $name = 'bag_dapur.';
 
             $agunan_bag_dapur = Helper::uploadImg($check, $file, $path, $name);
-        }else{
+        } else {
             $agunan_bag_dapur = $check_agunan_bag_dapur;
         }
 
@@ -363,7 +363,7 @@ class TanahController extends BaseController
             $name = 'lamp_sertifikat.';
 
             $lamp_sertifikat = Helper::uploadImg($check, $file, $path, $name);
-        }else {
+        } else {
             $lamp_sertifikat = $check_lamp_sertifikat;
         }
 
@@ -373,7 +373,7 @@ class TanahController extends BaseController
             $name = 'lamp_imb.';
 
             $lamp_imb = Helper::uploadImg($check, $file, $path, $name);
-        }else{
+        } else {
             $lamp_imb = $check_lamp_imb;
         }
 
@@ -382,55 +382,55 @@ class TanahController extends BaseController
             $name = 'lamp_pbb.';
 
             $lamp_pbb = Helper::uploadImg($check, $file, $path, $name);
-        }else {
+        } else {
             $lamp_pbb = $check_lamp_pbb;
         }
 
         // AgunanTanah
         $dataAgunanTanah = array(
-            'tipe_lokasi'             => empty($req->input('tipe_lokasi_agunan')) 
+            'tipe_lokasi'             => empty($req->input('tipe_lokasi_agunan'))
                 ? $check_tan->tipe_lokasi : strtoupper($req->input('tipe_lokasi_agunan')),
 
-            'alamat'                  => empty($req->input('alamat_agunan')) 
+            'alamat'                  => empty($req->input('alamat_agunan'))
                 ? $check_tan->alamat : $req->input('alamat_agunan'),
 
-            'id_provinsi'             => empty($req->input('id_prov_agunan')) 
+            'id_provinsi'             => empty($req->input('id_prov_agunan'))
                 ? $check_tan->id_provinsi : $req->input('id_prov_agunan'),
 
-            'id_kabupaten'            => empty($req->input('id_kab_agunan')) 
+            'id_kabupaten'            => empty($req->input('id_kab_agunan'))
                 ? $check_tan->id_kabupaten : $req->input('id_kab_agunan'),
 
-            'id_kecamatan'            => empty($req->input('id_kec_agunan')) 
+            'id_kecamatan'            => empty($req->input('id_kec_agunan'))
                 ? $check_tan->id_kecamatan : $req->input('id_kec_agunan'),
 
-            'id_kelurahan'            => empty($req->input('id_kel_agunan')) 
+            'id_kelurahan'            => empty($req->input('id_kel_agunan'))
                 ? $check_tan->id_kelurahan : $req->input('id_kel_agunan'),
 
-            'rt'                      => empty($req->input('rt_agunan')) 
+            'rt'                      => empty($req->input('rt_agunan'))
                 ? $check_tan->rt : $req->input('rt_agunan'),
 
-            'rw'                      => empty($req->input('rw_agunan')) 
+            'rw'                      => empty($req->input('rw_agunan'))
                 ? $check_tan->rw : $req->input('rw_agunan'),
 
-            'luas_tanah'              => empty($req->input('luas_tanah')) 
+            'luas_tanah'              => empty($req->input('luas_tanah'))
                 ? $check_tan->luas_tanah : $req->input('luas_tanah'),
 
-            'luas_bangunan'           => empty($req->input('luas_bangunan')) 
+            'luas_bangunan'           => empty($req->input('luas_bangunan'))
                 ? $check_tan->luas_bangunan : $req->input('luas_bangunan'),
 
-            'nama_pemilik_sertifikat' => empty($req->input('nama_pemilik_sertifikat')) 
+            'nama_pemilik_sertifikat' => empty($req->input('nama_pemilik_sertifikat'))
                 ? $check_tan->nama_pemilik_sertifikat : $req->input('nama_pemilik_sertifikat'),
 
-            'jenis_sertifikat'        => empty($req->input('jenis_sertifikat')) 
+            'jenis_sertifikat'        => empty($req->input('jenis_sertifikat'))
                 ? $check_tan->jenis_sertifikat : strtoupper($req->input('jenis_sertifikat')),
 
-            'no_sertifikat'           => empty($req->input('no_sertifikat')) 
+            'no_sertifikat'           => empty($req->input('no_sertifikat'))
                 ? $check_tan->no_sertifikat : $req->input('no_sertifikat'),
 
-            'tgl_ukur_sertifikat'     => empty($req->input('tgl_ukur_sertifikat')) 
+            'tgl_ukur_sertifikat'     => empty($req->input('tgl_ukur_sertifikat'))
                 ? $check_tan->tgl_ukur_sertifikat : $req->input('tgl_ukur_sertifikat'),
 
-            'tgl_berlaku_shgb'        => empty($req->input('tgl_berlaku_shgb')) 
+            'tgl_berlaku_shgb'        => empty($req->input('tgl_berlaku_shgb'))
                 ? $check_tan->tgl_berlaku_shgb : Carbon::parse($req->input('tgl_berlaku_shgb'))->format('Y-m-d'),
 
             'no_imb'                  => empty($req->input('no_imb'))   ? $check_tan->no_imb : $req->input('no_imb'),
@@ -457,7 +457,7 @@ class TanahController extends BaseController
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'message'=> 'Update Agunan Tanah Berhasil',
+                'message' => 'Update Agunan Tanah Berhasil',
                 'data'   => $dataAgunanTanah
             ], 200);
         } catch (\Exception $e) {
