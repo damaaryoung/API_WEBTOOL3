@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Master\AreaKantor;
 
+use App\Http\Controllers\AuthController;
 use Laravel\Lumen\Routing\Controller as BaseController;
 // use App\Http\Controllers\Controller as Helper;
 use App\Http\Requests\AreaKantor\PICRequest;
@@ -9,9 +10,12 @@ use App\Models\AreaKantor\PIC;
 use App\Models\AreaKantor\JPIC;
 use App\Models\AreaKantor\Area;
 use App\Models\AreaKantor\Cabang;
+use App\Models\AreaKantor\ParameterAcc;
 use Illuminate\Http\Request;
+use Firebase\JWT\JWT;
 use Carbon\Carbon;
 use Cache;
+use Illuminate\Support\Facades\Auth;
 // use DB;
 
 class PICController extends BaseController
@@ -69,8 +73,23 @@ class PICController extends BaseController
         }
     }
 
-    public function store(PICRequest $req)
+    public function store(PICRequest $req, Request $request)
     {
+        $pic = $request->header('Authorization');
+        $str = str_replace('Bearer ', '', $pic);
+        $str2 = json_decode(base64_decode(str_replace('_', '/', str_replace('-', '+', explode('.', $str)[1]))));
+
+        $param = ParameterAcc::where('id', 'USER_AKSES_MENU_MASTER_PIC')->first();
+        $exp_param = explode(',', $param->value);
+        $dd = in_array($str2->id, $exp_param);
+        if ($dd === false) {
+            return response()->json([
+                'code'    => 401,
+                'status'  => 'Kesalahan',
+                'message' => 'Anda Tidak Mempunyai Akses Untuk Menambah PIC Baru, Silahkan Hubungi IT'
+            ], 401);
+        }
+
         $data = array(
             'user_id'       => $req->input('user_id'),
             'id_area'       => $req->input('id_mk_area'),
@@ -117,6 +136,7 @@ class PICController extends BaseController
             'nama_cabang'    => Cabang::select('nama')->whereColumn('id_cabang', 'mk_cabang.id'),
         ])->where('id', $id)->first();
 
+
         if (empty($query)) {
             return response()->json([
                 'code'    => 404,
@@ -140,10 +160,24 @@ class PICController extends BaseController
         }
     }
 
-    public function update($id, PICRequest $req)
+    public function update($id, PICRequest $req, Request $request, AuthController $user)
     {
+        $pic = $request->header('Authorization');
+        $str = str_replace('Bearer ', '', $pic);
+        $str2 = json_decode(base64_decode(str_replace('_', '/', str_replace('-', '+', explode('.', $str)[1]))));
         $check = PIC::where('id', $id)->first();
-        //dd($check);
+        $param = ParameterAcc::where('id', 'USER_AKSES_MENU_MASTER_PIC')->first();
+        $exp_param = explode(',', $param->value);
+        $dd = in_array($str2->id, $exp_param);
+        if ($dd === false) {
+            return response()->json([
+                'code'    => 401,
+                'status'  => 'Kesahalan',
+                'message' => 'Anda Tidak Mempunyai Akses Untuk Mengubah PIC' . ' ' . $id . 'Silahkan Hubungi IT'
+            ], 401);
+        }
+
+
         if (empty($check)) {
             return response()->json([
                 'code'    => 404,
@@ -151,6 +185,8 @@ class PICController extends BaseController
                 'message' => 'Data tidak ada'
             ], 404);
         }
+
+
 
         $data = array(
             'nama'         => empty($req->input('nama')) ? $check->nama : $req->input('nama'),

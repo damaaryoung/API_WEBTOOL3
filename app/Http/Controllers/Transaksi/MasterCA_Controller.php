@@ -139,7 +139,9 @@ class MasterCA_Controller extends BaseController
 
         $query_dir = TransAO::with('so', 'pic', 'cabang')->where('status_ao', 1)->orderBy('created_at', 'desc');
 
+
         $query = Helper::checkDir($scope, $query_dir, $id_area, $id_cabang);
+
 
         if (empty($query->get())) {
             return response()->json([
@@ -167,10 +169,17 @@ class MasterCA_Controller extends BaseController
             } else {
                 $status_ca = 'waiting';
             }
+            $rev =  TransCA::select('revisi')->where('id_trans_so', $val->id_trans_so)->get();
+
+            $arr = array();
+            foreach ($rev as $key => $value) {
+                $arr['revisi'] = $value->revisi;
+            }
 
             $data[] = [
                 'id_trans_so'    => $val->id_trans_so == null ? null : (int) $val->id_trans_so,
                 'nomor_so'       => $val->so['nomor_so'],
+                'no_rev'        => $arr,
                 'nomor_ao'       => $val->nomor_ao,
                 "ao" => [
                     'status_ao'     => $status_ao,
@@ -198,6 +207,12 @@ class MasterCA_Controller extends BaseController
             }
             return false;
         });
+        array_walk_recursive($res, function (&$item, $key) {
+            $item = null === $item ? '-' : $item;
+        });
+
+        // echo json_encode($res);
+        //  dd($res);
 
         try {
             if ($res == false) {

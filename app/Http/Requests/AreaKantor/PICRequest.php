@@ -30,7 +30,8 @@ class PICRequest extends FormRequest
             case 'POST':
                 $user_id      = 'required|integer';
                 $email        = 'email|unique:web.m_pic,email';
-                $nama         = 'required|unique:web.m_pic,nama';
+                $nama         = 'required';
+                // $nama         = 'required|unique:web.m_pic,nama';
                 $id_mk_area   = 'required|integer';
                 $id_mk_cabang = 'required|integer';
                 $id_mj_pic    = 'required|integer';
@@ -71,7 +72,7 @@ class PICRequest extends FormRequest
             'email.email'           => ':attribute harus berupa email',
             'user_id.unique'        => ':attribute telah ada yang menggunakan',
             'email.unique'          => ':attribute telah ada yang menggunakan',
-            'nama.unique'           => ':attribute telah ada yang menggunakan'
+            // 'nama.unique'           => ':attribute telah ada yang menggunakan'
         ];
     }
 

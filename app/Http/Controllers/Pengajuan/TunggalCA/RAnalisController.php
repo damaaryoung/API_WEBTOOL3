@@ -18,7 +18,8 @@ use DB;
 
 class RAnalisController extends BaseController
 {
-    public function index(){
+    public function index()
+    {
         $query = RingkasanAnalisa::get()->toArray();
 
         try {
@@ -36,10 +37,11 @@ class RAnalisController extends BaseController
         }
     }
 
-    public function show($id){
+    public function show($id)
+    {
         $query = RingkasanAnalisa::where('id', $id)->first();
 
-        if($query == null){
+        if ($query == null) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
@@ -62,7 +64,8 @@ class RAnalisController extends BaseController
         }
     }
 
-    public function update($id, RiAnalisReq $req){
+    public function update($id, RiAnalisReq $req)
+    {
         $check = RingkasanAnalisa::where('id', $id)->first();
 
         if ($check == null) {
@@ -88,7 +91,7 @@ class RAnalisController extends BaseController
 
         if ($plafonCA == 0 && $tenorCA == 0 && $bunga == 0) {
             $recom_angs = 0;
-        }else{
+        } else {
             $recom_angs = Helper::recom_angs($plafonCA, $tenorCA, $bunga);
         }
 
@@ -111,8 +114,8 @@ class RAnalisController extends BaseController
 
         if ($PeriksaTanah == []) {
             $sumTaksasiTan = 0;
-        }else{
-            $sumTaksasiTan = array_sum(array_column($PeriksaTanah,'nilai_taksasi_agunan')); //array_sum($PeriksaTanah);
+        } else {
+            $sumTaksasiTan = array_sum(array_column($PeriksaTanah, 'nilai_taksasi_agunan')); //array_sum($PeriksaTanah);
         }
 
         // $PeriksaKenda = PemeriksaanAgunTan::select('nilai_taksasi_agunan')->whereIn('id', explode(",", $id_pe_ta))->get()->toArray();
@@ -132,38 +135,38 @@ class RAnalisController extends BaseController
 
         // Data Ringkasan Analisa CA
         $dataRingkasan = array(
-            'kuantitatif_ttl_pendapatan'    => $rekomen_pendapatan,
-            'kuantitatif_ttl_pengeluaran'   => $rekomen_pengeluaran,
-            'kuantitatif_pendapatan_bersih' => $rekomen_pend_bersih,
-            'kuantitatif_angsuran'          => $recom_angs,
-            'kuantitatif_ltv'               => $recom_ltv,
-            'kuantitatif_dsr'               => $recom_dsr,
-            'kuantitatif_idir'              => $recom_idir,
-            'kuantitatif_hasil'             => $recom_hasil,
+            'kuantitatif_ttl_pendapatan'    => empty($req->input('kuantitatif_ttl_pendapatan')) ? $check->kuantitatif_ttl_pendapatan : $req->input('kuantitatif_ttl_pendapatan'),
+            'kuantitatif_ttl_pengeluaran'   => empty($req->input('kuantitatif_ttl_pengeluaran')) ? $check->kuantitatif_ttl_pengeluaran : $req->input('kuantitatif_ttl_pengeluaran'),
+            'kuantitatif_pendapatan_bersih' => empty($req->input('kuantitatif_pendapatan_bersih')) ? $check->kuantitatif_pendapatan_bersih : $req->input('kuantitatif_pendapatan_bersih'),
+            'kuantitatif_angsuran'          => empty($req->input('kuantitatif_angsuran')) ? $check->kuantitatif_angsuran : $req->input('kuantitatif_angsuran'),
+            'kuantitatif_ltv'               => empty($req->input('kuantitatif_ltv')) ? $check->kuantitatif_ltv : $req->input('kuantitatif_ltv'),
+            'kuantitatif_dsr'               =>  empty($req->input('kuantitatif_dsr')) ? $check->kuantitatif_dsr : $req->input('kuantitatif_dsr'),
+            'kuantitatif_idir'              => empty($req->input('kuantitatif_idir')) ? $check->kuantitatif_idir : $req->input('kuantitatif_idir'),
+            'kuantitatif_hasil'             => empty($req->input('kuantitatif_hasil')) ? $check->kuantitatif_hasil : $req->input('kuantitatif_hasil'),
 
 
             'kualitatif_analisa'
-                => empty($req->input('kualitatif_analisa'))
+            => empty($req->input('kualitatif_analisa'))
                 ? $check->kualitatif_analisa
                 : $req->input('kualitatif_analisa'),
 
             'kualitatif_strenght'
-                => empty($req->input('kualitatif_strenght'))
+            => empty($req->input('kualitatif_strenght'))
                 ? $check->kualitatif_strenght
                 : $req->input('kualitatif_strenght'),
 
             'kualitatif_weakness'
-                => empty($req->input('kualitatif_weakness'))
+            => empty($req->input('kualitatif_weakness'))
                 ? $check->kualitatif_weakness
                 : $req->input('kualitatif_weakness'),
 
             'kualitatif_opportunity'
-                => empty($req->input('kualitatif_opportunity'))
+            => empty($req->input('kualitatif_opportunity'))
                 ? $check->kualitatif_opportunity
                 : $req->input('kualitatif_opportunity'),
 
             'kualitatif_threatness'
-                => empty($req->input('kualitatif_threatness'))
+            => empty($req->input('kualitatif_threatness'))
                 ? $check->kualitatif_threatness
                 : $req->input('kualitatif_threatness')
         );
@@ -178,7 +181,7 @@ class RAnalisController extends BaseController
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'message'=> 'Update Berhasil',
+                'message' => 'Update Berhasil',
                 'data'   => $dataRingkasan
             ], 200);
         } catch (Exception $e) {

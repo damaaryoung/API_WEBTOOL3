@@ -1,69 +1,69 @@
-<?php
+    <?php
 
-namespace App\Http\Requests\Pengajuan;
+    namespace App\Http\Requests\Pengajuan;
 
-use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
-use Illuminate\Http\JsonResponse;
-use Urameshibr\Requests\FormRequest;
-use Illuminate\Contracts\Validation\Validator;
-use Illuminate\Validation\ValidationException;
-use Illuminate\Http\Exceptions\HttpResponseException;
-use Illuminate\Foundation\Http\FormRequest as LaravelFormRequest;
+    use Illuminate\Http\Request;
+    use Illuminate\Validation\Rule;
+    use Illuminate\Http\JsonResponse;
+    use Urameshibr\Requests\FormRequest;
+    use Illuminate\Contracts\Validation\Validator;
+    use Illuminate\Validation\ValidationException;
+    use Illuminate\Http\Exceptions\HttpResponseException;
+    use Illuminate\Foundation\Http\FormRequest as LaravelFormRequest;
 
-class A_TanahRequest extends FormRequest
-{
-    public function authorize()
+    class A_TanahRequest extends FormRequest
     {
-        return true;
-    }
-
-    public function rules(Request $request)
-    {
-        $single = $request->segment(4);
-
-        if (empty($single)) {
-
-            $rules = [
-                // Agunan Tanah
-                'tipe_lokasi_agunan.*'   => 'in:PERUM,BIASA',
-                'rt_agunan.*'            => 'numeric',
-                'rw_agunan.*'            => 'numeric',
-                'luas_tanah.*'           => 'numeric',
-                'luas_bangunan.*'        => 'numeric',
-                'jenis_sertifikat.*'     => 'in:SHM,SHGB',
-                // 'tgl_ukur_sertifikat.*' => 'date_format:d-m-Y',
-                // 'tgl_berlaku_shgb.*'     => 'date_format:d-m-Y',
-                'agunan_bag_depan.*'     => 'mimes:jpg,jpeg,png,pdf',
-                'agunan_bag_jalan.*'     => 'mimes:jpg,jpeg,png,pdf',
-                'agunan_bag_ruangtamu.*' => 'mimes:jpg,jpeg,png,pdf',
-                'agunan_bag_kamarmandi.*'=> 'mimes:jpg,jpeg,png,pdf',
-                'agunan_bag_dapur.  *'   => 'mimes:jpg,jpeg,png,pdf'
-            ];
-        }else{
-            $rules = [
-               // Agunan Tanah
-                'tipe_lokasi_agunan'   => 'in:PERUM,BIASA',
-                'rt_agunan'            => 'numeric',
-                'rw_agunan'            => 'numeric',
-                'luas_tanah'           => 'numeric',
-                'luas_bangunan'        => 'numeric',
-                'jenis_sertifikat'     => 'in:SHM,SHGB',
-                // 'tgl_ukur_sertifikat' => 'date_format:d-m-Y',
-                // 'tgl_berlaku_shgb'     => 'date_format:d-m-Y',
-                'agunan_bag_depan'     => 'mimes:jpg,jpeg,png,pdf',
-                'agunan_bag_jalan'     => 'mimes:jpg,jpeg,png,pdf',
-                'agunan_bag_ruangtamu' => 'mimes:jpg,jpeg,png,pdf',
-                'agunan_bag_kamarmandi'=> 'mimes:jpg,jpeg,png,pdf',
-                'agunan_bag_dapur'     => 'mimes:jpg,jpeg,png,pdf'
-            ];
+        public function authorize()
+        {
+            return true;
         }
 
-        return $rules;
-    }
+        public function rules(Request $request)
+        {
+            $single = $request->segment(4);
 
-    public function messages()
-    {
+            if (empty($single)) {
+
+                $rules = [
+                    // Agunan Tanah
+                    'tipe_lokasi_agunan.*'   => 'required|in:PERUM,BIASA',
+                    'rt_agunan.*'            => 'required|numeric',
+                    'rw_agunan.*'            => 'required|numeric',
+                    'luas_tanah.*'           => 'required|numeric',
+                    'luas_bangunan.*'        => 'required|numeric',
+                    'jenis_sertifikat.*'     => 'required|in:SHM,SHGB',
+                    // 'tgl_ukur_sertifikat.*' => 'date_format:d-m-Y',
+                    // 'tgl_berlaku_shgb.*'     => 'date_format:d-m-Y',
+                    'agunan_bag_depan.*'     => 'mimes:jpg,jpeg,png,pdf',
+                    'agunan_bag_jalan.*'     => 'mimes:jpg,jpeg,png,pdf',
+                    'agunan_bag_ruangtamu.*' => 'mimes:jpg,jpeg,png,pdf',
+                    'agunan_bag_kamarmandi.*' => 'mimes:jpg,jpeg,png,pdf',
+                    'agunan_bag_dapur.  *'   => 'mimes:jpg,jpeg,png,pdf'
+                ];
+            } else {
+                $rules = [
+                    // Agunan Tanah
+                    'tipe_lokasi_agunan'   => 'required|in:PERUM,BIASA',
+                    'rt_agunan'            => 'required|numeric',
+                    'rw_agunan'            => 'required|numeric',
+                    'luas_tanah'           => 'required|numeric',
+                    'luas_bangunan'        => 'required|numeric',
+                    'jenis_sertifikat'     => 'required|in:SHM,SHGB',
+                    // 'tgl_ukur_sertifikat' => 'date_format:d-m-Y',
+                    // 'tgl_berlaku_shgb'     => 'date_format:d-m-Y',
+                    'agunan_bag_depan'     => 'mimes:jpg,jpeg,png,pdf',
+                    'agunan_bag_jalan'     => 'mimes:jpg,jpeg,png,pdf',
+                    'agunan_bag_ruangtamu' => 'mimes:jpg,jpeg,png,pdf',
+                    'agunan_bag_kamarmandi' => 'mimes:jpg,jpeg,png,pdf',
+                    'agunan_bag_dapur'     => 'mimes:jpg,jpeg,png,pdf'
+                ];
+            }
+
+            return $rules;
+        }
+
+        public function messages()
+        {
             return  [
                 // Agunan Tanah Array
                 'tipe_lokasi_agunan.*.in'           => ':attribute harus salah satu dari jenis berikut :values',
@@ -108,19 +108,21 @@ class A_TanahRequest extends FormRequest
                 // 'lamp_agunan_kiri.max'            => 'ukuran :attribute max :max kb',
                 // 'lamp_agunan_belakang.max'        => 'ukuran :attribute max :max kb',
                 // 'lamp_agunan_dalam.max'           => 'ukuran :attribute max :max kb'
-            ];
-    }
 
-    protected function failedValidation(Validator $validator)
-    {
-        $errors = (new ValidationException($validator))->errors();
-        throw new HttpResponseException(
-            // response()->json(['errors' => $errors], JsonResponse::HTTP_UNPROCESSABLE_ENTITY)
-            response()->json([
-                "code"    => 422,
-                "status"  => "not valid request",
-                "message" => $errors
-            ], JsonResponse::HTTP_UNPROCESSABLE_ENTITY)
-        );
+                // 'tipe_lokasi_agunan.*.required'           => ':attribute harus diisi',
+            ];
+        }
+
+        protected function failedValidation(Validator $validator)
+        {
+            $errors = (new ValidationException($validator))->errors();
+            throw new HttpResponseException(
+                // response()->json(['errors' => $errors], JsonResponse::HTTP_UNPROCESSABLE_ENTITY)
+                response()->json([
+                    "code"    => 422,
+                    "status"  => "not valid request",
+                    "message" => $errors
+                ], JsonResponse::HTTP_UNPROCESSABLE_ENTITY)
+            );
+        }
     }
-}

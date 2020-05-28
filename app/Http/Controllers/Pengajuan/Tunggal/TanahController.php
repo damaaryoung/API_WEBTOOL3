@@ -25,92 +25,94 @@ class TanahController extends BaseController
 {
     public function store($id_trans, A_TanahRequest $req)
     {
-        $check_ao = TransAO::where('id_agunan_tanah', $id_trans)->first();
+        $check_ao = TransAO::where('id_trans_so', $id_trans)->first();
 
+        // $ch_agu = AgunanTanah::where('id', $check_ao->id_agunan_tanah)->first();
+        // dd($ch_agu);
         if ($check_ao === null) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
-                'message' => 'Data Agunan Tanah dengan id "' . $id_trans . '" tidak ada'
+                'message' => 'Data Transaksi dengan id "' . $id_trans . '" tidak ada'
             ], 404);
         }
 
-        $path = 'public/' . $check_ao->debt['no_ktp'] . '/agunan_tanah';
+        // $path = 'public/' . $check_ao->debt['no_ktp'] . '/agunan_tanah';
 
-        /** Lampiran Agunan Tanah */
-        if ($file = $req->file('agunan_bag_depan')) {
-            $name = 'bag_depan';
-            $check = '';
+        // /** Lampiran Agunan Tanah */
+        // if ($file = $req->file('agunan_bag_depan')) {
+        //     $name = 'bag_depan';
+        //     $check = '';
 
-            $agunan_bag_depan = Helper::uploadImg($check, $file, $path, $name);
-        } else {
-            $agunan_bag_depan = null;
-        }
+        //     $agunan_bag_depan = Helper::uploadImg($check, $file, $path, $name);
+        // } else {
+        //     $agunan_bag_depan = null;
+        // }
 
-        if ($file = $req->file('agunan_bag_jalan')) {
-            $name  = 'bag_jalan';
-            $check = '';
+        // if ($file = $req->file('agunan_bag_jalan')) {
+        //     $name  = 'bag_jalan';
+        //     $check = '';
 
-            $agunan_bag_jalan = Helper::uploadImg($check, $file, $path, $name);
-        } else {
-            $agunan_bag_jalan = null;
-        }
+        //     $agunan_bag_jalan = Helper::uploadImg($check, $file, $path, $name);
+        // } else {
+        //     $agunan_bag_jalan = null;
+        // }
 
-        if ($file = $req->file('agunan_bag_ruangtamu')) {
-            $name = 'bag_ruangtamu';
-            $check = '';
+        // if ($file = $req->file('agunan_bag_ruangtamu')) {
+        //     $name = 'bag_ruangtamu';
+        //     $check = '';
 
-            $agunan_bag_ruangtamu = Helper::uploadImg($check, $file, $path, $name);
-        } else {
-            $agunan_bag_ruangtamu = null;
-        }
+        //     $agunan_bag_ruangtamu = Helper::uploadImg($check, $file, $path, $name);
+        // } else {
+        //     $agunan_bag_ruangtamu = null;
+        // }
 
 
-        if ($file = $req->file('agunan_bag_kamarmandi')) {
-            $name = 'bag_kamarmandi';
-            $check = '';
+        // if ($file = $req->file('agunan_bag_kamarmandi')) {
+        //     $name = 'bag_kamarmandi';
+        //     $check = '';
 
-            $agunan_bag_kamarmandi = Helper::uploadImg($check, $file, $path, $name);
-        } else {
-            $agunan_bag_kamarmandi = null;
-        }
+        //     $agunan_bag_kamarmandi = Helper::uploadImg($check, $file, $path, $name);
+        // } else {
+        //     $agunan_bag_kamarmandi = null;
+        // }
 
-        if ($file = $req->file('agunan_bag_dapur')) {
-            $name = 'bag_dapur';
-            $check = '';
+        // if ($file = $req->file('agunan_bag_dapur')) {
+        //     $name = 'bag_dapur';
+        //     $check = '';
 
-            $agunan_bag_dapur = Helper::uploadImg($check, $file, $path, $name);
-        } else {
-            $agunan_bag_dapur = null;
-        }
+        //     $agunan_bag_dapur = Helper::uploadImg($check, $file, $path, $name);
+        // } else {
+        //     $agunan_bag_dapur = null;
+        // }
 
-        if ($file = $req->file('lamp_sertifikat')) {
-            $name = 'lamp_sertifikat';
-            $check = '';
+        // if ($file = $req->file('lamp_sertifikat')) {
+        //     $name = 'lamp_sertifikat';
+        //     $check = '';
 
-            $lamp_sertifikat = Helper::uploadImg($check, $file, $path, $name);
-        } else {
-            $lamp_sertifikat = null;
-        }
+        //     $lamp_sertifikat = Helper::uploadImg($check, $file, $path, $name);
+        // } else {
+        //     $lamp_sertifikat = null;
+        // }
 
-        // Tambahan Agunan Tanah
-        if ($file = $req->file('lamp_imb')) {
-            $name = 'lamp_imb';
-            $check = '';
+        // // Tambahan Agunan Tanah
+        // if ($file = $req->file('lamp_imb')) {
+        //     $name = 'lamp_imb';
+        //     $check = '';
 
-            $lamp_imb = Helper::uploadImg($check, $file, $path, $name);
-        } else {
-            $lamp_imb = null;
-        }
+        //     $lamp_imb = Helper::uploadImg($check, $file, $path, $name);
+        // } else {
+        //     $lamp_imb = null;
+        // }
 
-        if ($file = $req->file('lamp_pbb')) {
-            $name = 'lamp_pbb';
-            $check = '';
+        // if ($file = $req->file('lamp_pbb')) {
+        //     $name = 'lamp_pbb';
+        //     $check = '';
 
-            $lamp_pbb = Helper::uploadImg($check, $file, $path, $name);
-        } else {
-            $lamp_pbb = null;
-        }
+        //     $lamp_pbb = Helper::uploadImg($check, $file, $path, $name);
+        // } else {
+        //     $lamp_pbb = null;
+        // }
         /** */
 
         $data = array(
@@ -146,30 +148,29 @@ class TanahController extends BaseController
 
             'no_imb'                  => $req->input('no_imb'),
             'njop'                    => $req->input('njop'),
-            'nop'                     => $req->input('nop'),
-            'agunan_bag_depan'        => $agunan_bag_depan,
-            'agunan_bag_jalan'        => $agunan_bag_jalan,
-            'agunan_bag_ruangtamu'    => $agunan_bag_ruangtamu,
-            'agunan_bag_kamarmandi'   => $agunan_bag_kamarmandi,
-            'agunan_bag_dapur'        => $agunan_bag_dapur,
-            'lamp_imb'                => $lamp_imb,
-            'lamp_pbb'                => $lamp_pbb,
-            'lamp_sertifikat'         => $lamp_sertifikat,
-        );
+            'nop'                     => $req->input('nop')
 
+        );
+        $arr = array();
+        foreach ($data as $key => $val) {
+            $arr[$key] = $val;
+        }
+        //  dd($val);
         DB::connection('web')->beginTransaction();
 
         try {
 
-            $query = AgunanTanah::create($data);
-
-            if ($check_ao->ao['id_agunan_tanah'] == null) {
-                $id_agunan = $query->id;
-            } else {
-                $id_agunan = $check_ao->ao['id_agunan_tanah'] . ',' . $query->id;
+            if ($val === null) {
+                return response()->json([
+                    'code'  => 401,
+                    'message'   => 'bad request',
+                    'data'  => 'data agunan harus di input'
+                ]);
             }
 
-            TransAO::where('id_trans_so', $id_trans)->update(['id_agunan_tanah' => $id_agunan]);
+            $query = AgunanTanah::create($data);
+
+            TransAO::where('id_trans_so', $id_trans)->update(['id_agunan_tanah' => $query->id]);
 
             DB::connection('web')->commit();
 

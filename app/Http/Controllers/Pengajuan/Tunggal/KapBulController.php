@@ -17,7 +17,7 @@ use App\Models\Transaksi\TransAO;
 // use Illuminate\Http\Request;
 // use App\Http\Requests;
 // use Carbon\Carbon;
-use DB;
+use Illuminate\Support\Facades\DB;
 
 class KapBulController extends BaseController
 {
@@ -99,17 +99,17 @@ class KapBulController extends BaseController
 
             'pemasukan_penjamin'    => $req->input('pemasukan_penjamin') ? $check->pemasukan_penjamin : $req->input('pemasukan_penjamin'),
 
-            'biaya_rumah_tangga'    => $req->input('biaya_rumah_tangga') ? $check->biaya_rumah_tangga : $req->input('biaya_rumah_tangga'),
+            'biaya_rumah_tangga'    => empty($req->input('biaya_rumah_tangga')) ? $check->biaya_rumah_tangga : $req->input('biaya_rumah_tangga'),
 
-            'biaya_transport'       => $req->input('biaya_transport') ? $check->biaya_transport : $req->input('biaya_transport'),
+            'biaya_transport'       => empty($req->input('biaya_transport')) ? $check->biaya_transport : $req->input('biaya_transport'),
 
-            'biaya_pendidikan'      => $req->input('biaya_pendidikan') ? $check->biaya_pendidikan : $req->input('biaya_pendidikan'),
+            'biaya_pendidikan'      => empty($req->input('biaya_pendidikan')) ? $check->biaya_pendidikan : $req->input('biaya_pendidikan'),
 
-            'telp_listr_air'        => $req->input('telp_listr_air') ? $check->telp_listr_air : $req->input('telp_listr_air'),
+            'telp_listr_air'        => empty($req->input('telp_listr_air')) ? $check->telp_listr_air : $req->input('telp_listr_air'),
 
-            'angsuran'              => $req->input('angsuran') ? $check->angsuran : $req->input('angsuran'),
+            'angsuran'              => empty($req->input('angsuran')) ? $check->angsuran : $req->input('angsuran'),
 
-            'biaya_lain'            => $req->input('biaya_lain') ? $check->biaya_lain : $req->input('biaya_lain')
+            'biaya_lain'            => empty($req->input('biaya_lain')) ? $check->biaya_lain : $req->input('biaya_lain')
         );
 
         $total_KapBul = array(
@@ -118,7 +118,7 @@ class KapBulController extends BaseController
             'penghasilan_bersih' => $ttl1 - $ttl2,
             'ao_ca'              => empty($req->input('ao_ca') ? $check->ao_ca : $req->input('ao_ca'))
         );
-
+        //  dd($dataKapBulanan);
         $KapBUl = array_merge($dataKapBulanan, $total_KapBul);
 
         DB::connection('web')->beginTransaction();

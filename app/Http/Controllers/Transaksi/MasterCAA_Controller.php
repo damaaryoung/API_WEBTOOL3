@@ -23,6 +23,7 @@ use App\Models\AreaKantor\JPIC;
 use App\Models\AreaKantor\PIC;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use App\Models\Transaksi\LogRekomCA;
 use App\Models\Pengajuan\CA\RingkasanAnalisa;
 use Image;
 use Illuminate\Support\Facades\DB;
@@ -69,6 +70,7 @@ class MasterCAA_Controller extends BaseController
             } elseif ($val->so['caa']['status_caa'] == null || $val->so['caa']['status_caa'] == "") {
                 $status_caa = 'null';
             }
+
 
             $id_agu_ta = explode(",", $val->so['ao']['id_agunan_tanah']);
             $AguTa = AgunanTanah::whereIn('id', $id_agu_ta)->get();
@@ -128,6 +130,8 @@ class MasterCAA_Controller extends BaseController
                 'pembayaran_bunga' => (int) $val->so['ao']['recom_ao']['pembayaran_bunga']
             );
 
+            //dd($val->id_recom_ca);
+            // dd($val->so['ca']['id_recom_ca']);
             $rekomendasi_ca = array(
                 'id'                   => $val->so['ca']['id_recom_ca'] == null ? null : (int) $val->so['ca']['id_recom_ca'],
                 'produk'               => $val->so['ca']['recom_ca']['produk'],
@@ -137,6 +141,7 @@ class MasterCAA_Controller extends BaseController
                 'pembayaran_bunga'     => (int) $val->recom_ca['pembayaran_bunga'],
                 'rekomendasi_angsuran' => (int) $val->recom_ca['rekom_angsuran']
             );
+
 
             $data[] = [
                 'status_revisi'  => $val->revisi >= 1 ? 'Y' : 'N',
@@ -163,8 +168,24 @@ class MasterCAA_Controller extends BaseController
                     'kendaraan' => $Ken
                 ],
                 'tgl_transaksi' => $val->created_at,
-                'approval'      => $Appro
+                'approval'      => $Appro,
             ];
+        }
+
+        $log_rekomca = LogRekomCA::select('id', 'produk', 'plafon_kredit', 'jangka_waktu', 'suku_bunga', 'pembayaran_bunga', 'rekom_angsuran')->get();
+        foreach ($log_rekomca as $key => $log) {
+            // dd($log_rekomca);
+            //     //   dd($val->so['ca']['id_recom_ca']);
+            $rev_rekomendasi_ca = array(
+                'id'                   =>
+                $log->id,
+                'produk'               =>  $log->produk,
+                'plafon'               =>  $log->plafon_kredit,
+                'tenor'                => $log->jangka_waktu,
+                'suku_bunga'           => $log->suku_bunga,
+                'pembayaran_bunga'     => $log->pembayaran_bunga,
+                'rekomendasi_angsuran' => $log->rekom_angsuran,
+            );
         }
 
         try {
@@ -172,7 +193,8 @@ class MasterCAA_Controller extends BaseController
                 'code'   => 200,
                 'status' => 'success',
                 'count'  => sizeof($data),
-                'data'   => $data
+                'data'   => $data,
+                'revisi_ca' => $log_rekomca,
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
@@ -1310,7 +1332,8 @@ class MasterCAA_Controller extends BaseController
                     'biaya_credit_checking' => $check_ca->recom_ca['biaya_credit_checking'],
                     'biaya_premi' => [
                         'asuransi_jiwa'     => $check_ca->recom_ca['biaya_asuransi_jiwa'],
-                        'asuransi_jaminan'  => $check_ca->recom_ca['biaya_asuransi_jaminan']
+                        'asuransi_kebakaran'  => $check_ca->recom_ca['biaya_asuransi_jaminan_kebakaran'],
+                        'asuransi_kendaraan'  => $check_ca->recom_ca['biaya_asuransi_jaminan_kendaraan'],
                     ],
                     'biaya_tabungan'                    => $check_ca->recom_ca['biaya_tabungan'],
                     'biaya_notaris'                     => $check_ca->recom_ca['notaris'],

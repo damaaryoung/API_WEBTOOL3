@@ -116,6 +116,7 @@ class MasterSO_Controller extends BaseController
                 "message" => "Data dengan id " . $id . " tidak ada di SO atau belum di rekomendasikan oleh bagian DAS dan HM"
             ], 404);
         }
+        //dd($val);
 
         // $ao = TransAO::where('id_trans_so', $val->id)->first();
 
@@ -194,6 +195,8 @@ class MasterSO_Controller extends BaseController
                 'ca'  => $status_ca,
                 'caa' => $status_caa,
             ],
+            'catatan_DAS' => $val->catatan_das,
+            'catatan_DSSPV' => $val->catatan_hm,
             'asal_data' => [
                 'id'   => $val->id_asal_data == null ? null : (int) $val->id_asal_data,
                 'nama' => $val->asaldata['nama'],

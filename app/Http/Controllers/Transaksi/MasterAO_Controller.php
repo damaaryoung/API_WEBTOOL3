@@ -290,6 +290,21 @@ class MasterAO_Controller extends BaseController
         } else {
             $status_ao = 'waiting';
         }
+        //dd($val);
+
+
+        $value = Debitur::with('prov_ktp', 'kab_ktp', 'kec_ktp', 'kel_ktp', 'prov_dom', 'kab_dom', 'kec_dom', 'kel_dom', 'prov_kerja', 'kab_kerja', 'kec_kerja', 'kel_kerja')
+            ->where('id', $id)->first();
+
+        $nama_anak = explode(",", $value->nama_anak);
+        $tgl_anak  = explode(",", $value->tgl_lahir_anak);
+
+        for ($i = 0; $i < count($nama_anak); $i++) {
+            $anak[] = array(
+                'nama'      => $nama_anak[$i],
+                'tgl_lahir' => empty($tgl_anak[$i]) ? null : Carbon::parse($tgl_anak[$i])->format("d-m-Y")
+            );
+        }
 
         $faspin = FasilitasPinjaman::where('id', $val->id_fasilitas_pinjaman)->first();
         $data = array(
@@ -343,6 +358,8 @@ class MasterAO_Controller extends BaseController
                 'no_ktp_kk'             => $val->debt['no_ktp_kk'],
                 'no_kk'                 => $val->debt['no_kk'],
                 'no_npwp'               => $val->debt['no_npwp'],
+                'nama_anak'             => $anak,
+                //'tgl_lahir_anak'        => $val->debt['tgl_lahir_anak'],
                 'tempat_lahir'          => $val->debt['tempat_lahir'],
                 'tgl_lahir'             => Carbon::parse($val->debt['tgl_lahir'])->format('d-m-Y'),
                 'agama'                 => $val->debt['agama'],

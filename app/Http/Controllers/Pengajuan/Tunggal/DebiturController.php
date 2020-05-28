@@ -366,7 +366,7 @@ class DebiturController extends BaseController
         }
         /** */
 
-        // dd($tgl_lhr_anak);
+        dd($tgl_lhr_anak);
         // Data Debitur
         $dataDebitur = array(
             'nama_lengkap'          => empty($req->input('nama_lengkap'))
@@ -471,8 +471,11 @@ class DebiturController extends BaseController
             'berat_badan'           => empty($req->input('berat_badan'))
                 ? $check_debt->berat_badan : $req->input('berat_badan'),
 
-            'nama_anak'             => $nama_anak,
-            'tgl_lahir_anak'        =>  $tgl_lhr_anak == null ? $check_debt->tgl_lahir_anak : implode(",", $req->input('tgl_lahir_anak')),
+            'nama_anak'             => $check_debt->nama_anak . "," . $nama_anak,
+            'tgl_lahir_anak'        =>  $tgl_lhr_anak == null ? $check_debt->tgl_lahir_anak : $tgl_lhr_anak . ',' . implode(",", $req->input('tgl_lahir_anak')),
+            //tambah anak
+            // 'nama_anak'             => $check_debt->nama_anak . "," . $nama_anak,
+            // 'tgl_lahir_anak'        =>  $tgl_lhr_anak == null ? $check_debt->tgl_lahir_anak : $tgl_lhr_anak . ',' . implode(",", $req->input('tgl_lahir_anak')),
 
             'pekerjaan'             => empty($req->input('pekerjaan'))
                 ? $check_debt->pekerjaan : $req->input('pekerjaan'),

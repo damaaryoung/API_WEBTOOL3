@@ -17,11 +17,12 @@ use App\Models\Transaksi\TransSO;
 // use Illuminate\Http\Request;
 // use App\Http\Requests;
 // use Carbon\Carbon;
-use DB;
+use Illuminate\Support\Facades\DB;
 
 class FaspinController extends BaseController
 {
-    public function segmentasiBPR(){
+    public function segmentasiBPR()
+    {
         $query = DB::connection('web')->table('view_segmentasi_bpr')->select('kode', 'nama')->get();
 
         try {
@@ -39,9 +40,48 @@ class FaspinController extends BaseController
         }
     }
 
+    public function segmentasiSektorEkonomi()
+    {
+        $query = DB::connection('web')->table('view_sektor_ekonomi')->select('kode', 'nama')->get();
+
+        try {
+            return response()->json([
+                'code'   => 200,
+                'status' => 'success',
+                'data'   => $query
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                "code"    => 501,
+                "status"  => "error",
+                "message" => $e
+            ], 501);
+        }
+    }
+
+    public function namaAsuransi()
+    {
+        $query = DB::connection('web')->table('view_asuransi_jiwa')->select('kode_asuransi', 'nm_asuransi')->get();
+
+        try {
+            return response()->json([
+                'code'   => 200,
+                'status' => 'success',
+                'data'   => $query
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                "code"    => 501,
+                "status"  => "error",
+                "message" => $e
+            ], 501);
+        }
+    }
+
+
     public function show($id)
     {
-        $query = FasilitasPinjaman::select('id', 'jenis_pinjaman', 'tujuan_pinjaman', 'plafon', 'tenor', 'segmentasi_bpr')->where('id', $id)->first();
+        $query = FasilitasPinjaman::select('id', 'jenis_pinjaman', 'tujuan_pinjaman', 'plafon', 'tenor', 'segmentasi_bpr', 'validasi_sektor_ekonomi')->where('id', $id)->first();
 
         if (empty($query)) {
             return response()->json([
@@ -94,7 +134,8 @@ class FaspinController extends BaseController
             'tujuan_pinjaman' => empty($req->input('tujuan_pinjaman')) ? $check->tujuan_pinjaman : $req->input('tujuan_pinjaman'),
             'plafon'          => empty($req->input('plafon_pinjaman')) ? $check->plafon : $req->input('plafon_pinjaman'),
             'tenor'           => empty($req->input('tenor_pinjaman')) ? $check->tenor : $req->input('tenor_pinjaman'),
-            'segmentasi_bpr'  => empty($req->input('segmentasi_bpr')) ? $check->segmentasi_bpr : $req->input('segmentasi_bpr')
+            'segmentasi_bpr'  => empty($req->input('segmentasi_bpr')) ? $check->segmentasi_bpr : $req->input('segmentasi_bpr'),
+            'validasi_sektor_ekonomi'  => empty($req->input('validasi_sektor_ekonomi')) ? $check->validasi_sektor_ekonomi : $req->input('validasi_sektor_ekonomi')
         );
 
         DB::connection('web')->beginTransaction();
@@ -107,7 +148,7 @@ class FaspinController extends BaseController
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'message'=> 'Update Fasilitas Pinjaman Berhasil',
+                'message' => 'Update Fasilitas Pinjaman Berhasil',
                 'data'   => $dataFasilitasPinjaman
             ], 200);
         } catch (\Exception $e) {
