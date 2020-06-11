@@ -42,7 +42,7 @@ class Debitur extends Model implements AuthenticatableContract, AuthorizableCont
 
 
 
-    // public $timestamps = false;
+    public $timestamps = false;
 
     // KTP
     public function prov_ktp()

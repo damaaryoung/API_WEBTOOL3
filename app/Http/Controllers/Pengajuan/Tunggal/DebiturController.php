@@ -12,13 +12,98 @@ use App\Http\Requests\Pengajuan\DebiturRequest;
 use App\Models\Pengajuan\SO\Debitur;
 // use App\Models\Transaksi\TransSO;
 
+use App\Models\Pengajuan\SO\Anak;
 // use Illuminate\Support\Facades\File;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class DebiturController extends BaseController
 {
+    public function validasiCadebt($id)
+    {
+        $now   = Carbon::now();
+        $dateExpires   = strtotime($now); // time to integer
+        $day_in_second = 60 * 60 * 24 * 30; //1 bulan
 
+        $valid = DB::connection("web")->table("view_nasabah")->where("NO_ID", $id)->first();
+
+        if ($valid === null) {
+            // $NASABAH_ID = null;
+            $NASABAH_ID = null;
+        } else {
+            $NASABAH_ID = $valid->NASABAH_ID;
+        }
+
+        $check_ktp_web = Debitur::select('id', 'nama_lengkap', 'no_ktp', 'created_at')->where('no_ktp', $id)->first();
+        //  dd($valid);
+        if ($valid === null) {
+            return response()->json([
+                'code'  => 404,
+                'status'    => 'not found',
+                'message'   => 'data debitur tidak ada'
+            ]);
+        }
+
+        if ($check_ktp_web === null) {
+            return response()->json([
+                'code'  => 404,
+                'status'    => 'not found',
+                'message'   => 'data debitur tidak ada'
+            ]);
+        }
+        if ($check_ktp_web !== null) {
+
+            $created_at = strtotime($check_ktp_web->created_at);
+            $compare_day_in_second = $dateExpires - $created_at;
+            //   dd($compare_day_in_second <= $day_in_second);
+            if ($compare_day_in_second <= $day_in_second) {
+                return response()->json([
+                    "code"    => 403,
+                    "status"  => "Expired",
+                    'message' => "Akun belum aktif kembali, belum ada 1 bulan yang lalu"
+                ], 403);
+                // } else {
+                //     return response()->json([
+                //         "code"    => 202,
+                //         "status"  => "success",
+                //         "message" => "Akun telah ada di sistem, gunakan endpoint berikut apabila ingin menggunakan datanya",
+                //         "endpoint" => "/api/debitur/" . $check_ktp_web->id
+                //     ], 202);
+            }
+
+            $data = array(
+                'NASABAH_ID' => $valid->NASABAH_ID,
+                'NAMA_NASABAH' => $valid->NAMA_NASABAH,
+                'ALAMAT'    => $valid->ALAMAT,
+                'TELPON'    => $valid->TELPON,
+                'JENIS_KELAMIN' => $valid->JENIS_KELAMIN,
+                'TEMPATLAHIR'   => $valid->TEMPATLAHIR,
+                'TGLLAHIR'  => Carbon::parse($valid->TGLLAHIR)->format('d-m-Y'),
+                'JENIS_ID' => $valid->JENIS_ID,
+                'NO_ID' => $valid->NO_ID,
+                'KETERANGAN' => $valid->KETERANGAN,
+                'kode_group1'   => $valid->kode_group1,
+                'kode_group2'   => $valid->kode_group2,
+                'kode_group3'   => $valid->kode_group3,
+                'KODE_AGAMA'    => $valid->KODE_AGAMA,
+                'DESA'      => $valid->DESA,
+                'KECAMATAN' => $valid->KECAMATAN,
+                'KOTA_KAB'  => $valid->KOTA_KAB,
+                'PROPINSI'  => $valid->PROPINSI,
+                'HP'    => $valid->HP,
+                'NAMA_IBU_KANDUNG'  => $valid->NAMA_IBU_KANDUNG,
+                'NPWP'  => $valid->NPWP,
+                'kodepos'   => $valid->kodepos,
+            );
+
+            // dd($data);
+            return response()->json([
+                'code'   => 200,
+                'status' => 'success',
+                'data'   => $data
+            ], 200);
+        }
+    }
     public function show($id)
     {
         $val = Debitur::with('prov_ktp', 'kab_ktp', 'kec_ktp', 'kel_ktp', 'prov_dom', 'kab_dom', 'kec_dom', 'kel_dom', 'prov_kerja', 'kab_kerja', 'kec_kerja', 'kel_kerja')
@@ -32,15 +117,16 @@ class DebiturController extends BaseController
             ], 404);
         }
 
-        $nama_anak = explode(",", $val->nama_anak);
-        $tgl_anak  = explode(",", $val->tgl_lahir_anak);
+        // $nama_anak = explode(",", $val->nama_anak);
+        // $tgl_anak  = explode(",", $val->tgl_lahir_anak);
 
-        for ($i = 0; $i < count($nama_anak); $i++) {
-            $anak[] = array(
-                'nama'      => $nama_anak[$i],
-                'tgl_lahir' => empty($tgl_anak[$i]) ? null : Carbon::parse($tgl_anak[$i])->format("d-m-Y")
-            );
-        }
+        // for ($i = 0; $i < count($nama_anak); $i++) {
+        //     $anak[] = array(
+        //         'nama'      => $nama_anak[$i],
+        //         'tgl_lahir' => empty($tgl_anak[$i]) ? null : Carbon::parse($tgl_anak[$i])->format("d-m-Y")
+        //     );
+        // }
+        $anak = Anak::select('nama_anak AS nama', 'tgl_lahir_anak AS tgl_lahir')->where('nasabah_id', $id)->get();
 
         $data = array(
             'id'                    => $val->id == null ? null : (int) $val->id,
@@ -211,6 +297,7 @@ class DebiturController extends BaseController
             $lamp_ktp = $check_lamp_ktp;
         }
 
+        // dd($file);
         if ($file = $req->file('lamp_kk')) {
             $name = 'kk.';
             $check = $check_lamp_kk;
@@ -361,12 +448,12 @@ class DebiturController extends BaseController
                 $tglLahirAnak[] = empty($req->tgl_lahir_anak[$i]) ? $check_debt->tgl_lahir_anak[$i] : Carbon::parse($req->tgl_lahir_anak[$i])->format('Y-m-d');
             }
 
-            $nama_anak    = implode(",", $namaAnak);
-            $tgl_lhr_anak = implode(",", $tglLahirAnak);
+            $nama_anak    = $namaAnak;
+            $tgl_lhr_anak = $tglLahirAnak;
         }
         /** */
 
-        dd($tgl_lhr_anak);
+        //    dd($tgl_lhr_anak);
         // Data Debitur
         $dataDebitur = array(
             'nama_lengkap'          => empty($req->input('nama_lengkap'))
@@ -471,9 +558,6 @@ class DebiturController extends BaseController
             'berat_badan'           => empty($req->input('berat_badan'))
                 ? $check_debt->berat_badan : $req->input('berat_badan'),
 
-            'nama_anak'             => $check_debt->nama_anak . "," . $nama_anak,
-            'tgl_lahir_anak'        =>  $tgl_lhr_anak == null ? $check_debt->tgl_lahir_anak : $tgl_lhr_anak . ',' . implode(",", $req->input('tgl_lahir_anak')),
-            //tambah anak
             // 'nama_anak'             => $check_debt->nama_anak . "," . $nama_anak,
             // 'tgl_lahir_anak'        =>  $tgl_lhr_anak == null ? $check_debt->tgl_lahir_anak : $tgl_lhr_anak . ',' . implode(",", $req->input('tgl_lahir_anak')),
 
@@ -531,30 +615,56 @@ class DebiturController extends BaseController
             'lamp_surat_cerai'      => $lamp_surat_cerai,
             'lamp_tempat_tinggal'   => $lamp_tempat_tinggal
         );
+        // $imp = implode(" ", $nama_anak);
+        // dd($imp);
+        //$merge = array_merge($nama_anak, $tgl_lhr_anak);
+        //  dd($merge);
+        //  foreach ($tgl_lhr_anak as $tgl) {
+        $an =  Anak::select('nama_anak')->where('nasabah_id', $id)->get();
+        $tg =  Anak::select('tgl_lahir_anak')->where('nasabah_id', $id)->get();
 
+        if (empty($nama_anak) || empty($tgl_lhr_anak)) {
+            null;
+        } else {
+            $s = 0;
+
+            $an = array();
+            foreach ($nama_anak as $key => $anak) {
+                //   dd($anak);
+                $an[$key]['nasabah_id'] = $id;
+                $an[$key]['nama_anak']  = $anak;
+                //   $an[$key]['nama_anak']  = $tgl;
+                // 'tgl_lahir_anak'        =>  $tgl_lhr_anak == null ? $check_debt->tgl_lahir_anak : $tgl_lhr_anak . ',' . implode(",", $req->input('tgl_lahir_anak')),
+
+                Anak::create(['nasabah_id' => $id, 'nama_anak' => $anak, 'tgl_lahir_anak' => $tgl_lhr_anak[$s]]);
+                //dd($an[$s]['id']);
+                $s++;
+            }
+        }
         DB::connection('web')->beginTransaction();
 
-        try {
+        //  try {
 
-            Debitur::where('id', $id)->update($dataDebitur);
+        Debitur::where('id', $id)->update($dataDebitur);
 
-            DB::connection('web')->commit();
 
-            return response()->json([
-                'code'   => 200,
-                'status' => 'success',
-                'message' => 'Update Debitur Berhasil',
-                'data'   => $dataDebitur
-            ], 200);
-        } catch (\Exception $e) {
+        DB::connection('web')->commit();
 
-            $err = DB::connection('web')->rollback();
+        return response()->json([
+            'code'   => 200,
+            'status' => 'success',
+            'message' => 'Update Debitur Berhasil',
+            'data'   => $dataDebitur
+        ], 200);
+        // } catch (\Exception $e) {
 
-            return response()->json([
-                'code'    => 501,
-                'status'  => 'error',
-                'message' => $err
-            ], 501);
-        }
+        //     $err = DB::connection('web')->rollback();
+
+        //     return response()->json([
+        //         'code'    => 501,
+        //         'status'  => 'error',
+        //         'message' => $err
+        //     ], 501);
+        // }
     }
 }

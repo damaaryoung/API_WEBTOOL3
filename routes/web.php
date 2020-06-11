@@ -23,6 +23,7 @@ $router->get('segmentasi', 'Pengajuan\Tunggal\ViewController@segmentasiBPR');
 $router->get('sektorEkonomi', 'Pengajuan\Tunggal\ViewController@segmentasiSektorEkonomi');
 $router->get('namaAsuransi', 'Pengajuan\Tunggal\ViewController@namaAsuransi');
 $router->get('reportAO/{id}', 'Pengajuan\Tunggal\ViewController@viewReportAo');
+$router->get('pekerjaan', 'Pengajuan\Tunggal\ViewController@viewPekerjaan');
 
 $router->group(['prefix' => '/wilayah'], function () use ($router) {
     $router->get('/', function () use ($router) {
@@ -123,6 +124,8 @@ $router->post('/api/operator/{id_trans_so}', 'Transaksi\MasterCA_Controller@oper
 // $router->group(['middleware' => ['jwt.auth', 'log'], 'prefix' => 'api'], function () use ($router) {
 $router->group(['middleware' => ['jwt.auth', 'log'], 'prefix' => 'api'], function () use ($router) {
 
+
+
     // Logs (History)
     // $router->group(['prefix' => '/logs'], function () use ($router){
     //     $router->get('/',     ['subject' => 'Read Logs',  'uses' => 'LogsController@index']); //Log History All
@@ -173,6 +176,7 @@ $router->group(['middleware' => ['jwt.auth', 'log'], 'prefix' => 'api'], functio
 
 
     $router->group(['prefix' => '/master'], function () use ($router) {
+
 
         $router->group(['namespace' => 'Master\Bisnis'], function () use ($router) {
             // Mitra Bisnis
@@ -381,6 +385,15 @@ $router->group(['middleware' => ['jwt.auth', 'log'], 'prefix' => 'api'], functio
                 $router->post('/{id}/approval/{id_approval}', ['subject' => 'Make Approval', 'uses' => 'Approval_Controller@approve']);
             });
 
+            $router->group(['prefix' => '/lpdk'], function () use ($router) {
+                $router->get('/', ['subject' => 'Get LPDK', 'uses' => 'Lpdk_Controller@index']);
+                $router->get('/progress', ['subject' => 'Get LPDK', 'uses' => 'Lpdk_Controller@indexOnprogress']);
+                $router->get('/realisasi', ['subject' => 'Get LPDK', 'uses' => 'Lpdk_Controller@indexRealisasi']);
+                $router->get('/{id}', ['subject' => 'Detail LPDK', 'uses' => 'Lpdk_Controller@show']);
+                $router->post('/{id}', ['subject' => 'Create LPDK', 'uses' => 'Lpdk_Controller@store']);
+                $router->post('/update/{id}', ['subject' => 'Update LPDK', 'uses' => 'Lpdk_Controller@updateLampiran']);
+            });
+
             $router->get('/team_caa', ['subject' => 'Get Komite_CAA', 'uses' => 'Approval_Controller@list_team']);  // Get List Team CAA
             $router->get('/team_caa/{id_team}', ['subject' => 'Detail Komite_CAA', 'uses' => 'Approval_Controller@detail_team']);  // Get List Team CAA
             $router->get('/report/approval/{id_trans_so}', ['subject' => 'Report Approval', 'uses' => 'Approval_Controller@report_approval']);
@@ -457,6 +470,7 @@ $router->group(['middleware' => ['jwt.auth', 'log'], 'prefix' => 'api'], functio
         // Calon Debitur
         $router->group(['prefix' => '/debitur'], function () use ($router) {
             $router->get('/{id}',  ['subject' => 'Detail calon_debitur', 'uses' => 'DebiturController@show']);
+            $router->get('/ktpcadebt/{id}',  ['subject' => 'Detail calon_debitur', 'uses' => 'DebiturController@validasiCadebt']);
             $router->post('/{id}', ['subject' => 'Update calon_debitur', 'uses' => 'DebiturController@update']);
         });
 
@@ -479,6 +493,7 @@ $router->group(['middleware' => ['jwt.auth', 'log'], 'prefix' => 'api'], functio
                 $router->post('/{id_trans}/store',  ['subject' => 'Create agunan_tanah', 'uses' => 'TanahController@store']);
                 $router->get('/{id}',  ['subject' => 'Detail agunan_tanah', 'uses' => 'TanahController@show']);
                 $router->post('/{id}', ['subject' => 'Update agunan_tanah', 'uses' => 'TanahController@update']);
+                $router->post('/{id}/updateTambah', ['subject' => 'Update Tambah agunan_tanah', 'uses' => 'TanahController@updateTambah']);
                 $router->post('/{id_trans}/store',  ['subject' => 'Create agunan_tanah', 'uses' => 'TanahController@store']);
             });
 

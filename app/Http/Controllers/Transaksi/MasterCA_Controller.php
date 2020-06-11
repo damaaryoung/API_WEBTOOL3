@@ -30,6 +30,7 @@ use App\Models\Transaksi\TransSO;
 use App\Models\AreaKantor\JPIC;
 use App\Models\AreaKantor\PIC;
 use Illuminate\Http\Request;
+use App\Models\Pengajuan\SO\Anak;
 use Carbon\Carbon;
 // use Image;
 //use DB;
@@ -197,7 +198,7 @@ class MasterCA_Controller extends BaseController
                 'nama_debitur'   => $val->so['debt']['nama_lengkap'],
                 'plafon'         => $val->so['faspin']['plafon'],
                 'tenor'          => $val->so['faspin']['tenor'],
-                'tgl_transaksi' => $val->created_at
+                'tgl_transaksi' => Carbon::parse($val->created_at)->format('d-m-Y H:m:s')
             ];
         }
 
@@ -424,7 +425,7 @@ class MasterCA_Controller extends BaseController
                 'tempat_lahir'          => $val->so['debt']['tempat_lahir'],
                 'tgl_lahir'             => Carbon::parse($val->so['debt']['tgl_lahir'])->format('d-m-Y'),
                 'agama'                 => $val->so['debt']['agama'],
-                'anak'             => $anak,
+                'anak'             => Anak::select('nama_anak AS nama', 'tgl_lahir_anak AS tgl_lahir')->where('nasabah_id', $id)->get(),
                 'alamat_ktp' => [
                     'alamat_singkat' => $val->so['debt']['alamat_ktp'],
                     'rt'     => $val->so['debt']['rt_ktp'] == null ? null : (int) $val->so['debt']['rt_ktp'],

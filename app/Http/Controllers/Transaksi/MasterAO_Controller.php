@@ -25,6 +25,7 @@ use App\Models\Pengajuan\SO\FasilitasPinjaman;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Image;
+use App\Models\Pengajuan\SO\Anak;
 use Illuminate\Support\Facades\DB;
 
 class MasterAO_Controller extends BaseController
@@ -296,15 +297,17 @@ class MasterAO_Controller extends BaseController
         $value = Debitur::with('prov_ktp', 'kab_ktp', 'kec_ktp', 'kel_ktp', 'prov_dom', 'kab_dom', 'kec_dom', 'kel_dom', 'prov_kerja', 'kab_kerja', 'kec_kerja', 'kel_kerja')
             ->where('id', $id)->first();
 
-        $nama_anak = explode(",", $value->nama_anak);
-        $tgl_anak  = explode(",", $value->tgl_lahir_anak);
+        // $nama_anak = explode(",", $value->nama_anak);
+        // $tgl_anak  = explode(",", $value->tgl_lahir_anak);
 
-        for ($i = 0; $i < count($nama_anak); $i++) {
-            $anak[] = array(
-                'nama'      => $nama_anak[$i],
-                'tgl_lahir' => empty($tgl_anak[$i]) ? null : Carbon::parse($tgl_anak[$i])->format("d-m-Y")
-            );
-        }
+        // for ($i = 0; $i < count($nama_anak); $i++) {
+        //     $anak[] = array(
+        //         'nama'      => $nama_anak[$i],
+        //         'tgl_lahir' => empty($tgl_anak[$i]) ? null : Carbon::parse($tgl_anak[$i])->format("d-m-Y")
+        //     );
+        // }
+
+        $anak = Anak::select('nama_anak AS nama', 'tgl_lahir_anak AS tgl_lahir')->where('nasabah_id', $id)->get();
 
         $faspin = FasilitasPinjaman::where('id', $val->id_fasilitas_pinjaman)->first();
         $data = array(

@@ -65,7 +65,7 @@ class BlankRequest extends FormRequest
 
                 // Debitur
                 'jenis_kelamin'         => 'in:L,P',
-                'status_nikah'          => 'in:SINGLE,NIKAH,CERAI',
+                'status_nikah'          => 'in:Single,Menikah,Janda/Duda',
                 'no_ktp'                => 'digits:16',
                 'no_ktp_kk'             => 'digits:16',
                 'no_kk'                 => 'digits:16',
@@ -91,7 +91,7 @@ class BlankRequest extends FormRequest
                 'jenis_kelamin_pas'         => 'in:L,P',
                 // 'lamp_ktp_pas'              => 'mimes:jpg,jpeg,png,pdf',
                 // 'lamp_kk_pas'               => 'mimes:jpg,jpeg,png,pdf',
-                'pekerjaan_pas'             => 'in:KARYAWAN,PNS,WIRASWASTA,PENGURUS_RT',
+                //  'pekerjaan_pas'             => 'in:KARYAWAN,PNS,WIRASWASTA,PENGURUS_RT',
                 'rt_tempat_kerja_pas'       => 'numeric',
                 'rw_tempat_kerja_pas'       => 'numeric',
                 // 'tgl_mulai_kerja_pas'       => 'date_format:d-m-Y',
@@ -109,7 +109,7 @@ class BlankRequest extends FormRequest
                 'lamp_kk_pen.*'              => 'mimes:jpg,jpeg,png,pdf',
                 'lamp_buku_nikah_pen.*'      => 'mimes:jpg,jpeg,png,pdf',
 
-                'pekerjaan_pen.*'            => 'in:KARYAWAN,PNS,WIRASWASTA,PENGURUS_RT',
+                // 'pekerjaan_pen.*'            => 'in:KARYAWAN,PNS,WIRASWASTA,PENGURUS_RT',
                 'rt_tempat_kerja_pen.*'      => 'numeric',
                 'rw_tempat_kerja_pen.*'      => 'numeric',
                 // 'tgl_mulai_kerja_pen.*'      => 'date_format:d-m-Y',
@@ -292,7 +292,7 @@ class BlankRequest extends FormRequest
                 // Debitur
                 'nama_lengkap'          => 'required',
                 'jenis_kelamin'         => 'required|in:L,P',
-                'status_nikah'          => 'required|in:SINGLE,NIKAH,CERAI',
+                'status_nikah'          => 'required|in:Single,Menikah,Janda/Duda',
                 'ibu_kandung'           => 'required',
                 'no_ktp'                => 'required|digits:16',
                 'no_ktp_kk'             => 'required|digits:16',
@@ -324,7 +324,7 @@ class BlankRequest extends FormRequest
                 'tgl_lahir_anak.*'      => 'date_format:d-m-Y',
                 'tinggi_badan'          => 'integer',
                 'berat_badan'           => 'integer',
-                'pekerjaan'             => 'in:KARYAWAN,PNS,WIRASWASTA,PENGURUS_RT',
+                //'pekerjaan'             => 'in:KARYAWAN,PNS,WIRASWASTA,PENGURUS_RT',
                 'id_prov_tempat_kerja'  => 'integer',
                 'id_kab_tempat_kerja'   => 'integer',
                 'id_kec_tempat_kerja'   => 'integer',
@@ -353,7 +353,7 @@ class BlankRequest extends FormRequest
 
                 // 'lamp_ktp_pas'              => 'mimes:jpg,jpeg,png,pdf',
                 // 'lamp_kk_pas'               => 'mimes:jpg,jpeg,png,pdf',
-                'pekerjaan_pas'             => 'in:KARYAWAN,PNS,WIRASWASTA,PENGURUS_RT',
+                //  'pekerjaan_pas'             => 'in:KARYAWAN,PNS,WIRASWASTA,PENGURUS_RT',
                 'rt_tempat_kerja_pas'       => 'numeric',
                 'rw_tempat_kerja_pas'       => 'numeric',
                 // 'tgl_mulai_kerja_pas'       => 'date_format:d-m-Y',
@@ -375,7 +375,7 @@ class BlankRequest extends FormRequest
                 'lamp_kk_pen.*'              => 'mimes:jpg,jpeg,png,pdf',
                 'lamp_buku_nikah_pen.*'      => 'mimes:jpg,jpeg,png,pdf',
 
-                'pekerjaan_pen.*'            => 'in:KARYAWAN,PNS,WIRASWASTA,PENGURUS_RT',
+                // 'pekerjaan_pen.*'            => 'in:KARYAWAN,PNS,WIRASWASTA,PENGURUS_RT',
                 'rt_tempat_kerja_pen.*'      => 'numeric',
                 'rw_tempat_kerja_pen.*'      => 'numeric',
                 // 'tgl_mulai_kerja_pen.*'      => 'date_format:d-m-Y',

@@ -229,6 +229,7 @@ class Approval_Controller extends BaseController
                 'tanggal'        => empty($val->updated_at) ? null : Carbon::parse($val->updated_at)->format("d-m-Y H:i:s"),
             ];
         }
+        //dd($val);
 
         try {
             return response()->json([

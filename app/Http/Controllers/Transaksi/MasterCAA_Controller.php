@@ -1106,7 +1106,7 @@ class MasterCAA_Controller extends BaseController
 
         $caa = Helper::checkDir($scope, $query_dir, $id_area, $id_cabang);
         $check_caa = $caa->first();
-
+        //   dd($caa->first());
         if (empty($check_caa)) {
             return response()->json([
                 'code'    => 404,
