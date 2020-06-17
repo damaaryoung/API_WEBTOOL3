@@ -16,7 +16,7 @@ use App\Models\AreaKantor\PIC;
 use App\Models\AreaKantor\Area;
 use App\Models\AreaKantor\Cabang;
 
-class Lpdk extends Model implements AuthenticatableContract, AuthorizableContract
+class Lpdk_penjamin extends Model implements AuthenticatableContract, AuthorizableContract
 {
     use Authenticatable, Authorizable;
 
@@ -27,33 +27,16 @@ class Lpdk extends Model implements AuthenticatableContract, AuthorizableContrac
      */
     protected $connection = 'web';
 
-    protected $table = 'lpdk';
+    protected $table = 'lpdk_penjamin';
     protected $primaryKey = 'id';
 
     protected $fillable = [
         'id',
         'trans_so',
-        'nomor_so',
-        'nama_so',
-        'asal_data',
-        'nama_marketing',
-        'request_by',
-        'area_kerja',
-        'plafon',
-        'tenor',
-        'nama_debitur',
-        'nama_pasangan',
-        'status_nikah',
-        'produk',
-        'alamat_ktp_vs_jaminan',
-        'hub_cadeb',
-        'akta_notaris',
-        'status_kredit',
-        'notes_progress',
-        'notes_counter',
-        'id_sertifikat',
-        'id_penjamin',
-        'id_lampiran',
+        'nama_penjamin',
+        'ibu_kandung_penjamin',
+        'pasangan_penjamin',
+        'lampiran_ktp_penjamin',
         'created_at',
         'updated_at'
     ];

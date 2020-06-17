@@ -16,7 +16,7 @@ use App\Models\AreaKantor\PIC;
 use App\Models\AreaKantor\Area;
 use App\Models\AreaKantor\Cabang;
 
-class Lpdk extends Model implements AuthenticatableContract, AuthorizableContract
+class Lpdk_kendaraan extends Model implements AuthenticatableContract, AuthorizableContract
 {
     use Authenticatable, Authorizable;
 
@@ -27,35 +27,11 @@ class Lpdk extends Model implements AuthenticatableContract, AuthorizableContrac
      */
     protected $connection = 'web';
 
-    protected $table = 'lpdk';
+    protected $table = 'lpdk_kendaraan';
     protected $primaryKey = 'id';
 
     protected $fillable = [
-        'id',
-        'trans_so',
-        'nomor_so',
-        'nama_so',
-        'asal_data',
-        'nama_marketing',
-        'request_by',
-        'area_kerja',
-        'plafon',
-        'tenor',
-        'nama_debitur',
-        'nama_pasangan',
-        'status_nikah',
-        'produk',
-        'alamat_ktp_vs_jaminan',
-        'hub_cadeb',
-        'akta_notaris',
-        'status_kredit',
-        'notes_progress',
-        'notes_counter',
-        'id_sertifikat',
-        'id_penjamin',
-        'id_lampiran',
-        'created_at',
-        'updated_at'
+        'id', 'trans_so', 'no_bpkb', 'nama_pemilik', 'alamat_pemilik', 'merk', 'jenis', 'no_rangka', 'no_mesin', 'warna', 'tahun', 'no_polisi', 'no_stnk', 'tgl_kadaluarsa_pajak', 'tgl_kadaluarsa_stnk', 'no_faktur', 'lamp_agunan_depan', 'lamp_agunan_kanan', 'lamp_agunan_kiri', 'lamp_agunan_belakang', 'lamp_agunan_dalam'
     ];
 
     // protected $casts = [

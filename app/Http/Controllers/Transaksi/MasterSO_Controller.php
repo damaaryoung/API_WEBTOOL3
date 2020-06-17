@@ -78,7 +78,6 @@ class MasterSO_Controller extends BaseController
                 ],
                 'tgl_transaksi' => Carbon::parse($val->created_at)->format('d-m-Y H:m:s')
             ];
-            //dd($val->created_at);
         }
 
         try {
@@ -117,7 +116,6 @@ class MasterSO_Controller extends BaseController
                 "message" => "Data dengan id " . $id . " tidak ada di SO atau belum di rekomendasikan oleh bagian DAS dan HM"
             ], 404);
         }
-        //dd($val);
 
         // $ao = TransAO::where('id_trans_so', $val->id)->first();
 
@@ -292,9 +290,8 @@ class MasterSO_Controller extends BaseController
 
 
         $check_ktp_dpm = DB::connection("web")->table("view_nasabah")->where("NO_ID", $ktp)->first();
-        //  dd($check_ktp_dpm->NAMA_NASABAH);
+
         if ($check_ktp_dpm === null) {
-            // $NASABAH_ID = null;
             $NASABAH_ID = null;
         } else {
             $NASABAH_ID = $check_ktp_dpm->NASABAH_ID;
@@ -469,20 +466,20 @@ class MasterSO_Controller extends BaseController
 
             // Data Calon Debitur
             $dataDebitur = array(
-                'no_ktp'                => $ktp,
-                'nama_lengkap'          => $check_ktp_dpm === null ? $req->input('nama_lengkap') : $check_ktp_dpm->NAMA_NASABAH,
+                'nama_lengkap'          => $req->input('nama_lengkap'),
                 'gelar_keagamaan'       => $req->input('gelar_keagamaan'),
                 'gelar_pendidikan'      => $req->input('gelar_pendidikan'),
-                'jenis_kelamin'         => $check_ktp_dpm === null ? strtoupper($req->input('jenis_kelamin')) : $check_ktp_dpm->JENIS_KELAMIN,
-                'status_nikah'          => $check_ktp_dpm === null ? $req->input('status_nikah') : $check_ktp_dpm->STATUS_MARITAL,
-                'ibu_kandung'           => $check_ktp_dpm === null ? $req->input('ibu_kandung') : $check_ktp_dpm->NAMA_IBU_KANDUNG,
-                'no_ktp_kk'             => $check_ktp_dpm === null ? $req->input('no_ktp_kk') : $check_ktp_dpm->NO_ID,
+                'jenis_kelamin'         => strtoupper($req->input('jenis_kelamin')),
+                'status_nikah'          => $req->input('status_nikah'),
+                'ibu_kandung'           => $req->input('ibu_kandung'),
+                'no_ktp'                => $ktp,
+                'no_ktp_kk'             => $req->input('no_ktp_kk'),
                 'no_kk'                 => $req->input('no_kk'),
-                'no_npwp'               => $check_ktp_dpm === null ? $req->input('no_npwp') : $check_ktp_dpm->NPWP,
-                'tempat_lahir'          => $check_ktp_dpm === null ? $req->input('tempat_lahir') : $check_ktp_dpm->TEMPATLAHIR,
-                'tgl_lahir'             => $check_ktp_dpm === null ? empty($req->input('tgl_lahir')) ? null : Carbon::parse($req->input('tgl_lahir'))->format('Y-m-d') : $check_ktp_dpm->TGLLAHIR,
-                'agama'                 => $check_ktp_dpm === null ? strtoupper($req->input('agama')) : $check_ktp_dpm->KODE_AGAMA,
-                'alamat_ktp'            => $check_ktp_dpm === null ? $alamat_ktp = $req->input('alamat_ktp') : $check_ktp_dpm->ALAMAT_KTP,
+                'no_npwp'               => $req->input('no_npwp'),
+                'tempat_lahir'          => $req->input('tempat_lahir'),
+                'tgl_lahir'             => empty($req->input('tgl_lahir')) ? null : Carbon::parse($req->input('tgl_lahir'))->format('Y-m-d'),
+                'agama'                 => strtoupper($req->input('agama')),
+                'alamat_ktp'            => $alamat_ktp = $req->input('alamat_ktp'),
                 'rt_ktp'                => $rt_ktp = $req->input('rt_ktp'),
                 'rw_ktp'                => $rw_ktp = $req->input('rw_ktp'),
                 'id_prov_ktp'           => $id_prov_ktp = $req->input('id_provinsi_ktp'),
@@ -499,8 +496,8 @@ class MasterSO_Controller extends BaseController
                 'pendidikan_terakhir'   => $req->input('pendidikan_terakhir'),
                 'jumlah_tanggungan'     => $req->input('jumlah_tanggungan'),
                 'no_telp'               => $req->input('no_telp'),
-                'no_hp'                 => $check_ktp_dpm === null ? $req->input('no_hp') : $check_ktp_dpm->HP,
-                'alamat_surat'          => $check_ktp_dpm === null ? $req->input('alamat_surat') : $check_ktp_dpm->ALAMAT_SURAT,
+                'no_hp'                 => $req->input('no_hp'),
+                'alamat_surat'          => $req->input('alamat_surat'),
                 'lamp_ktp'              => $lamp_ktp,
                 'lamp_kk'               => $lamp_kk,
                 'lamp_sertifikat'       => $lamp_sertifikat,
@@ -511,7 +508,6 @@ class MasterSO_Controller extends BaseController
                 'NASABAH_ID'            => $NASABAH_ID
             );
 
-            //    dd($dataDebitur);
             if ($file = $req->file('lamp_ktp_pas')) {
                 $name       = 'ktp.';
                 $check_file = 'null';
@@ -553,7 +549,6 @@ class MasterSO_Controller extends BaseController
                 'lamp_buku_nikah'  => $lamp_buku_nikah_pas
             );
 
-            //  dd($dataPasangan);
             // Data Penjamin
             if ($files = $req->file('lamp_ktp_pen')) {
                 $name       = 'ktp_penjamin.';
@@ -633,7 +628,7 @@ class MasterSO_Controller extends BaseController
                 }
             }
         }
-        // dd($dataDebitur['status_nikah']);
+
         DB::connection('web')->beginTransaction();
         try {
             $debt = Debitur::create($dataDebitur);
@@ -674,6 +669,8 @@ class MasterSO_Controller extends BaseController
 
             $mergeTr  = array_merge($trans_so, $arrTr);
             $transaksi = TransSO::create($mergeTr);
+
+            dd($transaksi->id);
 
             DB::connection('web')->commit();
 

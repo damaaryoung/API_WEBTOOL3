@@ -388,10 +388,15 @@ $router->group(['middleware' => ['jwt.auth', 'log'], 'prefix' => 'api'], functio
             $router->group(['prefix' => '/lpdk'], function () use ($router) {
                 $router->get('/', ['subject' => 'Get LPDK', 'uses' => 'Lpdk_Controller@index']);
                 $router->get('/progress', ['subject' => 'Get LPDK', 'uses' => 'Lpdk_Controller@indexOnprogress']);
+                $router->get('/detail/{id}', ['subject' => 'Get LPDK', 'uses' => 'Lpdk_Controller@getDetailLpdk']);
                 $router->get('/realisasi', ['subject' => 'Get LPDK', 'uses' => 'Lpdk_Controller@indexRealisasi']);
                 $router->get('/{id}', ['subject' => 'Detail LPDK', 'uses' => 'Lpdk_Controller@show']);
                 $router->post('/{id}', ['subject' => 'Create LPDK', 'uses' => 'Lpdk_Controller@store']);
                 $router->post('/update/{id}', ['subject' => 'Update LPDK', 'uses' => 'Lpdk_Controller@updateLampiran']);
+                $router->post('/tambah/sertifikat/{id_trans}', ['subject' => 'Update LPDK', 'uses' => 'Lpdk_Controller@tambahSertifikat']);
+                $router->post('/tambah/penjamin/{id_trans}', ['subject' => 'Update LPDK', 'uses' => 'Lpdk_Controller@tambahPenjamin']);
+                $router->post('/edit/{id_trans}/sertifikat/{id}', ['subject' => 'Update LPDK', 'uses' => 'Lpdk_Controller@EditSertifikat']);
+                $router->post('/edit/{id_trans}/penjamin/{id}', ['subject' => 'Update LPDK', 'uses' => 'Lpdk_Controller@EditPenjamin']);
             });
 
             $router->get('/team_caa', ['subject' => 'Get Komite_CAA', 'uses' => 'Approval_Controller@list_team']);  // Get List Team CAA

@@ -3,32 +3,13 @@
 return [
     'default' => 'mysql',
     'connections' => [
-        'web' => [
-            'driver' => 'mysql',
-            'host' => env('DB_HOST', '103.31.232.148'),
-            'port' => env('DB_PORT', 3307),
-            'database' => env('DB_DATABASE', 'newwebtool'),
-            'username' => env('DB_USERNAME', 'u2Qi7Jfui'),
-            'password' => env('DB_PASSWORD', 'qJ7ysIkg8ce!'),
-            'unix_socket' => env('DB_SOCKET', ''),
-            'charset' => env('DB_CHARSET', 'utf8mb4'),
-            'collation' => env('DB_COLLATION', 'utf8mb4_unicode_ci'),
-            'prefix' => env('DB_PREFIX', ''),
-            'strict' => env('DB_STRICT_MODE', false),
-            'engine' => env('DB_ENGINE', null),
-            // 'timezone' => env('DB_TIMEZONE', '+00:00'),
-            'options'   => [
-                \PDO::ATTR_EMULATE_PREPARES => true
-            ]
-        ],
-
         // 'web' => [
         //     'driver' => 'mysql',
-        //     'host' => env('DB_HOST'),
-        //     'port' => env('DB_PORT'),
-        //     'database' => env('DB_DATABASE'),
-        //     'username' => env('DB_USERNAME'),
-        //     'password' => env('DB_PASSWORD'),
+        //     'host' => env('DB_HOST', '103.31.232.148'),
+        //     'port' => env('DB_PORT', 3307),
+        //     'database' => env('DB_DATABASE', 'newwebtool'),
+        //     'username' => env('DB_USERNAME', 'u2Qi7Jfui'),
+        //     'password' => env('DB_PASSWORD', 'qJ7ysIkg8ce!'),
         //     'unix_socket' => env('DB_SOCKET', ''),
         //     'charset' => env('DB_CHARSET', 'utf8mb4'),
         //     'collation' => env('DB_COLLATION', 'utf8mb4_unicode_ci'),
@@ -40,6 +21,25 @@ return [
         //         \PDO::ATTR_EMULATE_PREPARES => true
         //     ]
         // ],
+
+        'web' => [
+            'driver' => 'mysql',
+            'host' => env('DB_HOST'),
+            'port' => env('DB_PORT'),
+            'database' => env('DB_DATABASE'),
+            'username' => env('DB_USERNAME'),
+            'password' => env('DB_PASSWORD'),
+            'unix_socket' => env('DB_SOCKET', ''),
+            'charset' => env('DB_CHARSET', 'utf8mb4'),
+            'collation' => env('DB_COLLATION', 'utf8mb4_unicode_ci'),
+            'prefix' => env('DB_PREFIX', ''),
+            'strict' => env('DB_STRICT_MODE', false),
+            'engine' => env('DB_ENGINE', null),
+            // 'timezone' => env('DB_TIMEZONE', '+00:00'),
+            'options'   => [
+                \PDO::ATTR_EMULATE_PREPARES => true
+            ]
+        ],
         'dpm' => [
             'driver' => 'mysql',
             'host' => env('DB_HOST'),
