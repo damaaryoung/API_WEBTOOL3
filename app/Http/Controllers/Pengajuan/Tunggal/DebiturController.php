@@ -35,14 +35,15 @@ class DebiturController extends BaseController
         }
 
         $check_ktp_web = Debitur::select('id', 'nama_lengkap', 'no_ktp', 'created_at')->where('no_ktp', $id)->first();
-        //  dd($valid);
-        if ($valid === null) {
-            return response()->json([
-                'code'  => 404,
-                'status'    => 'not found',
-                'message'   => 'data debitur tidak ada'
-            ]);
-        }
+
+       //   dd($check_ktp_web === null);
+        // if ($valid === null) {
+        //     return response()->json([
+        //         'code'  => 404,
+        //         'status'    => 'not found',
+        //         'message'   => 'data debitur tidak ada'
+        //     ]);
+        // }
 
         if ($check_ktp_web === null) {
             return response()->json([
@@ -62,14 +63,15 @@ class DebiturController extends BaseController
                     "status"  => "Expired",
                     'message' => "Akun belum aktif kembali, belum ada 1 bulan yang lalu"
                 ], 403);
-                // } else {
-                //     return response()->json([
-                //         "code"    => 202,
-                //         "status"  => "success",
-                //         "message" => "Akun telah ada di sistem, gunakan endpoint berikut apabila ingin menggunakan datanya",
-                //         "endpoint" => "/api/debitur/" . $check_ktp_web->id
-                //     ], 202);
-            }
+                } 
+            //     else {
+            //         return response()->json([
+            //             "code"    => 403,
+            //             "status"  => "forbidden",
+            //             "message" => "Akun telah ada di sistem, gunakan endpoint berikut apabila ingin menggunakan datanya",
+            //             "endpoint" => "/api/debitur/" . $check_ktp_web->id
+            //         ], 403);
+            // }
 
             $data = array(
                 'NASABAH_ID' => $valid->NASABAH_ID,
@@ -126,8 +128,7 @@ class DebiturController extends BaseController
         //         'tgl_lahir' => empty($tgl_anak[$i]) ? null : Carbon::parse($tgl_anak[$i])->format("d-m-Y")
         //     );
         // }
-        $anak = Anak::select('nama_anak AS nama', 'tgl_lahir_anak AS tgl_lahir')->where('nasabah_id', $id)->get();
-
+        $anak = Anak::select('anak_id','nama_anak AS nama', 'tgl_lahir_anak')->where('nasabah_id', $id)->get();
         $data = array(
             'id'                    => $val->id == null ? null : (int) $val->id,
             'nama_lengkap'          => $val->nama_lengkap,
@@ -144,6 +145,7 @@ class DebiturController extends BaseController
             'no_npwp'               => $val->no_npwp,
             'tempat_lahir'          => $val->tempat_lahir,
             'tgl_lahir'             => Carbon::parse($val->tgl_lahir)->format('d-m-Y'),
+            'umur'                  => $val->umur,
             'agama'                 => $val->agama,
             'anak'                  => $anak,
             'alamat_ktp' => [
@@ -196,6 +198,7 @@ class DebiturController extends BaseController
                 "nama_tempat_kerja"     => $val->nama_tempat_kerja,
                 "jenis_pekerjaan"       => $val->jenis_pekerjaan,
                 "tgl_mulai_kerja"       => Carbon::parse($val->tgl_mulai_kerja)->format('d-m-Y'),
+                "lama_kerja"            => $val->lama_kerja,
                 "no_telp_tempat_kerja"  => $val->no_telp_tempat_kerja,
                 'alamat' => [
                     'alamat_singkat' => $val->alamat_tempat_kerja,
@@ -225,6 +228,7 @@ class DebiturController extends BaseController
             'no_telp'               => $val->no_telp,
             'no_hp'                 => $val->no_hp,
             'alamat_surat'          => $val->alamat_surat,
+            'email'          => $val->email,
             'lampiran' => [
                 'lamp_surat_cerai'  => $val->lamp_surat_cerai,
                 'lamp_ktp'              => $val->lamp_ktp,
@@ -297,7 +301,6 @@ class DebiturController extends BaseController
             $lamp_ktp = $check_lamp_ktp;
         }
 
-        // dd($file);
         if ($file = $req->file('lamp_kk')) {
             $name = 'kk.';
             $check = $check_lamp_kk;
@@ -491,6 +494,8 @@ class DebiturController extends BaseController
 
             'tgl_lahir'             => empty($req->input('tgl_lahir'))
                 ? $check_debt->tgl_lahir : Carbon::parse($req->input('tgl_lahir'))->format('Y-m-d'),
+                 'umur'                 => empty($req->input('umur'))
+                ? $check_debt->umur : strtoupper($req->input('umur')),
 
             'agama'                 => empty($req->input('agama'))
                 ? $check_debt->agama : strtoupper($req->input('agama')),
@@ -551,6 +556,8 @@ class DebiturController extends BaseController
 
             'alamat_surat'          => empty($req->input('alamat_surat'))
                 ? $check_debt->alamat_surat : $req->input('alamat_surat'),
+                'email'          => empty($req->input('email'))
+                ? $check_debt->email : $req->input('email'),
 
             'tinggi_badan'          => empty($req->input('tinggi_badan'))
                 ? $check_debt->tinggi_badan : $req->input('tinggi_badan'),
@@ -596,6 +603,10 @@ class DebiturController extends BaseController
 
             'tgl_mulai_kerja'       => empty($req->input('tgl_mulai_kerja'))
                 ? $check_debt->tgl_mulai_kerja : Carbon::parse($req->input('tgl_mulai_kerja'))->format('Y-m-d'),
+
+                    'lama_kerja'                 => empty($req->input('lama_kerja'))
+                ? $check_debt->lama_kerja : strtoupper($req->input('lama_kerja')),
+
 
             'no_telp_tempat_kerja'  => empty($req->input('no_telp_tempat_kerja'))
                 ? $check_debt->no_telp_tempat_kerja : $req->input('no_telp_tempat_kerja'),

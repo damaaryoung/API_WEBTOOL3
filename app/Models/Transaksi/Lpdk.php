@@ -34,11 +34,14 @@ class Lpdk extends Model implements AuthenticatableContract, AuthorizableContrac
         'id',
         'trans_so',
         'nomor_so',
+        'id_pic',
+        'id_area',
+        'id_cabang',
         'nama_so',
         'asal_data',
         'nama_marketing',
-        'request_by',
         'area_kerja',
+'request_by',
         'plafon',
         'tenor',
         'nama_debitur',
@@ -51,11 +54,14 @@ class Lpdk extends Model implements AuthenticatableContract, AuthorizableContrac
         'status_kredit',
         'notes_progress',
         'notes_counter',
+        'notes_cancel',
+	'lain_lain',
         'id_sertifikat',
         'id_penjamin',
         'id_lampiran',
         'created_at',
-        'updated_at'
+        'updated_at',
+        'sla'
     ];
 
     // protected $casts = [
@@ -63,4 +69,36 @@ class Lpdk extends Model implements AuthenticatableContract, AuthorizableContrac
     //     'created_at' => 'date:m-d-Y H:i:s',
     //     'updated_at' => 'date:m-d-Y H:i:s'
     // ];
+
+ public function pic()
+    {
+        return $this->belongsTo(PIC::class, 'id_pic')
+            ->withDefault(function () {
+                return new PIC();
+            });
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id')
+            ->withDefault(function () {
+                return new User();
+            });
+    }
+
+    public function area()
+    {
+        return $this->belongsTo(Area::class, 'id_area')
+            ->withDefault(function () {
+                return new Area();
+            });
+    }
+
+    public function cabang()
+    {
+        return $this->belongsTo(Cabang::class, 'id_cabang')
+            ->withDefault(function () {
+                return new Cabang();
+            });
+    }
 }

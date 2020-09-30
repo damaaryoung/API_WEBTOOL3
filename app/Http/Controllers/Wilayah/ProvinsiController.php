@@ -12,23 +12,25 @@ use DB;
 
 class ProvinsiController extends BaseController
 {
-    public function __construct() {
-        $this->time_cache = config('app.cache_exp');
-    }
+    //  public function __construct()
+    //{
+    //  $this->time_cache = config('app.cache_exp');
+    //}
 
-    public function index() {
+    public function index()
+    {
         $data = array();
-        $query = Cache::remember("prov.index", $this->time_cache, function () use ($data) {
-            foreach(
-                Provinsi::select('id', 'nama')->where('flg_aktif', 1)->orderBy('nama', 'asc')->cursor()
-                as $cursor
-            ){
-                $data[] = $cursor;
-            }
+        $query = Provinsi::get();
+        // $query = Cache::remember("prov.index", $this->time_cache, function () use ($data) {
+        //     foreach (Provinsi::select('id', 'nama')->where('flg_aktif', 1)->orderBy('nama', 'asc')->cursor()
+        //         as $cursor) {
+        //         $data[] = $cursor;
+        //     }
 
-            return $data;
-        });
+        //     return $data;
+        // });
 
+        //  dd($query);
         if (empty($query)) {
             return response()->json([
                 "code"    => 404,
@@ -53,7 +55,8 @@ class ProvinsiController extends BaseController
         }
     }
 
-    public function store(Request $req) {
+    public function store(Request $req)
+    {
         $nama = $req->input('nama');
 
         if (!$nama) {
@@ -65,7 +68,7 @@ class ProvinsiController extends BaseController
         }
 
         Provinsi::create(['nama' => $nama]);
-        
+
         try {
             return response()->json([
                 'code'    => 200,
@@ -82,11 +85,11 @@ class ProvinsiController extends BaseController
         }
     }
 
-    public function show($IdOrName) 
+    public function show($IdOrName)
     {
         // $res = array();
         // if(preg_match("/^[0-9]{1,}$/", $IdOrName)){
-        $query = Provinsi::select('id','nama as nama_provinsi','flg_aktif')->where('id', $IdOrName)->first();
+        $query = Provinsi::select('id', 'nama as nama_provinsi', 'flg_aktif')->where('id', $IdOrName)->first();
         // }else{
         //     $query = Provinsi::select('id','nama','flg_aktif')->where('nama','like','%'.$IdOrName.'%')->get();
         // }
@@ -114,7 +117,7 @@ class ProvinsiController extends BaseController
         }
     }
 
-    public function update($id, Request $req) 
+    public function update($id, Request $req)
     {
         $check = Provinsi::where('id', $id)->first();
 
@@ -159,7 +162,7 @@ class ProvinsiController extends BaseController
         }
     }
 
-    public function delete($id) 
+    public function delete($id)
     {
         Provinsi::where('id', $id)->update(['flg_aktif' => 0]);
 
@@ -167,7 +170,7 @@ class ProvinsiController extends BaseController
             return response()->json([
                 'code'    => 200,
                 'status'  => 'success',
-                'message' => 'Data dengan ID '.$id.', berhasil dihapus'
+                'message' => 'Data dengan ID ' . $id . ', berhasil dihapus'
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
@@ -229,7 +232,7 @@ class ProvinsiController extends BaseController
     {
         $column = array('id', 'nama');
 
-        if($param != 'filter' && $param != 'search'){
+        if ($param != 'filter' && $param != 'search') {
             return response()->json([
                 'code'    => 412,
                 'status'  => 'not valid',
@@ -237,43 +240,41 @@ class ProvinsiController extends BaseController
             ], 412);
         }
 
-        if (in_array($key, $column) == false)
-        {
+        if (in_array($key, $column) == false) {
             return response()->json([
                 'code'    => 412,
                 'status'  => 'not valid',
-                'message' => 'gunakan key yang valid diantara berikut: '.implode(",", $column)
+                'message' => 'gunakan key yang valid diantara berikut: ' . implode(",", $column)
             ], 412);
         }
 
-        if (in_array($orderBy, $column) == false)
-        {
+        if (in_array($orderBy, $column) == false) {
             return response()->json([
                 'code'    => 412,
                 'status'  => 'not valid',
-                'message' => 'gunakan order by yang valid diantara berikut: '.implode(",", $column)
+                'message' => 'gunakan order by yang valid diantara berikut: ' . implode(",", $column)
             ], 412);
         }
 
-        if($param == 'search'){
+        if ($param == 'search') {
             $operator   = "like";
             $func_value = "%{$value}%";
-        }else{
+        } else {
             $operator   = "=";
             $func_value = "{$value}";
         }
 
         $query = Provinsi::where('flg_aktif', $status)->orderBy($orderBy, $orderVal);
 
-        if($value == 'default'){
+        if ($value == 'default') {
             $res = $query;
-        }else{
+        } else {
             $res = $query->where($key, $operator, $func_value);
         }
 
-        if($limit == 'default'){
+        if ($limit == 'default') {
             $result = $res->get();
-        }else{
+        } else {
             $result = $res->limit($limit)->get();
         }
 

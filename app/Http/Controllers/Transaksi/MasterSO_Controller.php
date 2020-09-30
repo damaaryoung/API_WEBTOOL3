@@ -12,8 +12,11 @@ use App\Models\Pengajuan\SO\Debitur;
 use App\Models\Transaksi\TransSO;
 use App\Models\AreaKantor\JPIC;
 use App\Models\AreaKantor\PIC;
+use App\Models\Transaksi\Lpdk_penjamin;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use App\Models\master_nilai;
+use App\Models\master_transaksi;
 use Illuminate\Support\Facades\DB;
 
 class MasterSO_Controller extends BaseController
@@ -22,15 +25,34 @@ class MasterSO_Controller extends BaseController
     {
         $pic = $req->pic; // From PIC middleware
 
-        $id_area   = $pic->id_area;
-        $id_cabang = $pic->id_cabang;
-        $scope     = $pic->jpic['cakupan'];
+        $arr = array();
+        $i=0;
+        foreach ($pic as $val) {
+            $arr[] = $val['id_area'];
+          $i++;
+        }   
+
+        $arrr = array();
+        foreach ($pic as $val) {
+            $arrr[] = $val['id_cabang'];
+          $i++;
+        }   
+        $arrrr = array();
+        foreach ($pic as $val) {
+            $arrrr[] = $val['jpic']['cakupan'];
+          $i++;
+        }  
+          //  dd($arr);
+        $id_area   = $arr;
+        $id_cabang = $arrr;
+       // dd($id_cabang);
+        $scope     = $arrrr;
 
         $query_dir = TransSO::with('pic', 'cabang', 'asaldata', 'debt', 'faspin')->orderBy('created_at', 'desc');
         $query = Helper::checkDir($scope, $query_dir, $id_area, $id_cabang);
         // dd($query->get());
 
-        if ($query->get() === '[]') {
+        if ($query === '[]') {
             return response()->json([
                 "code"    => 404,
                 "status"  => "not found",
@@ -39,7 +61,7 @@ class MasterSO_Controller extends BaseController
         }
 
         $data = array();
-        foreach ($query->get() as $key => $val) {
+        foreach ($query as $key => $val) {
             if ($val->status_das == 1) {
                 $status_das = 'complete';
             } elseif ($val->status_das == 2) {
@@ -99,11 +121,28 @@ class MasterSO_Controller extends BaseController
     public function show($id, Request $req)
     {
         $pic = $req->pic; // From PIC middleware
+        $arr = array();
+        $i=0;
+        foreach ($pic as $val) {
+            $arr[] = $val['id_area'];
+          $i++;
+        }   
 
-        $id_area   = $pic->id_area;
-        $id_cabang = $pic->id_cabang;
-        $scope     = $pic->jpic['cakupan'];
-
+        $arrr = array();
+        foreach ($pic as $val) {
+            $arrr[] = $val['id_cabang'];
+          $i++;
+        }   
+        $arrrr = array();
+        foreach ($pic as $val) {
+            $arrrr[] = $val['jpic']['cakupan'];
+          $i++;
+        }  
+          //  dd($arr);
+        $id_area   = $arr;
+        $id_cabang = $arrr;
+       // dd($id_cabang);
+        $scope     = $arrrr;
         $query_dir = TransSO::with('pic', 'cabang', 'asaldata', 'debt', 'pas', 'faspin', 'ao', 'ca')->where('id', $id);
 
         $vals = Helper::checkDir($scope, $query_dir, $id_area, $id_cabang);
@@ -187,6 +226,7 @@ class MasterSO_Controller extends BaseController
             ],
             'id_cabang'   => $val->id_cabang == null ? null : (int) $val->id_cabang,
             'nama_cabang' => $val->cabang['nama'],
+'notes_so' => $val->notes_so,
             'tracking'  => [
                 'das' => $status_das,
                 'hm'  => $status_hm,
@@ -197,7 +237,7 @@ class MasterSO_Controller extends BaseController
             'catatan_DAS' => $val->catatan_das,
             'catatan_DSSPV' => $val->catatan_hm,
             'asal_data' => [
-                'id'   => $val->id_asal_data == null ? null : (int) $val->id_asal_data,
+                'id'   => $val->id_asal_data == null ? null : $val->id_asal_data,
                 'nama' => $val->asaldata['nama'],
             ],
             'nama_marketing'    => $val->nama_marketing,
@@ -237,7 +277,36 @@ class MasterSO_Controller extends BaseController
     {
         $pic = $request->pic; // From PIC middleware
         $user_id = $request->auth->user_id;
-
+//dd($pic);
+        $mj = array();
+        $i=0;
+        foreach ($pic as $val) {
+            $mj[] = $val['id_mj_pic'];
+          $i++;
+        }   
+        $id_pic = array();
+        $i=0;
+        foreach ($pic as $val) {
+            $id_pic[] = $val['id'];
+          $i++;
+        }   
+ $arrr = array();
+        foreach ($pic as $val) {
+            $arrr[] = $val['id_cabang'];
+          $i++;
+        }  
+        $area = array();
+        $i=0;
+        foreach ($pic as $val) {
+            $area[] = $val['id_area'];
+          $i++;
+        } 
+        $nama = array();
+        $i=0;
+        foreach ($pic as $val) {
+            $nama[] = $val['nama'];
+          $i++;
+        }       
         $countTSO = TransSO::latest('id', 'nomor_so')->first();
 
         if ($countTSO === null) {
@@ -255,21 +324,22 @@ class MasterSO_Controller extends BaseController
         $now   = Carbon::now();
         $year  = $now->year;
         $month = $now->month;
-
-        $JPIC   = JPIC::where('id', $pic->id_mj_pic)->first();
-
+//dd($mj);
+        $JPIC   = JPIC::whereIn('id', $mj)->first();
+//dd($JPIC);
         //  ID-Cabang - AO / CA / SO - Bulan - Tahun - NO. Urut
-        $nomor_so = $pic->id_cabang . '-' . $JPIC->nama_jenis . '-' . $month . '-' . $year . '-' . $lastNumb; //  ID-Cabang - AO / CA / SO - Bulan - Tahun - NO. Urut
-
+        $nomor_so = $arrr[0] . '-' . $JPIC->nama_jenis . '-' . $month . '-' . $year . '-' . $lastNumb; //  ID-Cabang - AO / CA / SO - Bulan - Tahun - NO. Urut
+//dd($nomor_so);
         $trans_so = array(
             'nomor_so'       => $nomor_so,
             'user_id'        => $user_id,
-            'id_pic'         => $pic->id,
-            'id_area'        => $pic->id_area,
-            'id_cabang'      => $pic->id_cabang,
-            'nama_so'        => $pic->nama,
+            'id_pic'         => $id_pic[0],
+            'id_area'        => $area[0],
+            'id_cabang'      => $arrr[0],
+            'nama_so'        => $nama[0],
             'id_asal_data'   => $req->input('id_asal_data'),
-            'nama_marketing' => $req->input('nama_marketing')
+            'nama_marketing' => $req->input('nama_marketing'),
+            'notes_so' => $req->input('notes_so')
         );
 
         // Data Fasilitas Pinjaman
@@ -281,7 +351,7 @@ class MasterSO_Controller extends BaseController
         );
 
         $dateExpires   = strtotime($now); // time to integer
-        $day_in_second = 60 * 60 * 24 * 30;
+        $day_in_second = 60 * 60 * 24 * 60;
 
         $ktp        = $req->input('no_ktp');
         // $no_ktp_kk  = $req->input('no_ktp_kk');
@@ -313,11 +383,11 @@ class MasterSO_Controller extends BaseController
                 ], 403);
             } else {
                 return response()->json([
-                    "code"    => 200,
-                    "status"  => "success",
+                    "code"    => 403,
+                    "status"  => "Forbidden",
                     "message" => "Akun telah ada di sistem, gunakan endpoint berikut apabila ingin menggunakan datanya",
                     "endpoint" => "/api/debitur/" . $check_ktp_web->id
-                ], 200);
+                ], 403);
             }
         } else {
             $check_ktp_debt = Debitur::where('no_ktp', $ktp)->first();
@@ -364,37 +434,37 @@ class MasterSO_Controller extends BaseController
 
             $check_ktp_pas = Pasangan::where('no_ktp', $no_ktp_pas)->first();
 
-            if (!empty($check_ktp_pas) && !empty($check_ktp_pas->no_ktp)) {
-                return response()->json([
-                    "code"    => 422,
-                    "status"  => "not valid request",
-                    "message" => 'no ktp pasangan telah ada yang menggunakan'
-                ], 422);
-            }
+            // if (!empty($check_ktp_pas) && !empty($check_ktp_pas->no_ktp)) {
+            //     return response()->json([
+            //         "code"    => 422,
+            //         "status"  => "not valid request",
+            //         "message" => 'no ktp pasangan telah ada yang menggunakan'
+            //     ], 422);
+            // }
 
-            if (!empty($check_ktp_pas) && !empty($check_ktp_pas->no_ktp_kk)) {
-                return response()->json([
-                    "code"    => 422,
-                    "status"  => "not valid request",
-                    "message" => 'no ktp di kk pasangan telah ada yang menggunakan'
-                ], 422);
-            }
+            // if (!empty($check_ktp_pas) && !empty($check_ktp_pas->no_ktp_kk)) {
+            //     return response()->json([
+            //         "code"    => 422,
+            //         "status"  => "not valid request",
+            //         "message" => 'no ktp di kk pasangan telah ada yang menggunakan'
+            //     ], 422);
+            // }
 
-            if (!empty($check_ktp_pas) && !empty($check_ktp_pas->no_npwp)) {
-                return response()->json([
-                    "code"    => 422,
-                    "status"  => "not valid request",
-                    "message" => 'no npwp pasangan telah ada yang menggunakan'
-                ], 422);
-            }
+            // if (!empty($check_ktp_pas) && !empty($check_ktp_pas->no_npwp)) {
+            //     return response()->json([
+            //         "code"    => 422,
+            //         "status"  => "not valid request",
+            //         "message" => 'no npwp pasangan telah ada yang menggunakan'
+            //     ], 422);
+            // }
 
-            if (!empty($check_ktp_debt) && !empty($check_ktp_debt->no_telp)) {
-                return response()->json([
-                    "code"    => 422,
-                    "status"  => "not valid request",
-                    "message" => 'no telp pasangan telah ada yang menggunakan'
-                ], 422);
-            }
+            // if (!empty($check_ktp_debt) && !empty($check_ktp_debt->no_telp)) {
+            //     return response()->json([
+            //         "code"    => 422,
+            //         "status"  => "not valid request",
+            //         "message" => 'no telp pasangan telah ada yang menggunakan'
+            //     ], 422);
+            // }
 
             $lamp_dir  = 'public/' . $ktp;
             $path_debt = $lamp_dir . '/debitur';
@@ -478,6 +548,7 @@ class MasterSO_Controller extends BaseController
                 'no_npwp'               => $req->input('no_npwp'),
                 'tempat_lahir'          => $req->input('tempat_lahir'),
                 'tgl_lahir'             => empty($req->input('tgl_lahir')) ? null : Carbon::parse($req->input('tgl_lahir'))->format('Y-m-d'),
+                'umur'                  => $req->input('umur'),
                 'agama'                 => strtoupper($req->input('agama')),
                 'alamat_ktp'            => $alamat_ktp = $req->input('alamat_ktp'),
                 'rt_ktp'                => $rt_ktp = $req->input('rt_ktp'),
@@ -505,8 +576,99 @@ class MasterSO_Controller extends BaseController
                 'lamp_imb'              => $lamp_imb,
                 'lamp_surat_cerai'      => $lamp_surat_cerai,
                 'foto_agunan_rumah'     => $foto_agunan_rumah,
-                'NASABAH_ID'            => $NASABAH_ID
+                'NASABAH_ID'            => $NASABAH_ID,
+                'email'          => $req->input('email'),
             );
+
+
+                   $sek = $dataDebitur['pendidikan_terakhir'];
+
+           switch ($sek) {
+  case "Tidak Sekolah/SD":
+    $sek = "0021";
+    break;
+  case "SMP":
+     $sek = "0022";
+    break;
+
+ case "SMA":
+     $sek = "0023";
+    break;
+     case "D3/S1":
+     $sek = "0024";
+    break;
+     case "S2/S3":
+     $sek = "0025";
+    break;
+ # case "green":
+  #  echo "Your favorite color is green!";
+   # break;
+  default:
+    $sek = null;
+}
+
+       $tang = $dataDebitur['jumlah_tanggungan'];
+
+           switch ($tang) {
+  case 0:
+    $tang = "0041";
+    break;
+  case 1:
+     $tang = "0042";
+    break;
+
+ case 2:
+     $tang = "0043";
+    break;
+     case 3:
+     $tang = "0044";
+    break;
+case ( $tang = 4 && $tang > 4) :
+     $tang = "0045";
+    break;
+ # case "green":
+  #  echo "Your favorite color is green!";
+   # break;
+  default:
+    $tang = null;
+}
+
+      $umr = $dataDebitur['umur'];
+
+           switch ($umr) {
+  case ($umr <= 30 && $umr >= 21 ):
+    $umr = "0031";
+    break;
+  case ($umr <= 40 && $umr >= 30 ):
+     $umr = "0032";
+    break;
+ case ($umr <= 50 && $umr >= 40):
+     $umr = "0033";
+    break;
+     case ($umr <= 60 && $umr >= 50 ):
+     $umr = "0034";
+    break;
+     case ($umr > 60 ):
+     $umr = "0035";
+    break;
+ # case "green":
+  #  echo "Your favorite color is green!";
+   # break;
+  default:
+    $umr = null;
+}
+
+$merge_scor = array($sek,$tang,$umr);
+
+$scor_sek = DB::connection('simar')->table('master_creditscoring')->select('id_parameter AS parameter','id_detail_params AS detail','point','bobot')->where('id_detail_params',$sek)->first();
+
+$scor_tang = DB::connection('simar')->table('master_creditscoring')->select('id_parameter AS parameter','id_detail_params AS detail','point','bobot')->where('id_detail_params',$tang)->first();
+
+$scor_umr = DB::connection('simar')->table('master_creditscoring')->select('id_parameter AS parameter','id_detail_params AS detail','point','bobot')->where('id_detail_params',$umr)->first();
+
+$merge_scor = array($scor_sek,$scor_tang,$scor_umr);
+
+
 
             if ($file = $req->file('lamp_ktp_pas')) {
                 $name       = 'ktp.';
@@ -630,7 +792,7 @@ class MasterSO_Controller extends BaseController
         }
 
         DB::connection('web')->beginTransaction();
-        try {
+        // try {
             $debt = Debitur::create($dataDebitur);
 
             if ($dataFasPin) {
@@ -668,9 +830,39 @@ class MasterSO_Controller extends BaseController
             );
 
             $mergeTr  = array_merge($trans_so, $arrTr);
+//dd($mergeTr);
             $transaksi = TransSO::create($mergeTr);
 
-            dd($transaksi->id);
+
+             $arr_s = array();
+foreach ($merge_scor as $key => $val) {
+    $arr_s[$key]['id_aplikasi'] = $transaksi->id;
+    $arr_s[$key]['parameter'] = $val->parameter;
+    $arr_s[$key]['detail'] = $val->detail;
+    $arr_s[$key]['point'] = $val->point;
+    $arr_s[$key]['bobot'] = $val->bobot;
+}
+
+// dd($arr_s);
+
+$data_cs_trans = array(
+"tgl_transaksi" => $transaksi->created_at,
+"id_aplikasi" => $transaksi->id,
+"nomor_aplikasi" => $transaksi->nomor_so,
+"nama_debitur" => $debt->nama_lengkap,
+"id_area" => $transaksi->id_area,
+"id_cabang" => $transaksi->id_cabang,
+"nama_so" => $transaksi->nama_so
+);
+
+// dd($arr_s);
+            $ms_trans = master_transaksi::create($data_cs_trans);
+            $scor_params = master_nilai::insert($arr_s);
+
+            $pen_exp = explode(',', $penID);
+
+            Penjamin::whereIn('id', $pen_exp)->update(['id_trans_so' => $transaksi->id]);
+            // dd($transaksi->id);
 
             DB::connection('web')->commit();
 
@@ -680,14 +872,14 @@ class MasterSO_Controller extends BaseController
                 'message' => 'Data berhasil dibuat',
                 'data'   => $transaksi
             ], 200);
-        } catch (\Exception $e) {
-            $err = DB::connection('web')->rollback();
-            return response()->json([
-                'code'    => 501,
-                'status'  => 'error',
-                'message' => $err
-            ], 501);
-        }
+        // } catch (\Exception $e) {
+        //     $err = DB::connection('web')->rollback();
+        //     return response()->json([
+        //         'code'    => 501,
+        //         'status'  => 'error',
+        //         'message' => $err
+        //     ], 501);
+        // }
     }
 
     public function update($id, Request $request, BlankRequest $req)
@@ -862,9 +1054,28 @@ class MasterSO_Controller extends BaseController
     {
         $pic = $req->pic; // From PIC middleware
 
-        $id_area   = $pic->id_area;
-        $id_cabang = $pic->id_cabang;
-        $scope     = $pic->jpic['cakupan'];
+        $arr = array();
+        $i=0;
+        foreach ($pic as $val) {
+            $arr[] = $val['id_area'];
+          $i++;
+        }   
+
+        $arrr = array();
+        foreach ($pic as $val) {
+            $arrr[] = $val['id_cabang'];
+          $i++;
+        }   
+        $arrrr = array();
+        foreach ($pic as $val) {
+            $arrrr[] = $val['jpic']['cakupan'];
+          $i++;
+        }  
+          //  dd($arr);
+        $id_area   = $arr;
+        $id_cabang = $arrr;
+       // dd($id_cabang);
+        $scope     = $arrrr;
 
         if ($month == null) {
 
@@ -879,7 +1090,7 @@ class MasterSO_Controller extends BaseController
 
         $query = Helper::checkDir($scope, $query_dir, $id_area, $id_cabang);
 
-        if ($query->get() == '[]') {
+        if ($query == '[]') {
             return response()->json([
                 "code"    => 404,
                 "status"  => "not found",
@@ -888,7 +1099,7 @@ class MasterSO_Controller extends BaseController
         }
 
         $data = array();
-        foreach ($query->get() as $key => $val) {
+        foreach ($query as $key => $val) {
             if ($val->status_das == 1) {
                 $status_das = 'complete';
             } elseif ($val->status_das == 2) {

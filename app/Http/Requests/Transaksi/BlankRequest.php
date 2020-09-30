@@ -65,7 +65,7 @@ class BlankRequest extends FormRequest
 
                 // Debitur
                 'jenis_kelamin'         => 'in:L,P',
-                'status_nikah'          => 'in:Single,Menikah,Janda/Duda',
+               // 'status_nikah'          => 'in:Single,Menikah,Janda/Duda',
                 'no_ktp'                => 'digits:16',
                 'no_ktp_kk'             => 'digits:16',
                 'no_kk'                 => 'digits:16',
@@ -224,10 +224,10 @@ class BlankRequest extends FormRequest
                 // Data History Bank pada CA
                 'no_rekening'             => 'numeric',
                 'penghasilan_per_tahun'   => 'integer',
-                'pemasukan_per_bulan'     => 'in:A,B,C,D,E',
-                'frek_trans_pemasukan'    => 'in:A,B,C,D,E',
-                'pengeluaran_per_bulan'   => 'in:A,B,C,D,E',
-                'frek_trans_pengeluaran'  => 'in:A,B,C,D,E',
+                'pemasukan_per_bulan'     => 'in:1,2,3,4,5',
+                'frek_trans_pemasukan'    => 'in:1,2,3,4,5',
+                'pengeluaran_per_bulan'   => 'in:1,2,3,4,5',
+                'frek_trans_pengeluaran'  => 'in:1,2,3,4,5',
                 // 'sumber_dana_setoran'     =>
                 'tujuan_pengeluaran_dana' => 'in:KONSUMTIF,MODAL KERJA,INVESTASI',
 

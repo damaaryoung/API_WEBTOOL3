@@ -390,6 +390,8 @@ class TanahController extends BaseController
 
         // AgunanTanah
         $dataAgunanTanah = array(
+            'id_trans_so'         => empty($req->input('trans_so'))
+            ? $ao->id_trans_so : $req->input('trans_so'),
             'tipe_lokasi'             => empty($req->input('tipe_lokasi_agunan'))
                 ? $check_tan->tipe_lokasi : strtoupper($req->input('tipe_lokasi_agunan')),
 
@@ -596,6 +598,8 @@ class TanahController extends BaseController
 
         // AgunanTanah
         $dataAgunanTanah = array(
+            'id_trans_so'         => empty($req->input('trans_so'))
+                ? $ao->id_trans_so : $req->input('trans_so'),
             'tipe_lokasi'             => empty($req->input('tipe_lokasi_agunan'))
                 ? $check_tan->tipe_lokasi : strtoupper($req->input('tipe_lokasi_agunan')),
 

@@ -118,15 +118,14 @@ class Controller extends BaseController
     public static function checkDir($scope, $query_dir, $id_area, $id_cabang)
     {
 
-        if ($scope == 'PUSAT') {
+        if ($scope === 'PUSAT') {
 
-            $query = $query_dir;
-        } elseif ($scope == 'AREA') {
+            $query = $query_dir->paginate(10);
+        } elseif ($scope === 'AREA') {
 
-            $query = $query_dir->where('id_area', $id_area);
+            $query = $query_dir->where('id_area',$id_area)->paginate(10);
         } else {
-
-            $query = $query_dir->where('id_cabang', $id_cabang);
+            $query = $query_dir->whereIn('id_cabang',$id_cabang)->paginate(10);
         }
 
         return $query;
@@ -257,7 +256,7 @@ class Controller extends BaseController
             // cut size image
             // Image::make(realpath($file))->save($fullPath);
 
-            Image::make(realpath($file))->resize(480, 360, function ($constraint) {
+            Image::make(realpath($file))->resize(800, 750, function ($constraint) {
                 $constraint->aspectRatio();
             })->save($fullPath);
 

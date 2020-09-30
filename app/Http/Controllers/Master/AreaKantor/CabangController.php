@@ -29,21 +29,23 @@ class CabangController extends BaseController
 
         // $query = Cache::remember('cabang.index', $this->time_cache, function () use ($data) {
 
-        Cabang::select('id', 'nama as nama_cabang', 'jenis_kantor', 'kode_kantor')
-            ->addSelect([
-                'nama_area'      => Area::select('nama')->whereColumn('id_area', 'mk_area.id'),
-                'nama_provinsi'  => Provinsi::select('nama')->whereColumn('id_provinsi', 'master_provinsi.id'),
-                'nama_kabupaten' => Kabupaten::select('nama')->whereColumn('id_kabupaten', 'master_kabupaten.id'),
-                'nama_kecamatan' => Kecamatan::select('nama')->whereColumn('id_kecamatan', 'master_kecamatan.id'),
-                'nama_kelurahan' => Kelurahan::select('nama')->whereColumn('id_kelurahan', 'master_kelurahan.id'),
-            ])
-            ->where('flg_aktif', 1)
-            ->orderBy('nama', 'asc')
-            ->chunk(50, function ($chunks) use (&$data) {
-                foreach ($chunks as $chunk) {
-                    $data[] = $chunk;
-                }
-            });
+        $data =  DB::connection('web')->select("SELECT mk_cabang.`id` AS id, mk_cabang.`nama` AS nama_cabang,vw_master_kabupaten.`nama` AS nama_kabupaten,vw_master_provinsi.`nama` AS nama_provinsi FROM mk_cabang JOIN vw_master_kabupaten ON (mk_cabang.`id_kabupaten`=vw_master_kabupaten.`id`) JOIN vw_master_provinsi ON (mk_cabang.`id_provinsi`=vw_master_provinsi.`id`)");
+
+        // Cabang::select('id', 'nama as nama_cabang', 'jenis_kantor', 'kode_kantor')
+        //     ->addSelect([
+        //         'nama_area'      => Area::select('nama')->whereColumn('id_area', 'mk_area.id'),
+        //         'nama_provinsi'  => Provinsi::select('nama')->whereColumn('id_provinsi', 'master_provinsi.id'),
+        //         'nama_kabupaten' => Kabupaten::select('nama')->whereColumn('id_kabupaten', 'master_kabupaten.id'),
+        //         'nama_kecamatan' => Kecamatan::select('nama')->whereColumn('id_kecamatan', 'master_kecamatan.id'),
+        //         'nama_kelurahan' => Kelurahan::select('nama')->whereColumn('id_kelurahan', 'master_kelurahan.id'),
+        //     ])
+        //     ->where('flg_aktif', 1)
+        //     ->orderBy('nama', 'asc')
+        //     ->chunk(50, function ($chunks) use (&$data) {
+        //         foreach ($chunks as $chunk) {
+        //             $data[] = $chunk;
+        //         }
+        //     });
 
         // return $data;
         // });

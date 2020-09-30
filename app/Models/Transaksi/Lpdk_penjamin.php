@@ -37,6 +37,7 @@ class Lpdk_penjamin extends Model implements AuthenticatableContract, Authorizab
         'ibu_kandung_penjamin',
         'pasangan_penjamin',
         'lampiran_ktp_penjamin',
+'buku_nikah_penjamin',
         'created_at',
         'updated_at'
     ];

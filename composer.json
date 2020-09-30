@@ -7,9 +7,11 @@
     "require": {
         "php": "^7.2",
         "firebase/php-jwt": "^5.0",
+        "guzzlehttp/guzzle": "^7.0",
         "illuminate/redis": "^6.8",
         "intervention/imagecache": "^2.4",
         "irazasyed/larasupport": "^1.0",
+        "jenssegers/date": "^4.0",
         "laravel/lumen-framework": "^6.0",
         "nesbot/carbon": "^2.22",
         "predis/predis": "^1.1",

@@ -25,6 +25,7 @@ $router->get('namaAsuransi', 'Pengajuan\Tunggal\ViewController@namaAsuransi');
 $router->get('reportAO/{id}', 'Pengajuan\Tunggal\ViewController@viewReportAo');
 $router->get('pekerjaan', 'Pengajuan\Tunggal\ViewController@viewPekerjaan');
 
+
 $router->group(['prefix' => '/wilayah'], function () use ($router) {
     $router->get('/', function () use ($router) {
         return 'add parameters after slash';
@@ -124,8 +125,6 @@ $router->post('/api/operator/{id_trans_so}', 'Transaksi\MasterCA_Controller@oper
 // $router->group(['middleware' => ['jwt.auth', 'log'], 'prefix' => 'api'], function () use ($router) {
 $router->group(['middleware' => ['jwt.auth', 'log'], 'prefix' => 'api'], function () use ($router) {
 
-
-
     // Logs (History)
     // $router->group(['prefix' => '/logs'], function () use ($router){
     //     $router->get('/',     ['subject' => 'Read Logs',  'uses' => 'LogsController@index']); //Log History All
@@ -176,7 +175,6 @@ $router->group(['middleware' => ['jwt.auth', 'log'], 'prefix' => 'api'], functio
 
 
     $router->group(['prefix' => '/master'], function () use ($router) {
-
 
         $router->group(['namespace' => 'Master\Bisnis'], function () use ($router) {
             // Mitra Bisnis
@@ -258,11 +256,9 @@ $router->group(['middleware' => ['jwt.auth', 'log'], 'prefix' => 'api'], functio
                 $router->put('/{id}',   ['subject' => 'Update PIC', 'uses' => 'PICController@update']);
                 $router->delete('/{id}', ['subject' => 'Delete PIC', 'uses' => 'PICController@delete']);
                 $router->get('/{id}',   ['subject' => 'Detail PIC', 'uses' => 'PICController@show']);
+// $router->get('/params_access',       ['subject' => 'Read Parameter Access',   'uses' => 'ParameterAccessController@index']);
 
-                // $router->get('/params_access',       ['subject' => 'Read Parameter Access',   'uses' => 'ParameterAccessController@index']);
-
-                $router->get('/params/byid/{id}',       ['subject' => 'Read Parameter Access',   'uses' => 'ParameterAccessController@show']);
-
+ $router->get('/params/byid/{id}',       ['subject' => 'Read Parameter Access',   'uses' => 'ParameterAccessController@show']);
                 // Trash
                 $router->get('/trash/check',        ['subject' => 'Trash of PIC', 'uses' => 'PICController@trash']);
                 $router->get('/trash/restore/{id}', ['subject' => 'Restore PIC',  'uses' => 'PICController@restore']);
@@ -323,6 +319,10 @@ $router->group(['middleware' => ['jwt.auth', 'log'], 'prefix' => 'api'], functio
                 $router->get('/filter/{year}/{month}', ['subject' => 'Filter Trans_SO', 'uses' => 'MasterSO_Controller@filter']);
             });
 
+  $router->group(['prefix' => '/mitra',], function () use ($router) {
+                $router->post('/',     ['subject' => 'Create Trans_SO', 'uses' => 'MitraBisnisController@store']);
+                $router->get('so/{id}',  ['subject' => 'Detail Trans_SO', 'uses' => 'MitraBisnisController@show']);
+            });
             // Trans AO
             $router->group(['prefix' => '/mao'], function () use ($router) {
                 $router->post('/{id}', ['subject' => 'Create Trans_AO', 'uses' => 'MasterAO_Controller@update']);
@@ -385,19 +385,36 @@ $router->group(['middleware' => ['jwt.auth', 'log'], 'prefix' => 'api'], functio
                 $router->post('/{id}/approval/{id_approval}', ['subject' => 'Make Approval', 'uses' => 'Approval_Controller@approve']);
             });
 
-            $router->group(['prefix' => '/lpdk'], function () use ($router) {
+ $router->group(['prefix' => '/lpdk'], function () use ($router) {
                 $router->get('/', ['subject' => 'Get LPDK', 'uses' => 'Lpdk_Controller@index']);
-                $router->get('/progress', ['subject' => 'Get LPDK', 'uses' => 'Lpdk_Controller@indexOnprogress']);
+                $router->get('/queue', ['subject' => 'Get LPDK', 'uses' => 'Lpdk_Controller@indexOnprogress']);
+ $router->get('/statusAll', ['subject' => 'Get LPDK', 'uses' => 'Lpdk_Controller@indexAll']);
+ $router->get('/statusQueueReturn', ['subject' => 'Get LPDK', 'uses' => 'Lpdk_Controller@indexQueueReturn']);
+ $router->get('/statuskre', ['subject' => 'Get LPDK', 'uses' => 'Lpdk_Controller@indexAllStatus']);
                 $router->get('/detail/{id}', ['subject' => 'Get LPDK', 'uses' => 'Lpdk_Controller@getDetailLpdk']);
                 $router->get('/realisasi', ['subject' => 'Get LPDK', 'uses' => 'Lpdk_Controller@indexRealisasi']);
                 $router->get('/{id}', ['subject' => 'Detail LPDK', 'uses' => 'Lpdk_Controller@show']);
                 $router->post('/{id}', ['subject' => 'Create LPDK', 'uses' => 'Lpdk_Controller@store']);
+ $router->post('editLPDK/{id}', ['subject' => 'Create LPDK', 'uses' => 'Lpdk_Controller@EditStatus']);
                 $router->post('/update/{id}', ['subject' => 'Update LPDK', 'uses' => 'Lpdk_Controller@updateLampiran']);
                 $router->post('/tambah/sertifikat/{id_trans}', ['subject' => 'Update LPDK', 'uses' => 'Lpdk_Controller@tambahSertifikat']);
+ $router->post('/edit/lampiran/{id_trans}', ['subject' => 'Edit Lampiran', 'uses' => 'Lpdk_LampiranController@editLampiran']);
+                $router->post('/tambah/lampiran/{id_trans}', ['subject' => 'Tambah Lampiran', 'uses' => 'Lpdk_LampiranController@tambahLampiran']);
                 $router->post('/tambah/penjamin/{id_trans}', ['subject' => 'Update LPDK', 'uses' => 'Lpdk_Controller@tambahPenjamin']);
                 $router->post('/edit/{id_trans}/sertifikat/{id}', ['subject' => 'Update LPDK', 'uses' => 'Lpdk_Controller@EditSertifikat']);
                 $router->post('/edit/{id_trans}/penjamin/{id}', ['subject' => 'Update LPDK', 'uses' => 'Lpdk_Controller@EditPenjamin']);
+                $router->post('/hasil/{id_trans}', ['subject' => 'LPDK Hasil', 'uses' => 'Lpdk_HasilController@store']);
+$router->post('/hasil/update/{id_trans}', ['subject' => 'LPDK Hasil', 'uses' => 'Lpdk_HasilController@update']);
+$router->get('/hasil/{id_trans}', ['subject' => 'LPDK Hasil', 'uses' => 'Lpdk_HasilController@getHasilLPDK']);
+ $router->get('/detailPenj/{id_penj}', ['subject' => 'Get Detail Penjamin', 'uses' => 'Lpdk_DetailController@detailPenjamin']);
+                $router->get('/detailSert/{id_penj}', ['subject' => 'Get Detail Penjamin', 'uses' => 'Lpdk_DetailController@detailSertifikat']);
             });
+
+$router->group(['prefix' => '/collectresult'], function () use ($router) {
+                $router->get('/', ['subject' => 'Get LPDK', 'uses' => 'Jari_CollController@getCollectResult']);
+                $router->get('/coll', ['subject' => 'Get LPDK', 'uses' => 'Jari_CollController@filterCollectResult']);
+            });
+
 
             $router->get('/team_caa', ['subject' => 'Get Komite_CAA', 'uses' => 'Approval_Controller@list_team']);  // Get List Team CAA
             $router->get('/team_caa/{id_team}', ['subject' => 'Detail Komite_CAA', 'uses' => 'Approval_Controller@detail_team']);  // Get List Team CAA
@@ -475,7 +492,7 @@ $router->group(['middleware' => ['jwt.auth', 'log'], 'prefix' => 'api'], functio
         // Calon Debitur
         $router->group(['prefix' => '/debitur'], function () use ($router) {
             $router->get('/{id}',  ['subject' => 'Detail calon_debitur', 'uses' => 'DebiturController@show']);
-            $router->get('/ktpcadebt/{id}',  ['subject' => 'Detail calon_debitur', 'uses' => 'DebiturController@validasiCadebt']);
+$router->get('/ktpcadebt/{id}',  ['subject' => 'Detail calon_debitur', 'uses' => 'DebiturController@validasiCadebt']);
             $router->post('/{id}', ['subject' => 'Update calon_debitur', 'uses' => 'DebiturController@update']);
         });
 
@@ -489,6 +506,7 @@ $router->group(['middleware' => ['jwt.auth', 'log'], 'prefix' => 'api'], functio
         $router->group(['prefix' => '/penjamin'], function () use ($router) {
             $router->get('/{id}',  ['subject' => 'Detail penjamin', 'uses' => 'PenjaminController@show']);
             $router->post('/{id}', ['subject' => 'Update penjamin', 'uses' => 'PenjaminController@update']);
+$router->post('tambah/{id}', ['subject' => 'POST penjamin', 'uses' => 'PenjaminController@store']);
         });
 
         // Agunan
@@ -498,8 +516,7 @@ $router->group(['middleware' => ['jwt.auth', 'log'], 'prefix' => 'api'], functio
                 $router->post('/{id_trans}/store',  ['subject' => 'Create agunan_tanah', 'uses' => 'TanahController@store']);
                 $router->get('/{id}',  ['subject' => 'Detail agunan_tanah', 'uses' => 'TanahController@show']);
                 $router->post('/{id}', ['subject' => 'Update agunan_tanah', 'uses' => 'TanahController@update']);
-                $router->post('/{id}/updateTambah', ['subject' => 'Update Tambah agunan_tanah', 'uses' => 'TanahController@updateTambah']);
-                $router->post('/{id_trans}/store',  ['subject' => 'Create agunan_tanah', 'uses' => 'TanahController@store']);
+$router->post('/{id}/updateTambah', ['subject' => 'Update Tambah agunan_tanah', 'uses' => 'TanahController@updateTambah']);
             });
 
             // Agunan Kendaraan
@@ -530,7 +547,7 @@ $router->group(['middleware' => ['jwt.auth', 'log'], 'prefix' => 'api'], functio
             $router->post('/{id}', ['subject' => 'Update kapasitas_bulanan', 'uses' => 'KapBulController@update']);
         });
 
-        // PENDAPATAN USAHA CADEBT di AO
+        // PENDAPATAN USAHA CADEBT
         $router->group(['prefix' => '/usaha_cadebt'], function () use ($router) {
             $router->get('/{id}',  ['subject' => 'Read pendapatan_calon_debitur',   'uses' => 'UsahaCadebtController@show']);
             $router->post('/{id}', ['subject' => 'Update pendapatan_calon_debitur', 'uses' => 'UsahaCadebtController@update']);
@@ -546,11 +563,10 @@ $router->group(['middleware' => ['jwt.auth', 'log'], 'prefix' => 'api'], functio
             $router->post('/{id}', ['subject' => 'Update pendapatan_calon_debitur', 'uses' => 'MutasiController@update']);
         });
 
-        $router->group(['prefix' => '/pendapatanUsahaCA'], function () use ($router) {
+ $router->group(['prefix' => '/pendapatanUsahaCA'], function () use ($router) {
             $router->get('/{id}',  ['subject' => 'Read pendapatan_calon_debitur',   'uses' => 'PendapatanUsahaController@show']);
-            $router->post('/{id}', ['subject' => 'Update pendapatan_calon_debitur', 'uses' => 'UsahaCadebtController@update']);
+            $router->post('/{id}', ['subject' => 'Update pendapatan_calon_debitur', 'uses' => 'PendapatanUsahaController@update']);
         });
-
 
         // Data Keuangan (Tabungan) Bank Milik Nasabah
         $router->group(['prefix' => '/data_keuangan'], function () use ($router) {
@@ -564,6 +580,7 @@ $router->group(['middleware' => ['jwt.auth', 'log'], 'prefix' => 'api'], functio
             $router->get('/',     ['subject' => 'Read Info Analisa Credit Checking',   'uses' => 'IAC_Controller@index']);
             $router->get('/{id}', ['subject' => 'Detail Info Analisa Credit Checking', 'uses' => 'IAC_Controller@show']);
             $router->put('/{id}', ['subject' => 'Update Info Analisa Credit Checking', 'uses' => 'IAC_Controller@update']);
+$router->post('/{id}', ['subject' => 'Update Info Analisa Credit Checking', 'uses' => 'IAC_Controller@store']);
         });
 
         // Ringkasan Analisa
@@ -594,13 +611,13 @@ $router->group(['middleware' => ['jwt.auth', 'log'], 'prefix' => 'api'], functio
             $router->put('/{id}', ['subject' => 'Update - Asuransi Jaminan', 'uses' => 'AsJaminanKenController@update']);
         });
 
-        //form tunggal kapasitas bulanan
-        $router->group(['prefix' => '/kapasitas_bulanan'], function () use ($router) {
+$router->group(['prefix' => '/kapasitas_bulanan'], function () use ($router) {
             $router->get('/',     ['subject' => 'Read Kapasitas Bulanan',     'uses' => 'KapBulController@index']);
             $router->get('/{id}', ['subject' => 'Detail Kapasitas Bulanan',   'uses' => 'KapBulController@show']);
             $router->put('/{id}', ['subject' => 'Update Kapasitas Bulanan', 'uses' => 'KapBulController@update']);
         });
-        // Form Tunggal Penyimpangan
+
+ // Form Tunggal Penyimpangan
         $router->group(['prefix' => '/penyimpangan'], function () use ($router) {
             $router->get('/',     ['subject' => 'Read data penyimpangan',     'uses' => 'PenyimpanganController@index']);
             $router->get('/{id}', ['subject' => 'Detail Penyimpangan',   'uses' => 'PenyimpanganController@show']);

@@ -42,15 +42,34 @@ class MasterCA_Controller extends BaseController
     {
         $pic = $req->pic; // From PIC middleware
 
-        $id_area   = $pic->id_area;
-        $id_cabang = $pic->id_cabang;
-        $scope     = $pic->jpic['cakupan'];
+        $arr = array();
+        $i=0;
+        foreach ($pic as $val) {
+            $arr[] = $val['id_area'];
+          $i++;
+        }   
+
+        $arrr = array();
+        foreach ($pic as $val) {
+            $arrr[] = $val['id_cabang'];
+          $i++;
+        }   
+        $arrrr = array();
+        foreach ($pic as $val) {
+            $arrrr[] = $val['jpic']['cakupan'];
+          $i++;
+        }  
+          //  dd($arr);
+        $id_area   = $arr;
+        $id_cabang = $arrr;
+       // dd($id_cabang);
+        $scope     = $arrrr;
 
         $query_dir = TransAO::with('so', 'pic', 'cabang')->where('status_ao', 1)->orderBy('created_at', 'desc');
 
         $query = Helper::checkDir($scope, $query_dir, $id_area, $id_cabang);
 
-        if (empty($query->get())) {
+        if (empty($query)) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
@@ -59,7 +78,7 @@ class MasterCA_Controller extends BaseController
         }
 
         $data = array();
-        foreach ($query->get() as $key => $val) {
+        foreach ($query as $key => $val) {
             //   dd($val->so);
             if ($val->status_ao == 1) {
                 $status_ao = 'recommend';
@@ -110,7 +129,7 @@ class MasterCA_Controller extends BaseController
                 'nama_debitur'   => $val->so['debt']['nama_lengkap'],
                 'plafon'         => $val->so['faspin']['plafon'],
                 'tenor'          => $val->so['faspin']['tenor'],
-                'tgl_transaksi'  => $val->created_at
+                'tgl_transaksi'  => Carbon::parse($val->created_at)->format('d-m-Y H:m:s')
             ];
         }
 
@@ -134,17 +153,34 @@ class MasterCA_Controller extends BaseController
     {
         $pic = $req->pic; // From PIC middleware
 
-        $id_area   = $pic->id_area;
-        $id_cabang = $pic->id_cabang;
-        $scope     = $pic->jpic['cakupan'];
+        $arr = array();
+        $i=0;
+        foreach ($pic as $val) {
+            $arr[] = $val['id_area'];
+          $i++;
+        }   
+
+        $arrr = array();
+        foreach ($pic as $val) {
+            $arrr[] = $val['id_cabang'];
+          $i++;
+        }   
+        $arrrr = array();
+        foreach ($pic as $val) {
+            $arrrr[] = $val['jpic']['cakupan'];
+          $i++;
+        }  
+          //  dd($arr);
+        $id_area   = $arr;
+        $id_cabang = $arrr;
+       // dd($id_cabang);
+        $scope     = $arrrr;
 
         $query_dir = TransAO::with('so', 'pic', 'cabang')->where('status_ao', 1)->orderBy('created_at', 'desc');
 
-
         $query = Helper::checkDir($scope, $query_dir, $id_area, $id_cabang);
 
-
-        if (empty($query->get())) {
+        if (empty($query)) {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
@@ -153,7 +189,7 @@ class MasterCA_Controller extends BaseController
         }
 
         $data = array();
-        foreach ($query->get() as $key => $val) {
+        foreach ($query as $key => $val) {
 
             if ($val->status_ao == 1) {
                 $status_ao = 'recommend';
@@ -170,17 +206,19 @@ class MasterCA_Controller extends BaseController
             } else {
                 $status_ca = 'waiting';
             }
-            $rev =  TransCA::select('revisi')->where('id_trans_so', $val->id_trans_so)->get();
 
-            $arr = array();
-            foreach ($rev as $key => $value) {
+ $rev =  TransCA::select('revisi')->where('id_trans_so', $val->id_trans_so)->get();
+ //merubah nilai null menjadi empty string
+             $arr = array();
+           foreach ($rev as $key => $value) {
                 $arr['revisi'] = $value->revisi;
             }
 
             $data[] = [
                 'id_trans_so'    => $val->id_trans_so == null ? null : (int) $val->id_trans_so,
                 'nomor_so'       => $val->so['nomor_so'],
-                'no_rev'        => $arr,
+                'notes_so'       => $val->so['notes_so'],
+'no_rev'        => $rev,
                 'nomor_ao'       => $val->nomor_ao,
                 "ao" => [
                     'status_ao'     => $status_ao,
@@ -196,6 +234,7 @@ class MasterCA_Controller extends BaseController
                 'asal_data'      => $val->so['asaldata']['nama'],
                 'nama_marketing' => $val->so['nama_marketing'],
                 'nama_debitur'   => $val->so['debt']['nama_lengkap'],
+                'email'   => $val->so['debt']['email'],
                 'plafon'         => $val->so['faspin']['plafon'],
                 'tenor'          => $val->so['faspin']['tenor'],
                 'tgl_transaksi' => Carbon::parse($val->created_at)->format('d-m-Y H:m:s')
@@ -208,12 +247,12 @@ class MasterCA_Controller extends BaseController
             }
             return false;
         });
-        array_walk_recursive($res, function (&$item, $key) {
-            $item = null === $item ? '-' : $item;
-        });
 
-        // echo json_encode($res);
-        //  dd($res);
+array_walk_recursive($res, function (&$item, $key) {
+           $item = null === $item ? '-' : $item;
+       });
+
+//        echo json_encode($res);
 
         try {
             if ($res == false) {
@@ -247,9 +286,28 @@ class MasterCA_Controller extends BaseController
     {
         $pic = $req->pic; // From PIC middleware
 
-        $id_area   = $pic->id_area;
-        $id_cabang = $pic->id_cabang;
-        $scope     = $pic->jpic['cakupan'];
+        $arr = array();
+        $i=0;
+        foreach ($pic as $val) {
+            $arr[] = $val['id_area'];
+          $i++;
+        }   
+
+        $arrr = array();
+        foreach ($pic as $val) {
+            $arrr[] = $val['id_cabang'];
+          $i++;
+        }   
+        $arrrr = array();
+        foreach ($pic as $val) {
+            $arrrr[] = $val['jpic']['cakupan'];
+          $i++;
+        }  
+          //  dd($arr);
+        $id_area   = $arr;
+        $id_cabang = $arrr;
+       // dd($id_cabang);
+        $scope     = $arrrr;
 
         $check_so = TransSO::where('id', $id)->where('status_das', 1)->where('status_hm', 1)->first();
 
@@ -357,8 +415,9 @@ class MasterCA_Controller extends BaseController
             $status_ca = 'waiting';
         }
 
+        $trans_debitur =  TransSo::where('id',$id)->first();
         $value = Debitur::with('prov_ktp', 'kab_ktp', 'kec_ktp', 'kel_ktp', 'prov_dom', 'kab_dom', 'kec_dom', 'kel_dom', 'prov_kerja', 'kab_kerja', 'kec_kerja', 'kel_kerja')
-            ->where('id', $id)->first();
+            ->where('id', $trans_debitur->id_calon_debitur)->first();
 
         if (empty($val)) {
             return response()->json([
@@ -388,6 +447,7 @@ class MasterCA_Controller extends BaseController
             'status_ao'      => $status_ao,
             'status_ca'      => $status_ca,
             'nama_marketing' => $val->so['nama_marketing'],
+            'notes_so' => $val->so['notes_so'],
             'pic'  => [
                 'id'         => $val->id_pic == null ? null : (int) $val->id_pic,
                 'nama'       => $val->pic['nama'],
@@ -402,7 +462,7 @@ class MasterCA_Controller extends BaseController
             ],
 
             'asaldata'  => [
-                'id'   => $val->so['id_asal_data'] == null ? null : (int) $val->so['id_asal_data'],
+                'id'   => $val->so['id_asal_data'] == null ? null : $val->so['id_asal_data'],
                 'nama' => $val->so['asaldata']['nama']
             ],
             'fasilitas_pinjaman'  =>
@@ -505,6 +565,7 @@ class MasterCA_Controller extends BaseController
                 'no_telp'               => $val->so['debt']['no_telp'],
                 'no_hp'                 => $val->so['debt']['no_hp'],
                 'alamat_surat'          => $val->so['debt']['alamat_surat'],
+                'email'          => $val->so['debt']['email'],
                 'lampiran' => [
                     'lamp_ktp'              => $val->so['debt']['lamp_ktp'],
                     'lamp_kk'               => $val->so['debt']['lamp_kk'],
@@ -617,6 +678,35 @@ class MasterCA_Controller extends BaseController
         $pic     = $request->pic; // From PIC middleware
         $user_id = $request->auth->user_id;
 
+        $mj = array();
+        $i=0;
+        foreach ($pic as $val) {
+            $mj[] = $val['id_mj_pic'];
+          $i++;
+        }   
+        $id_pic = array();
+        $i=0;
+        foreach ($pic as $val) {
+            $id_pic[] = $val['id'];
+          $i++;
+        }   
+ $arrr = array();
+        foreach ($pic as $val) {
+            $arrr[] = $val['id_cabang'];
+          $i++;
+        }  
+        $area = array();
+        $i=0;
+        foreach ($pic as $val) {
+            $area[] = $val['id_area'];
+          $i++;
+        }    
+        $nama = array();
+        $i=0;
+        foreach ($pic as $val) {
+            $nama[] = $val['nama'];
+          $i++;
+        }       
         $countCA = TransCA::latest('id', 'nomor_ca')->first();
 
         if (!$countCA) {
@@ -634,10 +724,10 @@ class MasterCA_Controller extends BaseController
         $year  = $nows->year;
         $month = $nows->month;
 
-        $JPIC   = JPIC::where('id', $pic->id_mj_pic)->first();
+        $JPIC   = JPIC::whereIn('id', $mj)->first();
 
         //  ID-Cabang - AO / CA / SO - Bulan - Tahun - NO. Urut
-        $nomor_ca = $pic->id_cabang . '-' . $JPIC->nama_jenis . '-' . $month . '-' . $year . '-' . $lastNumb;
+        $nomor_ca = $arrr[0] . '-' . $JPIC->nama_jenis . '-' . $month . '-' . $year . '-' . $lastNumb;
 
         $check_so = TransSO::where('id', $id)->where('status_das', 1)->where('status_hm', 1)->first();
 
@@ -668,14 +758,14 @@ class MasterCA_Controller extends BaseController
                 'message' => 'Transaksi dengan id ' . $id . ' sudah ada di CA'
             ], 404);
         }
-
+$cab = TransSO::where('id', $id)->first();
         $transCA = array(
             'nomor_ca'    => $nomor_ca,
             'user_id'     => $user_id,
-            'id_trans_so' => $id,
-            'id_pic'      => $pic->id,
-            'id_area'     => $pic->id_area,
-            'id_cabang'   => $pic->id_cabang,
+            'id_trans_so' => $check_so->id,
+            'id_pic'      => $id_pic[0],
+            'id_area'     => $cab->id_area,
+            'id_cabang'   => $cab->id_cabang,
             'catatan_ca'  => $req->input('catatan_ca'),
             'status_ca'   => empty($req->input('status_ca')) ? 1 : $req->input('status_ca')
         );
@@ -744,27 +834,27 @@ class MasterCA_Controller extends BaseController
         $rekomPinjaman = array(
             'penyimpangan_struktur'
             => empty($req->input('penyimpangan_struktur'))
-                ? null : $req->input('penyimpangan_struktur'),
+                ? 0 : $req->input('penyimpangan_struktur'),
 
             'penyimpangan_dokumen'
             => empty($req->input('penyimpangan_dokumen'))
-                ? null : $req->input('penyimpangan_dokumen'),
+                ? 0 : $req->input('penyimpangan_dokumen'),
 
             'recom_nilai_pinjaman'
             => empty($req->input('recom_nilai_pinjaman'))
-                ? null : $req->input('recom_nilai_pinjaman'),
+                ? 0 : $req->input('recom_nilai_pinjaman'),
 
             'recom_tenor'
             => empty($req->input('recom_tenor'))
-                ? null : $req->input('recom_tenor'),
+                ? 0 : $req->input('recom_tenor'),
 
             'recom_angsuran'
             => empty($req->input('recom_angsuran'))
-                ? null : $req->input('recom_angsuran'),
+                ? 0 : $req->input('recom_angsuran'),
 
             'recom_produk_kredit'
             => empty($req->input('recom_produk_kredit'))
-                ? null : $req->input('recom_produk_kredit'),
+                ? 0 : $req->input('recom_produk_kredit'),
 
             'note_recom'
             => empty($req->input('note_recom'))
@@ -772,11 +862,11 @@ class MasterCA_Controller extends BaseController
 
             'bunga_pinjaman'
             => empty($req->input('bunga_pinjaman'))
-                ? null : $req->input('bunga_pinjaman'),
+                ? 0 : $req->input('bunga_pinjaman'),
 
             'nama_ca'
             => empty($req->input('nama_ca'))
-                ? $pic->nama : $req->input('nama_ca')
+                ? $nama[0] : $req->input('nama_ca')
         );
 
         // Rekomendasi Angsuran pada table rrekomendasi_pinjaman
@@ -936,6 +1026,7 @@ class MasterCA_Controller extends BaseController
                 );
             }
         }
+
 
         $dataTabUang = array(
 
@@ -1802,10 +1893,28 @@ class MasterCA_Controller extends BaseController
     {
         $pic = $req->pic; // From PIC middleware
 
-        $id_area   = $pic->id_area;
-        $id_cabang = $pic->id_cabang;
-        $scope     = $pic->jpic['cakupan'];
+        $area = array();
+        $i=0;
+        foreach ($pic as $val) {
+            $area[] = $val['id_area'];
+          $i++;
+        }   
 
+        $arrr = array();
+        foreach ($pic as $val) {
+            $arrr[] = $val['id_cabang'];
+          $i++;
+        }   
+        $arrrr = array();
+        foreach ($pic as $val) {
+            $arrrr[] = $val['jpic']['cakupan'];
+          $i++;
+        }  
+          //  dd($arr);
+        $id_area   = $area;
+        $id_cabang = $arrr;
+       // dd($id_cabang);
+        $scope     = $arrrr;
         if ($month == null) {
 
             $query_dir = TransAO::with('so', 'pic', 'cabang')->where('status_ao', 1)
@@ -1821,7 +1930,7 @@ class MasterCA_Controller extends BaseController
 
         $query = Helper::checkDir($scope, $query_dir, $id_area, $id_cabang);
 
-        if ($query->get() == '[]') {
+        if ($query == '[]') {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
@@ -1830,7 +1939,7 @@ class MasterCA_Controller extends BaseController
         }
 
         $data = array();
-        foreach ($query->get() as $key => $val) {
+        foreach ($query as $key => $val) {
 
             if ($val->status_ao == 1) {
                 $status_ao = 'recommend';
@@ -1894,9 +2003,28 @@ class MasterCA_Controller extends BaseController
     {
         $pic = $req->pic; // From PIC middleware
 
-        $id_area   = $pic->id_area;
-        $id_cabang = $pic->id_cabang;
-        $scope     = $pic->jpic['cakupan'];
+        $area = array();
+        $i=0;
+        foreach ($pic as $val) {
+            $area[] = $val['id_area'];
+          $i++;
+        }   
+
+        $arrr = array();
+        foreach ($pic as $val) {
+            $arrr[] = $val['id_cabang'];
+          $i++;
+        }   
+        $arrrr = array();
+        foreach ($pic as $val) {
+            $arrrr[] = $val['jpic']['cakupan'];
+          $i++;
+        }  
+          //  dd($arr);
+        $id_area   = $area;
+        $id_cabang = $arrr;
+       // dd($id_cabang);
+        $scope     = $arrrr;
 
         $check_so = TransSO::where('id', $id)->where('status_das', 1)->where('status_hm', 1)->first();
 
@@ -1968,7 +2096,7 @@ class MasterCA_Controller extends BaseController
             $dataMut = null;
         }
 
-        $id_pe_ta = $check_ao->id_periksa_agunan_tanah;
+ $id_pe_ta = $check_ao->id_periksa_agunan_tanah;
 
         if (empty($id_pe_ta)) {
             $PeriksaTanah = null;
@@ -2000,7 +2128,7 @@ class MasterCA_Controller extends BaseController
                 'collectabitas_tertinggi' => max(array_column($iac, 'collectabilitas'))
             ),
             'ringkasan_analisa'     => $check_ca->ringkasan,
-            'nilai_taksasi_agunan'  => $PeriksaTanah,
+'nilai_taksasi_agunan'  => $PeriksaTanah,
             'rekomendasi_pinjaman'  => $check_ca->recom_pin,
             'rekomendasi_ca'        => $check_ca->recom_ca,
             'asuransi_jiwa'         => $check_ca->as_jiwa,

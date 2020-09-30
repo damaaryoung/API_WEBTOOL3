@@ -19,16 +19,18 @@ class KabupatenController extends BaseController
     public function index()
     {
         $data = array();
-        $query = Cache::remember('kab.index', $this->time_cache, function () use ($data) {
-            foreach (Kabupaten::withCount(['prov as nama_provinsi' => function ($sub) {
-                $sub->select('nama');
-            }])
-                ->where('flg_aktif', 1)->orderBy('nama', 'asc')->cursor() as $cursor) {
-                $data[] = $cursor;
-            }
 
-            return $data;
-        });
+        $query = Kabupaten::get();
+        // $query = Cache::remember('kab.index', $this->time_cache, function () use ($data) {
+        //     foreach (Kabupaten::withCount(['prov as nama_provinsi' => function ($sub) {
+        //         $sub->select('nama');
+        //     }])
+        //         ->where('flg_aktif', 1)->orderBy('nama', 'asc')->cursor() as $cursor) {
+        //         $data[] = $cursor;
+        //     }
+
+        //     return $data;
+        // });
 
         if (empty($query)) {
             return response()->json([
@@ -106,11 +108,11 @@ class KabupatenController extends BaseController
     public function show($IdOrName)
     {
         // $res = array();
-
+        $query = Kabupaten::where('id', $IdOrName)->first();
         // if(preg_match("/^[0-9]{1,}$/", $IdOrName)){
-        $query = Kabupaten::withCount(['prov as nama_provinsi' => function ($sub) {
-            $sub->select('nama');
-        }])->where('id', $IdOrName)->first();
+        // $query = Kabupaten::withCount(['prov as nama_provinsi' => function ($sub) {
+        //     $sub->select('nama');
+        // }])->where('id', $IdOrName)->first();
         // }else{
         //     $query = Kabupaten::withCount(['prov as nama_provinsi' => function($sub) 
         //     {
@@ -269,12 +271,11 @@ class KabupatenController extends BaseController
 
     public function sector($id_prov)
     {
-        $data = array();
+        // $data = array();
+        $data = Kabupaten::select('id', 'nama', 'id_povinsi')
+            ->where('vw_master_kabupaten.id_povinsi', $id_prov)->get();
+        // $data = Kabupaten::select('id', 'nama', 'id_provinsi')->where('id_provinsi', $id_prov)->get();
 
-        foreach (Kabupaten::select('id', 'nama', 'id_provinsi')->where('id_provinsi', $id_prov)->orderBy('nama', 'asc')->cursor()
-            as $cursor) {
-            $data[] = $cursor;
-        }
 
         if (empty($data)) {
             return response()->json([

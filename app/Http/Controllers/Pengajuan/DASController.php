@@ -18,15 +18,34 @@ class DASController extends BaseController
     {
         $pic = $req->pic; // From PIC middleware
 
-        $id_area   = $pic->id_area;
-        $id_cabang = $pic->id_cabang;
-        $scope     = $pic->jpic['cakupan'];
+        $arr = array();
+        $i=0;
+        foreach ($pic as $val) {
+            $arr[] = $val['id_area'];
+          $i++;
+        }   
+
+        $arrr = array();
+        foreach ($pic as $val) {
+            $arrr[] = $val['id_cabang'];
+          $i++;
+        }   
+        $arrrr = array();
+        foreach ($pic as $val) {
+            $arrrr[] = $val['jpic']['cakupan'];
+          $i++;
+        }  
+          //  dd($arr);
+        $id_area   = $arr;
+        $id_cabang = $arrr;
+       // dd($id_cabang);
+        $scope     = $arrrr;
 
         $query_dir = TransSO::with('pic', 'cabang', 'asaldata', 'debt', 'pas', 'faspin', 'ao', 'ca')->orderBy('created_at', 'desc');
 
         $query = Helper::checkDir($scope, $query_dir, $id_area, $id_cabang);
 
-        if ($query->get() === '[]') {
+        if ($query === '[]') {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
@@ -35,7 +54,7 @@ class DASController extends BaseController
         }
 
         $data = array();
-        foreach ($query->get() as $key => $val) {
+        foreach ($query as $key => $val) {
 
             if ($val->status_das == 1) {
                 $status = 'complete';
@@ -59,6 +78,7 @@ class DASController extends BaseController
                 'tenor'           => (int) $val->faspin['tenor'],
                 'status'          => $status,
                 'note'            => $val->catatan_das,
+                'notes_so'            => $val->notes_so,
                 'tgl_transaksi'   => Carbon::parse($val->created_at)->format("d-m-Y H:i:s")
             ];
         }
@@ -144,6 +164,7 @@ class DASController extends BaseController
             'nama_cabang'    => $val->pic['cabang']['nama'],
             'asal_data'      => $val->asaldata['nama'],
             'nama_marketing' => $val->nama_marketing,
+            'notes_so' => $val->notes_so,
             'plafon'         => (int) $val->faspin->plafon,
             'tenor'          => (int) $val->faspin->tenor,
             'fasilitas_pinjaman'  => [
@@ -247,6 +268,7 @@ class DASController extends BaseController
                 'no_telp'               => $val->debt['no_telp'],
                 'no_hp'                 => $val->debt['no_hp'],
                 'alamat_surat'          => $val->debt['alamat_surat'],
+                'email'          => $val->debt['email'],
                 'lampiran' => [
                     'lamp_ktp'              => $val->debt['lamp_ktp'],
                     'lamp_kk'               => $val->debt['lamp_kk'],
@@ -343,6 +365,7 @@ class DASController extends BaseController
         //         "message" => "file ideb harus berupa format ideb"
         //     ], 422);
         // }
+        //atas gak kepake
 
         $lamp_dir = 'public/lamp_trans.' . $check_so->nomor_so;
 
@@ -495,9 +518,28 @@ class DASController extends BaseController
             $func_value = "{$value}";
         }
 
-        $id_area   = $pic->id_area;
-        $id_cabang = $pic->id_cabang;
-        $scope     = $pic->jpic['cakupan'];
+        $arr = array();
+        $i=0;
+        foreach ($pic as $val) {
+            $arr[] = $val['id_area'];
+          $i++;
+        }   
+
+        $arrr = array();
+        foreach ($pic as $val) {
+            $arrr[] = $val['id_cabang'];
+          $i++;
+        }   
+        $arrrr = array();
+        foreach ($pic as $val) {
+            $arrrr[] = $val['jpic']['cakupan'];
+          $i++;
+        }  
+          //  dd($arr);
+        $id_area   = $arr;
+        $id_cabang = $arrr;
+       // dd($id_cabang);
+        $scope     = $arrrr;
 
         $query_dir = TransSO::with('pic', 'cabang', 'asaldata', 'debt', 'faspin')
             ->where('flg_aktif', $status)
@@ -505,7 +547,7 @@ class DASController extends BaseController
 
         $query = Helper::checkDir($scope, $query_dir, $id_area, $id_cabang);
 
-        if ($query->get() == '[]') {
+        if ($query == '[]') {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
@@ -525,7 +567,7 @@ class DASController extends BaseController
             $result = $res->limit($limit);
         }
 
-        if ($result->get() == '[]') {
+        if ($result == '[]') {
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
@@ -534,7 +576,7 @@ class DASController extends BaseController
         }
 
         $data = array();
-        foreach ($result->get() as $key => $val) {
+        foreach ($result as $key => $val) {
 
             if ($val->status_das == 1) {
                 $status = 'complete';
@@ -577,4 +619,163 @@ class DASController extends BaseController
             ], 501);
         }
     }
+
+    public function tunggal_ideb($id, Request $req)
+    {
+        $check_so = TransSO::where('id', $id)->first();
+
+        if ($check_so == null) {
+            return response()->json([
+                'code'    => 404,
+                'status'  => 'not found',
+                'message' => 'Data Tidak Ada!!'
+            ], 404);
+        }
+
+        // $validator = \Validator::make(
+        //   [
+        //       'file'      => $req->file,
+        //       'extension' => strtolower($request->file->getClientOriginalExtension()),
+        //   ],
+        //   [
+        //       'file'          => 'required',
+        //       'extension'      => 'required|in:doc,csv,xlsx,xls,docx,ppt,odt,ods,odp',
+        //   ]
+        // );
+
+        $validator = Validator::make($req->all(), [
+            'status_das' => 'numeric'
+        ], $messages = [
+            'numeric' => 'Status harus berupa digit'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                "code"    => 422,
+                "status"  => "not valid request",
+                "message" => $validator->errors()
+            ], 422);
+        }
+
+        // $exIdeb = $req->file('lamp_ideb')->getClientOriginalExtension();
+        // $exPef  = $req->file('lamp_ideb')->getClientOriginalExtension();
+
+        // if ($exIdeb != 'ideb') {
+        //     return response()->json([
+        //         "code"    => 422,
+        //         "status"  => "not valid request",
+        //         "message" => "file ideb harus berupa format ideb"
+        //     ], 422);
+        // }
+
+        $lamp_dir = 'public/lamp_trans.' . $check_so->nomor_so;
+
+        if ($files = $req->file('lamp_ideb')) {
+
+            $path = $lamp_dir . '/ideb';
+
+            $check = $check_so->lamp_ideb;
+
+            $arrayPath = array();
+            foreach ($files as $file) {
+                $exIdeb = $file->getClientOriginalExtension();
+
+                if ($exIdeb != 'ideb' && $exIdeb != 'pdf') {
+                    return response()->json([
+                        "code"    => 422,
+                        "status"  => "not valid request",
+                        "message" => "file ideb harus berupa format ideb / pdf"
+                    ], 422);
+                }
+
+                // Check Directory
+                if (!File::isDirectory($path)) {
+                    File::makeDirectory($path, 0777, true, true);
+                }
+
+                // // Delete File is Exists
+                if (!empty($check)) {
+                    File::delete($check);
+                }
+
+                $name = $file->getClientOriginalName();
+
+                // dd($path . '/' . $name);
+
+                // Save Image to Directory
+                $file->move($path, $name);
+                $arrayPath[] = $path . '/' . $name;
+            }
+
+            $im_ideb = implode(";", $arrayPath);
+        } else {
+            $im_ideb = null;
+        }
+
+        if ($files = $req->file('lamp_pefindo')) {
+
+            $check = $check_so->lamp_pefindo;
+            $path = $lamp_dir . '/pefindo';
+            $name = '';
+
+            $arrayPath = array();
+            foreach ($files as $file) {
+                $exIdeb = $file->getClientOriginalExtension();
+
+                if (
+                    $exIdeb != 'png' &&
+                    $exIdeb != 'jpg' &&
+                    $exIdeb != 'jpeg' &&
+                    $exIdeb != 'PNG' &&
+                    $exIdeb != 'JPG' &&
+                    $exIdeb != 'JPEG' &&
+                    $exIdeb != 'pdf' &&
+                    $exIdeb != 'PDF'
+                ) {
+                    return response()->json([
+                        "code"    => 422,
+                        "status"  => "not valid request",
+                        "message" => "file pefindo harus berformat: png, jpg, jpeg, pdf"
+                    ], 422);
+                }
+
+                $arrayPath[] = Helper::uploadImg($check, $file, $path, $name);
+            }
+
+            $im_pef = implode(";", $arrayPath);
+        } else {
+            $im_pef = null;
+        }
+$id_idebpef = TransSO::where('id',$id)->first();
+        $data = array(
+            'lamp_ideb'   => empty($im_ideb) ? $id_idebpef->lamp_ideb : $id_idebpef->lamp_ideb.";". $im_ideb,
+            'lamp_pefindo' => empty($im_pef) ? $id_idebpef->lamp_pefindo : $id_idebpef->lamp_pefindo.";".$im_pef
+        );
+
+        if ($data['status_das'] == 1) {
+            $msg = 'data lengkap';
+        } else if ($data['status_das'] == 2) {
+            $msg = 'data perlu ditinjau';
+        } else {
+            $msg = 'waiting proccess';
+        }
+
+        TransSO::where('id', $id)->update($data);
+
+        try {
+            return response()->json([
+                'code'    => 200,
+                'status'  => 'success',
+                'message' => $msg
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                "code"    => 501,
+                "status"  => "error",
+                "message" => $e
+            ], 501);
+        }
+    }
+
+
 }

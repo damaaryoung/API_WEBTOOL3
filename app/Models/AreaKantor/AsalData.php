@@ -19,15 +19,16 @@ class AsalData extends Model implements AuthenticatableContract, AuthorizableCon
      */
     protected $connection = 'web';
 
-    protected $table = 'master_asal_data';
+    protected $table = 'view_kode_group4';
     protected $primaryKey = 'id';
 
     protected $fillable = [
-        'nama', 'info', 'flg_aktif'
+        'nama'
     ];
 
     protected $casts = [
-        'flg_aktif' => 'boolean'
+        'flg_aktif' => 'boolean',
+        'id' => 'char'
     ];
 
     public $timestamps = false;

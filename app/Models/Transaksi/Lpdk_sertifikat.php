@@ -35,11 +35,17 @@ class Lpdk_sertifikat extends Model implements AuthenticatableContract, Authoriz
         'trans_so',
         'nama_sertifikat',
         'status_sertifikat',
+        'hub_cadeb',
         'nama_pas_sertifikat',
         'status_pas_sertifikat',
         'no_sertifikat',
         'jenis_sertifikat',
         'tgl_berlaku_shgb',
+        'lampiran_ktp_sertifikat',
+        'lampiran_ktp_pasangan_sertifikat',
+        'ahli_waris',
+        'akta_hibah',
+        'ajb_ppjb',
         'lampiran_sertifikat',
         'lampiran_imb',
         'lampiran_pbb',
@@ -47,9 +53,9 @@ class Lpdk_sertifikat extends Model implements AuthenticatableContract, Authoriz
         'updated_at'
     ];
 
-    // protected $casts = [
+    protected $casts = [
     //     'flg_aktif'  => 'boolean',
-    //     'created_at' => 'date:m-d-Y H:i:s',
+         'tgl_berlaku_shgb' => 'date:d-m-Y',
     //     'updated_at' => 'date:m-d-Y H:i:s'
-    // ];
+     ];
 }

@@ -41,6 +41,7 @@ use App\Models\Pengajuan\AO\VerifModel;
 use App\Models\Pengajuan\SO\Debitur;
 use App\Models\AreaKantor\JPIC;
 use App\Models\AreaKantor\PIC;
+use GuzzleHttp\Client;
 
 //request
 use Illuminate\Http\Request;
@@ -53,10 +54,28 @@ class Approval_Controller extends BaseController
     {
         $pic = $req->pic; // From PIC middleware
 
-        $id_area   = $pic->id_area;
-        $id_cabang = $pic->id_cabang;
-        $scope     = $pic->jpic['cakupan'];
+        $arr = array();
+        $i=0;
+        foreach ($pic as $val) {
+            $arr[] = $val['id_area'];
+          $i++;
+        }   
 
+        $arrr = array();
+        foreach ($pic as $val) {
+            $arrr[] = $val['id_cabang'];
+          $i++;
+        }   
+        $arrrr = array();
+        foreach ($pic as $val) {
+            $arrrr[] = $val['jpic']['cakupan'];
+          $i++;
+        }  
+          //  dd($arr);
+        $id_area   = $arr;
+        $id_cabang = $arrr;
+       // dd($id_cabang);
+        $scope     = $arrrr;
         $query = PIC::with(['jpic', 'area', 'cabang'])
             ->whereHas('jpic', function ($q) {
                 // Query the name field in status table
@@ -229,7 +248,6 @@ class Approval_Controller extends BaseController
                 'tanggal'        => empty($val->updated_at) ? null : Carbon::parse($val->updated_at)->format("d-m-Y H:i:s"),
             ];
         }
-        //dd($val);
 
         try {
             return response()->json([
@@ -394,32 +412,102 @@ class Approval_Controller extends BaseController
             $to_forward = $forward_q->id_pic;
         }
 
-        $id_area   = $pic->id_area;
-        $id_cabang = $pic->id_cabang;
+        $mj = array();
+        $i=0;
+        foreach ($pic as $val) {
+            $mj[] = $val['id_mj_pic'];
+          $i++;
+        }   
+        $id_pic = array();
+        $i=0;
+        foreach ($pic as $val) {
+            $id_pic[] = $val['id'];
+          $i++;
+        }   
+ $arrr = array();
+        foreach ($pic as $val) {
+            $arrr[] = $val['id_cabang'];
+          $i++;
+        }  
+        $area = array();
+        $i=0;
+        foreach ($pic as $val) {
+            $area[] = $val['id_area'];
+          $i++;
+        } 
+        $nama = array();
+        $i=0;
+        foreach ($pic as $val) {
+            $nama[] = $val['nama'];
+          $i++;
+        }       
 
         $form = array(
             'user_id'       => $user_id,
-            'id_area'       => $id_area,
-            'id_cabang'     => $id_cabang,
+            'id_area'       => $area[0],
+            'id_cabang'     => $arrr[0],
             'plafon'        => $request->input('plafon'),
             'tenor'         => $request->input('tenor'),
             'rincian'       => $request->input('rincian'),
             'status'        => $st = $request->input('status'),
+            'status_crm'    => $request->input('status_crm'),
             'tujuan_forward' => $st == 'forward' ? $to_forward : null //$request->input('tujuan_forward'),
             // 'tanggal'       => Carbon::now()->toDateTimeString()
         );
-
+//dd($form);
         DB::connection('web')->beginTransaction();
 
-        try {
+    //    try {
+ if ($form['status'] == 'accept')
+        {
+            Approval::where('id_trans_so',$id)->where('id', '>', $id_approval)->delete();
 
+            $team_caa = Approval::where('id_trans_so',$id)->pluck('id_pic');
+            $str = str_replace("[","",$team_caa);
+            $str2 = str_replace("]","",$str);
+            TransCAA::where('id_trans_so',$id)->update(['pic_team_caa' => $str2]);
+        }
+$last_pic = TransCAA::where('id_trans_so', $id)->first();
+$exp = explode(",",$last_pic->pic_team_caa);
+$end = end($exp);
+//dd($end);
+if ($form['status_crm'] == 'Ya') {
+    Approval::where('id_trans_so',$id)->where('id_pic',$end)->delete();
+    $team_caa = Approval::where('id_trans_so',$id)->pluck('id_pic');
+            $str = str_replace("[","",$team_caa);
+            $str2 = str_replace("]","",$str);
+            TransCAA::where('id_trans_so',$id)->update(['pic_team_caa' => $str2]);
+    // $pic = TransCAA::where('id_trans_so', $id)->first();
+    // TransCAA::where('id_trans_so', $id)->update(['pic_team_caa' => $pic->pic_team_caa]);
+}
 
             if ($form['status'] == 'accept' || $form['status'] == 'reject' || $form['status'] == 'return') {
-                $status = $form['status'] . " by picID {$pic->id}";
+                $status = $form['status'] . " by picID {$id_pic[0]}";
                 // TransCAA::where('id_trans_so', $id)->update(['status_team_caa' => $form['status'].' by user '.$user_id]);
             } elseif ($form['status'] == 'forward') {
-                $status = $form['status'] . " by picID {$pic->id} to picID {$form['tujuan_forward']}";
+                $status = $form['status'] . " by picID {$id_pic[0]} to picID {$form['tujuan_forward']}";
+
+                $email = array(
+                    'subyek' => $req->input('subyek'),
+                    'tujuan' => $req->input('tujuan'),
+                    'cc' => $req->input('cc'),
+                    'pesan' => $req->input('pesan'),
+                    // 'attach1' => $req->file('attach1')
+                                );
+                    
+                             //   dd($email);
+                                $client = new Client();
+                                //   $request = $client->request('POST', 'https://kmi.jari.co.id/integration/task/bulk',  [
+                                $request = $client->request('POST', 'http://103.31.232.149:3838/email',  [
+                                    //$request = $client->request('POST', 'kmi.jari.co.id:8080/integration/task/bulkdraft',  [
+                                   // 'headers'        => ['token' => $token],
+                                    'Content-type' => 'application/x-www-form-urlencoded',
+                                    'form_params'          => $email
+                                ]);
+                                $response = $request->getBody()->getContents();
+                                $sendEmail = json_decode($response, true);
             }
+           
 
             if ($form['status'] === 'return') {
                 TransCAA::where('id_trans_so', $id)->where('id_trans_so', $id)->delete();
@@ -447,14 +535,14 @@ class Approval_Controller extends BaseController
                     'transaksi' => $trans_caa
                 )
             ], 200);
-        } catch (\Exception $e) {
-            $err = DB::connection('web')->rollback();
-            return response()->json([
-                'code'    => 501,
-                'status'  => 'error',
-                'message' => $err
-            ], 501);
-        }
+        // } catch (\Exception $e) {
+        //     $err = DB::connection('web')->rollback();
+        //     return response()->json([
+        //         'code'    => 501,
+        //         'status'  => 'error',
+        //         'message' => $err
+        //     ], 501);
+        // }
     }
 
     // Team Caa
@@ -522,7 +610,8 @@ class Approval_Controller extends BaseController
                 'plafon'  => $val->plafon,
                 'tenor'   => $val->tenor,
                 'status'  => $val->status,
-                'rincian' => $val->rincian
+                'rincian' => $val->rincian,
+                'tgl_approval' => $val->updated_at
             ];
         }
 
@@ -611,6 +700,30 @@ class Approval_Controller extends BaseController
     public function update($id, Request $request, BlankRequest $req)
     {
         $pic     = $request->pic; // From PIC middleware
+
+        $mj = array();
+        $i=0;
+        foreach ($pic as $val) {
+            $mj[] = $val['id_mj_pic'];
+          $i++;
+        }   
+        $id_pic = array();
+        $i=0;
+        foreach ($pic as $val) {
+            $id_pic[] = $val['id'];
+          $i++;
+        }   
+ $arrr = array();
+        foreach ($pic as $val) {
+            $arrr[] = $val['id_cabang'];
+          $i++;
+        }  
+        $area = array();
+        $i=0;
+        foreach ($pic as $val) {
+            $area[] = $val['id_area'];
+          $i++;
+        }    
         $user_id = $request->auth->user_id;
 
         $countCA = TransCA::latest('id', 'nomor_ca')->first();
@@ -631,10 +744,10 @@ class Approval_Controller extends BaseController
         $year  = $nows->year;
         $month = $nows->month;
 
-        $JPIC   = JPIC::where('id', $pic->id_mj_pic)->first();
+        $JPIC   = JPIC::whereIn('id', $mj)->first();
 
         //  ID-Cabang - AO / CA / SO - Bulan - Tahun - NO. Urut
-        $nomor_ca = $pic->id_cabang . '-' . $JPIC->nama_jenis . '-' . $month . '-' . $year . '-' . $lastNumb;
+        $nomor_ca = $arrr[0] . '-' . $JPIC->nama_jenis . '-' . $month . '-' . $year . '-' . $lastNumb;
 
         $check_so = TransSO::where('id', $id)->where('status_das', 1)->where('status_hm', 1)->first();
 
@@ -689,10 +802,10 @@ class Approval_Controller extends BaseController
         $transCA = array(
             'nomor_ca'    => $nomor_ca,
             'user_id'     => $user_id,
-            'id_trans_so' => $id,
-            'id_pic'      => $pic->id,
-            'id_area'     => $pic->id_area,
-            'id_cabang'   => $pic->id_cabang,
+            'id_trans_so' =>$check_so->id,
+            'id_pic'      => $id_pic[0],
+            'id_area'     => $area[0],
+            'id_cabang'   => $arrr[0],
             'catatan_ca'  => $check_ca->catatan_ca,
             'status_ca'   => $check_ca->status_ca
         );
@@ -1019,8 +1132,8 @@ class Approval_Controller extends BaseController
         //   dd($recomCA);
         $asJiwa = AsuransiJiwa::where('id', $check_ca->id_asuransi_jiwa)->first();
         $asuransiJiwa = array(
-            'nama_asuransi'       => empty($req->input('nama_asuransi')) ? $asJiwa->nama_asuransi : $req->input('nama_asuransi'),
-            'jangka_waktu'        => empty($req->input('jangka_waktu')) ? $asJiwa->jangka_waktu : $req->input('jangka_waktu'),
+            'nama_asuransi'       => empty($req->input('nama_asuransi_jiwa')) ? $asJiwa->nama_asuransi : $req->input('nama_asuransi_jiwa'),
+            'jangka_waktu'        => empty($req->input('jangka_waktu_jiwa')) ? $asJiwa->jangka_waktu : $req->input('jangka_waktu_jiwa'),
             'nilai_pertanggungan' => empty($req->input('nilai_pertanggungan')) ? $asJiwa->nilai_pertanggungan : $req->input('nilai_pertanggungan'),
             'jatuh_tempo'         => empty($req->input('jatuh_tempo')) ? Carbon::parse($asJiwa->jatuh_tempo)->format('Y-m-d') : Carbon::parse($req->input('jatuh_tempo'))->format('Y-m-d'),
             'berat_badan'         => empty($req->input('berat_badan')) ? $asJiwa->berat_badan : $req->input('berat_badan'),
@@ -1070,21 +1183,21 @@ class Approval_Controller extends BaseController
             //  dd($newEditCA);
             $CA = RekomendasiCA::where('id', $check_ca->id_recom_ca)
                 ->update([
-                    'produk'                => empty($req->input('produk')) ? $rekom->produk : $req->input('produk'),
-                    'plafon_kredit'         => empty($req->input('plafon_kredit')) ? $rekom->plafon_kredit : $req->input('plafon_kredit'),
-                    'jangka_waktu'          => empty($req->input('jangka_waktu')) ? $rekom->jangka_waktu : $req->input('jangka_waktu'),
-                    'suku_bunga'            => empty($req->input('suku_bunga')) ? $rekom->suku_bunga : $req->input('suku_bunga'),
-                    'pembayaran_bunga'      => empty($req->input('pembayaran_bunga')) ? $rekom->pembayaran_bunga : $req->input('pembayaran_bunga'),
-                    'akad_kredit'           => empty($req->input('akad_kredit')) ? $rekom->akad_kredit : $req->input('akad_kredit'),
-                    'ikatan_agunan'         => empty($req->input('ikatan_agunan')) ? $rekom->ikatan_agunan : $req->input('ikatan_agunan'),
-                    'biaya_provisi'         => empty($req->input('biaya_provisi')) ? $rekom->biaya_provisi : $req->input('biaya_provisi'),
-                    'biaya_administrasi'    => empty($req->input('biaya_administrasi')) ? $rekom->biaya_administrasi : $req->input('biaya_administrasi'),
-                    'biaya_credit_checking' => empty($req->input('biaya_credit_checking')) ? $rekom->biaya_credit_checking : $req->input('biaya_credit_checking'),
-                    'biaya_asuransi_jiwa'   => $req->input('biaya_asuransi_jiwa'),
-                    'biaya_asuransi_jaminan_kebakaran' => $req->input('biaya_asuransi_jaminan_kebakaran'),
-                    'biaya_asuransi_jaminan_kendaraan' => $req->input('biaya_asuransi_jaminan_kendaraan'),
-                    'notaris'               => empty($req->input('notaris')) ? $rekom->notaris : $req->input('notaris'),
-                    'biaya_tabungan'        => empty($req->input('biaya_tabungan')) ? $rekom->biaya_tabungan : $req->input('biaya_tabungan'),
+                    'produk'                => empty($req->input('produk')) ? 0 : $req->input('produk'),
+                    'plafon_kredit'         => empty($req->input('plafon_kredit')) ? 0 : $req->input('plafon_kredit'),
+                    'jangka_waktu'          => empty($req->input('jangka_waktu')) ? 0 : $req->input('jangka_waktu'),
+                    'suku_bunga'            => empty($req->input('suku_bunga')) ? 0 : $req->input('suku_bunga'),
+                    'pembayaran_bunga'      => empty($req->input('pembayaran_bunga')) ? 0 : $req->input('pembayaran_bunga'),
+                    'akad_kredit'           => empty($req->input('akad_kredit')) ? 0 : $req->input('akad_kredit'),
+                    'ikatan_agunan'         => empty($req->input('ikatan_agunan')) ? 0 : $req->input('ikatan_agunan'),
+                    'biaya_provisi'         => empty($req->input('biaya_provisi')) ? 0 : $req->input('biaya_provisi'),
+                    'biaya_administrasi'    => empty($req->input('biaya_administrasi')) ? 0 : $req->input('biaya_administrasi'),
+                    'biaya_credit_checking' => empty($req->input('biaya_credit_checking')) ? 0 : $req->input('biaya_credit_checking'),
+                     'biaya_asuransi_jiwa'   => $req->input('biaya_asuransi_jiwa'),
+                     'biaya_asuransi_jaminan_kebakaran' => $req->input('biaya_asuransi_jaminan_kebakaran'),
+'biaya_asuransi_jaminan_kendaraan' => $req->input('biaya_asuransi_jaminan_kendaraan'),
+                    'notaris'               => empty($req->input('notaris')) ? 0 : $req->input('notaris'),
+                    'biaya_tabungan'        => empty($req->input('biaya_tabungan')) ? 0 : $req->input('biaya_tabungan'),
 
                 ]);
 

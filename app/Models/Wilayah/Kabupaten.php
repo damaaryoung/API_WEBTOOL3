@@ -25,7 +25,7 @@ class Kabupaten extends Model implements AuthenticatableContract, AuthorizableCo
     protected $primaryKey = 'id';
 
     protected $fillable = [
-       'nama', 'id_provinsi', 'flg_aktif'
+        'nama', 'id_povinsi', 'flg_aktif'
     ];
 
     protected $casts = [
@@ -34,42 +34,48 @@ class Kabupaten extends Model implements AuthenticatableContract, AuthorizableCo
 
     public $timestamps = false;
 
-    public function prov(){
+    public function prov()
+    {
         return $this->belongsTo(Provinsi::class, 'id_provinsi')->select(['id', 'nama'])
             ->withDefault(function () {
                 return new Provinsi();
             });
     }
 
-    public function kec(){
+    public function kec()
+    {
         return $this->hasMany(Kecamatan::class)
             ->withDefault(function () {
                 return new Kecamatan();
             });
     }
 
-    public function debt(){
+    public function debt()
+    {
         return $this->hasMany(Debitur::class)
             ->withDefault(function () {
                 return new Debitur();
             });
     }
 
-    public function pas(){
+    public function pas()
+    {
         return $this->hasMany(Pasangan::class)
             ->withDefault(function () {
                 return new Pasangan();
             });
     }
 
-    public function penj(){
+    public function penj()
+    {
         return $this->hasMany(Penjamin::class)
             ->withDefault(function () {
                 return new Penjamin();
             });
     }
 
-    public function tanah(){
+    public function tanah()
+    {
         return $this->hasMany(AgunanTanah::class)
             ->withDefault(function () {
                 return new AgunanTanah();

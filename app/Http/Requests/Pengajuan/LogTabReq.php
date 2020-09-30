@@ -24,10 +24,10 @@ class LogTabReq extends FormRequest
         return [
             'no_rekening'             => 'numeric',
             'penghasilan_per_tahun'   => 'integer',
-            'pemasukan_per_bulan'     => 'in:A,B,C,D,E',
-            'frek_trans_pemasukan'    => 'in:A,B,C,D,E',
-            'pengeluaran_per_bulan'   => 'in:A,B,C,D,E',
-            'frek_trans_pengeluaran'  => 'in:A,B,C,D,E',
+            'pemasukan_per_bulan'     => 'in:1,2,3,4,5',
+            'frek_trans_pemasukan'    => 'in:1,2,3,4,5',
+            'pengeluaran_per_bulan'   => 'in:1,2,3,4,5',
+            'frek_trans_pengeluaran'  => 'in:1,2,3,4,5',
             // 'sumber_dana_setoran'     =>
             'tujuan_pengeluaran_dana' => 'in:KONSUMTIF,MODAL KERJA,INVESTASI',
         ];

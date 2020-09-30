@@ -218,7 +218,7 @@ class PICController extends BaseController
 
     public function delete($id)
     {
-        PIC::where('id', $id)->update(['flg_aktif' => 0]);
+        PIC::where('id', $id)->delete();
 
         try {
             return response()->json([

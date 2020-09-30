@@ -11,15 +11,13 @@ use DB;
 
 class AsalDataController extends BaseController
 {
-    public function __construct() {
-        $this->time_cache = config('app.cache_exp');
-    }
+    // public function __construct() {
+    //     $this->time_cache = config('app.cache_exp');
+    // }
 
     public function index() 
     {
-        $query = Cache::remember('asalData.index', $this->time_cache, function () {
-            return AsalData::select('id', 'nama', 'info')->where('flg_aktif', 1)->orderBy('nama', 'asc')->get();
-        });
+        $query = AsalData::select('id', 'nama')->get();
 
         if (empty($query)) {
             return response()->json([
@@ -70,8 +68,9 @@ class AsalDataController extends BaseController
     }
 
     public function show($id) {
-        $query = AsalData::select('nama', 'info', 'flg_aktif', 'created_at', 'updated_at')->where('id', $id)->first();
+        // $query = AsalData::select('nama', 'info', 'flg_aktif', 'created_at', 'updated_at')->where('id', $id)->first()->where('id', $id)->first();
         
+        $query = AsalData::select('id', 'nama')->where('id', $id)->first();
         if (empty($query)) {
             return response()->json([
                 "code"    => 404,

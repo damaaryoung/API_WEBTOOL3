@@ -11,9 +11,10 @@ class CodeController extends BaseController
     // Produk CA
     public function produk()
     {
-        $query = Cache::rememberForever('produk', function () {
-            return DB::connection('web')->select("SELECT kode_produk, `DESKRIPSI_PRODUK` AS nama_produk FROM kre_produk");
-        });
+        $query = DB::connection('web')->select("SELECT kode_produk, `DESKRIPSI_PRODUK` AS nama_produk FROM view_produk ORDER BY kode_produk ='38' DESC ");
+        // $query = Cache::rememberForever('produk', function () {
+        //     return DB::connection('web')->select("SELECT kode_produk, `DESKRIPSI_PRODUK` AS nama_produk FROM kre_produk");
+        // });
 
         if (empty($query)) {
             return response()->json([

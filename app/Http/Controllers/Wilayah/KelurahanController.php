@@ -11,32 +11,19 @@ use DB;
 
 class KelurahanController extends BaseController
 {
-    public function __construct() 
+
+    public function index()
     {
-        $this->time_cache = config('app.cache_exp');
-        $this->chunk = 1000;
-    }
-
-    public function index() 
-    {    
         $data = array();
+        $query = Kelurahan::get();
+        // $query = Cache::remember("prov.index", $this->time_cache, function () use ($data) {
+        //     foreach (Provinsi::select('id', 'nama')->where('flg_aktif', 1)->orderBy('nama', 'asc')->cursor()
+        //         as $cursor) {
+        //         $data[] = $cursor;
+        //     }
 
-        $query = Cache::rememberForever('kel.index', function () use (&$data) {
-
-            DB::connection('web')->table('master_kelurahan')
-            ->join('master_kecamatan', 'master_kelurahan.id_kecamatan', 'master_kecamatan.id')
-            ->select('master_kelurahan.*', 'master_kecamatan.nama as nama_kecamatan')
-            ->where('master_kelurahan.flg_aktif', 1)
-            ->orderBy('master_kelurahan.nama', 'asc')
-            ->chunk($this->chunk, function($chunks) use (&$data) {
-                foreach($chunks as $chunk){
-                    $data[] = $chunk;
-                }
-            });
-
-            return $data;
-
-        });
+        //     return $data;
+        // });
 
         if (empty($query)) {
             return response()->json([
@@ -62,7 +49,8 @@ class KelurahanController extends BaseController
         }
     }
 
-    public function store(Request $req) {
+    public function store(Request $req)
+    {
         $nama      = $req->input('nama');
         $kode_pos  = $req->input('kode_pos');
         $kecamatan = $req->input('id_kecamatan');
@@ -71,7 +59,7 @@ class KelurahanController extends BaseController
             return response()->json([
                 "code"    => 422,
                 "status"  => "not valid request",
-                "message" => [ "nama" => ["nama wajib diisi"]]
+                "message" => ["nama" => ["nama wajib diisi"]]
             ], 422);
         }
 
@@ -79,15 +67,15 @@ class KelurahanController extends BaseController
             return response()->json([
                 "code"    => 422,
                 "status"  => "not valid request",
-                "message" => [ "id_kecamatan" => ["id kecamatan wajib diisi"]]
+                "message" => ["id_kecamatan" => ["id kecamatan wajib diisi"]]
             ], 422);
         }
 
-        if(!empty($kecamatan) && !preg_match("/^[0-9]{1,}$/", $kecamatan)){
+        if (!empty($kecamatan) && !preg_match("/^[0-9]{1,}$/", $kecamatan)) {
             return response()->json([
                 "code"    => 422,
                 "status"  => "not valid request",
-                "message" => [ "id_kecamatan" => ["id kecamatan harus berupa angka"]]
+                "message" => ["id_kecamatan" => ["id kecamatan harus berupa angka"]]
             ], 422);
         }
 
@@ -95,15 +83,15 @@ class KelurahanController extends BaseController
             return response()->json([
                 "code"    => 422,
                 "status"  => "not valid request",
-                "message" => [ "kode_pos" => ["kode pos wajib diisi"]]
+                "message" => ["kode_pos" => ["kode pos wajib diisi"]]
             ], 422);
         }
 
-        if(!empty($kode_pos) && !preg_match("/^[0-9]{1,}$/", $kode_pos)){
+        if (!empty($kode_pos) && !preg_match("/^[0-9]{1,}$/", $kode_pos)) {
             return response()->json([
                 "code"    => 422,
                 "status"  => "not valid request",
-                "message" => [ "kode_pos" => ["kode pos harus berupa angka"]]
+                "message" => ["kode_pos" => ["kode pos harus berupa angka"]]
             ], 422);
         }
 
@@ -111,7 +99,7 @@ class KelurahanController extends BaseController
             return response()->json([
                 "code"    => 422,
                 "status"  => "not valid request",
-                "message" => [ "kode_pos" => ["kode pos harus berjumlah 5 digit"]]
+                "message" => ["kode_pos" => ["kode pos harus berjumlah 5 digit"]]
             ], 422);
         }
 
@@ -139,11 +127,11 @@ class KelurahanController extends BaseController
         }
     }
 
-    public function show($IdOrName) {
+    public function show($IdOrName)
+    {
         // $res = array();
         // if(preg_match("/^[0-9]{1,}$/", $IdOrName)){
-        $query = Kelurahan::withCount(['kec as nama_kecamatan' => function ($sub) 
-        {
+        $query = Kelurahan::withCount(['kec as nama_kecamatan' => function ($sub) {
             $sub->select('nama');
         }])->where('id', $IdOrName)->first();
         // }else{
@@ -176,7 +164,7 @@ class KelurahanController extends BaseController
         }
     }
 
-    public function update($id, Request $req) 
+    public function update($id, Request $req)
     {
         $check = Kelurahan::where('id', $id)->first();
 
@@ -193,19 +181,19 @@ class KelurahanController extends BaseController
         $kecamatan = empty($req->input('id_kecamatan')) ? $check->id_kecamatan : $req->input('id_kecamatan');
         $flg_aktif = empty($req->input('flg_aktif')) ? $check->flg_aktif : ($req->input('flg_aktif') == 'false' ? 0 : 1);
 
-        if(!empty($kecamatan) && !preg_match("/^[0-9]{1,}$/", $kecamatan)){
+        if (!empty($kecamatan) && !preg_match("/^[0-9]{1,}$/", $kecamatan)) {
             return response()->json([
                 "code"    => 422,
                 "status"  => "not valid request",
-                "message" => [ "id_kecamatan" => ["id kecamatan harus berupa angka"]]
+                "message" => ["id_kecamatan" => ["id kecamatan harus berupa angka"]]
             ], 422);
         }
 
-        if(!empty($kode_pos) && !preg_match("/^[0-9]{1,}$/", $kode_pos)){
+        if (!empty($kode_pos) && !preg_match("/^[0-9]{1,}$/", $kode_pos)) {
             return response()->json([
                 "code"    => 422,
                 "status"  => "not valid request",
-                "message" => [ "kode_pos" => ["kode pos harus berupa angka"]]
+                "message" => ["kode_pos" => ["kode pos harus berupa angka"]]
             ], 422);
         }
 
@@ -250,15 +238,15 @@ class KelurahanController extends BaseController
         }
     }
 
-    public function delete($id) 
+    public function delete($id)
     {
         Kelurahan::where('id', $id)->update(['flg_aktif' => 0]);
-        
+
         try {
             return response()->json([
                 'code'    => 200,
                 'status'  => 'success',
-                'message' => 'Data with ID '.$id.' was deleted successfully'
+                'message' => 'Data with ID ' . $id . ' was deleted successfully'
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
@@ -271,8 +259,7 @@ class KelurahanController extends BaseController
 
     public function trash()
     {
-        $query = Kelurahan::withCount(['kec as nama_kecamatan' => function ($sub) 
-        {
+        $query = Kelurahan::withCount(['kec as nama_kecamatan' => function ($sub) {
             $sub->select('nama');
         }])->where('flg_aktif', 0)->orderBy('nama', 'asc')->get();
 
@@ -319,16 +306,12 @@ class KelurahanController extends BaseController
         }
     }
 
-    public function sector($id_kec) 
+    public function sector($id_kec)
     {
         $data = array();
 
-        foreach
-        (
-            Kelurahan::select('id', 'nama', 'kode_pos', 'id_kecamatan')->where('id_kecamatan', $id_kec)->orderBy('nama', 'asc')->cursor()
-            as $cursor
-        )
-        {
+        foreach (Kelurahan::select('id', 'nama', 'kode_pos', 'id_kecamatan')->where('id_kecamatan', $id_kec)->orderBy('nama', 'asc')->cursor()
+            as $cursor) {
             $data[] = $cursor;
         }
 
@@ -360,7 +343,7 @@ class KelurahanController extends BaseController
     {
         $column = array('id', 'nama', 'kode_pos', 'id_kecamatan');
 
-        if($param != 'filter' && $param != 'search'){
+        if ($param != 'filter' && $param != 'search') {
             return response()->json([
                 'code'    => 412,
                 'status'  => 'not valid',
@@ -368,44 +351,42 @@ class KelurahanController extends BaseController
             ], 412);
         }
 
-        if (in_array($key, $column) == false)
-        {
+        if (in_array($key, $column) == false) {
             return response()->json([
                 'code'    => 412,
                 'status'  => 'not valid',
-                'message' => 'gunakan key yang valid diantara berikut: '.implode(",", $column)
+                'message' => 'gunakan key yang valid diantara berikut: ' . implode(",", $column)
             ], 412);
         }
 
-        if (in_array($orderBy, $column) == false)
-        {
+        if (in_array($orderBy, $column) == false) {
             return response()->json([
                 'code'    => 412,
                 'status'  => 'not valid',
-                'message' => 'gunakan order by yang valid diantara berikut: '.implode(",", $column)
+                'message' => 'gunakan order by yang valid diantara berikut: ' . implode(",", $column)
             ], 412);
         }
 
-        if($param == 'search'){
+        if ($param == 'search') {
             $operator   = "like";
             $func_value = "%{$value}%";
-        }else{
+        } else {
             $operator   = "=";
             $func_value = "{$value}";
         }
 
         $query = Kelurahan::where('flg_aktif', $status)->orderBy($orderBy, $orderVal);
 
-        if($value == 'default'){
+        if ($value == 'default') {
             $res = $query;
-        }else{
+        } else {
             $res = $query->where($key, $operator, $func_value);
         }
 
-        
-        if($limit == 'default'){
+
+        if ($limit == 'default') {
             $result = $res->get();
-        }else{
+        } else {
             $result = $res->limit($limit)->get();
         }
 

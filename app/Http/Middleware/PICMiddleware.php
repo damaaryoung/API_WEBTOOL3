@@ -21,7 +21,7 @@ class PICMiddleware
     {
         $userID   = $request->auth->user_id;
 
-        $pic = PIC::where('user_id', $userID)->first();
+        $pic = PIC::where('user_id', $userID)->get();
 
         if ($pic == null) {
             return response()->json([

@@ -74,23 +74,23 @@ class RekomPinController extends BaseController
         $rekomPinjaman = array(
             'penyimpangan_struktur'
             => empty($req->input('penyimpangan_struktur'))
-                ? $check->penyimpangan_struktur : $req->input('penyimpangan_struktur'),
+                ? 0 : $req->input('penyimpangan_struktur'),
 
             'penyimpangan_dokumen'
             => empty($req->input('penyimpangan_dokumen'))
-                ? $check->penyimpangan_dokumen : $req->input('penyimpangan_dokumen'),
+                ? 0 : $req->input('penyimpangan_dokumen'),
 
             'recom_nilai_pinjaman'
             => empty($req->input('recom_nilai_pinjaman'))
-                ? $check->recom_nilai_pinjaman : $req->input('recom_nilai_pinjaman'),
+                ? 0 : $req->input('recom_nilai_pinjaman'),
 
             'recom_tenor'
             => empty($req->input('recom_tenor'))
-                ? $check->recom_tenor : $req->input('recom_tenor'),
+                ? 0 : $req->input('recom_tenor'),
 
             'recom_angsuran'
             => empty($req->input('recom_angsuran'))
-                ? $check->recom_angsuran : $req->input('recom_angsuran'),
+                ? 0 : $req->input('recom_angsuran'),
 
             'recom_produk_kredit'
             => empty($req->input('recom_produk_kredit'))
@@ -101,7 +101,7 @@ class RekomPinController extends BaseController
                 ? $check->note_recom : $req->input('note_recom'),
             'bunga_pinjaman'
             => empty($req->input('bunga_pinjaman'))
-                ? $check->bunga_pinjaman : $req->input('bunga_pinjaman')
+                ? 0 : $req->input('bunga_pinjaman')
         );
 
         DB::connection('web')->beginTransaction();
