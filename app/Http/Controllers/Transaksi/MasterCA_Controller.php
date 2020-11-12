@@ -32,6 +32,8 @@ use App\Models\AreaKantor\PIC;
 use Illuminate\Http\Request;
 use App\Models\Pengajuan\SO\Anak;
 use Carbon\Carbon;
+use App\Models\master_nilai;
+use App\Models\master_transaksi;
 // use Image;
 //use DB;
 use Illuminate\Support\Facades\DB;
@@ -356,7 +358,8 @@ array_walk_recursive($res, function (&$item, $key) {
                     "posisi_pekerjaan"      => $pen->posisi_pekerjaan,
                     "nama_tempat_kerja"     => $pen->nama_tempat_kerja,
                     "jenis_pekerjaan"       => $pen->jenis_pekerjaan,
-                    "tgl_mulai_kerja"       => Carbon::parse($pen->tgl_mulai_kerja)->format('d-m-Y'),
+                    "tgl_mulai_kerja"       => Carbon::parse($pen->tgl_mulai_kerja)->format('Y-m-d'),
+ "lama_kerja"       => $pen->lama_kerja,
                     "no_telp_tempat_kerja"  => $pen->no_telp_tempat_kerja,
                     'alamat' => [
                         'alamat_singkat' => $pen->alamat_tempat_kerja,
@@ -483,7 +486,8 @@ array_walk_recursive($res, function (&$item, $key) {
                 'no_kk'                 => $val->so['debt']['no_kk'],
                 'no_npwp'               => $val->so['debt']['no_npwp'],
                 'tempat_lahir'          => $val->so['debt']['tempat_lahir'],
-                'tgl_lahir'             => Carbon::parse($val->so['debt']['tgl_lahir'])->format('d-m-Y'),
+                'tgl_lahir'             => Carbon::parse($val->so['debt']['tgl_lahir'])->format('Y-m-d'),
+ 'umur'          => $val->so['debt']['umur'],
                 'agama'                 => $val->so['debt']['agama'],
                 'anak'             => Anak::select('nama_anak AS nama', 'tgl_lahir_anak AS tgl_lahir')->where('nasabah_id', $id)->get(),
                 'alamat_ktp' => [
@@ -535,7 +539,8 @@ array_walk_recursive($res, function (&$item, $key) {
                     "posisi_pekerjaan"      => $val->so['debt']['posisi_pekerjaan'],
                     "nama_tempat_kerja"     => $val->so['debt']['nama_tempat_kerja'],
                     "jenis_pekerjaan"       => $val->so['debt']['jenis_pekerjaan'],
-                    "tgl_mulai_kerja"       => Carbon::parse($val->so['debt']['tgl_mulai_kerja'])->format('d-m-Y'),
+                    "tgl_mulai_kerja"       => Carbon::parse($val->so['debt']['tgl_mulai_kerja'])->format('Y-m-d'),
+  "lama_kerja"       => $val->so['debt']['lama_kerja'],
                     "no_telp_tempat_kerja"  => $val->so['debt']['no_telp_tempat_kerja'],
                     'alamat' => [
                         'alamat_singkat' => $val->so['debt']['alamat_tempat_kerja'],
@@ -1027,7 +1032,6 @@ $cab = TransSO::where('id', $id)->first();
             }
         }
 
-
         $dataTabUang = array(
 
             'no_rekening'
@@ -1165,6 +1169,603 @@ $cab = TransSO::where('id', $id)->first();
         //         'jatuh_tempo'         => null
         //     );
         // }
+
+  $get_trans = DB::connection('web')->table('view_transaksi_cs')->where('id',$id)->first();
+         #Mengambil Transaksi yang ada di inputan SEFIN dari SO sampai dengan CA#
+$cs_trans = array(
+"tgl_transaksi" => $get_trans->tgl_transaksi,
+"id" => $get_trans->id,
+"nomor_so" => $get_trans->nomor_so,
+"nama_debitur" => $get_trans->nama_debitur,
+"id_area" => $get_trans->id_area,
+"id_cabang" => $get_trans->id_cabang,
+"nama_so" => $get_trans->nama_so,
+"nama_ao" => $get_trans->nama_ao
+);
+  
+    # Mengambil Data Nilai Credit Scoring yang ada di inputan SEFIN dari SO sampai dengan CA#
+  $cs_nilai = array(
+"umur" => $get_trans->umur,
+"tanggungan" => $get_trans->tanggungan,
+"pendidikan_terakhir" => $get_trans->pendidikan_terakhir,
+"lama_kerja" => $get_trans->lama_kerja,
+"ltv" => $get_trans->ltv,
+"dsr" => $get_trans->dsr,
+"idir" => $get_trans->idir,
+"kuantitatif_ttl_pendapatan" => $get_trans->kuantitatif_ttl_pendapatan,
+"tenor" => $get_trans->tenor
+);
+
+// //dd(array($cs_trans,$cs_nilai));
+//   ###############################################################################################
+//   # PENGHITUNGAN #
+//   ###############################################################################################
+#start umur 1
+   $umr = $cs_nilai['umur'];
+
+           switch ($umr) {
+  case ($umr <= 30 && $umr >= 21 ):
+    $umr = "0031";
+    break;
+  case ($umr <= 40 && $umr >= 30 ):
+     $umr = "0032";
+    break;
+ case ($umr <= 50 && $umr >= 40):
+     $umr = "0033";
+    break;
+     case ($umr <= 60 && $umr >= 50 ):
+     $umr = "0034";
+    break;
+     case ($umr > 60 ):
+     $umr = "0035";
+    break;
+
+  default:
+    $umr = null;
+}
+#end umur
+#####################################################################################################
+#start tanggungan 2
+  $tang = $cs_nilai['tanggungan'];
+
+           switch ($tang) {
+  case 0:
+    $tang = "0041";
+    break;
+  case 1:
+     $tang = "0042";
+    break;
+
+ case 2:
+     $tang = "0043";
+    break;
+     case 3:
+     $tang = "0044";
+    break;
+case ( $tang = 4 && $tang > 4) :
+     $tang = "0045";
+    break;
+  default:
+    $tang = null;
+}
+#end tanggungan
+####################################################################################################
+#start pendidikan 3
+
+ $sek = $cs_nilai['pendidikan_terakhir'];
+
+           switch ($sek) {
+  case "Tidak Sekolah/SD":
+    $sek = "0021";
+    break;
+  case "SMP":
+     $sek = "0022";
+    break;
+
+ case "SMA":
+     $sek = "0023";
+    break;
+     case "D3/S1":
+     $sek = "0024";
+    break;
+     case "S2/S3":
+     $sek = "0025";
+    break;
+  default:
+    $sek = null;
+}
+#end pendidikan
+#######################################################################################################
+#start lama_kerja 4
+
+ $ker = $cs_nilai['lama_kerja'];
+
+           switch ($ker) {
+  case ($ker < 6 ):
+    $ker = "01501";
+    break;
+  case ($ker >= 6 && $ker < 12 ):
+     $ker = "01502";
+    break;
+
+ case ($ker >= 12 && $ker < 24 ) :
+     $ker = "01503";
+    break;
+     case ($ker >= 24 && $ker < 36 ):
+     $ker = "01504";
+    break;
+     case ($ker > 36 ):
+     $ker = "01505";
+    break;
+  default:
+    $ker = null;
+}
+#end lama_kerja
+
+#start LTV 5
+$ltv = $dataRingkasan['kuantitatif_ltv'];
+
+           switch ($ltv) {
+  case ($ltv < 50):
+    $ltv = "01201";
+    break;
+  case ($ltv >= 50 && $ltv <= 60 ):
+     $ltv = "01202";
+    break;
+ case ($ltv > 60 && $ltv <= 70):
+     $ltv = "01203";
+    break;
+     case ($ltv > 70 && $ltv <= 80 ):
+     $ltv = "01204";
+    break;
+     case ($ltv > 80 ):
+     $ltv = "01205";
+    break;
+  default:
+    $ltv = null;
+}
+
+#end LTV
+
+#start Rasio Kapasitas 6
+ $pendapatan = $dataRingkasan['kuantitatif_ttl_pendapatan'];
+$ras_kapasitas = null;
+    switch ($ras_kapasitas) {
+  case ($dataRingkasan['kuantitatif_idir'] < 80 && $dataRingkasan['kuantitatif_dsr'] < 30):
+    $ras_kapasitas = "01901";
+    break;
+  case ($dataRingkasan['kuantitatif_idir'] < 80 && $dataRingkasan['kuantitatif_dsr'] > 30 ):
+     $ras_kapasitas = "01902";
+    break;
+ case ($dataRingkasan['kuantitatif_idir']  > 80 && $dataRingkasan['kuantitatif_dsr']  < 30):
+     $ras_kapasitas = "01903";
+    break;
+     case ($dataRingkasan['kuantitatif_idir']  > 80 && $dataRingkasan['kuantitatif_dsr']  > 30 && $pendapatan > 0  ):
+     $ras_kapasitas = "01904";
+    break;
+     case ($dataRingkasan['kuantitatif_idir']  > 80 && $dataRingkasan['kuantitatif_dsr']  > 30 && $pendapatan < 0 ):
+     $ras_kapasitas = "01905";
+    break;
+
+  default:
+    $ras_kapasitas = null;
+}
+#end Rasio Kapasitas
+
+#start Tenor 7
+ $ten = $cs_nilai['tenor'];
+
+           switch ($ten) {
+  case ($ten < 12):
+    $ten = "01401";
+    break;
+  case ($ten >= 12 && $ten <= 24 ):
+     $ten = "01402";
+    break;
+ case ($ten >= 25 && $ten <= 48):
+     $ten = "01403";
+    break;
+     case ($ten > 48 && $ten <= 60 ):
+     $ten = "01404";
+    break;
+     case ($ten > 60 ):
+     $ten = "01405";
+    break;
+  default:
+    $ten = null;
+}
+#end tenor
+
+#start cc 8 
+$cc = $dataACC;
+
+           switch ($cc) {
+  case ($dataACC[0]['jenis_kredit'] == 'No Din'):
+    $cc = "0011";
+    break;
+  case ($dataACC[0]['jenis_kredit'] == 'KTA'&& $dataACC[0]['jenis_kredit'] == 'CC (Credit Card)' && $dataACC[0]['collectabilitas'] > 1 ):
+     $cc = "0012";
+    break;
+ case ($dataACC[0]['collectabilitas'] == 1):
+     $cc = "0013";
+    break;
+     case ($cc > 48 && $cc <= 60 ):
+     $cc = "0014";
+    break;
+     case ($cc > 60 ):
+     $cc = "0015";
+    break;
+  default:
+    $cc = null;
+}
+#end cc
+
+#start jumlah_pinjaman_bank_lain 9 
+$pin_bank_lain = $dataACC;
+
+           switch ($pin_bank_lain) {
+  case (count($dataACC) == null):
+    $pin_bank_lain = "0051";
+    break;
+  case ( count($dataACC) == 1):
+     $pin_bank_lain = "0052";
+    break;
+ case (count($dataACC) == 2 ):
+     $pin_bank_lain = "0053";
+    break;
+     case (count($dataACC) == 3):
+     $pin_bank_lain = "0054";
+    break;
+     case (count($dataACC) >= 4 ):
+     $pin_bank_lain = "0055";
+    break;
+  default:
+    $pin_bank_lain = null;
+}
+#end jumlah_pinjaman_bank_lain
+
+#start idir 10 
+ $idir = $dataRingkasan['kuantitatif_idir'];
+
+           switch ($idir) {
+  case ($idir < 25):
+    $idir = "0091";
+    break;
+  case ($idir >= 25 && $idir <= 50 ):
+     $idir = "0092";
+    break;
+ case ($idir > 50 && $idir <= 70):
+     $idir = "0093";
+    break;
+     case ($idir > 70 && $idir <= 80 ):
+     $idir = "0094";
+    break;
+     case ($idir > 80 ):
+     $idir = "0095";
+    break;
+
+  default:
+    $idir = null;
+}
+#end idir
+
+#start dsr 11
+$dsr = $dataRingkasan['kuantitatif_dsr'];
+
+           switch ($dsr) {
+  case ($dsr < 10):
+    $dsr = "01001";
+    break;
+  case ($dsr >= 10 && $dsr <= 25 ):
+     $dsr = "01002";
+    break;
+ case ($dsr > 25 && $dsr <= 35):
+     $dsr = "01003";
+    break;
+     case ($dsr > 35 && $dsr <= 50 ):
+     $dsr = "01004";
+    break;
+     case ($dsr > 50 ):
+     $dsr = "01005";
+    break;
+
+  default:
+    $dsr = null;
+}
+
+#end dsr
+
+
+#start tipe lokasi 12
+ $tipelok = AgunanTanah::select('tipe_lokasi')->where('id_trans_so',$id)->first();
+
+           switch ($tipelok) {
+  case ($tipelok = 'PERUMAHAN/CLUSTER' ):
+    $tipelok = "01601";
+    break;
+  case ($tipelok = 'JAMINAN PINGGIR JALAN RAYA' ):
+     $tipelok = "01602";
+    break;
+ case ($tipelok = 'KAVLING'):
+     $tipelok = "01603";
+    break;
+     case ($tipelok = 'PERKAMPUNGAN AKSES JALAN MOBIL' ):
+     $tipelok = "01604";
+    break;
+     case ($tipelok = 'LAINNYA' ):
+     $tipelok = "01605";
+    break;
+ 
+  default:
+    $tipelok = null;
+}
+#end tipe_lokasi
+
+#start collateral 13
+$collateral = AgunanTanah::select('collateral')->where('id_trans_so',$id)->first();
+
+           switch ($collateral) {
+  case ($collateral = 'Rumah' ):
+    $collateral = "01101";
+    break;
+  case ($collateral = 'Ruko' ):
+     $collateral = "01102";
+    break;
+ case ($collateral = 'Rumah Kontrakan'):
+     $collateral = "01103";
+    break;
+     case ($collateral = 'Gedung' ):
+     $collateral = "01104";
+    break;
+     case ($collateral = 'Tanah Kosong'):
+     $collateral = "01105";
+    break;
+ 
+  default:
+    $collateral = null;
+}
+#end collateral
+
+#jenis_serti 14 
+$shmshgb = AgunanTanah::where('id_trans_so',$id)->first();
+$jen_sert = null;
+if($shmshgb === null) {
+$jen_sert = null;
+} else {
+       switch ($jen_sert) {
+  case ($shmshgb->jenis_sertifikat == 'SHM'):
+    $jen_sert = "01701";
+    break;
+  case ($shmshgb->jenis_sertifikat == 'SHGB AKTIF'):
+     $jen_sert = "01702";
+    break;
+ case ($shmshgb->jenis_sertifikat == 'SHGB Akan Expired < 5 Tahun'):
+     $jen_sert = "01703";
+    break;
+     case ($shmshgb->jenis_sertifikat == 'SHM PTSL'):
+     $jen_sert = "01704";
+    break;
+     case ($shmshgb->jenis_sertifikat == 'LAINNYA' ):
+     $jen_sert = "001705";
+    break;
+  default:
+    $jen_sert = null;
+}
+}
+
+
+
+        
+#end jenis_serti
+
+#start pemilik_jaminan 15
+   $pemtn = PemeriksaanAgunTan::select('periksa_agunan_tanah.status_penghuni')->join('trans_ao','trans_ao.id_periksa_agunan_tanah','=','periksa_agunan_tanah.id')->where('trans_ao.id_trans_so',$id)->first();
+
+           switch ($pemtn) {
+  case ($pemtn = 'Suami/Istri' ):
+    $pemtn = "01301";
+    break;
+  case ($pemtn = 'Milik Keluarga' ):
+     $pemtn = "01302";
+    break;
+ case ($pemtn = 'Milik Orang Lain (belum Balik nama)'):
+     $pemtn = "01303";
+    break;
+     case ($pemtn = 'Take Over a.n Sendiri' ):
+     $pemtn = "01304";
+    break;
+     case ($pemtn = 'Take Over  masih a.n Orang Lain' ):
+     $pemtn = "01305";
+    break;
+ 
+  default:
+    $pemtn = null;
+}
+#end Pemilik Jaminan
+
+#start Lokasi Jaminan 16
+$tipelok = AgunanTanah::select('tipe_lokasi')->where('id_trans_so',$id)->first();
+
+           switch ($tipelok) {
+  case ($tipelok = 'PERUMAHAN/CLUSTER' ):
+    $tipelok = "01601";
+    break;
+  case ($tipelok = 'JAMINAN PINGGIR JALAN RAYA' ):
+     $tipelok = "01602";
+    break;
+ case ($tipelok = 'KAVLING'):
+     $tipelok = "01603";
+    break;
+     case ($tipelok = 'PERKAMPUNGAN AKSES JALAN MOBIL' ):
+     $tipelok = "01604";
+    break;
+     case ($tipelok = 'LAINNYA' ):
+     $tipelok = "01605";
+    break;
+ 
+  default:
+    $tipelok = null;
+}
+#end Lokasi Jaminan
+
+#start angsuran_lain 17 
+$ang_bank_lain = $dataACC;
+
+           switch ($ang_bank_lain) {
+  case (count($dataACC) == null):
+    $ang_bank_lain = "0081";
+    break;
+  case ( count($dataACC ) == 1):
+     $ang_bank_lain = "0082";
+    break;
+ case (count($dataACC ) == 2):
+     $ang_bank_lain = "0083";
+    break;
+     case (count($dataACC ) == 3):
+     $ang_bank_lain = "0084";
+    break;
+     case (count($dataACC ) >= 4 ):
+     $ang_bank_lain = "0085";
+    break;
+  default:
+    $ang_bank_lain = null;
+}
+#end jumlah_pinjaman_bank_lain
+
+#start baki_lain 18 
+$baki_bank_lain = $dataACC;
+
+           switch ($baki_bank_lain) {
+  case (count($dataACC ) == null):
+    $baki_bank_lain = "0071";
+    break;
+  case ( count($dataACC ) == 1):
+     $baki_bank_lain = "0072";
+    break;
+ case (count($dataACC ) == 2):
+     $baki_bank_lain = "0073";
+    break;
+     case (count($dataACC ) == 3):
+     $baki_bank_lain = "0074";
+    break;
+     case (count($dataACC ) >= 4 ):
+     $baki_bank_lain = "0075";
+    break;
+  default:
+    $baki_bank_lain = null;
+}
+#end baki_bank_lain
+
+#start bukti_kap 19
+$bukti_kap = null;
+
+           switch ($bukti_kap) {
+  case ( !empty($cs_nilai['sku']) && !empty($cs_nilai['dokumen_usaha']) && !empty($cs_nilai['rekening']) || !empty($cs_nilai['foto_usaha']) ):
+    $bukti_kap = "01801";
+    break;
+  case ( !empty($cs_nilai['sku']) && !empty($cs_nilai['rekening']) && !empty($cs_nilai['foto_usaha']) ):
+     $bukti_kap = "01802";
+    break;
+ case (!empty($cs_nilai['sku']) && !empty($cs_nilai['dokumen_usaha']) && !empty($cs_nilai['foto_usaha']) ):
+     $bukti_kap = "01803";
+    break;
+     case ( !empty($cs_nilai['sku']) && !empty($cs_nilai['foto_usaha'])):
+     $bukti_kap = "01804";
+    break;
+     case (empty($cs_nilai['sku']) && empty($cs_nilai['dokumen_usaha']) && empty($cs_nilai['rekening']) && empty($cs_nilai['foto_usaha'])):
+     $bukti_kap = "01805";
+    break;
+  default:
+    $bukti_kap = null;
+}
+
+#end bukti_kap
+
+$pendapatan = $dataRingkasan['kuantitatif_ttl_pendapatan'];
+    switch ($pendapatan) {
+  case ($pendapatan < 3000000):
+    $pendapatan = "0061";
+    break;
+  case ($pendapatan >= 3000000 && $pendapatan < 5000000 ):
+     $pendapatan = "0062";
+    break;
+ case ($pendapatan >= 5000000 && $pendapatan < 10000000):
+     $pendapatan = "0063";
+    break;
+     case ( $pendapatan >= 10000000 && $pendapatan < 15000000 ):
+     $pendapatan = "0064";
+    break;
+     case ( $pendapatan >  15000000):
+     $pendapatan = "0065";
+    break;
+
+  default:
+    $pendapatan = null;
+}
+
+
+
+#1
+$scor_cc = DB::connection('simar')->table('master_creditscoring')->select('id_parameter AS parameter','id_detail_params AS detail','point','bobot')->where('id_detail_params',$cc)->first();
+#2
+$scor_sek = DB::connection('simar')->table('master_creditscoring')->select('id_parameter AS parameter','id_detail_params AS detail','point','bobot')->where('id_detail_params',$sek)->first();
+#3
+$scor_umr = DB::connection('simar')->table('master_creditscoring')->select('id_parameter AS parameter','id_detail_params AS detail','point','bobot')->where('id_detail_params',$umr)->first();
+#4
+$scor_tang = DB::connection('simar')->table('master_creditscoring')->select('id_parameter AS parameter','id_detail_params AS detail','point','bobot')->where('id_detail_params',$tang)->first();
+#5
+$scor_pin_bank_lain = DB::connection('simar')->table('master_creditscoring')->select('id_parameter AS parameter','id_detail_params AS detail','point','bobot')->where('id_detail_params',$pin_bank_lain)->first();
+#6
+$scor_baki = DB::connection('simar')->table('master_creditscoring')->select('id_parameter AS parameter','id_detail_params AS detail','point','bobot')->where('id_detail_params',$baki_bank_lain)->first();
+
+#7
+$scor_ang_lain = DB::connection('simar')->table('master_creditscoring')->select('id_parameter AS parameter','id_detail_params AS detail','point','bobot')->where('id_detail_params',$ang_bank_lain)->first();
+#8
+$scor_idir = DB::connection('simar')->table('master_creditscoring')->select('id_parameter AS parameter','id_detail_params AS detail','point','bobot')->where('id_detail_params',$idir)->first();
+#9
+$scor_dsr = DB::connection('simar')->table('master_creditscoring')->select('id_parameter AS parameter','id_detail_params AS detail','point','bobot')->where('id_detail_params',$dsr)->first();
+#10
+$scor_coll = DB::connection('simar')->table('master_creditscoring')->select('id_parameter AS parameter','id_detail_params AS detail','point','bobot')->where('id_detail_params',$collateral)->first();
+#11
+$scor_ltv = DB::connection('simar')->table('master_creditscoring')->select('id_parameter AS parameter','id_detail_params AS detail','point','bobot')->where('id_detail_params',$ltv)->first();
+#12
+$scor_pem_jam = DB::connection('simar')->table('master_creditscoring')->select('id_parameter AS parameter','id_detail_params AS detail','point','bobot')->where('id_detail_params',$pemtn)->first();
+#13
+$scor_ten = DB::connection('simar')->table('master_creditscoring')->select('id_parameter AS parameter','id_detail_params AS detail','point','bobot')->where('id_detail_params',$ten)->first();
+#14
+$scor_ker = DB::connection('simar')->table('master_creditscoring')->select('id_parameter AS parameter','id_detail_params AS detail','point','bobot')->where('id_detail_params',$ker)->first();
+#15
+$scor_lokasi = DB::connection('simar')->table('master_creditscoring')->select('id_parameter AS parameter','id_detail_params AS detail','point','bobot')->where('id_detail_params',$tipelok)->first();
+#16
+$scor_jen_sert = DB::connection('simar')->table('master_creditscoring')->select('id_parameter AS parameter','id_detail_params AS detail','point','bobot')->where('id_detail_params',$jen_sert)->first();
+#17
+$scor_kap = DB::connection('simar')->table('master_creditscoring')->select('id_parameter AS parameter','id_detail_params AS detail','point','bobot')->where('id_detail_params',$bukti_kap)->first();
+#18
+$scor_rasio = DB::connection('simar')->table('master_creditscoring')->select('id_parameter AS parameter','id_detail_params AS detail','point','bobot')->where('id_detail_params',$ras_kapasitas)->first();
+
+#18
+$scor_pendapatan = DB::connection('simar')->table('master_creditscoring')->select('id_parameter AS parameter','id_detail_params AS detail','point','bobot')->where('id_detail_params',$pendapatan)->first();
+
+
+
+$merge_scor = array($scor_cc,$scor_sek,$scor_umr,$scor_tang,$scor_pin_bank_lain,$scor_baki,$scor_ang_lain,$scor_idir,$scor_dsr,$scor_coll,$scor_ltv,$scor_pem_jam,$scor_ten,$scor_ker,$scor_lokasi,$scor_jen_sert,$scor_kap,$scor_rasio,$scor_pendapatan);
+
+// // dd($merge_scor);
+
+
+     $arr_s = array();
+foreach ($merge_scor as $key => $val) {
+  if(!empty($val)) {
+    $arr_s[$key]['id_aplikasi'] = $id;
+    $arr_s[$key]['parameter'] = $val->parameter;
+    $arr_s[$key]['detail'] = $val->detail;
+    $arr_s[$key]['point'] = $val->point;
+    $arr_s[$key]['bobot'] = $val->bobot;
+}
+}
+
+  $ms_trans = master_transaksi::create($cs_trans);
+            $scor_params = master_nilai::insert($arr_s);
 
         try {
             DB::connection('web')->beginTransaction();

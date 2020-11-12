@@ -26,6 +26,12 @@ $app->withFacades(
     class_alias('Intervention\Image\Facades\Image', 'Image')
 );
 
+// $app->withFacade(
+// class_alias(Yajra\Datatables\Facades\Datatables::class, 'Datatables')
+// );
+
+
+
 $app->withEloquent();
 
 
@@ -99,6 +105,7 @@ $app->configure('database'); //file to ensure the Redis database configuration i
 $app->register(Irazasyed\Larasupport\Providers\ArtisanServiceProvider::class); // Artisan
 $app->register(Intervention\Image\ImageServiceProvider::class); // Intervention Image
 
+ // $app->register(Yajra\Datatables\DatatablesServiceProvider::class);
 /*
 |--------------------------------------------------------------------------
 | Load The Application Routes

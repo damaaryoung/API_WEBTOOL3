@@ -28,7 +28,32 @@ class AgunanTanah extends Model implements AuthenticatableContract, Authorizable
     protected $primaryKey = 'id';
 
     protected $fillable = [
-        'id_trans_so','tipe_lokasi','collateral', 'alamat', 'id_provinsi', 'id_kabupaten', 'id_kecamatan', 'id_kelurahan', 'rt', 'rw', 'luas_tanah', 'luas_bangunan', 'nama_pemilik_sertifikat', 'jenis_sertifikat', 'no_sertifikat', 'tgl_ukur_sertifikat', 'tgl_berlaku_shgb', 'no_imb', 'njop', 'nop', 'agunan_bag_depan', 'agunan_bag_jalan', 'agunan_bag_ruangtamu', 'agunan_bag_kamarmandi', 'agunan_bag_dapur', 'lamp_sertifikat', 'lamp_imb', 'lamp_pbb'
+        'id_trans_so','tipe_lokasi','collateral', 'alamat', 'id_provinsi', 'id_kabupaten', 'id_kecamatan', 'id_kelurahan', 'rt', 'rw', 'luas_tanah', 'luas_bangunan', 'nama_pemilik_sertifikat', 'jenis_sertifikat', 'no_sertifikat', 'tgl_ukur_sertifikat', 'tgl_berlaku_shgb', 'no_imb', 'njop', 'nop', 'agunan_bag_depan', 'agunan_bag_jalan', 'agunan_bag_ruangtamu', 'agunan_bag_kamarmandi', 'agunan_bag_dapur', 'lamp_sertifikat', 'lamp_imb', 'lamp_pbb',
+        'asli_ajb',
+  'asli_imb',
+  'asli_sppt',
+  'asli_skmht',
+  'asli_gambar_denah',
+  'asli_surat_roya',
+  'asli_sht',
+  'asli_stts',
+  'asli_ssb',
+  'imb',
+  'sppt',
+  'no_sppt',
+  'sppt_tahun',
+  'skmht',
+  'gambar_denah',
+  'surat_roya',
+  'sht',
+  'no_sht',
+  'sht_propinsi',
+  'sht_kota',
+  'stts',
+  'stts_tahun',
+  'ssb',
+  'ssb_atas_nama',
+  'lain_lain'
     ];
 
     protected $casts = [

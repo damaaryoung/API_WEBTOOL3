@@ -457,7 +457,19 @@ class Approval_Controller extends BaseController
 //dd($form);
         DB::connection('web')->beginTransaction();
 
+// $lpdk_status = Lpdk::where('id',$id)->first();
+   //     if ($lpdk_status !== NULL) {
+// Lpdk::where('id',$id)->update([ 'plafon' => $form['plafon'] , 'tenor' => $form['tenor']]);
+   //     }
+
     //    try {
+
+// if($form['plafon'] == 0 ) {
+// $form['status'] = 'forward';
+// }
+
+  s      // dd($id_pic);
+
  if ($form['status'] == 'accept')
         {
             Approval::where('id_trans_so',$id)->where('id', '>', $id_approval)->delete();
@@ -466,6 +478,11 @@ class Approval_Controller extends BaseController
             $str = str_replace("[","",$team_caa);
             $str2 = str_replace("]","",$str);
             TransCAA::where('id_trans_so',$id)->update(['pic_team_caa' => $str2]);
+
+            $lpdk_status = Lpdk::where('id',$id)->first();
+       if (!empty($lpdk_status)) {
+Lpdk::where('id',$id)->update([ 'plafon' => $form['plafon'] , 'tenor' => $form['tenor']]);
+        }
         }
 $last_pic = TransCAA::where('id_trans_so', $id)->first();
 $exp = explode(",",$last_pic->pic_team_caa);

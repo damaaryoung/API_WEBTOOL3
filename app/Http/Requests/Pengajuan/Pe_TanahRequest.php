@@ -25,7 +25,7 @@ class Pe_TanahRequest extends FormRequest
         if (empty($single)){
             $rules = [
                 // Pemeriksaan Agunan Tanah
-                'status_penghuni.*'       => 'in:PEMILIK,PENYEWA, KELUARGA',
+               // 'status_penghuni.*'       => 'in:PEMILIK,PENYEWA, KELUARGA',
                 // 'bentuk_bangunan.*'       => 'in:RUMAH,KONTRAKAN,VILLA,RUKO,APARTMENT',
                 'kondisi_bangunan.*'      => 'in:LAYAK,KURANG,TIDAK',
                 // 'nilai_taksasi_agunan.*'  => 'integer',
@@ -36,7 +36,7 @@ class Pe_TanahRequest extends FormRequest
         }else{
             $rules = [
                 // Pemeriksaan Agunan Tanah
-                'status_penghuni'        => 'in:PEMILIK,PENYEWA, KELUARGA',
+              //  'status_penghuni'        => 'in:PEMILIK,PENYEWA, KELUARGA',
                 // 'bentuk_bangunan'        => 'in:RUMAH,KONTRAKAN,VILLA,RUKO,APARTMENT',
                 'kondisi_bangunan'       => 'in:LAYAK,KURANG,TIDAK',
                 // 'nilai_taksasi_agunan'   => 'integer',
@@ -53,7 +53,7 @@ class Pe_TanahRequest extends FormRequest
     {
             return [
                 // Pemeriksaan Agunan Tanah
-                'status_penghuni.*.in'              => ':attribute harus salah satu dari jenis berikut :values',
+             //   'status_penghuni.*.in'              => ':attribute harus salah satu dari jenis berikut :values',
                 'bentuk_bangunan.*.in'              => ':attribute harus salah satu dari jenis berikut :values',
                 'kondisi_bangunan.*.in'             => ':attribute harus salah satu dari jenis berikut :values',
                 'nilai_taksasi_agunan.*.integer'    => ':attribute harus berupa angka / bilangan bulat',
@@ -62,7 +62,7 @@ class Pe_TanahRequest extends FormRequest
                 'nilai_likuidasi.*.integer'         => ':attribute harus berupa angka / bilangan bulat',
 
                 // Pemeriksaan Agunan Tanah
-                'status_penghuni.in'              => ':attribute harus salah satu dari jenis berikut :values',
+            //    'status_penghuni.in'              => ':attribute harus salah satu dari jenis berikut :values',
                 'bentuk_bangunan.in'              => ':attribute harus salah satu dari jenis berikut :values',
                 'kondisi_bangunan.in'             => ':attribute harus salah satu dari jenis berikut :values',
                 'nilai_taksasi_agunan.integer'    => ':attribute harus berupa angka / bilangan bulat',

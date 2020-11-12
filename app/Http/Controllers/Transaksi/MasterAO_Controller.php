@@ -419,7 +419,7 @@ class MasterAO_Controller extends BaseController
                 'nama_anak'             => $anak,
                 //'tgl_lahir_anak'        => $val->debt['tgl_lahir_anak'],
                 'tempat_lahir'          => $val->debt['tempat_lahir'],
-                'tgl_lahir'             => Carbon::parse($val->debt['tgl_lahir'])->format('d-m-Y'),
+                'tgl_lahir'             => Carbon::parse($val->debt['tgl_lahir'])->format('Y-m-d'),
                 'agama'                 => $val->debt['agama'],
                 'alamat_ktp' => [
                     'alamat_singkat' => $val->debt['alamat_ktp'],
@@ -1049,7 +1049,8 @@ class MasterAO_Controller extends BaseController
                     'tipe_lokasi'
                     => empty($req->tipe_lokasi_agunan[$i])
                         ? null : strtoupper($req->tipe_lokasi_agunan[$i]),
-                        'collateral'
+
+ 'collateral'
                     => empty($req->collateral[$i])
                         ? null : strtoupper($req->collateral[$i]),
 

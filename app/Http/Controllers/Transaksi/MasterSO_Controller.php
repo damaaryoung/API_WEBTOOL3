@@ -15,8 +15,6 @@ use App\Models\AreaKantor\PIC;
 use App\Models\Transaksi\Lpdk_penjamin;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
-use App\Models\master_nilai;
-use App\Models\master_transaksi;
 use Illuminate\Support\Facades\DB;
 
 class MasterSO_Controller extends BaseController
@@ -381,12 +379,13 @@ class MasterSO_Controller extends BaseController
                     "status"  => "Expired",
                     'message' => "Akun belum aktif kembali, belum ada 1 bulan yang lalu, tepatnya pada tanggal '" . Carbon::parse($check_ktp_web->created_at)->format("Y-m-d") . "' debitur dengan nama '{$check_ktp_web->nama_lengkap}' telah melakukan pengajuan"
                 ], 403);
-            } else {
+            } 
+ else {
                 return response()->json([
                     "code"    => 403,
                     "status"  => "Forbidden",
                     "message" => "Akun telah ada di sistem, gunakan endpoint berikut apabila ingin menggunakan datanya",
-                    "endpoint" => "/api/debitur/" . $check_ktp_web->id
+                   "endpoint" => "/api/debitur/" . $check_ktp_web->id
                 ], 403);
             }
         } else {
@@ -548,7 +547,7 @@ class MasterSO_Controller extends BaseController
                 'no_npwp'               => $req->input('no_npwp'),
                 'tempat_lahir'          => $req->input('tempat_lahir'),
                 'tgl_lahir'             => empty($req->input('tgl_lahir')) ? null : Carbon::parse($req->input('tgl_lahir'))->format('Y-m-d'),
-                'umur'                  => $req->input('umur'),
+                'umur'          => $req->input('umur'),
                 'agama'                 => strtoupper($req->input('agama')),
                 'alamat_ktp'            => $alamat_ktp = $req->input('alamat_ktp'),
                 'rt_ktp'                => $rt_ktp = $req->input('rt_ktp'),
@@ -579,96 +578,6 @@ class MasterSO_Controller extends BaseController
                 'NASABAH_ID'            => $NASABAH_ID,
                 'email'          => $req->input('email'),
             );
-
-
-                   $sek = $dataDebitur['pendidikan_terakhir'];
-
-           switch ($sek) {
-  case "Tidak Sekolah/SD":
-    $sek = "0021";
-    break;
-  case "SMP":
-     $sek = "0022";
-    break;
-
- case "SMA":
-     $sek = "0023";
-    break;
-     case "D3/S1":
-     $sek = "0024";
-    break;
-     case "S2/S3":
-     $sek = "0025";
-    break;
- # case "green":
-  #  echo "Your favorite color is green!";
-   # break;
-  default:
-    $sek = null;
-}
-
-       $tang = $dataDebitur['jumlah_tanggungan'];
-
-           switch ($tang) {
-  case 0:
-    $tang = "0041";
-    break;
-  case 1:
-     $tang = "0042";
-    break;
-
- case 2:
-     $tang = "0043";
-    break;
-     case 3:
-     $tang = "0044";
-    break;
-case ( $tang = 4 && $tang > 4) :
-     $tang = "0045";
-    break;
- # case "green":
-  #  echo "Your favorite color is green!";
-   # break;
-  default:
-    $tang = null;
-}
-
-      $umr = $dataDebitur['umur'];
-
-           switch ($umr) {
-  case ($umr <= 30 && $umr >= 21 ):
-    $umr = "0031";
-    break;
-  case ($umr <= 40 && $umr >= 30 ):
-     $umr = "0032";
-    break;
- case ($umr <= 50 && $umr >= 40):
-     $umr = "0033";
-    break;
-     case ($umr <= 60 && $umr >= 50 ):
-     $umr = "0034";
-    break;
-     case ($umr > 60 ):
-     $umr = "0035";
-    break;
- # case "green":
-  #  echo "Your favorite color is green!";
-   # break;
-  default:
-    $umr = null;
-}
-
-$merge_scor = array($sek,$tang,$umr);
-
-$scor_sek = DB::connection('simar')->table('master_creditscoring')->select('id_parameter AS parameter','id_detail_params AS detail','point','bobot')->where('id_detail_params',$sek)->first();
-
-$scor_tang = DB::connection('simar')->table('master_creditscoring')->select('id_parameter AS parameter','id_detail_params AS detail','point','bobot')->where('id_detail_params',$tang)->first();
-
-$scor_umr = DB::connection('simar')->table('master_creditscoring')->select('id_parameter AS parameter','id_detail_params AS detail','point','bobot')->where('id_detail_params',$umr)->first();
-
-$merge_scor = array($scor_sek,$scor_tang,$scor_umr);
-
-
 
             if ($file = $req->file('lamp_ktp_pas')) {
                 $name       = 'ktp.';
@@ -792,7 +701,7 @@ $merge_scor = array($scor_sek,$scor_tang,$scor_umr);
         }
 
         DB::connection('web')->beginTransaction();
-        // try {
+        try {
             $debt = Debitur::create($dataDebitur);
 
             if ($dataFasPin) {
@@ -833,32 +742,6 @@ $merge_scor = array($scor_sek,$scor_tang,$scor_umr);
 //dd($mergeTr);
             $transaksi = TransSO::create($mergeTr);
 
-
-             $arr_s = array();
-foreach ($merge_scor as $key => $val) {
-    $arr_s[$key]['id_aplikasi'] = $transaksi->id;
-    $arr_s[$key]['parameter'] = $val->parameter;
-    $arr_s[$key]['detail'] = $val->detail;
-    $arr_s[$key]['point'] = $val->point;
-    $arr_s[$key]['bobot'] = $val->bobot;
-}
-
-// dd($arr_s);
-
-$data_cs_trans = array(
-"tgl_transaksi" => $transaksi->created_at,
-"id_aplikasi" => $transaksi->id,
-"nomor_aplikasi" => $transaksi->nomor_so,
-"nama_debitur" => $debt->nama_lengkap,
-"id_area" => $transaksi->id_area,
-"id_cabang" => $transaksi->id_cabang,
-"nama_so" => $transaksi->nama_so
-);
-
-// dd($arr_s);
-            $ms_trans = master_transaksi::create($data_cs_trans);
-            $scor_params = master_nilai::insert($arr_s);
-
             $pen_exp = explode(',', $penID);
 
             Penjamin::whereIn('id', $pen_exp)->update(['id_trans_so' => $transaksi->id]);
@@ -872,14 +755,14 @@ $data_cs_trans = array(
                 'message' => 'Data berhasil dibuat',
                 'data'   => $transaksi
             ], 200);
-        // } catch (\Exception $e) {
-        //     $err = DB::connection('web')->rollback();
-        //     return response()->json([
-        //         'code'    => 501,
-        //         'status'  => 'error',
-        //         'message' => $err
-        //     ], 501);
-        // }
+        } catch (\Exception $e) {
+            $err = DB::connection('web')->rollback();
+            return response()->json([
+                'code'    => 501,
+                'status'  => 'error',
+                'message' => $err
+            ], 501);
+        }
     }
 
     public function update($id, Request $request, BlankRequest $req)

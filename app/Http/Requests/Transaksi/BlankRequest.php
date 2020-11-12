@@ -150,12 +150,12 @@ class BlankRequest extends FormRequest
                 'val_agunan'          => 'integer',
 
                 // Agunan Tanah
-                'tipe_lokasi_agunan.*'  => 'in:PERUM,BIASA',
+                'tipe_lokasi_agunan.*'  => 'in:PERUM,BIASA,JAMINAN PINGGIR JALAN RAYA,KAVLING,LAINNYA,PERKAMPUNGAN AKSES JALAN MOBIL,PERUMAHAN/CLUSTER',
                 'rt_agunan.*'           => 'numeric',
                 'rw_agunan.*'           => 'numeric',
                 'luas_tanah.*'          => 'integer',
                 'luas_bangunan.*'       => 'integer',
-                'jenis_sertifikat.*'    => 'in:SHM,SHGB',
+                'jenis_sertifikat.*'    => 'in:SHM,SHGB,SHGB Aktif,SHGB Akan Expired < 5 Tahun,SHM PTSL,LAINNYA',
                 // 'tgl_ukur_sertifikat.*' => 'date_format:d-m-Y',
                 // 'tgl_berlaku_shgb.*'      => 'date_format:d-m-Y',
                 'agunan_bag_depan.*'      => 'mimes:jpg,jpeg,png,pdf',
@@ -239,7 +239,7 @@ class BlankRequest extends FormRequest
                 // Ringkasan Analisa CA
                 'kuantitatif_ttl_pendapatan'  => 'integer',
                 'kuantitatif_ttl_pengeluaran' => 'integer',
-                'kuantitatif_pendapatan'      => 'integer',
+                 'kuantitatif_pendapatan'      => 'integer',
                 'kuantitatif_angsuran'        => 'integer',
                 // 'kuantitatif_ltv'             => 'integer',
                 // 'kuantitatif_dsr'             => 'integer',
@@ -416,12 +416,12 @@ class BlankRequest extends FormRequest
                 'val_agunan'          => 'integer',
 
                 // Agunan Tanah
-                'tipe_lokasi_agunan.*'  => 'in:PERUM,BIASA',
+                'tipe_lokasi_agunan.*'  => 'in:PERUM,BIASA,JAMINAN PINGGIR JALAN RAYA,KAVLING,LAINNYA,PERKAMPUNGAN AKSES JALAN MOBIL,PERUMAHAN/CLUSTER',
                 'rt_agunan.*'           => 'numeric',
                 'rw_agunan.*'           => 'numeric',
                 'luas_tanah.*'          => 'integer',
                 'luas_bangunan.*'       => 'integer',
-                'jenis_sertifikat.*'    => 'in:SHM,SHGB',
+                'jenis_sertifikat.*'    => 'in:SHM,SHGB,SHGB Aktif,SHGB Akan Expired < 5 Tahun,SHM PTSL,LAINNYA',
                 // 'tgl_ukur_sertifikat.*' => 'date_format:d-m-Y',
                 // 'tgl_berlaku_shgb.*'      => 'date_format:d-m-Y',
                 'agunan_bag_depan.*'      => 'mimes:jpg,jpeg,png,pdf',
@@ -504,7 +504,7 @@ class BlankRequest extends FormRequest
                 // Ringkasan Analisa CA
                 'kuantitatif_ttl_pendapatan'  => 'integer',
                 'kuantitatif_ttl_pengeluaran' => 'integer',
-                'kuantitatif_pendapatan'      => 'integer',
+                 'kuantitatif_pendapatan'      => 'integer',
                 'kuantitatif_angsuran'        => 'integer',
                 // 'kuantitatif_ltv'             => 'integer',
                 // 'kuantitatif_dsr'             => 'integer',
@@ -840,8 +840,8 @@ class BlankRequest extends FormRequest
 
             // Ringkasan Analisa CA
             'kuantitatif_ttl_pendapatan.integer'  => $integer,
-            'kuantitatif_ttl_pengeluaran.integer' => $integer,
-            'kuantitatif_pendapatan.integer'      => $integer,
+            // 'kuantitatif_ttl_pengeluaran.integer' => $integer,
+             'kuantitatif_pendapatan.integer'      => $integer,
             'kuantitatif_angsuran.integer'        => $integer,
             // 'kuantitatif_ltv.integer'             => $integer,
             // 'kuantitatif_dsr.integer'             => $integer,

@@ -1,6 +1,6 @@
 <?php
 
-$production = '103.31.232.146';
+$production = '202.73.24.188';
 $office     = '103.234.254.186';
 
 $url_production = $production . ':4100';

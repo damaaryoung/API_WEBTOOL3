@@ -76,7 +76,6 @@ class Lpdk_Controller extends BaseController
 
       //  $query_dir = Lpdk::with('pic', 'cabang')->orderBy('created_at', 'desc');
       $query_dir =  ViewApproval::with('pic','area', 'cabang');
-      // ->where('status_team_caa','<>','ON-PROGRESS');
     //   ->orderBy('created_at', 'desc');
         $query = Helper::checkDir($scope, $query_dir, $id_area, $id_cabang); 
         //$lpdk =  DB::connection('web')->table('view_approval_caa')->get();
@@ -640,7 +639,7 @@ $scope     = $arrrr;
 
 
 
-$query_dir = Lpdk::with('pic','area', 'cabang');
+$query_dir = Lpdk::with('pic','area', 'cabang')->orderBy('created_at', 'desc');
 
 $query = Helper::checkDir($scope, $query_dir, $id_area, $id_cabang); 
         // $lpdk =  DB::connection('web')->table('vw_memo_ca_approve')->get();
@@ -1005,7 +1004,7 @@ $scope     = $arrrr;
 
 //dd($arrr);
 
-$query_dir = Lpdk::with('pic','area', 'cabang')->orWhere('status_kredit', 'ON-PROGRESS')->orWhere('status_kredit', 'REALISASI');
+$query_dir = Lpdk::with('pic','area', 'cabang')->orWhere('status_kredit', 'ON-PROGRESS')->orWhere('status_kredit', 'REALISASI')->orderBy('created_at', 'desc');
 
 $query = Helper::checkDir($scope, $query_dir, $id_area, $id_cabang); 
         // $lpdk =  DB::connection('web')->table('vw_memo_ca_approve')->get();

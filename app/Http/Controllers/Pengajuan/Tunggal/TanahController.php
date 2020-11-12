@@ -117,6 +117,7 @@ class TanahController extends BaseController
 
         $data = array(
             'tipe_lokasi'             => $req->input('tipe_lokasi_agunan'),
+            'collateral'             => $req->input('tipe_lokasi_agunan_collateral'),
 
             'alamat'                  => $req->input('alamat_agunan'),
 
@@ -209,6 +210,7 @@ class TanahController extends BaseController
         $data = array(
             'id'          => $check->id == null ? null : (int) $check->id,
             'tipe_lokasi' => $check->tipe_lokasi,
+'collateral' => $check->collateral,
             'alamat' => [
                 'alamat_singkat' => $check->alamat,
                 'rt' => $check->rt == null ? null : (int) $check->rt,
@@ -394,6 +396,11 @@ class TanahController extends BaseController
             ? $ao->id_trans_so : $req->input('trans_so'),
             'tipe_lokasi'             => empty($req->input('tipe_lokasi_agunan'))
                 ? $check_tan->tipe_lokasi : strtoupper($req->input('tipe_lokasi_agunan')),
+
+                   'collateral'                  => empty($req->input('tipe_lokasi_agunan_collateral'))
+                ? $check_tan->collateral : $req->input('tipe_lokasi_agunan_collateral'),
+
+
 
             'alamat'                  => empty($req->input('alamat_agunan'))
                 ? $check_tan->alamat : $req->input('alamat_agunan'),
@@ -602,6 +609,8 @@ class TanahController extends BaseController
                 ? $ao->id_trans_so : $req->input('trans_so'),
             'tipe_lokasi'             => empty($req->input('tipe_lokasi_agunan'))
                 ? $check_tan->tipe_lokasi : strtoupper($req->input('tipe_lokasi_agunan')),
+                'collateral'             => empty($req->input('tipe_lokasi_agunan_collateral'))
+                ? $check_tan->collateral : strtoupper($req->input('tipe_lokasi_agunan_collateral')),
 
             'alamat'                  => empty($req->input('alamat_agunan'))
                 ? $check_tan->alamat : $req->input('alamat_agunan'),

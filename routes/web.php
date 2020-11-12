@@ -4,6 +4,11 @@ $router->get('/', function () use ($router) {
     return 'API - SEFIN';
 });
 
+$router->get('/test', function () use ($router) {
+    return 'API - SEFIN TESSTTT';
+});
+
+
 $router->get('/api', function () use ($router) {
     return redirect('/');
 });
@@ -305,6 +310,28 @@ $router->group(['middleware' => ['jwt.auth', 'log'], 'prefix' => 'api'], functio
 
         // Transaksi From SO -> CAA, etc
         $router->group(['middleware' => 'pic', 'namespace' => 'Transaksi'], function () use ($router) {
+
+  //cek sertifikat
+  $router->group(['prefix' => '/sertifikat',], function () use ($router) {
+                 $router->post('/',     ['subject' => 'Create Sertifikat', 'uses' => 'SertifikatController@store']);
+                $router->get('/',      ['subject' => 'Read Sertifikat',   'uses' => 'SertifikatController@index']);
+                $router->post('/update/{id}', ['subject' => 'Update Trans_SO', 'uses' => 'SertifikatController@update']);
+                 $router->get('/{id}',  ['subject' => 'Detail Trans_SO', 'uses' => 'SertifikatController@show']);
+
+                   $router->get('filter/cari/',  ['subject' => 'Filter Trans_SO', 'uses' => 'SertifikatController@filter']);
+  });
+
+ //Target Lending
+ $router->group(['prefix' => '/target',], function () use ($router) {
+                $router->post('/tambah',     ['subject' => 'Create Sertifikat', 'uses' => 'TargetLendingController@store']);
+               $router->get('/',      ['subject' => 'Read Sertifikat',   'uses' => 'TargetLendingController@index']);
+                $router->post('/update/{id_no}', ['subject' => 'Update Trans_SO', 'uses' => 'TargetLendingController@update']);
+                $router->get('/{id}',  ['subject' => 'Detail Trans_SO', 'uses' => 'TargetLendingController@show']);
+                $router->delete('/delete/{id_no}',  ['subject' => 'Detail Trans_SO', 'uses' => 'TargetLendingController@delete']);
+            });
+
+
+
             // Trans SO
             $router->group(['prefix' => '/mcc',], function () use ($router) {
                 $router->post('/',     ['subject' => 'Create Trans_SO', 'uses' => 'MasterSO_Controller@store']);
@@ -425,7 +452,41 @@ $router->group(['prefix' => '/collectresult'], function () use ($router) {
             $router->get('/get/OLrev/log_biaya/{id}', ['subject' => 'Get Data Biaya Revisi OL', 'uses' => 'LogEditOLController@show']);
             $router->get('/get/OLrev/log/all', ['subject' => 'Get All Data Revisi OL', 'uses' => 'LogEditOLController@getAllLog']);
         });
+
+ // Master Activity
+            $router->group(['prefix' => '/MasterActivity'], function () use ($router) {
+                $router->post('/pic', ['subject' => 'Create Activity PIC', 'uses' => 'MasterActivityController@storeAktivitas']);
+                    $router->get('/indexpic', ['subject' => 'Create Activity PIC', 'uses' => 'MasterActivityController@showAktivitas']);
+                     $router->get('/filterpic', ['subject' => 'Create Activity PIC', 'uses' => 'MasterActivityController@filterAktivitas']);
+                      $router->get('/detailpic/{id}', ['subject' => 'Create Activity PIC', 'uses' => 'MasterActivityController@showdetailAktivitas']);
+                       $router->delete('/deletepic/{id}', ['subject' => 'Create Activity PIC', 'uses' => 'MasterActivityController@deletedetailAktivitas']);
+                        $router->post('/putpic/{id}', ['subject' => 'Create Activity PIC', 'uses' => 'MasterActivityController@putAktivitas']);
+                $router->post('/periodik', ['subject' => 'Create Activity PIC', 'uses' => 'MasterActivityController@storeTargetPeriodik']);
+                 $router->get('/indexperiodik', ['subject' => 'Create Activity PIC', 'uses' => 'MasterActivityController@showTargetPeriodik']);
+                  $router->delete('/periodik/delete/{bulan}/{tahun}/{periode}', ['subject' => 'Create Activity PIC', 'uses' => 'MasterActivityController@deleteTargetPeriodik']);
+                $router->post('/approval', ['subject' => 'Create Activity PIC', 'uses' => 'MasterActivityController@storeTargetApprovalPeriodik']);
+                 $router->post('/indexapproval', ['subject' => 'Create Activity PIC', 'uses' => 'MasterActivityController@showApprovalperiodik']);
+                });
+
+ // Master Activity
+            $router->group(['prefix' => '/Activity'], function () use ($router) {
+                $router->post('/so', ['subject' => 'Create Activity PIC', 'uses' => 'ActivitySO_Controller@storeSoActivity']);
+                $router->post('/so/update', ['subject' => 'Create Activity PIC', 'uses' => 'ActivitySO_Controller@updateSoActivity']);
+                $router->get('/so/index', ['subject' => 'Create Activity PIC', 'uses' => 'ActivitySO_Controller@indexSoActivity']);
+                $router->get('/so/detail/{id}', ['subject' => 'Create Activity PIC', 'uses' => 'ActivitySO_Controller@detailSoActivity']);
+                $router->get('/so/viewNasabahMikro', ['subject' => 'Create Activity PIC', 'uses' => 'ActivitySO_Controller@viewNasabahMikro']);
+                $router->get('/so/viewMB', ['subject' => 'Create Activity PIC', 'uses' => 'ActivitySO_Controller@viewMB']);
+ $router->get('/so/viewMB/{kode}', ['subject' => 'Create Activity PIC', 'uses' => 'ActivitySO_Controller@detailMB']);
+
+                // Aktivitas AO
+
+             $router->get('/ao', ['subject' => 'Create Activity PIC', 'uses' => 'ActivityAO_Controller@storeAoActivity']);
+           
+                });
     });
+
+
+ 
 
     // Menu
     $router->group(['prefix' => '/menu', 'namespace' => 'Menu'], function () use ($router) {
