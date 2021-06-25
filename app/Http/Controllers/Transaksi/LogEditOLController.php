@@ -24,7 +24,6 @@ use App\Models\AreaKantor\PIC;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use App\Models\Transaksi\LogRekomCA;
-use App\Models\Transaksi\LogRingAnalisa;
 use Image;
 use Illuminate\Support\Facades\DB;
 
@@ -76,12 +75,6 @@ class LogEditOLController extends BaseController
 
         $trans_ca = TransCA::where('id_trans_so', $id)->first();
         $log = LogRekomCA::where('id', $trans_ca->id_recom_ca)->first();
-        $logRingAnalisa = LogRingAnalisa::where('id', $trans_ca->id_ringkasan_analisa);
-
-        $data = array(
-            'log_rekomendasi_CA' => $log,
-            'log_ringkasan_analisa' => $logRingAnalisa
-        );
 
         if (empty($log)) {
             return response()->json([
@@ -95,7 +88,7 @@ class LogEditOLController extends BaseController
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'data'   => $data
+                'data'   => $log
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
@@ -115,14 +108,8 @@ class LogEditOLController extends BaseController
         $scope     = $pic->jpic['cakupan'];
 
         $log = LogRekomCA::get();
-        $logRingAnalisa = LogRingAnalisa::get();
 
-        $data = array(
-            'log_rekomendasi_CA' => $log,
-            'log_ringkasan_analisa' => $logRingAnalisa
-        );
-
-        if (empty($log) || empty($logRingAnalisa)) {
+        if (empty($log)) {
             return response()->json([
                 'code'   => 404,
                 'status' => 'not found',
@@ -133,7 +120,7 @@ class LogEditOLController extends BaseController
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'data'   => $data
+                'data'   => $log
             ], 200);
         } catch (\Exception $e) {
             return response()->json([

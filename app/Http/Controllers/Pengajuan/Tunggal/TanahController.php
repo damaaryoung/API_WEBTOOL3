@@ -116,6 +116,7 @@ class TanahController extends BaseController
         /** */
 
         $data = array(
+	'id_trans_so'			=> $id_trans,
             'tipe_lokasi'             => $req->input('tipe_lokasi_agunan'),
             'collateral'             => $req->input('tipe_lokasi_agunan_collateral'),
 
@@ -149,7 +150,9 @@ class TanahController extends BaseController
 
             'no_imb'                  => $req->input('no_imb'),
             'njop'                    => $req->input('njop'),
-            'nop'                     => $req->input('nop')
+            'nop'                     => $req->input('nop'),
+"created_at" => Carbon::parse(Carbon::now())->format('Y-m-d H:i:s'),
+"updated_at" => Carbon::parse(Carbon::now())->format('Y-m-d H:i:s')
 
         );
         $arr = array();

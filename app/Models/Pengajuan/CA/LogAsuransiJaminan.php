@@ -19,17 +19,17 @@ class LogAsuransiJaminan extends Model implements AuthenticatableContract, Autho
      */
     protected $connection = 'web';
 
-    protected $table = 'asuransi_jaminan_kebakaran';
+    protected $table = 'log_asuransi_jaminan_kebakaran';
     protected $primaryKey = 'id';
 
     protected $fillable = [
-        'id', 'nama_asuransi', 'jangka_waktu', 'nilai_pertanggungan', 'jatuh_tempo'
+        'id','nama_asuransi', 'jangka_waktu', 'nilai_pertanggungan', 'jatuh_tempo'
     ];
 
-    protected $casts = [
-        'jangka_waktu' => 'integer',
-        'jatuh_tempo' => 'date:Y-m-d'
-    ];
+    // protected $casts = [
+    //     'jangka_waktu' => 'integer',
+    //     'jatuh_tempo' => 'date:Y-m-d'
+    // ];
 
     public $timestamps = false;
 }

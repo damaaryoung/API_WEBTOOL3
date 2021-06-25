@@ -54,8 +54,8 @@ class DebiturRequest extends FormRequest
         $rules = [
             // Debitur
             'jenis_kelamin'         => 'in:L,P',
-            'status_nikah'          => 'in:SINGLE,NIKAH,CERAI',
-            'tgl_lahir'             => 'date_format:d-m-Y',
+            'status_nikah'          => 'in:Single,Menikah,Janda/Duda',
+            // 'tgl_lahir'             => 'date_format:d-m-Y',
             // 'agama'                 => 'in:ISLAM,KRISTEN,KHATOLIK,HINDU,BUDHA',
             'rt_ktp'                => 'numeric',
             'rw_ktp'                => 'numeric',
@@ -73,7 +73,7 @@ class DebiturRequest extends FormRequest
             'tgl_lahir_anak.*'      => 'date_format:d-m-Y',
             'tinggi_badan'          => 'numeric',
             'berat_badan'           => 'numeric',
-            'pekerjaan'             => 'in:KARYAWAN,PNS,WIRASWASTA,PENGURUS_RT',
+         //   'pekerjaan'             => 'in:KARYAWAN,PNS,WIRASWASTA,PENGURUS_RT',
             'id_prov_tempat_kerja'  => 'numeric',
             'id_kab_tempat_kerja'   => 'numeric',
             'id_kec_tempat_kerja'   => 'numeric',
@@ -115,7 +115,7 @@ class DebiturRequest extends FormRequest
             'no_kk.unique'                   => ':attribute telah ada yang menggunakan',
             'no_npwp.digits'                 => ':attribute harus berupa angka dan berjumlah :digits digit',
             'no_npwp.unique'                 => ':attribute telah ada yang menggunakan',
-            'tgl_lahir.date_format'          => ':attribute harus berupa angka dengan format :format',
+         //   'tgl_lahir.date_format'          => ':attribute harus berupa angka dengan format :format',
             // 'agama.in'                       => ':attribute harus salah satu dari jenis berikut :values',
             'rt_ktp.numeric'                 => ':attribute harus berupa angka',
             'rw_ktp.numeric'                 => ':attribute harus berupa angka',

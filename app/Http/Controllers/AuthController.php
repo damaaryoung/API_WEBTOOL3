@@ -40,7 +40,7 @@ class AuthController extends Controller
             'email'     => $user->email,
             'nama'      => $user->nama,
             'iat'       => time(), // created at
-            'exp'       => time() + (60*60*24*7*2) //,expiresIn: '14d'
+           // 'exp'       => time() + (60*60*24*7*2) //,expiresIn: '14d'
         ];
         return JWT::encode($payload, env('JWT_SECRET'));
     }
@@ -53,6 +53,7 @@ class AuthController extends Controller
         $username = $request->input('user');
         $password = $request->input('password');
         $fcm_token= $request->input('fcm_token');
+$username = strtolower($username);
 
         $user = User::where('user', $username)->first();
 

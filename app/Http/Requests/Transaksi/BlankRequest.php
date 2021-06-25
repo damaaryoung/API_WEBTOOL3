@@ -70,7 +70,7 @@ class BlankRequest extends FormRequest
                 'no_ktp_kk'             => 'digits:16',
                 'no_kk'                 => 'digits:16',
                 'no_npwp'               => 'digits:15',
-                'tgl_lahir'             => 'date_format:d-m-Y',
+              //  'tgl_lahir'             => 'date_format:d-m-Y',
                 'rt_ktp'                => 'numeric',
                 'rw_ktp'                => 'numeric',
                 'id_provinsi_ktp'       => 'integer',
@@ -83,7 +83,7 @@ class BlankRequest extends FormRequest
                 'id_kabupaten_domisili' => 'integer',
                 'id_kecamatan_domisili' => 'integer',
                 'id_kelurahan_domisili' => 'integer',
-                'jumlah_tanggungan'     => 'integer',
+               // 'jumlah_tanggungan'     => 'integer',
                 'no_telp'               => 'between:9,13',
                 'no_hp'                 => 'between:9,13',
 
@@ -155,7 +155,7 @@ class BlankRequest extends FormRequest
                 'rw_agunan.*'           => 'numeric',
                 'luas_tanah.*'          => 'integer',
                 'luas_bangunan.*'       => 'integer',
-                'jenis_sertifikat.*'    => 'in:SHM,SHGB,SHGB Aktif,SHGB Akan Expired < 5 Tahun,SHM PTSL,LAINNYA',
+                'jenis_sertifikat.*'    => 'in:SHM,SHGB',
                 // 'tgl_ukur_sertifikat.*' => 'date_format:d-m-Y',
                 // 'tgl_berlaku_shgb.*'      => 'date_format:d-m-Y',
                 'agunan_bag_depan.*'      => 'mimes:jpg,jpeg,png,pdf',
@@ -198,12 +198,12 @@ class BlankRequest extends FormRequest
                 'biaya_lain_lain'      => 'integer',
 
                 // Pemeriksaan Agunan Kendaraan
-                'status_pengguna_ken.*' => 'in:PEMILIK,PENYEWA,KELUARGA',
+             //   'status_pengguna_ken.*' => 'in:PEMILIK,PENYEWA,KELUARGA',
                 'jml_roda_ken.*'        => 'integer',
                 'km_ken.*'              => 'integer',
 
                 // Pemeriksaan Agunan Tanah
-                'status_penghuni.*'       => 'in:PEMILIK,PENYEWA,KELUARGA',
+               // 'status_penghuni.*'       => 'in:PEMILIK,PENYEWA,KELUARGA',
                 // 'bentuk_bangunan.*'       => 'in:RUMAH,KONTRAKAN,VILLA,RUKO,APARTMENT',
                 'kondisi_bangunan.*'      => 'in:LAYAK,KURANG,TIDAK',
                 // 'nilai_taksasi_agunan.*'  => 'integer',
@@ -239,7 +239,7 @@ class BlankRequest extends FormRequest
                 // Ringkasan Analisa CA
                 'kuantitatif_ttl_pendapatan'  => 'integer',
                 'kuantitatif_ttl_pengeluaran' => 'integer',
-                 'kuantitatif_pendapatan'      => 'integer',
+                'kuantitatif_pendapatan'      => 'integer',
                 'kuantitatif_angsuran'        => 'integer',
                 // 'kuantitatif_ltv'             => 'integer',
                 // 'kuantitatif_dsr'             => 'integer',
@@ -300,7 +300,7 @@ class BlankRequest extends FormRequest
                 // 'no_npwp'               => 'required|digits:15',
                 'no_npwp'               => 'digits:15',
                 'tempat_lahir'          => 'required',
-                'tgl_lahir'             => 'required|date_format:d-m-Y',
+             //   'tgl_lahir'             => 'required|date_format:d-m-Y',
                 'agama'                 => 'required',
                 'alamat_ktp'            => 'required',
                 'rt_ktp'                => 'required|numeric',
@@ -315,7 +315,7 @@ class BlankRequest extends FormRequest
                 'id_kabupaten_domisili' => 'integer',
                 'id_kecamatan_domisili' => 'integer',
                 'id_kelurahan_domisili' => 'integer',
-                'jumlah_tanggungan'     => 'integer',
+            //    'jumlah_tanggungan'     => 'integer',
                 'pendidikan_terakhir'   => 'required',
                 'no_telp'               => 'required|between:9,13',
                 'no_hp'                 => 'between:9,13',
@@ -421,7 +421,7 @@ class BlankRequest extends FormRequest
                 'rw_agunan.*'           => 'numeric',
                 'luas_tanah.*'          => 'integer',
                 'luas_bangunan.*'       => 'integer',
-                'jenis_sertifikat.*'    => 'in:SHM,SHGB,SHGB Aktif,SHGB Akan Expired < 5 Tahun,SHM PTSL,LAINNYA',
+                'jenis_sertifikat.*'    => 'in:SHM,SHGB',
                 // 'tgl_ukur_sertifikat.*' => 'date_format:d-m-Y',
                 // 'tgl_berlaku_shgb.*'      => 'date_format:d-m-Y',
                 'agunan_bag_depan.*'      => 'mimes:jpg,jpeg,png,pdf',
@@ -464,12 +464,12 @@ class BlankRequest extends FormRequest
                 'biaya_lain_lain'      => 'integer',
 
                 // Pemeriksaan Agunan Kendaraan
-                'status_pengguna_ken.*' => 'in:PEMILIK,PENYEWA,KELUARGA',
+              //  'status_pengguna_ken.*' => 'in:PEMILIK,PENYEWA,KELUARGA',
                 'jml_roda_ken.*'        => 'integer',
                 'km_ken.*'              => 'integer',
 
                 // Pemeriksaan Agunan Tanah
-                'status_penghuni.*'       => 'in:PEMILIK,PENYEWA,KELUARGA',
+               // 'status_penghuni.*'       => 'in:PEMILIK,PENYEWA,KELUARGA',
                 // 'bentuk_bangunan.*'       => 'in:RUMAH,KONTRAKAN,VILLA,RUKO,APARTMENT',
                 'kondisi_bangunan.*'      => 'in:LAYAK,KURANG,TIDAK',
                 // 'nilai_taksasi_agunan.*'  => 'integer',
@@ -504,7 +504,7 @@ class BlankRequest extends FormRequest
                 // Ringkasan Analisa CA
                 'kuantitatif_ttl_pendapatan'  => 'integer',
                 'kuantitatif_ttl_pengeluaran' => 'integer',
-                 'kuantitatif_pendapatan'      => 'integer',
+                'kuantitatif_pendapatan'      => 'integer',
                 'kuantitatif_angsuran'        => 'integer',
                 // 'kuantitatif_ltv'             => 'integer',
                 // 'kuantitatif_dsr'             => 'integer',
@@ -586,7 +586,7 @@ class BlankRequest extends FormRequest
             'no_kk.required'                  => $required,
             // 'no_npwp.required'                => $required,
             'tempat_lahir.required'           => $required,
-            'tgl_lahir.required'              => $required,
+          //  'tgl_lahir.required'              => $required,
             'agama.required'                  => $required,
             'alamat_ktp.required'             => $required,
             'rt_ktp.required'                 => $required,
@@ -609,7 +609,7 @@ class BlankRequest extends FormRequest
             // 'no_kk.unique'                   => $unique,
             'no_npwp.digits'                 => $digits,
             // 'no_npwp.unique'                 => $unique,
-            'tgl_lahir.date_format'          => $date_format,
+         //   'tgl_lahir.date_format'          => $date_format,
             // 'agama.in'                       => $in,
             'rt_ktp.numeric'                 => $numeric,
             'rw_ktp.numeric'                 => $numeric,
@@ -618,7 +618,7 @@ class BlankRequest extends FormRequest
             'id_kecamatan_ktp.integer'       => $integer,
             'id_kelurahan_ktp.integer'       => $integer,
 
-            'jumlah_tanggungan.integer'      => $integer,
+          //  'jumlah_tanggungan.integer'      => $integer,
             'no_telp.between'                => $between,
             'no_telp.unique'                 => $unique,
             'no_hp.between'                  => $between,
@@ -840,8 +840,8 @@ class BlankRequest extends FormRequest
 
             // Ringkasan Analisa CA
             'kuantitatif_ttl_pendapatan.integer'  => $integer,
-            // 'kuantitatif_ttl_pengeluaran.integer' => $integer,
-             'kuantitatif_pendapatan.integer'      => $integer,
+            'kuantitatif_ttl_pengeluaran.integer' => $integer,
+            'kuantitatif_pendapatan.integer'      => $integer,
             'kuantitatif_angsuran.integer'        => $integer,
             // 'kuantitatif_ltv.integer'             => $integer,
             // 'kuantitatif_dsr.integer'             => $integer,

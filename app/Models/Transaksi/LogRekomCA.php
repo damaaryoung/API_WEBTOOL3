@@ -23,7 +23,7 @@ class LogRekomCA extends Model implements AuthenticatableContract, AuthorizableC
     protected $primaryKey = 'id';
 
     protected $fillable = [
-        'id', 'produk', 'plafon_kredit', 'jangka_waktu', 'suku_bunga', 'pembayaran_bunga', 'akad_kredit', 'ikatan_agunan', 'biaya_provisi', 'biaya_administrasi', 'biaya_credit_checking', 'biaya_asuransi_jiwa', 'biaya_asuransi_jaminan_kebakaran', 'biaya_asuransi_jaminan_kendaraan', 'notaris', 'biaya_tabungan', 'rekom_angsuran', 'angs_pertama_bunga_berjalan', 'pelunasan_nasabah_ro', 'blokir_dana', 'pelunasan_tempat_lain', 'blokir_angs_kredit'
+        'id', 'produk', 'plafon_kredit', 'jangka_waktu', 'suku_bunga', 'pembayaran_bunga', 'akad_kredit', 'ikatan_agunan', 'biaya_provisi', 'biaya_administrasi', 'biaya_credit_checking', 'biaya_asuransi_jiwa', 'biaya_asuransi_jaminan_kebakaran','biaya_asuransi_jaminan_kendaraan', 'notaris', 'biaya_tabungan', 'rekom_angsuran', 'angs_pertama_bunga_berjalan', 'pelunasan_nasabah_ro', 'blokir_dana', 'pelunasan_tempat_lain', 'blokir_angs_kredit'
     ];
 
     protected $casts = [

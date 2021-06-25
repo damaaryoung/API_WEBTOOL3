@@ -13,38 +13,38 @@ use App\Models\User;
 
 class ActivityAo extends Model
 {
-    // use Authenticatable, Authorizable;
+  // use Authenticatable, Authorizable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
-    protected $connection = 'web';
+  /**
+   * The attributes that are mass assignable.
+   *
+   * @var array
+   */
+  protected $connection = 'web';
 
-    protected $table = 'activity_ao';
-    protected $primaryKey = 'id';
-    public $timestamps = false;
+  protected $table = 'activity_ao';
+  protected $primaryKey = 'id';
+  public $timestamps = false;
 
-    protected $fillable = [
-       'id',
-  'activity',
-  'nomor_so',
-  'nama_debitur',
-  'alamat_domisili',
-  'plafon_pengajuan',
-  'hasil_survey',
-  'keterangan_survey',
-  'latitude',
-  'longitude',
-  'hasil_visit',
-  'swafoto',
-  'tanggal'
-    ];
+  protected $fillable = [
+    'id',
+    'activity',
+    'nomor_so',
+    'nama_debitur',
+    'alamat_domisili',
+    'plafon_pengajuan',
+    'hasil_survey',
+    'keterangan_survey',
+    'latitude',
+    'longitude',
+    'hasil_visit',
+    'swafoto',
+    'tanggal'
+  ];
 
-    // protected $casts = [
-    //     'flg_aktif'  => 'boolean',
-    //     'created_at' => 'date:m-d-Y H:i:s',
-    //     'updated_at' => 'date:m-d-Y H:i:s'
-    // ];
+  // protected $casts = [
+  //     'flg_aktif'  => 'boolean',
+  //     'created_at' => 'date:m-d-Y H:i:s',
+  //     'updated_at' => 'date:m-d-Y H:i:s'
+  // ];
 }

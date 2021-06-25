@@ -1004,7 +1004,7 @@ $scope     = $arrrr;
 
 //dd($arrr);
 
-$query_dir = Lpdk::with('pic','area', 'cabang')->orWhere('status_kredit', 'ON-PROGRESS')->orWhere('status_kredit', 'REALISASI')->orderBy('created_at', 'desc');
+$query_dir = Lpdk::with('pic','area', 'cabang')->orWhere('status_kredit', 'ON-PROGRESS')->orWhere('status_kredit', 'REALISASI')->orderBy('created_at', 'desc')->limit(500);
 
 $query = Helper::checkDir($scope, $query_dir, $id_area, $id_cabang); 
         // $lpdk =  DB::connection('web')->table('vw_memo_ca_approve')->get();
@@ -3034,4 +3034,692 @@ $pic_so = TransSO::where('id',$id)->first();
         }
     }
 
+ public function indexAllCentro(Request $request)
+    {
+        $pic = $request->pic; // From PIC middleware
+        $kode_cabang = $request->input("cabang");
+        //  dd($kode_cabang);
+        $user_id = $request->auth->user_id;
+        //dd($pic);
+        $mj = array();
+        $i = 0;
+        foreach ($pic as $val) {
+            $mj[] = $val['id_mj_pic'];
+            $i++;
+        }
+        $id_pic = array();
+        $i = 0;
+        foreach ($pic as $val) {
+            $id_pic[] = $val['id'];
+            $i++;
+        }
+        $arrr = array();
+        foreach ($pic as $val) {
+            $arrr[] = $val['id_cabang'];
+            $i++;
+        }
+        $area = array();
+        $i = 0;
+        foreach ($pic as $val) {
+            $area[] = $val['id_area'];
+            $i++;
+        }
+        $nama = array();
+        $i = 0;
+        foreach ($pic as $val) {
+            $nama[] = $val['nama'];
+            $i++;
+        }
+
+        $arrrr = array();
+        foreach ($pic as $val) {
+            $arrrr[] = $val['jpic']['cakupan'];
+            $i++;
+        }
+
+        $id_area   = $area;
+        $id_cabang = $arrr;
+        // dd($id_cabang);
+        $scope     = $arrrr;
+
+        if (!empty($kode_cabang)) {
+            $id_cabang = $kode_cabang;
+        } else {
+            $id_cabang = $arrr;
+        }
+
+        //  $query_dir = Lpdk::with('pic', 'cabang')->orderBy('created_at', 'desc');
+        // $query_dir =  ViewApproval::with('pic','area', 'cabang');
+
+        //   dd($kode_cabang);
+        $centro = Lpdk::where('id_cabang', $kode_cabang)->get();
+        $arrData = array();
+        // dd($centro);
+        foreach ($centro as $key => $val) {
+            $arrData[$key]['id']       = $val->id;
+            $arrData[$key]['trans_so']       = $val->trans_so;
+            $arrData[$key]['request_by']       = $val->request_by;
+            $arrData[$key]['nomor_so']       = $val->nomor_so;
+            $arrData[$key]['id_pic']       = $val->id_pic;
+            $arrData[$key]['id_area']       = $val->id_area;
+            $arrData[$key]['nama_cabang']       = Cabang::where('id', $val->id_cabang)->pluck('nama');
+            $arrData[$key]['nama_so']       = $val->nama_so;
+            $arrData[$key]['asal_data']       = $val->asal_data;
+            $arrData[$key]['nama_marketing']       = $val->nama_marketing;
+            $arrData[$key]['area_kerja']       = $val->area_kerja;
+            $arrData[$key]['plafon']       = $val->plafon;
+            $arrData[$key]['tenor']       = $val->tenor;
+            $arrData[$key]['nama_debitur']       = $val->nama_debitur;
+            $arrData[$key]['nama_pasangan']       = $val->nama_pasangan;
+            $arrData[$key]['status_nikah']       = $val->status_nikah;
+            $arrData[$key]['produk']       = $val->produk;
+            $arrData[$key]['alamat_ktp_vs_jaminan']       = $val->alamat_ktp_vs_jaminan;
+            $arrData[$key]['akta_notaris']       = $val->akta_notaris;
+            $arrData[$key]['status_kredit']       = $val->status_kredit;
+            $arrData[$key]['notes_progress']       = $val->notes_progress;
+            $arrData[$key]['notes_counter']       = $val->notes_counter;
+            $arrData[$key]['notes_cancel']       = $val->notes_cancel;
+            $arrData[$key]['sla']       = $val->sla;
+            $ser_exp = explode(',', $val->id_sertifikat);
+            // dd($ser_exp);
+            $arrData[$key]['sertifikat']       = Lpdk_sertifikat::select(
+                'nama_sertifikat',
+                'status_sertifikat',
+                'nama_pas_sertifikat',
+                'status_pas_sertifikat',
+                'no_sertifikat',
+                'jenis_sertifikat',
+                'tgl_berlaku_shgb'
+                // 'lampiran_sertifikat',
+                // 'lampiran_pbb',
+                // 'lampiran_imb'
+            )->whereIn('id', $ser_exp)->get();
+            $lamp_ser = Lpdk_sertifikat::select(
+                'lampiran_sertifikat',
+                'lampiran_pbb',
+                'lampiran_imb',
+                'lampiran_ktp_sertifikat',
+                'lampiran_ktp_pasangan_sertifikat',
+                'ahli_waris',
+                'akta_hibah',
+                'ajb_ppjb'
+            )->whereIn('id', $ser_exp)->get();
+            // dd($lamp_ser->implode('lampiran_sertifikat' . ','));
+            $arrData[$key]['lampiran_sertifikat'] = $lamp_ser->implode('lampiran_sertifikat', ',');
+            $arrData[$key]['lampiran_ktp_sertifikat'] = $lamp_ser->implode('lampiran_ktp_sertifikat', ',');
+            $arrData[$key]['lampiran_ktp_pasangan_sertifikat'] = $lamp_ser->implode('lampiran_ktp_pasangan_sertifikat', ',');
+            $arrData[$key]['ahli_waris'] = $lamp_ser->implode('ahli_waris', ',');
+            $arrData[$key]['akta_hibah'] = $lamp_ser->implode('akta_hibah', ',');
+            $arrData[$key]['ajb_ppjb'] = $lamp_ser->implode('ajb_ppjb', ',');
+            $arrData[$key]['lampiran_pbb'] = $lamp_ser->implode('lampiran_pbb', ',');
+            $arrData[$key]['lampiran_imb'] = $lamp_ser->implode('lampiran_imb', ',');
+            $arrData[$key]['penjamin'] = Lpdk_penjamin::select(
+                'nama_penjamin',
+                'ibu_kandung_penjamin',
+                'pasangan_penjamin',
+                'lampiran_ktp_penjamin'
+            )->whereIn('id', explode(',', $val->id_penjamin))->get();
+            $lamp = Lpdk_penjamin::select(
+                'lampiran_ktp_penjamin'
+            )->whereIn('id', explode(',', $val->id_penjamin))->get();
+            //$imp_ktp = implode(',', $lamp->toArray());
+            // dd($lamp->implode('lampiran_ktp_penjamin', ','));
+            // $i++;
+            $arrData[$key]['lampiran_ktp_penjamin'] = $lamp->implode('lampiran_ktp_penjamin', ',');
+
+            $lam = Lpdk_lampiran::select(
+
+                'lampiran_npwp',
+                'lampiran_surat_kematian',
+                'lampiran_sk_desa',
+                'lampiran_surat_lahir',
+                'lampiran_surat_cerai',
+                'lampiran_surat_nikah'
+            )->where('id', $val->id_lampiran)->get();
+            $arrData[$key]['lampiran_ktp_deb'] = $lam->implode('lampiran_ktp_deb', ',');
+            $arrData[$key]['lampiran_ktp_pasangan'] = $lam->implode('lampiran_ktp_pasangan', ',');
+            $arrData[$key]['lampiran_npwp'] = $lam->implode('lampiran_npwp', ',');
+            $arrData[$key]['lampiran_surat_kematian'] = $lam->implode('lampiran_surat_kematian', ',');
+            $arrData[$key]['lampiran_sk_desa'] = $lam->implode('lampiran_sk_desa', ',');
+            $arrData[$key]['lampiran_skk'] = $lam->implode('lampiran_skk', ',');
+            $arrData[$key]['lampiran_sku'] = $lam->implode('lampiran_sku', ',');
+            $arrData[$key]['lampiran_slipgaji'] = $lam->implode('lampiran_slipgaji', ',');
+            $arrData[$key]['lampiran_kk'] = $lam->implode('lampiran_kk', ',');
+            $arrData[$key]['lampiran_surat_lahir'] = $lam->implode('lampiran_surat_lahir', ',');
+            $arrData[$key]['lampiran_surat_cerai'] = $lam->implode('lampiran_surat_cerai', ',');
+            $arrData[$key]['lampiran_surat_nikah'] = $lam->implode('lampiran_surat_nikah', ',');
+            $arrData[$key]['created_at']       = $val->created_at;
+            $arrData[$key]['updated_at']       = $val->updated_at;
+        }
+        //  dd($arrData);
+
+        // $lpdk =  DB::connection('web')->table('vw_memo_ca_approve')->get();
+        //  $lpdk = Lpdk::get();
+        //  $lpdk = Lpdk::paginate(10);
+        if ($centro === NULL) {
+            return response()->json([
+                'code'    => 404,
+                'status'  => 'not found',
+                'message' => 'Data LPDK Kosong'
+            ], 404);
+        }
+
+        //    dd($lpdk);
+        //  $i = 0;
+
+        try {
+            return response()->json([
+                'code'   => 200,
+                'status' => 'success',
+                'count' => count($arrData),
+                'data'  => $arrData
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                "code"    => 501,
+                "status"  => "error",
+                "message" => $e
+            ], 501);
+        }
+    }
+
+ public function indexCentro(Request $request)
+    {
+        $pic = $request->pic; // From PIC middleware
+        $user_id = $request->auth->user_id;
+        $kode_cabang = $request->input("cabang");
+        //dd($pic);
+        $mj = array();
+        $i = 0;
+        foreach ($pic as $val) {
+            $mj[] = $val['id_mj_pic'];
+            $i++;
+        }
+        $id_pic = array();
+        $i = 0;
+        foreach ($pic as $val) {
+            $id_pic[] = $val['id'];
+            $i++;
+        }
+        $arrr = array();
+        foreach ($pic as $val) {
+            $arrr[] = $val['id_cabang'];
+            $i++;
+        }
+        $area = array();
+        $i = 0;
+        foreach ($pic as $val) {
+            $area[] = $val['id_area'];
+            $i++;
+        }
+        $nama = array();
+        $i = 0;
+        foreach ($pic as $val) {
+            $nama[] = $val['nama'];
+            $i++;
+        }
+
+        $arrrr = array();
+        foreach ($pic as $val) {
+            $arrrr[] = $val['jpic']['cakupan'];
+            $i++;
+        }
+
+        $id_area   = $area;
+        $id_cabang = $arrr;
+        // dd($id_cabang);
+        $scope     = $arrrr;
+
+        //  $query_dir = Lpdk::with('pic', 'cabang')->orderBy('created_at', 'desc');
+        //  $query_dir =  ViewApproval::with('pic','area', 'cabang');
+        //   ->orderBy('created_at', 'desc');
+        //  $query = Helper::checkDir($scope, $query_dir, $id_area, $id_cabang); 
+        //$lpdk =  DB::connection('web')->table('view_approval_caa')->get();
+        $centro = ViewApproval::where('id_cabang', $kode_cabang)->get();
+
+        //dd($pic);
+        if ($centro === '[]') {
+            return response()->json([
+                "code"    => 404,
+                "status"  => "not found",
+                "message" => "Data di SO masih kosong"
+            ], 404);
+        }
+        //$lpdk = Lpdk_Cek::get();
+        //  $lpdk = Lpdk::paginate(10);
+        $arrData = array();
+        foreach ($centro as $key => $val) {
+            $arrData[$key]['id_trans_so']       = $val->id_trans_so;
+            $arrData[$key]['nomor_so']       = $val->nomor_so;
+            $arrData[$key]['id_pic']       = $val->id_pic;
+            $arrData[$key]['id_area']       = $val->id_area;
+            $arrData[$key]['id_cabang']       = $val->id_cabang;
+            $id_cab = Cabang::where('id', $val->id_cabang)->first();
+            $arrData[$key]['nama_cabang']       = $id_cab->nama;
+            $arrData[$key]['nama_so']       = $val->nama_so;
+            $arrData[$key]['asal_data']       = $val->asal_data;
+            $arrData[$key]['area_kerja']       = $val->area_kerja;
+            $arrData[$key]['nama_marketing']       = $val->nama_marketing;
+            $arrData[$key]['plafon']       = $val->plafon;
+            $arrData[$key]['tenor']       = $val->tenor;
+            $arrData[$key]['nama_debitur']       = $val->nama_debitur;
+            $arrData[$key]['nama_pasangan']       = $val->nama_pasangan;
+            $det = explode(',', $val->id_penjamin);
+            $arrData[$key]['penjamin']       = Penjamin::select('id', 'nama_ktp', 'nama_ibu_kandung', 'no_ktp', 'no_npwp', 'tempat_lahir', 'tgl_lahir', 'jenis_kelamin', 'lamp_ktp')->whereIn('id', $det)->get();
+            $arrData[$key]['status_nikah']       = $val->status_nikah;
+            $arrData[$key]['produk']       = $val->produk;
+            $ser = explode(',', $val->id_agunan_tanah);
+            $arrData[$key]['sertifikat']       = AgunanTanah::select('id', 'nama_pemilik_sertifikat', 'jenis_sertifikat', 'no_sertifikat', 'tgl_berlaku_shgb', 'lamp_sertifikat', 'lamp_imb', 'lamp_pbb')->whereIn('id', $ser)->get();
+            $ken = explode(',', $val->id_agunan_kendaraan);
+            $arrData[$key]['kendaraan']       = AgunanKendaraan::select('id', 'no_bpkb', 'nama_pemilik', 'alamat_pemilik', 'merk', 'jenis', 'no_rangka', 'no_mesin', 'warna', 'tahun', 'no_polisi', 'no_stnk', 'tgl_kadaluarsa_pajak', 'tgl_kadaluarsa_stnk', 'no_faktur', 'lamp_agunan_depan', 'lamp_agunan_kanan', 'lamp_agunan_kiri', 'lamp_agunan_belakang', 'lamp_agunan_dalam')->whereIn('id', $ken)->get();
+
+            $arrData[$key]['lampiran_kk']       = $val->lampiran_kk;
+            $arrData[$key]['lampiran_npwp']       = NULL;
+            $arrData[$key]['lampiran_ktp_deb']       = $val->lampiran_ktp_deb;
+            $arrData[$key]['lampiran_ktp_pasangan']       = $val->lampiran_ktp_pasangan;
+            $arrData[$key]['lamp_buku_nikah']       = $val->lamp_buku_nikah;
+            $arrData[$key]['lampiran_surat_cerai']       = $val->lampiran_surat_cerai;
+            $arrData[$key]['lampiran_surat_lahir']       = NULL;
+            $arrData[$key]['lampiran_surat_kematian']       = NULL;
+            $arrData[$key]['lampiran_surat_keterangan_desa']       = NULL;
+            $arrData[$key]['lampiran_surat_ajb_ppjb']       = NULL;
+            $arrData[$key]['lampiran_ahliwaris']       = NULL;
+            $arrData[$key]['lampiran_akta_hibah']       = NULL;
+        }
+        // if ($lpdk === null) {
+        //     return response()->json([
+        //         'code'    => 404,
+        //         'status'  => 'not found',
+        //         'message' => 'Data LPDK Kosong'
+        //     ], 404);
+        // }
+        try {
+            return response()->json([
+                'code'   => 200,
+                'status' => 'success',
+                'count' => count($arrData),
+                'data'  => $arrData
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                "code"    => 501,
+                "status"  => "error",
+                "message" => $e
+            ], 501);
+        }
+    }
+  public function indexQueueReturnCentro(Request $request)
+    {
+        $pic = $request->pic; // From PIC middleware
+        $user_id = $request->auth->user_id;
+        $kode_cabang = $request->input('cabang');
+//dd($pic);
+$mj = array();
+$i=0;
+foreach ($pic as $val) {
+    $mj[] = $val['id_mj_pic'];
+  $i++;
+}   
+$id_pic = array();
+$i=0;
+foreach ($pic as $val) {
+    $id_pic[] = $val['id'];
+  $i++;
+}   
+$arrr = array();
+foreach ($pic as $val) {
+    $arrr[] = $val['id_cabang'];
+  $i++;
+}  
+$area = array();
+$i=0;
+foreach ($pic as $val) {
+    $area[] = $val['id_area'];
+  $i++;
+} 
+$nama = array();
+$i=0;
+foreach ($pic as $val) {
+    $nama[] = $val['nama'];
+  $i++;
+} 
+
+$arrrr = array();
+foreach ($pic as $val) {
+    $arrrr[] = $val['jpic']['cakupan'];
+  $i++;
+}       
+
+$id_area   = $area;
+$id_cabang = $arrr;
+// dd($id_cabang);
+$scope     = $arrrr;
+
+//  $query_dir = Lpdk::with('pic', 'cabang')->orderBy('created_at', 'desc');
+// $query_dir =  ViewApproval::with('pic','area', 'cabang');
+
+
+
+//$query_dir = Lpdk::with('pic','area', 'cabang')->where('status_kredit', 'REVISI')->orWhere('status_kredit', 'ON-QUEUE')->orderBy('status_kredit', 'DESC');
+
+//$query = Helper::checkDir($scope, $query_dir, $id_area, $id_cabang);
+$query =  Lpdk::where('status_kredit', 'REVISI')->orWhere('status_kredit', 'ON-QUEUE')->orderBy('status_kredit', 'DESC')->where('id_cabang',$kode_cabang)->get();
+        // $lpdk =  DB::connection('web')->table('vw_memo_ca_approve')->get();
+        // $lpdk = Lpdk::where('status_kredit', 'REVISI')->orWhere('status_kredit', 'ON-QUEUE')->orderBy('status_kredit', 'DESC')->get();
+        //  $lpdk = Lpdk::paginate(10);
+        if ($query === NULL) {
+            return response()->json([
+                'code'    => 404,
+                'status'  => 'not found',
+                'message' => 'Data LPDK Kosong'
+            ], 404);
+        }
+
+        //    dd($lpdk);
+        //  $i = 0;
+        $arrData = array();
+        foreach ($query as $key => $val) {
+            $arrData[$key]['id']       = $val->id;
+            $arrData[$key]['trans_so']       = $val->trans_so;
+            $arrData[$key]['request_by']       = $val->request_by;
+            $arrData[$key]['nomor_so']       = $val->nomor_so;
+            $arrData[$key]['id_pic']       = $val->id_pic;
+            $arrData[$key]['id_area']       = $val->id_area;
+            $arrData[$key]['nama_cabang']       =  Cabang::where('id',$val->id_cabang)->pluck('nama');
+            $arrData[$key]['nama_so']       = $val->nama_so;
+            $arrData[$key]['asal_data']       = $val->asal_data;
+            $arrData[$key]['nama_marketing']       = $val->nama_marketing;
+            $arrData[$key]['area_kerja']       = $val->area_kerja;
+            $arrData[$key]['plafon']       = $val->plafon;
+            $arrData[$key]['tenor']       = $val->tenor;
+            $arrData[$key]['nama_debitur']       = $val->nama_debitur;
+            $arrData[$key]['nama_pasangan']       = $val->nama_pasangan;
+            $arrData[$key]['status_nikah']       = $val->status_nikah;
+            $arrData[$key]['produk']       = $val->produk;
+            $arrData[$key]['alamat_ktp_vs_jaminan']       = $val->alamat_ktp_vs_jaminan;
+            $arrData[$key]['akta_notaris']       = $val->akta_notaris;
+            $arrData[$key]['status_kredit']       = $val->status_kredit;
+            $arrData[$key]['notes_progress']     = explode(',',$val->notes_progress);
+            $arrData[$key]['notes_counter']     = explode(',',$val->notes_counter);
+            $arrData[$key]['notes_cancel']     = $val->notes_cancel;
+            $arrData[$key]['sla']     = $val->sla;
+            //$arrData[$key]['id_sertifikat']       = $val->id_sertifikat;
+            $ser_exp = explode(',', $val->id_sertifikat);
+            // dd($ser_exp);
+            $arrData[$key]['sertifikat']       = Lpdk_sertifikat::select(
+                'nama_sertifikat',
+                'status_sertifikat',
+                'nama_pas_sertifikat',
+                'status_pas_sertifikat',
+                'no_sertifikat',
+                'jenis_sertifikat',
+                'tgl_berlaku_shgb'
+                // 'lampiran_sertifikat',
+                // 'lampiran_pbb',
+                // 'lampiran_imb'
+            )->whereIn('id', $ser_exp)->get();
+            $lamp_ser = Lpdk_sertifikat::select(
+                'lampiran_sertifikat',
+                'lampiran_pbb',
+                'lampiran_imb',
+                'lampiran_ktp_sertifikat',
+                'lampiran_ktp_pasangan_sertifikat',
+                'ahli_waris',
+                'akta_hibah',
+                'ajb_ppjb'
+            )->whereIn('id', $ser_exp)->get();
+            // dd($lamp_ser->implode('lampiran_sertifikat' . ','));
+            $arrData[$key]['lampiran_sertifikat'] = $lamp_ser->implode('lampiran_sertifikat', ',');
+            $arrData[$key]['lampiran_ktp_sertifikat'] = $lamp_ser->implode('lampiran_ktp_sertifikat', ',');
+            $arrData[$key]['lampiran_ktp_pasangan_sertifikat'] = $lamp_ser->implode('lampiran_ktp_pasangan_sertifikat', ',');
+            $arrData[$key]['ahli_waris'] = $lamp_ser->implode('ahli_waris', ',');
+            $arrData[$key]['akta_hibah'] = $lamp_ser->implode('akta_hibah', ',');
+            $arrData[$key]['ajb_ppjb'] = $lamp_ser->implode('ajb_ppjb', ',');
+            $arrData[$key]['lampiran_pbb'] = $lamp_ser->implode('lampiran_pbb', ',');
+            $arrData[$key]['lampiran_imb'] = $lamp_ser->implode('lampiran_imb', ',');
+            $arrData[$key]['penjamin'] = Lpdk_penjamin::select(
+                'nama_penjamin',
+                'ibu_kandung_penjamin',
+                'pasangan_penjamin',
+                'lampiran_ktp_penjamin'
+            )->whereIn('id', explode(',', $val->id_penjamin))->get();
+            $lamp = Lpdk_penjamin::select(
+                'lampiran_ktp_penjamin'
+            )->whereIn('id', explode(',', $val->id_penjamin))->get();
+            //$imp_ktp = implode(',', $lamp->toArray());
+            // dd($lamp->implode('lampiran_ktp_penjamin', ','));
+            // $i++;
+            $arrData[$key]['lampiran_ktp_penjamin'] = $lamp->implode('lampiran_ktp_penjamin', ',');
+
+            $lam = Lpdk_lampiran::select(
+
+                'lampiran_npwp',
+                'lampiran_surat_kematian',
+                'lampiran_sk_desa',
+                'lampiran_surat_lahir',
+                'lampiran_surat_cerai',
+                'lampiran_surat_nikah'
+            )->where('id', $val->id_lampiran)->get();
+            $arrData[$key]['lampiran_ktp_deb'] = $lam->implode('lampiran_ktp_deb', ',');
+            $arrData[$key]['lampiran_ktp_pasangan'] = $lam->implode('lampiran_ktp_pasangan', ',');
+            $arrData[$key]['lampiran_npwp'] = $lam->implode('lampiran_npwp', ',');
+            $arrData[$key]['lampiran_surat_kematian'] = $lam->implode('lampiran_surat_kematian', ',');
+            $arrData[$key]['lampiran_sk_desa'] = $lam->implode('lampiran_sk_desa', ',');
+            $arrData[$key]['lampiran_skk'] = $lam->implode('lampiran_skk', ',');
+            $arrData[$key]['lampiran_sku'] = $lam->implode('lampiran_sku', ',');
+            $arrData[$key]['lampiran_slipgaji'] = $lam->implode('lampiran_slipgaji', ',');
+            $arrData[$key]['lampiran_kk'] = $lam->implode('lampiran_kk', ',');
+            $arrData[$key]['lampiran_surat_lahir'] = $lam->implode('lampiran_surat_lahir', ',');
+            $arrData[$key]['lampiran_surat_cerai'] = $lam->implode('lampiran_surat_cerai', ',');
+            $arrData[$key]['lampiran_surat_nikah'] = $lam->implode('lampiran_surat_nikah', ',');
+            $arrData[$key]['created_at']       = $val->created_at;
+            $arrData[$key]['updated_at']       = $val->updated_at;
+        }
+
+        try {
+            return response()->json([
+                'code'   => 200,
+                'status' => 'success',
+                'count' => count($arrData),
+                'data'  => $arrData
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                "code"    => 501,
+                "status"  => "error",
+                "message" => $e
+            ], 501);
+        }
+    }
+
+public function indexAllStatusCentro(Request $request)
+    {
+        $pic = $request->pic; // From PIC middleware
+        $user_id = $request->auth->user_id;
+        $kode_cabang = $request->input('cabang');
+        //dd($pic);
+        $mj = array();
+        $i = 0;
+        foreach ($pic as $val) {
+            $mj[] = $val['id_mj_pic'];
+            $i++;
+        }
+        $id_pic = array();
+        $i = 0;
+        foreach ($pic as $val) {
+            $id_pic[] = $val['id'];
+            $i++;
+        }
+        $arrr = array();
+        foreach ($pic as $val) {
+            $arrr[] = $val['id_cabang'];
+            $i++;
+        }
+        $area = array();
+        $i = 0;
+        foreach ($pic as $val) {
+            $area[] = $val['id_area'];
+            $i++;
+        }
+        $nama = array();
+        $i = 0;
+        foreach ($pic as $val) {
+            $nama[] = $val['nama'];
+            $i++;
+        }
+
+        $arrrr = array();
+        foreach ($pic as $val) {
+            $arrrr[] = $val['jpic']['cakupan'];
+            $i++;
+        }
+
+        $id_area   = $area;
+        $id_cabang = $arrr;
+        // dd($id_cabang);
+        $scope     = $arrrr;
+
+        //  $query_dir = Lpdk::with('pic', 'cabang')->orderBy('created_at', 'desc');
+        // $query_dir =  ViewApproval::with('pic','area', 'cabang');
+
+        //dd($arrr);
+
+        //   $query_dir = Lpdk::with('pic', 'area', 'cabang')->orWhere('status_kredit', 'ON-PROGRESS')->orWhere('status_kredit', 'REALISASI')->orderBy('created_at', 'desc');
+
+        // $query = Helper::checkDir($scope, $query_dir, $id_area, $id_cabang);
+     //   $query = Lpdk::where('id_cabang', $kode_cabang)->orWhere('status_kredit', 'ON-PROGRESS')->orWhere('status_kredit', 'REALISASI')->orderBy('created_at', 'desc')->get();
+       $query = Lpdk::where('id_cabang', $kode_cabang)
+            ->orWhere('status_kredit', 'ON-PROGRESS')
+            ->where('status_kredit', 'REALISASI')
+            ->orderBy('created_at', 'desc')
+            ->get();
+  // $lpdk =  DB::connection('web')->table('vw_memo_ca_approve')->get();
+        //   $lpdk = Lpdk::where('status_kredit', 'ON-PROGRESS')->orWhere('status_kredit')->orWhere('status_kredit', 'REALISASI')->get();
+        //  $lpdk = Lpdk::paginate(10);
+        if ($query === NULL) {
+            return response()->json([
+                'code'    => 404,
+                'status'  => 'not found',
+                'message' => 'Data LPDK Kosong'
+            ], 404);
+        }
+
+        //    dd($lpdk);
+        //  $i = 0;
+        $arrData = array();
+        foreach ($query as $key => $val) {
+            $arrData[$key]['id']       = $val->id;
+            $arrData[$key]['trans_so']       = $val->trans_so;
+            $arrData[$key]['request_by']       = $val->request_by;
+            $arrData[$key]['nomor_so']       = $val->nomor_so;
+            $arrData[$key]['id_pic']       = $val->id_pic;
+            $arrData[$key]['id_area']       = $val->id_area;
+            $arrData[$key]['nama_cabang']       = Cabang::where('id', $val->id_cabang)->pluck('nama');
+            $arrData[$key]['nama_so']       = $val->nama_so;
+            $arrData[$key]['asal_data']       = $val->asal_data;
+            $arrData[$key]['nama_marketing']       = $val->nama_marketing;
+            $arrData[$key]['area_kerja']       = $val->area_kerja;
+            $arrData[$key]['plafon']       = $val->plafon;
+            $arrData[$key]['tenor']       = $val->tenor;
+            $arrData[$key]['nama_debitur']       = $val->nama_debitur;
+            $arrData[$key]['nama_pasangan']       = $val->nama_pasangan;
+            $arrData[$key]['status_nikah']       = $val->status_nikah;
+            $arrData[$key]['produk']       = $val->produk;
+            $arrData[$key]['alamat_ktp_vs_jaminan']       = $val->alamat_ktp_vs_jaminan;
+            $arrData[$key]['akta_notaris']       = $val->akta_notaris;
+            $arrData[$key]['status_kredit']       = $val->status_kredit;
+            $arrData[$key]['note_progress']       = $val->note_progress;
+            $arrData[$key]['notes_counter']       = $val->notes_counter;
+            $arrData[$key]['notes_cancel']       = $val->notes_cancel;
+            $arrData[$key]['lain_lain']       = $val->lain_lain;
+            $arrData[$key]['sla']       = $val->sla;
+            //$arrData[$key]['id_sertifikat']       = $val->id_sertifikat;
+            $ser_exp = explode(',', $val->id_sertifikat);
+            // dd($ser_exp);
+            $arrData[$key]['sertifikat']       = Lpdk_sertifikat::select(
+                'nama_sertifikat',
+                'status_sertifikat',
+                'nama_pas_sertifikat',
+                'status_pas_sertifikat',
+                'no_sertifikat',
+                'jenis_sertifikat',
+                'tgl_berlaku_shgb'
+                // 'lampiran_sertifikat',
+                // 'lampiran_pbb',
+                // 'lampiran_imb'
+            )->whereIn('id', $ser_exp)->get();
+            $lamp_ser = Lpdk_sertifikat::select(
+                'lampiran_sertifikat',
+                'lampiran_pbb',
+                'lampiran_imb',
+                'lampiran_ktp_sertifikat',
+                'lampiran_ktp_pasangan_sertifikat',
+                'ahli_waris',
+                'akta_hibah',
+                'ajb_ppjb'
+            )->whereIn('id', $ser_exp)->get();
+            // dd($lamp_ser->implode('lampiran_sertifikat' . ','));
+            $arrData[$key]['lampiran_sertifikat'] = $lamp_ser->implode('lampiran_sertifikat', ',');
+            $arrData[$key]['lampiran_ktp_sertifikat'] = $lamp_ser->implode('lampiran_ktp_sertifikat', ',');
+            $arrData[$key]['lampiran_ktp_pasangan_sertifikat'] = $lamp_ser->implode('lampiran_ktp_pasangan_sertifikat', ',');
+            $arrData[$key]['ahli_waris'] = $lamp_ser->implode('ahli_waris', ',');
+            $arrData[$key]['akta_hibah'] = $lamp_ser->implode('akta_hibah', ',');
+            $arrData[$key]['ajb_ppjb'] = $lamp_ser->implode('ajb_ppjb', ',');
+            $arrData[$key]['lampiran_pbb'] = $lamp_ser->implode('lampiran_pbb', ',');
+            $arrData[$key]['lampiran_imb'] = $lamp_ser->implode('lampiran_imb', ',');
+            $arrData[$key]['penjamin'] = Lpdk_penjamin::select(
+                'nama_penjamin',
+                'ibu_kandung_penjamin',
+                'pasangan_penjamin',
+                'lampiran_ktp_penjamin'
+            )->whereIn('id', explode(',', $val->id_penjamin))->get();
+            $lamp = Lpdk_penjamin::select(
+                'lampiran_ktp_penjamin'
+            )->whereIn('id', explode(',', $val->id_penjamin))->get();
+            //$imp_ktp = implode(',', $lamp->toArray());
+            // dd($lamp->implode('lampiran_ktp_penjamin', ','));
+            // $i++;
+            $arrData[$key]['lampiran_ktp_penjamin'] = $lamp->implode('lampiran_ktp_penjamin', ',');
+
+            $lam = Lpdk_lampiran::select(
+
+                'lampiran_npwp',
+                'lampiran_surat_kematian',
+                'lampiran_sk_desa',
+                'lampiran_surat_lahir',
+                'lampiran_surat_cerai',
+                'lampiran_surat_nikah'
+            )->where('id', $val->id_lampiran)->get();
+            $arrData[$key]['lampiran_ktp_deb'] = $lam->implode('lampiran_ktp_deb', ',');
+            $arrData[$key]['lampiran_ktp_pasangan'] = $lam->implode('lampiran_ktp_pasangan', ',');
+            $arrData[$key]['lampiran_npwp'] = $lam->implode('lampiran_npwp', ',');
+            $arrData[$key]['lampiran_surat_kematian'] = $lam->implode('lampiran_surat_kematian', ',');
+            $arrData[$key]['lampiran_sk_desa'] = $lam->implode('lampiran_sk_desa', ',');
+            $arrData[$key]['lampiran_skk'] = $lam->implode('lampiran_skk', ',');
+            $arrData[$key]['lampiran_sku'] = $lam->implode('lampiran_sku', ',');
+            $arrData[$key]['lampiran_slipgaji'] = $lam->implode('lampiran_slipgaji', ',');
+            $arrData[$key]['lampiran_kk'] = $lam->implode('lampiran_kk', ',');
+            $arrData[$key]['lampiran_surat_lahir'] = $lam->implode('lampiran_surat_lahir', ',');
+            $arrData[$key]['lampiran_surat_cerai'] = $lam->implode('lampiran_surat_cerai', ',');
+            $arrData[$key]['lampiran_surat_nikah'] = $lam->implode('lampiran_surat_nikah', ',');
+            $arrData[$key]['created_at']       = $val->created_at;
+            $arrData[$key]['updated_at']       = $val->updated_at;
+            $arrData[$key]['tanggal_selesai']       = Lpdk_hasil::select('created_at')->where('trans_so', $val->trans_so)->get();
+        }
+
+        try {
+            return response()->json([
+                'code'   => 200,
+                'status' => 'success',
+                'count' => count($arrData),
+                'data'  => $arrData
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                "code"    => 501,
+                "status"  => "error",
+                "message" => $e
+            ], 501);
+        }
+    }
 }

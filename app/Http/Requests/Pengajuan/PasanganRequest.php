@@ -42,7 +42,7 @@ class PasanganRequest extends FormRequest
                 'jenis_kelamin_pas'         => 'in:L,P',
                 'lamp_ktp_pas'              => 'mimes:jpg,jpeg,png,pdf',
                 'lamp_kk_pas'               => 'mimes:jpg,jpeg,png,pdf',
-                'pekerjaan_pas'             => 'in:KARYAWAN,PNS,WIRASWASTA,PENGURUS_RT',
+               // 'pekerjaan_pas'             => 'in:KARYAWAN,PNS,WIRASWASTA,PENGURUS_RT',
                 'rt_tempat_kerja_pas'       => 'numeric',
                 'rw_tempat_kerja_pas'       => 'numeric',
                 // 'tgl_mulai_kerja_pas'       => 'date_format:d-m-Y',

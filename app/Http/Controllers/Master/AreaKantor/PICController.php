@@ -129,6 +129,7 @@ class PICController extends BaseController
             "id_cabang",
             "plafon_caa as plafon_max",
             "flg_aktif",
+	    "tgl_sk",
             "created_at"
         )->addSelect([
             'nama_jenis_pic' => JPIC::select('nama_jenis')->whereColumn('id_mj_pic', 'mj_pic.id'),

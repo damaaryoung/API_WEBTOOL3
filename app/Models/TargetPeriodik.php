@@ -27,10 +27,13 @@ class TargetPeriodik extends Model
     public $timestamps = false;
 
     protected $fillable = [
-       'bulan',
-       'tahun',
-       'periode',
-       'target_persen'
+        'bulan',
+        'tahun',
+        'periode',
+        'target_persen',
+        'hk',
+        'tgl',
+        'created'
     ];
 
     // protected $casts = [

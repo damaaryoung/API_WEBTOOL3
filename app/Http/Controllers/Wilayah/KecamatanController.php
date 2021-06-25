@@ -11,32 +11,23 @@ use DB;
 
 class KecamatanController extends BaseController
 {
-    public function __construct()
-    {
+    public function __construct() {
         $this->time_cache = config('app.cache_exp');
     }
-
+    
     public function index()
     {
-        $query = Kecamatan::get();
-        // $data = array();
-        // $query = Cache::rememberForever("kec.index", function () use ($data)
-        // {
-        //     foreach(
-        //         Kecamatan::withCount(['kab as nama_kabupaten' => function($sub)
-        //         {
-        //             $sub->select('nama');
-        //         }])
-        //         ->where('flg_aktif', 1)
-        //         ->orderBy('nama', 'asc')
-        //         ->cursor() as $cursor
-        //     )
-        //     {
-        //         $data[] = $cursor;                
+        $data = array();
+       $query = Kecamatan::get();
+        // $query = Cache::remember("prov.index", $this->time_cache, function () use ($data) {
+        //     foreach (Provinsi::select('id', 'nama')->where('flg_aktif', 1)->orderBy('nama', 'asc')->cursor()
+        //         as $cursor) {
+        //         $data[] = $cursor;
         //     }
 
         //     return $data;
         // });
+
 
         if (empty($query)) {
             return response()->json([
@@ -62,8 +53,7 @@ class KecamatanController extends BaseController
         }
     }
 
-    public function store(Request $req)
-    {
+    public function store(Request $req) {
         $nama      = $req->input('nama');
         $kabupaten = $req->input('id_kabupaten');
 
@@ -71,7 +61,7 @@ class KecamatanController extends BaseController
             return response()->json([
                 "code"    => 422,
                 "status"  => "not valid request",
-                "message" => ["nama" => ["nama belum diisi"]]
+                "message" => [ "nama" => ["nama belum diisi"]]
             ], 422);
         }
 
@@ -79,15 +69,15 @@ class KecamatanController extends BaseController
             return response()->json([
                 "code"    => 422,
                 "status"  => "not valid request",
-                "message" => ["id_kabupaten" => ["id kabupaten belum diisi"]]
+                "message" => [ "id_kabupaten" => ["id kabupaten belum diisi"]]
             ], 422);
         }
 
-        if (!empty($kabupaten) && !preg_match("/^[0-9]{1,}$/", $kabupaten)) {
+        if(!empty($kabupaten) && !preg_match("/^[0-9]{1,}$/", $kabupaten)){
             return response()->json([
                 "code"    => 422,
                 "status"  => "not valid request",
-                "message" => ["id_kabupaten" => ["id kabupaten harus berupa angka"]]
+                "message" => [ "id_kabupaten" => ["id kabupaten harus berupa angka"]]
             ], 422);
         }
 
@@ -97,7 +87,7 @@ class KecamatanController extends BaseController
         );
 
         Kecamatan::create($form); //703ms
-
+        
         try {
             return response()->json([
                 'code'    => 200,
@@ -114,13 +104,12 @@ class KecamatanController extends BaseController
         }
     }
 
-    public function show($IdOrName)
-    {
+    public function show($IdOrName) {
         // if(preg_match("/^[0-9]{1,}$/", $IdOrName)){
-
-        $query = Kecamatan::withCount(['kab as nama_kabupaten' => function ($sub) {
-            $sub->select('nama');
-        }])->where('id', $IdOrName)->first()->makeHidden(['id_kabupaten', 'flg_aktif']);
+            
+            $query = Kecamatan::withCount(['kab as nama_kabupaten' => function($sub){
+                $sub->select('nama');
+            }])->where('id', $IdOrName)->first()->makeHidden(['id_kabupaten', 'flg_aktif']);
         // }else{
         //     $query = Kecamatan::withCount(['kab as nama_kabupaten' => function($sub){
         //         $sub->select('nama');
@@ -150,8 +139,7 @@ class KecamatanController extends BaseController
         }
     }
 
-    public function update($id, Request $req)
-    {
+    public function update($id, Request $req) {
         $check = Kecamatan::where('id', $id)->first();
 
         if (empty($check)) {
@@ -166,7 +154,7 @@ class KecamatanController extends BaseController
         $kabupaten = empty($req->input('id_kabupaten')) ? $check->id_kabupaten : $req->input('id_kabupaten');
         $flg_aktif = empty($req->input('flg_aktif'))    ? $check->flg_aktif : ($req->input('flg_aktif') == 'false' ? 0 : 1);
 
-        if (!empty($kabupaten) && !preg_match("/^[0-9]{1,}$/", $kabupaten)) {
+        if(!empty($kabupaten) && !preg_match("/^[0-9]{1,}$/", $kabupaten)){
             return response()->json([
                 "code"    => 422,
                 "status"  => "not valid request",
@@ -206,15 +194,15 @@ class KecamatanController extends BaseController
         }
     }
 
-    public function delete($id)
+    public function delete($id) 
     {
         Kecamatan::where('id', $id)->update(['flg_aktif' => 0]);
-
+        
         try {
             return response()->json([
                 'code'    => 200,
                 'status'  => 'success',
-                'message' => 'Data dengan ID ' . $id . ', berhasil dihapus'
+                'message' => 'Data dengan ID '.$id.', berhasil dihapus'
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
@@ -227,12 +215,13 @@ class KecamatanController extends BaseController
 
     public function trash()
     {
-        $query = Kecamatan::withCount(['kab as nama_kabupaten' => function ($sub) {
+        $query = Kecamatan::withCount(['kab as nama_kabupaten' => function($sub)
+        {
             $sub->select('nama_kabupaten');
         }])
-            ->where('flg_aktif', 0)
-            ->orderBy('nama', 'asc')
-            ->get();
+        ->where('flg_aktif', 0)
+        ->orderBy('nama', 'asc')
+        ->get();
 
         if (empty($query)) {
             return response()->json([
@@ -281,7 +270,11 @@ class KecamatanController extends BaseController
     {
         $data = array();
 
-        foreach (Kecamatan::select('id', 'nama', 'id_kabupaten')->where('id_kabupaten', $id_kab)->orderBy('nama', 'asc')->cursor() as $cursor) {
+        foreach
+        (
+            Kecamatan::select('id', 'nama', 'id_kabupaten')->where('id_kabupaten', $id_kab)->orderBy('nama', 'asc')->cursor() as $cursor
+        )
+        {
             $data[] = $cursor;
         }
 
@@ -313,7 +306,7 @@ class KecamatanController extends BaseController
     {
         $column = array('id', 'nama', 'id_kabupaten');
 
-        if ($param != 'filter' && $param != 'search') {
+        if($param != 'filter' && $param != 'search'){
             return response()->json([
                 'code'    => 412,
                 'status'  => 'not valid',
@@ -321,41 +314,43 @@ class KecamatanController extends BaseController
             ], 412);
         }
 
-        if (in_array($key, $column) == false) {
+        if (in_array($key, $column) == false)
+        {
             return response()->json([
                 'code'    => 412,
                 'status'  => 'not valid',
-                'message' => 'gunakan key yang valid diantara berikut: ' . implode(",", $column)
+                'message' => 'gunakan key yang valid diantara berikut: '.implode(",", $column)
             ], 412);
         }
 
-        if (in_array($orderBy, $column) == false) {
+        if (in_array($orderBy, $column) == false)
+        {
             return response()->json([
                 'code'    => 412,
                 'status'  => 'not valid',
-                'message' => 'gunakan order by yang valid diantara berikut: ' . implode(",", $column)
+                'message' => 'gunakan order by yang valid diantara berikut: '.implode(",", $column)
             ], 412);
         }
 
-        if ($param == 'search') {
+        if($param == 'search'){
             $operator   = "like";
             $func_value = "%{$value}%";
-        } else {
+        }else{
             $operator   = "=";
             $func_value = "{$value}";
         }
 
         $query = Kecamatan::where('flg_aktif', $status)->orderBy($orderBy, $orderVal);
 
-        if ($value == 'default') {
+        if($value == 'default'){
             $res = $query;
-        } else {
+        }else{
             $res = $query->where($key, $operator, $func_value);
         }
 
-        if ($limit == 'default') {
+        if($limit == 'default'){
             $result = $res->get();
-        } else {
+        }else{
             $result = $res->limit($limit)->get();
         }
 

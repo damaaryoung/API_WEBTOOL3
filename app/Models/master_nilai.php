@@ -26,6 +26,7 @@ class master_nilai extends Model
 
     protected $table = 'cs_master_nilai';
     protected $primaryKey = 'id';
+public $timestamps = false;
 
     protected $fillable = [
           'id',

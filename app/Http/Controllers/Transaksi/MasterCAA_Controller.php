@@ -37,6 +37,7 @@ class MasterCAA_Controller extends BaseController
 {
      public function index(Request $req)
     {
+set_time_limit(0);
         $pic = $req->pic; // From PIC middleware
 
         $arr = array();
@@ -64,7 +65,7 @@ class MasterCAA_Controller extends BaseController
 
         $query_dir = TransCA::with('so', 'pic', 'cabang')->where('status_ca', 1)->orderBy('created_at', 'desc');
 
-        $query = Helper::checkDir($scope, $query_dir, $id_area, $id_cabang);
+        $query = Helper::checkDir($scope, $query_dir, $id_area, $id_cabang)->take(50);
 
         if (empty($query)) {
             return response()->json([
@@ -1310,6 +1311,7 @@ class MasterCAA_Controller extends BaseController
                 $ptc[] = [
                     'id_pic'    => $get_pic[$i]['id'] == null ? null : (int) $get_pic[$i]['id'],
                     'nama'      => $get_pic[$i]['nama'],
+'tgl_sk'      => $get_pic[$i]['tgl_sk'],
                     'jabatan'   => $get_pic[$i]['jpic']['nama_jenis'],
                     'urutan_jabatan'   => $get_pic[$i]['jpic']['urutan_jabatan'],
                     'user_id'   => $get_pic[$i]['user_id'] == null ? null : (int) $get_pic[$i]['user_id']

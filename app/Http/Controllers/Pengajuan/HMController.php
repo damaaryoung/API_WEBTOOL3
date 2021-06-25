@@ -148,7 +148,11 @@ class HMController extends BaseController
                         "lamp_ktp"          => $value->lamp_ktp,
                         "lamp_ktp_pasangan" => $value->lamp_ktp_pasangan,
                         "lamp_kk"           => $value->lamp_kk,
-                        "lamp_buku_nikah"   => $value->lamp_buku_nikah
+                        "lamp_buku_nikah"   => $value->lamp_buku_nikah,
+ "foto_selfie_penjamin"   => $value->foto_selfie_penjamin,
+"lampiran_npwp"   => $value->lampiran_npwp,
+"pemasukan_penjamin"   => $value->pemasukan_penjamin
+			
                     ]
                 ];
             }
@@ -217,6 +221,7 @@ class HMController extends BaseController
                 'no_npwp'               => $val->debt['no_npwp'],
                 'tempat_lahir'          => $val->debt['tempat_lahir'],
                 'tgl_lahir'             => $val->debt['tgl_lahir'],
+		'umur'         => $val->debt['umur'],
                 'agama'                 => $val->debt['agama'],
                 'alamat_ktp' => [
                     'alamat_singkat' => $val->debt['alamat_ktp'],
@@ -305,7 +310,9 @@ class HMController extends BaseController
                     'lamp_sertifikat'       => $val->debt['lamp_sertifikat'],
                     'lamp_sttp_pbb'         => $val->debt['lamp_sttp_pbb'],
                     'lamp_imb'              => $val->debt['lamp_imb'],
-                    'foto_agunan_rumah'     => $val->debt['foto_agunan_rumah']
+                    'foto_agunan_rumah'     => $val->debt['foto_agunan_rumah'],
+		    "foto_cadeb"   => $val->debt['foto_cadeb'],
+			"lamp_npwp"   => $val->debt['lamp_npwp']
                 ]
             ],
 
@@ -368,7 +375,9 @@ class HMController extends BaseController
                 'alamat_ktp'       => $val->pas['alamat_ktp'],
                 'no_telp'          => $val->pas['no_telp'],
                 'lamp_ktp'         => $val->pas['lamp_ktp'],
-                'lamp_buku_nikah'  => $val->pas['lamp_buku_nikah']
+                'lamp_buku_nikah'  => $val->pas['lamp_buku_nikah'],
+		'foto_pasangan'	   => $val->pas['foto_pasangan'],
+'lampiran_npwp'	   => $val->pas['lampiran_npwp']
             ],
             'data_penjamin' => $penjamin,
             'das_status'    => $status_das,

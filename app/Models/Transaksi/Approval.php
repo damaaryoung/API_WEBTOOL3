@@ -32,7 +32,7 @@ class Approval extends Model implements AuthenticatableContract, AuthorizableCon
     protected $primaryKey = 'id';
 
     protected $fillable = [
-        'user_id', 'id_trans_so', 'id_trans_caa', 'id_pic', 'id_area', 'id_cabang', 'plafon', 'tenor', 'rincian', 'status', 'tujuan_forward', 'flg_aktif'
+        'user_id', 'id_trans_so', 'id_trans_caa', 'id_pic', 'id_area', 'id_cabang', 'plafon', 'tenor', 'rincian', 'status','status_crm', 'tujuan_forward', 'flg_aktif'
     ];
 
     protected $casts = [

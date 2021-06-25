@@ -30,6 +30,7 @@ class ActivitySo extends Model
        'id',
   'activity',
   'nomor_so',
+'kode_mb',
   'nama_mb',
   'hasil_maintain',
   'nama_debitur',

@@ -23,7 +23,7 @@ class LogAsuransiJiwa extends Model implements AuthenticatableContract, Authoriz
     protected $primaryKey = 'id';
 
     protected $fillable = [
-        'id', 'nama_asuransi', 'jangka_waktu', 'nilai_pertanggungan', 'jatuh_tempo', 'berat_badan', 'tinggi_badan', 'umur_nasabah'
+       'id', 'nama_asuransi', 'jangka_waktu', 'nilai_pertanggungan', 'jatuh_tempo', 'berat_badan', 'tinggi_badan', 'umur_nasabah'
     ];
 
     protected $casts = [

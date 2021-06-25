@@ -96,12 +96,12 @@ class PemeriksaanTanahController extends BaseController
             'kondisi_bangunan'              => empty($req->input('kondisi_bangunan_agunan')) ? $check->kondisi_bangunan : $req->input('kondisi_bangunan_agunan'),
             'fasilitas'                     => empty($req->input('fasilitas_agunan')) ? $check->fasilitas : $req->input('fasilitas_agunan'),
             'listrik'                       => empty($req->input('listrik_agunan')) ? $check->listrik : $req->input('listrik_agunan'),
-            'nilai_taksasi_agunan'          => empty($req->input('nilai_taksasi_agunan')) ? $check->nilai_taksasi_agunan : $req->input('nilai_taksasi_agunan'),
-            'nilai_taksasi_bangunan'        => empty($req->input('nilai_taksasi_bangunan')) ? $check->nilai_taksasi_bangunan : $req->input('nilai_taksasi_bangunan'),
+            'nilai_taksasi_agunan'          => empty($req->input('nilai_taksasi_agunan')) && $req->input('nilai_taksasi_agunan') === 0 ? $check->nilai_taksasi_agunan : $req->input('nilai_taksasi_agunan'),
+            'nilai_taksasi_bangunan'        => empty($req->input('nilai_taksasi_bangunan')) && $req->input('nilai_taksasi_bangunan') === 0 ? $check->nilai_taksasi_bangunan : $req->input('nilai_taksasi_bangunan'),
             'tgl_taksasi'                   => empty($req->input('tgl_taksasi_agunan')) ? $check->tgl_taksasi : Carbon::parse($req->input('tgl_taksasi_agunan'))->format('Y-m-d'),
-            'nilai_likuidasi'               => empty($req->input('nilai_likuidasi_agunan')) ? $check->nilai_likuidasi : $req->input('nilai_likuidasi_agunan'),
-            'nilai_agunan_independen'       => empty($req->input('nilai_agunan_independen')) ? $check->nilai_agunan_independen : $req->input('nilai_agunan_independen'),
-            'perusahaan_penilai_independen' => empty($req->input('perusahaan_penilai_independen')) ? $check->perusahaan_penilai_independen : $req->input('perusahaan_penilai_independen')
+            'nilai_likuidasi'               => empty($req->input('nilai_likuidasi_agunan')) && $req->input('nilai_likuidasi_agunan') === 0 ? $check->nilai_likuidasi : $req->input('nilai_likuidasi_agunan'),
+            'nilai_agunan_independen'       => empty($req->input('nilai_agunan_independen')) && $req->input('nilai_agunan_independen') === 0 ? $check->nilai_agunan_independen : $req->input('nilai_agunan_independen'),
+            'perusahaan_penilai_independen' => empty($req->input('perusahaan_penilai_independen')) && $req->input('perusahaan_penilai_independen') === 0 ? $check->perusahaan_penilai_independen : $req->input('perusahaan_penilai_independen')
         );
 
         DB::connection('web')->beginTransaction();

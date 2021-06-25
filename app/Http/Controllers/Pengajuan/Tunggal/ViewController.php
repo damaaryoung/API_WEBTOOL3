@@ -63,6 +63,7 @@ class ViewController extends BaseController
     {
         $query = DB::connection('web')->table('view_asuransi_jiwa')->select('kode_asuransi', 'nm_asuransi')->get();
 
+
         try {
             return response()->json([
                 'code'   => 200,
@@ -117,7 +118,7 @@ class ViewController extends BaseController
         }
     }
 
-    public function viewPekerjaan()
+ public function viewPekerjaan()
     {
         $pekerjaan = DB::connection('web')->table('view_pekerjaan')->get();
 

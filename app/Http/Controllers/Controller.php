@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Laravel\Lumen\Routing\Controller as BaseController;
 use Illuminate\Support\Facades\File;
 use Intervention\Image\Facades\Image;
+use Illuminate\Support\Facades\Storage;
 use intervention\image\Imagick;
 
 class Controller extends BaseController
@@ -115,17 +116,17 @@ class Controller extends BaseController
         return $result;
     }
 
-    public static function checkDir($scope, $query_dir, $id_area, $id_cabang)
+     public static function checkDir($scope, $query_dir, $id_area, $id_cabang)
     {
 
         if ($scope === 'PUSAT') {
 
-            $query = $query_dir->paginate(10);
+            $query = $query_dir->get();
         } elseif ($scope === 'AREA') {
 
-            $query = $query_dir->where('id_area',$id_area)->paginate(10);
+            $query = $query_dir->where('id_area',$id_area)->get();
         } else {
-            $query = $query_dir->whereIn('id_cabang',$id_cabang)->paginate(10);
+            $query = $query_dir->whereIn('id_cabang',$id_cabang)->get();
         }
 
         return $query;
@@ -254,17 +255,381 @@ class Controller extends BaseController
             $file->move($path, $namefile);
         } else {
             // cut size image
-            // Image::make(realpath($file))->save($fullPath);
+          //  Image::make(realpath($file))->save($fullPath);
 
-            Image::make(realpath($file))->resize(800, 750, function ($constraint) {
+             Image::make(realpath($file))->resize(800, 750, function ($constraint) {
                 $constraint->aspectRatio();
             })->save($fullPath);
 
-            // $quick = Image::cache(function ($image) use ($file, $fullPath) {
-            //     return $image->make($file)->resize(480, 360)->save($fullPath);
+           //  $quick = Image::cache(function($image) use ($file, $fullPath) {
+             //    return $image->make($file)->resize(480, 360)->save($fullPath);
             // });
         }
 
         return $fullPath;
+    }
+ public static function copyFile($trans_so, $jenis, $path)
+    {
+        $path_to = 'public/log_verifikasi/' . $trans_so . '/' . $jenis . '/';
+        $storage = Storage::copy($path, $path_to);
+
+        return $storage;
+    }
+
+   public static function uploadImgWebtool($path, $file, $namefile)
+    {
+        // $filesystem = new Filesystem(new Adapter([
+        //     'host'     => '103.234.254.186',
+        //     'username' => 'bonar',
+        //     'password' => 'Abc123!!**',
+
+        //     /** optional config settings */
+        //     'port' => 2123,
+        //     // 'root' => '/path/to/root',
+        //     // 'passive' => true,
+        //     //  'ssl' => true,
+        //     //  'timeout' => 30,
+        //     'ignorePassiveAddress' => true,
+        // ]));
+
+        $ftp = Storage::createFtpDriver([
+            'host'     => '103.234.254.186',
+            'username' => 'bonar',
+            'password' => 'Abc123!!**',
+            'port'     => '2123', // your ftp port
+            // 'timeout'  => '30', // timeout setting 
+            'ignorePassiveAddress' => true,
+            // 'root' => 'F:/Apache2.2/htdocs/efiling'
+        ]);
+        if (!$ftp->exists($path)) {
+
+            $ftp->makeDirectory($path, 0775, true); //creates directory
+
+        }
+        // Check Directory
+        // if (!$ftp->isDirectory($path)) {
+        //     $ftp->makeDirectory($path, 0777, true, true);
+        // }
+        // if (!empty($check)) {
+        //     File::delete($check);
+        // }
+        // if ($name != '') {
+        //     $namefile = $name . '.' . $file->getClientOriginalName();
+        // } else {
+        //     $namefile = $file->getClientOriginalName();
+        // }
+        $namefile = $file->getClientOriginalName();
+
+        $fullPath = $path . '/' . $namefile;
+
+        if ($file->getClientMimeType() == "application/pdf") {
+            // $file->move($path, $namefile);
+            $ftp->put($fullPath, $namefile);
+        } else {
+            $ftp->put($fullPath, $namefile);
+        }
+        return $fullPath;
+
+        // $filecontent = $ftp->get($path . $file);
+
+
+        // return $filecontent;
+    }
+
+    public static function array_search_partial($arr, $keyword)
+    {
+        foreach ($arr as $string) {
+            if (strpos($string, $keyword) !== FALSE)
+                return substr($string, 36, 32 - 1);
+        }
+    }
+     public static function fcn($var)
+    {
+        //  dd($var);
+        if (empty($var)) {
+            $arrayfile = null;
+        } elseif ($var === '[]') {
+            $arrayfile = null;
+        } else {
+            $patterns = array();
+            $patterns[0] = '/]/';
+            $patterns[1] = '/"/';
+            $patterns[2] = "/~\~/";
+            $arrayfile  = array();
+            $var = preg_replace($patterns, "", $var);
+            $var = str_replace("[", "", $var);
+            $output = multiexplode(array("/", ","), $var);
+            // dd(count($output) < 9);
+            $exp = explode(",", $var);
+
+            $arr = array();
+            foreach ($exp as $key => $val) {
+                $arr[$key] =  multiexplode(array("/", ","), $val);
+            }
+            //    dd($output[3]);
+            if (count($output) < 8) {
+                $arrayfile = array($output[3]);
+                // dd($arrayfile);
+            } else {
+                foreach ($arr as $key => $val) {
+                    $arrayfile[$key] = $val[3];
+                    //   dd($val[3]);
+                }
+            }
+        }
+        // dd($arrayfile);
+        return $arrayfile;
+    }
+    public static function subsPengajuan($var, $no_ktp)
+    {
+        $patterns = array();
+        $patterns[0] = '/]/';
+        $patterns[1] = '/"/';
+        $patterns[2] = "/~\~/";
+        $arrayfile  = array();
+        $i = 0;
+        foreach ($var as $key => $item) {
+            $arrayfile[$key][$i] = $item;
+            foreach ($item as $val) {
+                $j = 0;
+                if ($arrayfile[$key][$i] = substr($val, 33, 32 - 2) === false) {
+                    $arrayfile[$key][$i] = null;
+                } else {
+
+                    $arrayfile[$key][$i] =  preg_replace($patterns, "", str_replace("public/" . $no_ktp . "/debitur" . "/" . "PengajuanBI/", "", $val));
+                    $j++;
+                }
+
+                $i++;
+            }
+            return $arrayfile;
+        }
+    }
+
+    public static function subsCA($var, $no_ktp)
+    {
+        $patterns = array();
+        $patterns[0] = '/]/';
+        $patterns[1] = '/"/';
+        $patterns[2] = "/~\~/";
+        $arrayfile  = array();
+        $i = 0;
+        foreach ($var as $key => $item) {
+            $arrayfile[$key][$i] = $item;
+            foreach ($item as $val) {
+                $j = 0;
+                if ($arrayfile[$key][$i] = substr($val, 33, 32 - 2) === false) {
+                    $arrayfile[$key][$i] = null;
+                } else {
+
+                    $arrayfile[$key][$i] =  preg_replace($patterns, "", str_replace("public/" . $no_ktp . "/debitur" . "/" . "CreditAnalist/", "", $val));
+                    $j++;
+                }
+
+                $i++;
+            }
+            return $arrayfile;
+        }
+    }
+
+    public static function subsBI($var, $no_ktp)
+    {
+        $patterns = array();
+        $patterns[0] = '/]/';
+        $patterns[1] = '/"/';
+        $patterns[2] = "/~\~/";
+        $arrayfile  = array();
+        $i = 0;
+        foreach ($var as $key => $item) {
+            $arrayfile[$key][$i] = $item;
+            foreach ($item as $val) {
+                $j = 0;
+                if ($arrayfile[$key][$i] = substr($val, 33, 32 - 2) === false) {
+                    $arrayfile[$key][$i] = null;
+                } else {
+
+                    $arrayfile[$key][$i] =  preg_replace($patterns, "", str_replace("public/" . $no_ktp . "/debitur" . "/" . "PengajuanBI/", "", $val));
+                    $j++;
+                }
+
+                $i++;
+            }
+            return $arrayfile;
+        }
+    }
+
+    public static function subsLegal($var, $no_ktp)
+    {
+        $patterns = array();
+        $patterns[0] = '/]/';
+        $patterns[1] = '/"/';
+        $patterns[2] = "/~\~/";
+        $arrayfile  = array();
+        $i = 0;
+        foreach ($var as $key => $item) {
+            $arrayfile[$key][$i] = $item;
+            foreach ($item as $val) {
+                $j = 0;
+                if ($arrayfile[$key][$i] = substr($val, 33, 32 - 2) === false) {
+                    $arrayfile[$key][$i] = null;
+                } else {
+
+                    $arrayfile[$key][$i] =  preg_replace($patterns, "", str_replace("public/" . $no_ktp . "/debitur" . "/" . "EFILLINGLEGAL/", "", $val));
+                    $j++;
+                }
+
+                $i++;
+            }
+            return $arrayfile;
+        }
+    }
+
+    public static function subsJaminan($var)
+    {
+        //  dd($var);
+        if (empty($var)) {
+            $arrayfile = null;
+        } elseif ($var === '[]') {
+            $arrayfile = null;
+        } else {
+            $patterns = array();
+            $patterns[0] = '/]/';
+            $patterns[1] = '/"/';
+            $patterns[2] = "/~\~/";
+            $arrayfile  = array();
+            $var = preg_replace($patterns, "", $var);
+            $var = str_replace("[", "", $var);
+            $output = multiexplode(array("/", ","), $var);
+           
+            $exp = explode(",", $var);
+
+            $arr = array();
+            foreach ($exp as $key => $val) {
+                $arr[$key] =  multiexplode(array("/", ","), $val);
+            }
+
+            if (count($output) < 8) {
+                $arrayfile = $output[6];
+               
+            } else {
+                foreach ($arr as $key => $val) {
+                    $arrayfile[$key] = $val[6];
+                }
+            }
+        }
+
+        return $arrayfile;
+    }
+
+    public static function subsFoto($var)
+    {
+        if (empty($var)) {
+            $arrayfile = array(null);
+        } else {
+            $patterns = array();
+            $patterns[0] = '/]/';
+            $patterns[1] = '/"/';
+            $patterns[2] = "/~\~/";
+            $arrayfile  = array();
+            $var = preg_replace($patterns, "", $var);
+            $var = str_replace("[", "", $var);
+            $output = multiexplode(array("/", ","), $var);
+            // dd(count($output) < 9);
+            $exp = explode(",", $var);
+
+            $arr = array();
+            foreach ($exp as $key => $val) {
+                $arr[$key] =  multiexplode(array("/", ","), $val);
+            }
+            //  dd($arr);
+            if (count($output) < 8) {
+                $arrayfile = array($output[3]);
+                // dd($arrayfile);
+            } else {
+                foreach ($arr as $key => $val) {
+                    $arrayfile[$key] = $val[3];
+                    //   dd($val[3]);
+                }
+            }
+        }
+        return $arrayfile;
+
+    }
+
+    public static function subsPermohonan($var, $no_ktp)
+    {
+        $patterns = array();
+        $patterns[0] = '/]/';
+        $patterns[1] = '/"/';
+        $patterns[2] = "/~\~/";
+        $arrayfile  = array();
+        $i = 0;
+        foreach ($var as $key => $item) {
+            $arrayfile[$key][$i] = $item;
+            foreach ($item as $val) {
+                $j = 0;
+                if ($arrayfile[$key][$i] = substr($val, 33, 32 - 2) === false) {
+                    $arrayfile[$key][$i] = null;
+                } else {
+
+                    $arrayfile[$key][$i] =  preg_replace($patterns, "", str_replace("public/" . $no_ktp . "/debitur" . "/" . "kredit/", "", $val));
+                    $j++;
+                }
+
+                $i++;
+            }
+            return $arrayfile;
+        }
+    }
+
+    public static function subsAsset($var, $no_ktp)
+    {
+        $patterns = array();
+        $patterns[0] = '/]/';
+        $patterns[1] = '/"/';
+        $patterns[2] = "/~\~/";
+        $arrayfile  = array();
+        $i = 0;
+        foreach ($var as $key => $item) {
+            $arrayfile[$key][$i] = $item;
+            foreach ($item as $val) {
+                $j = 0;
+                if ($arrayfile[$key][$i] = substr($val, 33, 32 - 2) === false) {
+                    $arrayfile[$key][$i] = null;
+                } else {
+
+                    $arrayfile[$key][$i] =  preg_replace($patterns, "", str_replace("public/" . $no_ktp . "/debitur" . "/" . "EFILLINGASSET/", "", $val));
+                    $j++;
+                }
+
+                $i++;
+            }
+            return $arrayfile;
+        }
+    }
+    public static function subsSpk($var, $no_ktp)
+    {
+        $patterns = array();
+        $patterns[0] = '/]/';
+        $patterns[1] = '/"/';
+        $patterns[2] = "/~\~/";
+        $arrayfile  = array();
+        $i = 0;
+        foreach ($var as $key => $item) {
+            $arrayfile[$key][$i] = $item;
+            foreach ($item as $val) {
+                $j = 0;
+                if ($arrayfile[$key][$i] = substr($val, 33, 32 - 2) === false) {
+                    $arrayfile[$key][$i] = null;
+                } else {
+
+                    $arrayfile[$key][$i] =  preg_replace($patterns, "", str_replace("public/" . $no_ktp . "/debitur" . "/" . "EFILLINGSPKNDK/", "", $val));
+                    $j++;
+                }
+
+                $i++;
+            }
+            return $arrayfile;
+        }
     }
 }

@@ -101,7 +101,7 @@ TargetPeriodik::create($data);
                 'code' => 200,
                 'status' => 'success',
                 'message' => 'Data Target Periodik Berhasil Di Input',
-  //if(is_array($merge_scor)) { //if(is_array($merge_scor)) {               'data' => $data
+                'data' => $data
             ]);
         } catch (\Exception $e) {
             // $err = DB::connection('web')->rollback();

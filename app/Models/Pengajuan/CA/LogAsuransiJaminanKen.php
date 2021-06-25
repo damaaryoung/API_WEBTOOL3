@@ -23,7 +23,7 @@ class LogAsuransiJaminanKen extends Model implements AuthenticatableContract, Au
     protected $primaryKey = 'id';
 
     protected $fillable = [
-        'id', 'nama_asuransi', 'jangka_waktu', 'nilai_pertanggungan', 'jatuh_tempo'
+        'id','nama_asuransi', 'jangka_waktu', 'nilai_pertanggungan', 'jatuh_tempo'
     ];
 
     protected $casts = [

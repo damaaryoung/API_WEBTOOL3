@@ -366,29 +366,41 @@ class MasterSO_Controller extends BaseController
         }
 
         $check_ktp_web = Debitur::select('id', 'no_ktp', 'nama_lengkap', 'created_at')->where('no_ktp', $ktp)->first();
-
-        if ($check_ktp_web !== null) {
+   if ($check_ktp_web !== null) {
 
             $created_at = strtotime($check_ktp_web->created_at);
-
             $compare_day_in_second = $dateExpires - $created_at;
-
+            //   dd($compare_day_in_second <= $day_in_second);
             if ($compare_day_in_second <= $day_in_second) {
                 return response()->json([
                     "code"    => 403,
                     "status"  => "Expired",
-                    'message' => "Akun belum aktif kembali, belum ada 1 bulan yang lalu, tepatnya pada tanggal '" . Carbon::parse($check_ktp_web->created_at)->format("Y-m-d") . "' debitur dengan nama '{$check_ktp_web->nama_lengkap}' telah melakukan pengajuan"
+                    'message' => "Akun belum aktif kembali, belum ada 2 bulan yang lalu"
                 ], 403);
-            } 
+                } 
+      //  if ($check_ktp_web !== null) {
+
+//            $created_at = strtotime($check_ktp_web->created_at);
+
+//            $compare_day_in_second = $dateExpires - $created_at;
+
+//            if ($compare_day_in_second <= $day_in_second) {
+  //              return response()->json([
+    //                "code"    => 403,
+      //              "status"  => "Expired",
+       //             'message' => "Akun belum aktif kembali, belum ada 1 bulan yang lalu, tepatnya pada tanggal '" . Carbon::parse//($check_ktp_web->created_at)->format("Y-m-d") . "' debitur dengan nama '{$check_ktp_web->nama_lengkap}' telah melakukan pengajuan"
+  //              ], 403);
+    //        } 
+        //  else {
+            //     return response()->json([
+            //         "code"    => 403,
+            //         "status"  => "forbidden",
+            //         "message" => "Akun telah ada di sistem, gunakan endpoint berikut apabila ingin menggunakan datanya",
+            //         "endpoint" => "/api/debitur/" . $check_ktp_web->id
+            //     ], 403);
+            // }
+        }
  else {
-                return response()->json([
-                    "code"    => 403,
-                    "status"  => "Forbidden",
-                    "message" => "Akun telah ada di sistem, gunakan endpoint berikut apabila ingin menggunakan datanya",
-                   "endpoint" => "/api/debitur/" . $check_ktp_web->id
-                ], 403);
-            }
-        } else {
             $check_ktp_debt = Debitur::where('no_ktp', $ktp)->first();
 
             if (!empty($check_ktp_debt) && !empty($check_ktp_debt->no_ktp)) {
@@ -432,7 +444,7 @@ class MasterSO_Controller extends BaseController
             }
 
             $check_ktp_pas = Pasangan::where('no_ktp', $no_ktp_pas)->first();
-
+}
             // if (!empty($check_ktp_pas) && !empty($check_ktp_pas->no_ktp)) {
             //     return response()->json([
             //         "code"    => 422,
@@ -478,6 +490,29 @@ class MasterSO_Controller extends BaseController
             } else {
                 $lamp_ktp = null;
             }
+
+########################################################################################################
+        ##UPDATE VERIJELAS
+        if ($file = $req->file('foto_cadeb')) {
+            $name       = 'cadeb.';
+            $check_file = 'null';
+
+            $foto_cadeb = Helper::uploadImg($check_file, $file, $path_debt, $name);
+        } else {
+            $foto_cadeb = null;
+        }
+
+        if ($file = $req->file('lamp_npwp')) {
+            $name       = 'npwp.';
+            $check_file = 'null';
+
+            $lamp_npwp = Helper::uploadImg($check_file, $file, $path_debt, $name);
+        } else {
+            $lamp_npwp = null;
+        }
+
+
+        ########################################################################################################
 
             if ($file = $req->file('lamp_kk')) {
                 $name       = 'kk.';
@@ -574,6 +609,8 @@ class MasterSO_Controller extends BaseController
                 'lamp_sttp_pbb'         => $lamp_sttp_pbb,
                 'lamp_imb'              => $lamp_imb,
                 'lamp_surat_cerai'      => $lamp_surat_cerai,
+'foto_cadeb'            => $foto_cadeb,
+            'lamp_npwp'                      => $lamp_npwp,
                 'foto_agunan_rumah'     => $foto_agunan_rumah,
                 'NASABAH_ID'            => $NASABAH_ID,
                 'email'          => $req->input('email'),
@@ -587,6 +624,16 @@ class MasterSO_Controller extends BaseController
             } else {
                 $lamp_ktp_pas = null;
             }
+  ################################################################################################
+        if ($file = $req->file('foto_pasangan')) {
+            $name       = 'pasangan.';
+            $check_file = 'null';
+
+            $foto_pasangan = Helper::uploadImg($check_file, $file, $path_pas, $name);
+        } else {
+            $foto_pasangan = null;
+        }
+        ################################################################################################
 
             if ($file = $req->file('lamp_buku_nikah_pas')) {
                 $name       = 'buku_nikah.';
@@ -617,6 +664,7 @@ class MasterSO_Controller extends BaseController
                 'alamat_ktp'       => $alamat_ktp_pas,
                 'no_telp'          => $req->input('no_telp_pas'),
                 'lamp_ktp'         => $lamp_ktp_pas,
+		'foto_pasangan'    => $foto_pasangan,
                 'lamp_buku_nikah'  => $lamp_buku_nikah_pas
             );
 
@@ -698,7 +746,7 @@ class MasterSO_Controller extends BaseController
                     ];
                 }
             }
-        }
+        
 
         DB::connection('web')->beginTransaction();
         try {

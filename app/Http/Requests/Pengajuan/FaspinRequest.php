@@ -29,7 +29,7 @@ class FaspinRequest extends FormRequest
                 'plafon_pinjaman'       => 'integer',
                 'tenor_pinjaman'        => 'numeric'
             ];
-        } else {
+        }else{
             $rules = [
                 // Fasilitas Pinjaman
                 'jenis_pinjaman'        => 'required|in:KONSUMTIF,MODAL KERJA,INVESTASI',
@@ -41,8 +41,7 @@ class FaspinRequest extends FormRequest
         return $rules;
     }
 
-    public function messages()
-    {
+    public function messages(){
         return [
             // Fasilitas Pinjaman
             'jenis_pinjaman.required'  => ':attribute wajib diisi',

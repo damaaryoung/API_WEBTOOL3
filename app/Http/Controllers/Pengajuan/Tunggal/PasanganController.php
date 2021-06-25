@@ -20,8 +20,9 @@ use DB;
 class PasanganController extends BaseController
 {
 
-    public function show($id){
-        $val = Pasangan::with('prov_kerja','kab_kerja','kec_kerja','kel_kerja')
+    public function show($id)
+    {
+        $val = Pasangan::with('prov_kerja', 'kab_kerja', 'kec_kerja', 'kel_kerja')
             ->where('id', $id)->first();
 
         if ($val == null) {
@@ -76,7 +77,9 @@ class PasanganController extends BaseController
             ],
             'lampiran' => [
                 'lamp_ktp'         => $val->lamp_ktp,
-                'lamp_buku_nikah'  => $val->lamp_buku_nikah
+                'lamp_buku_nikah'  => $val->lamp_buku_nikah,
+                'foto_pasangan'       => $val->foto_pasangan,
+		'lampiran_npwp'	=> $val->lampiran_npwp
             ]
         );
 
@@ -95,7 +98,8 @@ class PasanganController extends BaseController
         }
     }
 
-    public function update($id, PasanganRequest $req){
+    public function update($id, PasanganRequest $req)
+    {
         $check_pas = Pasangan::where('id', $id)->first();
 
         if ($check_pas == null) {
@@ -116,67 +120,91 @@ class PasanganController extends BaseController
             ], 404);
         }
 
-        
+
         /** Check Lampiran */
         $check_lamp_ktp_pas        = $check_pas->lamp_ktp;
         $check_lamp_buku_nikah_pas = $check_pas->lamp_buku_nikah;
+        $check_lamp_foto_pas = $check_pas->foto_pasangan;
+        $check_lamp_npwp = $check_pas->lampiran_npwp;
         /** */
         $path  = 'public/' . $so->debt['no_ktp'] . '/penjamin';
 
         // Lampiran Pasangan
-        if($file = $req->file('lamp_ktp_pas')){
+        if ($file = $req->file('lamp_ktp_pas')) {
             $name = 'ktp.';
             $check = $check_lamp_ktp_pas;
-            
+
             $ktpPass = Helper::uploadImg($check, $file, $path, $name);
-        }else{
+        } else {
             $ktpPass = $check_lamp_ktp_pas;
         }
+        ####################################################################################################################################
 
-        if($file = $req->file('lamp_buku_nikah_pas')){
+        if ($file = $req->file('foto_pasangan')) {
+            $name = 'foto_pasangan.';
+            $check = $check_lamp_foto_pas;
+
+            $fotopas = Helper::uploadImg($check, $file, $path, $name);
+        } else {
+            $fotopas = $check_lamp_foto_pas;
+        }
+        ####################################################################################################################################
+        if ($file = $req->file('lampiran_npwp')) {
+            $name = 'lampiran_npwp.';
+            $check = $check_lamp_npwp;
+
+            $npwppas = Helper::uploadImg($check, $file, $path, $name);
+        } else {
+            $npwppas = $check_lamp_npwp;
+        }
+
+        #######################################################################################################
+        if ($file = $req->file('lamp_buku_nikah_pas')) {
             $name = 'buku_nikah.';
             $check = $check_lamp_buku_nikah_pas;
-            
+
             $bukuNikahPass = Helper::uploadImg($check, $file, $path, $name);
-        }else{
+        } else {
             $bukuNikahPass = $check_lamp_buku_nikah_pas;
         }
 
         // Data Usaha Calon Debitur
         // Pasangan Lama
         $dataPasangan = array(
-            'nama_lengkap'     => empty($req->input('nama_lengkap_pas')) 
+            'nama_lengkap'     => empty($req->input('nama_lengkap_pas'))
                 ? $check_pas->nama_lengkap : $req->input('nama_lengkap_pas'),
 
-            'nama_ibu_kandung' => empty($req->input('nama_ibu_kandung_pas')) 
+            'nama_ibu_kandung' => empty($req->input('nama_ibu_kandung_pas'))
                 ? $check_pas->nama_ibu_kandung : $req->input('nama_ibu_kandung_pas'),
 
-            'jenis_kelamin'    => empty($req->input('jenis_kelamin_pas')) 
+            'jenis_kelamin'    => empty($req->input('jenis_kelamin_pas'))
                 ? strtoupper($check_pas->jenis_kelamin) : strtoupper($req->input('jenis_kelamin_pas')),
 
-            'no_ktp'           => empty($req->input('no_ktp_pas')) 
+            'no_ktp'           => empty($req->input('no_ktp_pas'))
                 ? $check_pas->no_ktp : $req->input('no_ktp_pas'),
 
-            'no_ktp_kk'        => empty($req->input('no_ktp_kk_pas')) 
+            'no_ktp_kk'        => empty($req->input('no_ktp_kk_pas'))
                 ? $check_pas->no_ktp_kk : $req->input('no_ktp_kk_pas'),
 
-            'no_npwp'          => empty($req->input('no_npwp_pas')) 
+            'no_npwp'          => empty($req->input('no_npwp_pas'))
                 ? $check_pas->no_npwp : $req->input('no_npwp_pas'),
 
-            'tempat_lahir'     => empty($req->input('tempat_lahir_pas')) 
+            'tempat_lahir'     => empty($req->input('tempat_lahir_pas'))
                 ? $check_pas->tempat_lahir : $req->input('tempat_lahir_pas'),
 
-            'tgl_lahir'        => empty($req->input('tgl_lahir_pas')) 
+            'tgl_lahir'        => empty($req->input('tgl_lahir_pas'))
                 ? $check_pas->tgl_lahir : Carbon::parse($req->input('tgl_lahir_pas'))->format('Y-m-d'),
 
-            'alamat_ktp'       => empty($req->input('alamat_ktp_pas')) 
+            'alamat_ktp'       => empty($req->input('alamat_ktp_pas'))
                 ? $check_pas->alamat_ktp : $req->input('alamat_ktp_pas'),
 
-            'no_telp'          => empty($req->input('no_telp_pas')) 
+            'no_telp'          => empty($req->input('no_telp_pas'))
                 ? $check_pas->no_telp : $req->input('no_telp_pas'),
-                
+
             'lamp_ktp'         => $ktpPass,
             'lamp_buku_nikah'  => $bukuNikahPass,
+            'foto_pasangan'    => $fotopas,
+            'lampiran_npwp'    => $npwppas,
 
             // Pasangan Baru
             'pekerjaan'             => $req->input('pekerjaan_pas'),
@@ -205,7 +233,7 @@ class PasanganController extends BaseController
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'message'=> 'Update Pasangan Berhasil',
+                'message' => 'Update Pasangan Berhasil',
                 'data'   => $dataPasangan
             ], 200);
         } catch (Exception $e) {

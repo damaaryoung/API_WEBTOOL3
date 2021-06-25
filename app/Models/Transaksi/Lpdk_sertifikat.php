@@ -53,9 +53,9 @@ class Lpdk_sertifikat extends Model implements AuthenticatableContract, Authoriz
         'updated_at'
     ];
 
-    protected $casts = [
+    // protected $casts = [
     //     'flg_aktif'  => 'boolean',
-         'tgl_berlaku_shgb' => 'date:d-m-Y',
+    //     'created_at' => 'date:m-d-Y H:i:s',
     //     'updated_at' => 'date:m-d-Y H:i:s'
-     ];
+    // ];
 }

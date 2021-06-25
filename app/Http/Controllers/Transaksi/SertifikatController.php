@@ -63,7 +63,7 @@ class SertifikatController extends BaseController
 
         $query = Helper::checkDir($scope, $query_dir, $id_area, $id_cabang);
 
-$trans_so = TransSO::select('trans_so.id','trans_so.nomor_so','mk_cabang.nama AS nama_cabang','calon_debitur.nama_lengkap','fasilitas_pinjaman.plafon','agunan_tanah.status AS status_sertifikat')->join('calon_debitur','trans_so.id_calon_debitur','=','calon_debitur.id')->join('fasilitas_pinjaman','trans_so.id_fasilitas_pinjaman','=','fasilitas_pinjaman.id')->join('mk_cabang','trans_so.id_cabang','=','mk_cabang.id')->join('trans_ao','trans_ao.id_trans_so','=','trans_so.id')->join('agunan_tanah','trans_ao.id_agunan_tanah','=','agunan_tanah.id')
+$trans_so = TransSO::select('trans_so.id','trans_so.nomor_so','mk_cabang.nama AS nama_cabang','calon_debitur.nama_lengkap','fasilitas_pinjaman.plafon','agunan_tanah.status AS status_sertifikat','agunan_tanah.plan_akad')->join('calon_debitur','trans_so.id_calon_debitur','=','calon_debitur.id')->join('fasilitas_pinjaman','trans_so.id_fasilitas_pinjaman','=','fasilitas_pinjaman.id')->join('mk_cabang','trans_so.id_cabang','=','mk_cabang.id')->join('trans_ao','trans_ao.id_trans_so','=','trans_so.id')->join('agunan_tanah','trans_ao.id_agunan_tanah','=','agunan_tanah.id')
 ->orderBy('trans_so.created_at','DESC')
 ->paginate(10);
         // $TransAO = TransAO::select('trans_so.id',
@@ -152,11 +152,10 @@ $trans_so = TransSO::select('trans_so.id','trans_so.nomor_so','mk_cabang.nama AS
        // dd($id_cabang);
         $scope     = $arrrr;
 
-$cek_sertifikat = Debitur::select('trans_so.id AS id','trans_so.nomor_so as no_rekening'  ,'calon_debitur.nama_lengkap','calon_debitur.alamat_ktp','agunan_tanah.no_sertifikat AS no_shm',
-  'jenis_sertifikat AS jenis_jaminan','agunan_tanah.tgl_sertifikat AS tgl_sertifikat','agunan_tanah.tgl_ukur_sertifikat AS nomor_surat_ukur','mk_cabang.nama AS nama_kota','agunan_tanah.nama_pemilik_sertifikat AS nama_pemilik_sertifikat','agunan_tanah.alamat','agunan_tanah.luas_tanah',
+$cek_sertifikat = Debitur::select('trans_so.id AS id','trans_so.nomor_so as no_rekening'  ,'calon_debitur.nama_lengkap','calon_debitur.alamat_ktp','agunan_tanah.no_sertifikat AS no_shm','jenis_sertifikat AS jenis_jaminan','agunan_tanah.tgl_sertifikat AS tgl_sertifikat','agunan_tanah.tgl_ukur_sertifikat AS nomor_surat_ukur','mk_cabang.nama AS nama_kota','agunan_tanah.nama_pemilik_sertifikat AS nama_pemilik_sertifikat','agunan_tanah.alamat','agunan_tanah.luas_tanah',
     'agunan_tanah.asli_ajb','agunan_tanah.asli_imb','agunan_tanah.asli_sppt','agunan_tanah.asli_sppt','agunan_tanah.asli_imb','asli_skmht','agunan_tanah.asli_gambar_denah','agunan_tanah.asli_imb','agunan_tanah.asli_surat_roya','agunan_tanah.asli_sht','agunan_tanah.asli_stts','agunan_tanah.asli_ssb','agunan_tanah.ajb',
-    'agunan_tanah.imb','agunan_tanah.sppt','agunan_tanah.no_sppt','agunan_tanah.sppt_tahun','agunan_tanah.skmht','agunan_tanah.gambar_denah','agunan_tanah.surat_roya','agunan_tanah.sht','agunan_tanah.no_sht','agunan_tanah.sht_propinsi','agunan_tanah.sht_kota','agunan_tanah.stts','agunan_tanah.stts_tahun','agunan_tanah.ssb','agunan_tanah.ssb_atas_nama','agunan_tanah.ssb_tahun','agunan_tanah.lain_lain','agunan_tanah.no_ajb','agunan_tanah.no_imb','agunan_tanah.no_sppt','agunan_tanah.tgl_ajb'
-)->join('trans_so','trans_so.id_calon_debitur','=','calon_debitur.id')->join('trans_ao','trans_ao.id_trans_so','=','trans_so.id')->join('agunan_tanah','trans_ao.id_agunan_tanah','=','agunan_tanah.id')->join('mk_cabang','trans_so.id_cabang','=','mk_cabang.id')
+    'agunan_tanah.imb','agunan_tanah.sppt','agunan_tanah.no_sppt','agunan_tanah.sppt_tahun','agunan_tanah.skmht','agunan_tanah.gambar_denah','agunan_tanah.surat_roya','agunan_tanah.sht','agunan_tanah.no_sht','agunan_tanah.sht_propinsi','agunan_tanah.sht_kota','agunan_tanah.stts','agunan_tanah.stts_tahun','agunan_tanah.ssb','agunan_tanah.ssb_atas_nama','agunan_tanah.ssb_tahun','agunan_tanah.lain_lain','agunan_tanah.no_ajb','agunan_tanah.no_imb','agunan_tanah.no_sppt','agunan_tanah.tgl_ajb',
+'agunan_tanah.status','agunan_tanah.plan_akad')->join('trans_so','trans_so.id_calon_debitur','=','calon_debitur.id')->join('trans_ao','trans_ao.id_trans_so','=','trans_so.id')->join('agunan_tanah','trans_ao.id_agunan_tanah','=','agunan_tanah.id')->join('mk_cabang','trans_so.id_cabang','=','mk_cabang.id')
  ->where('trans_so.id',$id)
 ->get();
 
@@ -197,7 +196,7 @@ try {
           'nama_pemilik_sertifikat'  => empty($req->input('nama'))     ? $ser->nama_pemilik_sertifikat : $req->input('nama'),
           'alamat'  => empty($req->input('alamat'))     ? $ser->alamat : $req->input('alamat'),
           'no_sertifikat'  => empty($req->input('no_shm'))     ? $ser->no_sertifikat : $req->input('no_shm'),
-          'nomor_surat_ukur'  => empty($req->input('nomor_surat_ukur'))     ? $ser->nomor_surat_ukur : $req->input('nomor_surat_ukur'),
+          'tgl_ukur_sertifikat'  => empty($req->input('nomor_surat_ukur'))     ? $ser->nomor_surat_ukur : $req->input('nomor_surat_ukur'),
           'tgl_sertifikat'  => empty($req->input('tgl_sertifikat'))     ? $ser->tgl_sertifikat : $req->input('tgl_sertifikat'),
           'luas_tanah'  => empty($req->input('luas_tanah'))     ? $ser->luas_tanah : $req->input('luas_tanah'),
 'lain_lain'  => empty($req->input('lain_lain'))     ? $ser->lain_lain : $req->input('lain_lain'),
@@ -232,7 +231,8 @@ try {
             'no_ajb'  => empty($req->input('no_ajb'))     ? $ser->no_ajb : $req->input('no_ajb'),
              'no_imb'  => empty($req->input('no_imb'))     ? $ser->no_imb : $req->input('no_imb'),
               'no_sppt'  => empty($req->input('no_sppt'))     ? $ser->no_sppt : $req->input('no_sppt'),
-               'tgl_ajb'  => empty($req->input('tgl_ajb'))     ? $ser->tgl_ajb : $req->input('tgl_ajb')
+               'tgl_ajb'  => empty($req->input('tgl_ajb'))     ? $ser->tgl_ajb : $req->input('tgl_ajb'),
+'plan_akad'  => empty(Carbon::parse($req->input('plan_akad'))->format('Y-m-d'))     ? $ser->tgl_ajb : Carbon::parse($req->input('plan_akad'))->format('Y-m-d')
         );
 
 AgunanTanah::where('id_trans_so',$id)->update($data);

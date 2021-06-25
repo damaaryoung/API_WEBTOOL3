@@ -54,14 +54,14 @@ class Lpdk extends Model implements AuthenticatableContract, AuthorizableContrac
         'status_kredit',
         'notes_progress',
         'notes_counter',
-        'notes_cancel',
+	'notes_cancel',
 	'lain_lain',
         'id_sertifikat',
         'id_penjamin',
         'id_lampiran',
+	'sla',
         'created_at',
-        'updated_at',
-        'sla'
+        'updated_at'
     ];
 
     // protected $casts = [

@@ -16,6 +16,7 @@ use App\Models\Pengajuan\SO\Anak;
 // use Illuminate\Support\Facades\File;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use App\Models\master_nilai;
 
 class DebiturController extends BaseController
 {
@@ -23,7 +24,7 @@ class DebiturController extends BaseController
     {
         $now   = Carbon::now();
         $dateExpires   = strtotime($now); // time to integer
-        $day_in_second = 60 * 60 * 24 * 30; //1 bulan
+        $day_in_second = 60 * 60 * 24 * 60; //1 bulan
 
         $valid = DB::connection("web")->table("view_nasabah")->where("NO_ID", $id)->first();
 
@@ -35,15 +36,14 @@ class DebiturController extends BaseController
         }
 
         $check_ktp_web = Debitur::select('id', 'nama_lengkap', 'no_ktp', 'created_at')->where('no_ktp', $id)->first();
-
-       //   dd($check_ktp_web === null);
-        // if ($valid === null) {
-        //     return response()->json([
-        //         'code'  => 404,
-        //         'status'    => 'not found',
-        //         'message'   => 'data debitur tidak ada'
-        //     ]);
-        // }
+        //  dd($valid);
+        if ($valid === null) {
+            return response()->json([
+                'code'  => 404,
+                'status'    => 'not found',
+                'message'   => 'data debitur tidak ada'
+            ]);
+        }
 
         if ($check_ktp_web === null) {
             return response()->json([
@@ -63,15 +63,15 @@ class DebiturController extends BaseController
                     "status"  => "Expired",
                     'message' => "Akun belum aktif kembali, belum ada 1 bulan yang lalu"
                 ], 403);
-                } 
-            //     else {
-            //         return response()->json([
-            //             "code"    => 403,
-            //             "status"  => "forbidden",
-            //             "message" => "Akun telah ada di sistem, gunakan endpoint berikut apabila ingin menggunakan datanya",
-            //             "endpoint" => "/api/debitur/" . $check_ktp_web->id
-            //         ], 403);
-            // }
+            }
+            // else {
+            //    return response()->json([
+            //      "code"    => 403,
+            //      "status"  => "forbidden",
+            //      "message" => "Akun telah ada di sistem, gunakan endpoint berikut apabila ingin menggunakan datanya",
+            //       "endpoint" => "/api/debitur/" . $check_ktp_web->id
+            //     ], 403);
+            //     }
 
             $data = array(
                 'NASABAH_ID' => $valid->NASABAH_ID,
@@ -128,7 +128,7 @@ class DebiturController extends BaseController
         //         'tgl_lahir' => empty($tgl_anak[$i]) ? null : Carbon::parse($tgl_anak[$i])->format("d-m-Y")
         //     );
         // }
-        $anak = Anak::select('anak_id','nama_anak AS nama', 'tgl_lahir_anak')->where('nasabah_id', $id)->get();
+        $anak = Anak::select('anak_id', 'nama_anak AS nama', 'tgl_lahir_anak')->where('nasabah_id', $id)->get();
         $data = array(
             'id'                    => $val->id == null ? null : (int) $val->id,
             'nama_lengkap'          => $val->nama_lengkap,
@@ -144,7 +144,7 @@ class DebiturController extends BaseController
             'no_kk'                 => $val->no_kk,
             'no_npwp'               => $val->no_npwp,
             'tempat_lahir'          => $val->tempat_lahir,
-            'tgl_lahir'             => Carbon::parse($val->tgl_lahir)->format('d-m-Y'),
+            'tgl_lahir'             => Carbon::parse($val->tgl_lahir)->format('Y-m-d'),
             'umur'                  => $val->umur,
             'agama'                 => $val->agama,
             'anak'                  => $anak,
@@ -197,7 +197,7 @@ class DebiturController extends BaseController
                 "posisi_pekerjaan"      => $val->posisi_pekerjaan,
                 "nama_tempat_kerja"     => $val->nama_tempat_kerja,
                 "jenis_pekerjaan"       => $val->jenis_pekerjaan,
-                "tgl_mulai_kerja"       => Carbon::parse($val->tgl_mulai_kerja)->format('d-m-Y'),
+                "tgl_mulai_kerja"       => Carbon::parse($val->tgl_mulai_kerja)->format('Y-m-d'),
                 "lama_kerja"            => $val->lama_kerja,
                 "no_telp_tempat_kerja"  => $val->no_telp_tempat_kerja,
                 'alamat' => [
@@ -229,6 +229,7 @@ class DebiturController extends BaseController
             'no_hp'                 => $val->no_hp,
             'alamat_surat'          => $val->alamat_surat,
             'email'          => $val->email,
+	    'waktu_menghubungi' => $val->waktu_menghubungi,
             'lampiran' => [
                 'lamp_surat_cerai'  => $val->lamp_surat_cerai,
                 'lamp_ktp'              => $val->lamp_ktp,
@@ -243,7 +244,9 @@ class DebiturController extends BaseController
                 'foto_pembukuan_usaha'  => $val->foto_pembukuan_usaha,
                 'lamp_tempat_tinggal'   => $val->lamp_tempat_tinggal,
                 'lamp_buku_tabungan'    => $val->lamp_buku_tabungan,
-                'foto_agunan_rumah'     => $val->foto_agunan_rumah
+                'foto_agunan_rumah'     => $val->foto_agunan_rumah,
+                'foto_cadeb'        => $val->foto_cadeb,
+                'lamp_npwp'        => $val->lamp_npwp
             ]
         );
 
@@ -288,6 +291,8 @@ class DebiturController extends BaseController
         $check_lamp_foto_usaha      = $check_debt->lamp_foto_usaha;
         $check_lamp_surat_cerai     = $check_debt->lamp_surat_cerai;
         $check_lamp_tempat_tinggal  = $check_debt->lamp_tempat_tinggal;
+        $check_foto_cadeb             = $check_debt->foto_cadeb;
+        $check_lamp_npwp             = $check_debt->lamp_npwp;
 
         $path = 'public/' . $check_debt->no_ktp . '/debitur';
 
@@ -300,6 +305,29 @@ class DebiturController extends BaseController
         } else {
             $lamp_ktp = $check_lamp_ktp;
         }
+
+        #######################################################################################################
+        #VERIJELAS
+        if ($file = $req->file('foto_cadeb')) {
+            $name = 'cadeb.';
+            $check = $check_foto_cadeb;
+
+            $foto_cadeb = Helper::uploadImg($check, $file, $path, $name);
+        } else {
+            $foto_cadeb = $check_foto_cadeb;
+        }
+
+        if ($file = $req->file('lamp_npwp')) {
+            $name = 'npwp.';
+            $check = $check_lamp_npwp;
+
+            $lamp_npwp = Helper::uploadImg($check, $file, $path, $name);
+        } else {
+            $lamp_npwp = $check_lamp_npwp;
+        }
+
+
+        #######################################################################################################
 
         if ($file = $req->file('lamp_kk')) {
             $name = 'kk.';
@@ -494,7 +522,7 @@ class DebiturController extends BaseController
 
             'tgl_lahir'             => empty($req->input('tgl_lahir'))
                 ? $check_debt->tgl_lahir : Carbon::parse($req->input('tgl_lahir'))->format('Y-m-d'),
-                 'umur'                 => empty($req->input('umur'))
+            'umur'                 => empty($req->input('umur'))
                 ? $check_debt->umur : strtoupper($req->input('umur')),
 
             'agama'                 => empty($req->input('agama'))
@@ -556,7 +584,7 @@ class DebiturController extends BaseController
 
             'alamat_surat'          => empty($req->input('alamat_surat'))
                 ? $check_debt->alamat_surat : $req->input('alamat_surat'),
-                'email'          => empty($req->input('email'))
+            'email'          => empty($req->input('email'))
                 ? $check_debt->email : $req->input('email'),
 
             'tinggi_badan'          => empty($req->input('tinggi_badan'))
@@ -604,12 +632,14 @@ class DebiturController extends BaseController
             'tgl_mulai_kerja'       => empty($req->input('tgl_mulai_kerja'))
                 ? $check_debt->tgl_mulai_kerja : Carbon::parse($req->input('tgl_mulai_kerja'))->format('Y-m-d'),
 
-                    'lama_kerja'                 => empty($req->input('lama_kerja'))
+            'lama_kerja'                 => empty($req->input('lama_kerja'))
                 ? $check_debt->lama_kerja : strtoupper($req->input('lama_kerja')),
 
 
             'no_telp_tempat_kerja'  => empty($req->input('no_telp_tempat_kerja'))
                 ? $check_debt->no_telp_tempat_kerja : $req->input('no_telp_tempat_kerja'),
+            'waktu_menghubungi'  => empty($req->input('waktu_menghubungi'))
+                ? $check_debt->waktu_menghubungi : $req->input('waktu_menghubungi'),
 
             'lamp_ktp'              => $lamp_ktp,
             'lamp_kk'               => $lamp_kk,
@@ -624,7 +654,9 @@ class DebiturController extends BaseController
             'lamp_foto_usaha'       => $lamp_foto_usaha,
             'foto_agunan_rumah'     => $foto_agunan_rumah,
             'lamp_surat_cerai'      => $lamp_surat_cerai,
-            'lamp_tempat_tinggal'   => $lamp_tempat_tinggal
+            'lamp_tempat_tinggal'   => $lamp_tempat_tinggal,
+            'foto_cadeb'            => $foto_cadeb,
+            'lamp_npwp'             => $lamp_npwp
         );
         // $imp = implode(" ", $nama_anak);
         // dd($imp);
@@ -655,6 +687,45 @@ class DebiturController extends BaseController
         DB::connection('web')->beginTransaction();
 
         //  try {
+        //     $umr = $dataDebitur['umur'];
+
+        //    switch ($umr) {
+        //        case ($umr > 50):
+        //            $umr = "02101";
+        //            break;
+        //       case ($umr > 40 && $umr <= 50):
+        //          $umr = "02102";
+        //          break;
+        //     case ($umr > 21  && $umr <= 26):
+        //        $umr = "02103";
+        //        break;
+        //    case ($umr > 26 && $umr >= 33):
+        //        $umr = "02104";
+        //        break;
+        //    case ($umr > 33 && $umr <= 40):
+        //        $umr = "02105";
+        //        break;
+
+        //            default:
+        //              $umr = null;
+        //    }
+
+        //        $scor_umr = DB::connection('simar')->table('master_creditscoring')->select('id_parameter AS parameter', 'id_detail_params AS detail', 'point', 'bobot')->where('id_detail_params', $umr)->first();
+        //        $merge = array($scor_umr);
+        //      $arr_s = array();
+        //    foreach ($merge as $key => $val) {
+        //      if (!empty($val)) {
+        //        $arr_s[$key]['id_aplikasi'] = $id;
+        //      $arr_s[$key]['parameter'] = $val->parameter;
+        //    $arr_s[$key]['detail'] = $val->detail;
+        //    $arr_s[$key]['point'] = $val->point;
+        //    $arr_s[$key]['bobot'] = $val->bobot;
+        //  }
+        //  }
+
+        //        $scor_params = master_nilai::insert($arr_s);
+        //      $get_trans = DB::connection('web')->table('view_transaksi_cs')->where('id', $id)->first();
+        //      $call_sp = DB::connection('simar')->select("CALL simar.`sp_hitung_hasil_scoring`(?,?)", array($get_trans->id, Carbon::parse// ($get_trans->tgl_transaksi)->format('Y-m-d')));
 
         Debitur::where('id', $id)->update($dataDebitur);
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Transaksi;
+namespace App\Http\Controllers\Activity;
 
 use Laravel\Lumen\Routing\Controller as BaseController;
 use App\Http\Controllers\Controller as Helper;

@@ -130,12 +130,15 @@ class DASController extends BaseController
                     "jenis_kelamin"    => $value->jenis_kelamin,
                     "alamat_ktp"       => $value->alamat_ktp,
                     "no_telp"          => $value->no_telp,
+		"pemasukan_penjamin"  => $value->pemasukan_penjamin,
                     "hubungan_debitur" => $value->hubungan_debitur,
                     "lampiran" => [
                         "lamp_ktp"          => $value->lamp_ktp,
                         "lamp_ktp_pasangan" => $value->lamp_ktp_pasangan,
                         "lamp_kk"           => $value->lamp_kk,
-                        "lamp_buku_nikah"   => $value->lamp_buku_nikah
+                        "lamp_buku_nikah"   => $value->lamp_buku_nikah,
+			"foto_penjamin" => $value->foto_selfie_penjamin,
+			"lamp_npwp"	=> $value->lampiran_npwp
                     ]
                 ];
             }
@@ -188,6 +191,7 @@ class DASController extends BaseController
                 'no_npwp'               => $val->debt['no_npwp'],
                 'tempat_lahir'          => $val->debt['tempat_lahir'],
                 'tgl_lahir'             => $val->debt['tgl_lahir'],
+		'umur'         => $val->debt['umur'],
                 'agama'                 => $val->debt['agama'],
                 'alamat_ktp' => [
                     'alamat_singkat' => $val->debt['alamat_ktp'],
@@ -276,7 +280,9 @@ class DASController extends BaseController
                     'lamp_sertifikat'       => $val->debt['lamp_sertifikat'],
                     'lamp_sttp_pbb'         => $val->debt['lamp_sttp_pbb'],
                     'lamp_imb'              => $val->debt['lamp_imb'],
-                    'foto_agunan_rumah'     => $val->debt['foto_agunan_rumah']
+                    'foto_agunan_rumah'     => $val->debt['foto_agunan_rumah'],
+		    'foto_cadeb'	    => $val->debt['foto_cadeb'],
+		    'lamp_npwp'	    => $val->debt['lamp_npwp']
                 ]
             ],
             'data_pasangan' => [
@@ -291,14 +297,17 @@ class DASController extends BaseController
                 'alamat_ktp'       => $val->pas['alamat_ktp'],
                 'no_telp'          => $val->pas['no_telp'],
                 'lamp_ktp'         => $val->pas['lamp_ktp'],
-                'lamp_buku_nikah'  => $val->pas['lamp_buku_nikah']
+                'lamp_buku_nikah'  => $val->pas['lamp_buku_nikah'],
+		'foto_pasangan'  => $val->pas['foto_pasangan'],
+'lampiran_npwp'  => $val->pas['lampiran_npwp']
             ],
             'data_penjamin' => $penjamin,
             'status'        => $status,
             'note'          => $val->catatan_das,
             'lampiran'  => [
                 'ideb'    => explode(";", $val->lamp_ideb),
-                'pefindo' => explode(";", $val->lamp_pefindo)
+                'pefindo' => explode(";", $val->lamp_pefindo),
+		'foto_pasangan' => $val->pas['foto_pasangan']
             ],
             'tgl_transaksi' => Carbon::parse($val->created_at)->format("d-m-Y H:i:s")
         ];

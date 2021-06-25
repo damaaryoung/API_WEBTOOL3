@@ -88,7 +88,7 @@ class PendapatanUsahaController extends BaseController
             return response()->json([
                 'code'    => 404,
                 'status'  => 'not found',
-                'message' => "Data Pendapatan Usaha dengan id {$id} tidak ditemukan"
+                'message' => "Data Pendapatan Usaha dengan id {$id} tidak ditemukan di CA"
             ], 404);
         }
         // Pendapatan Usaha Cadebt

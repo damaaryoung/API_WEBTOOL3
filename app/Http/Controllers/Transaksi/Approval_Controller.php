@@ -130,7 +130,8 @@ class Approval_Controller extends BaseController
                 "jabatan"   => $val->jpic['nama_jenis'],
                 "nama"      => $val->nama,
                 "email"     => $val->email,
-                // "flg_aktif" => (bool) $val->flg_aktif,
+"tgl_sk"     => $val->tgl_sk,
+                 "flg_aktif" => (bool) $val->flg_aktif,
                 "checked"   => $checked
             );
         }
@@ -468,8 +469,6 @@ class Approval_Controller extends BaseController
 // $form['status'] = 'forward';
 // }
 
-  s      // dd($id_pic);
-
  if ($form['status'] == 'accept')
         {
             Approval::where('id_trans_so',$id)->where('id', '>', $id_approval)->delete();
@@ -479,10 +478,10 @@ class Approval_Controller extends BaseController
             $str2 = str_replace("]","",$str);
             TransCAA::where('id_trans_so',$id)->update(['pic_team_caa' => $str2]);
 
-            $lpdk_status = Lpdk::where('id',$id)->first();
-       if (!empty($lpdk_status)) {
-Lpdk::where('id',$id)->update([ 'plafon' => $form['plafon'] , 'tenor' => $form['tenor']]);
-        }
+      //      $lpdk_status = Lpdk::where('id',$id)->first();
+      // if (!empty($lpdk_status)) {
+// Lpdk::where('id',$id)->update([ 'plafon' => $form['plafon'] , 'tenor' => $form['tenor']]);
+   //     }
         }
 $last_pic = TransCAA::where('id_trans_so', $id)->first();
 $exp = explode(",",$last_pic->pic_team_caa);
@@ -628,7 +627,7 @@ if ($form['status_crm'] == 'Ya') {
                 'tenor'   => $val->tenor,
                 'status'  => $val->status,
                 'rincian' => $val->rincian,
-                'tgl_approval' => $val->updated_at
+                'tgl_approval' => Carbon::parse($val->updated_at)->format('d-m-Y')
             ];
         }
 

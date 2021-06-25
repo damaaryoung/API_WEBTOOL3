@@ -314,12 +314,15 @@ class MasterAO_Controller extends BaseController
                 'alamat_ktp'        => $pen->alamat_ktp,
                 'no_telp'           => $pen->no_telp,
                 'hubungan_debitur'  => $pen->hubungan_debitur,
+'pemasukan_penjamin' => $pen->pemasukan_penjamin,
 
                 'lampiran' => [
                     'lamp_ktp' => $pen->lamp_ktp,
                     'lamp_ktp_pasangan' => $pen->lamp_ktp_pasangan,
                     'lamp_kk' => $pen->lamp_kk,
-                    'lamp_buku_nikah' => $pen->lamp_buku_nikah
+                    'lamp_buku_nikah' => $pen->lamp_buku_nikah,
+'foto_selfie_penjamin' => $pen->foto_selfie_penjamin,
+'lampiran_npwp' => $pen->lampiran_npwp,
                 ]
             ];
         }
@@ -420,7 +423,9 @@ class MasterAO_Controller extends BaseController
                 //'tgl_lahir_anak'        => $val->debt['tgl_lahir_anak'],
                 'tempat_lahir'          => $val->debt['tempat_lahir'],
                 'tgl_lahir'             => Carbon::parse($val->debt['tgl_lahir'])->format('Y-m-d'),
+		 'umur'               => $val->debt['umur'],
                 'agama'                 => $val->debt['agama'],
+'waktu_menghubungi'          => $val->debt['waktu_menghubungi'],
                 'alamat_ktp' => [
                     'alamat_singkat' => $val->debt['alamat_ktp'],
                     'rt'     => $val->debt['rt_ktp'] == null ? null : (int) $val->debt['rt_ktp'],
@@ -470,7 +475,8 @@ class MasterAO_Controller extends BaseController
                     "posisi_pekerjaan"      => $val->debt['posisi_pekerjaan'],
                     "nama_tempat_kerja"     => $val->debt['nama_tempat_kerja'],
                     "jenis_pekerjaan"       => $val->debt['jenis_pekerjaan'],
-                    "tgl_mulai_kerja"       => Carbon::parse($val->debt['tgl_mulai_kerja'])->format('d-m-Y'), //Carbon::parse($val->tgl_mulai_kerja)->format('d-m-Y'),
+                    "tgl_mulai_kerja"       => Carbon::parse($val->debt['tgl_mulai_kerja'])->format('Y-m-d'), //Carbon::parse($val->tgl_mulai_kerja)->format('d-m-Y'),
+"lama_kerja"       => $val->debt['lama_kerja'],
                     "no_telp_tempat_kerja"  => $val->debt['no_telp_tempat_kerja'],
                     'alamat' => [
                         'alamat_singkat' => $val->debt['alamat_tempat_kerja'],
@@ -508,7 +514,9 @@ class MasterAO_Controller extends BaseController
                     'lamp_sertifikat'       => $val->debt['lamp_sertifikat'],
                     'lamp_sttp_pbb'         => $val->debt['lamp_sttp_pbb'],
                     'lamp_imb'              => $val->debt['lamp_imb'],
-                    'foto_agunan_rumah'     => $val->debt['foto_agunan_rumah']
+                    'foto_agunan_rumah'     => $val->debt['foto_agunan_rumah'],
+		    'foto_cadeb'     => $val->debt['foto_cadeb'],
+		    'lamp_npwp'     => $val->debt['lamp_npwp']
                 ]
             ],
 
@@ -560,7 +568,9 @@ class MasterAO_Controller extends BaseController
                 ],
                 'lampiran' => [
                     'lamp_ktp'        => $val->pas['lamp_ktp'],
-                    'lamp_buku_nikah' => $val->pas['lamp_buku_nikah']
+                    'lamp_buku_nikah' => $val->pas['lamp_buku_nikah'],
+		    'foto_pasangan' => $val->pas['foto_pasangan'],
+'lampiran_npwp' => $val->pas['lampiran_npwp']
                 ],
                 'flg_aktif'             => $val->pas['flg_aktif']
             ],
@@ -1004,19 +1014,19 @@ class MasterAO_Controller extends BaseController
 
                     'fasilitas'
                     => empty($req->fasilitas_agunan[$i])
-                        ? null : $req->fasilitas_agunan[$i],
+                        ? 0 : $req->fasilitas_agunan[$i],
 
                     'listrik'
                     => empty($req->listrik_agunan[$i])
-                        ? null : $req->listrik_agunan[$i],
+                        ? 0 : $req->listrik_agunan[$i],
 
                     'nilai_taksasi_agunan'
                     => empty($req->nilai_taksasi_agunan[$i])
-                        ? null : $req->nilai_taksasi_agunan[$i],
+                        ? 0 : $req->nilai_taksasi_agunan[$i],
 
                     'nilai_taksasi_bangunan'
                     => empty($req->nilai_taksasi_bangunan[$i])
-                        ? null : $req->nilai_taksasi_bangunan[$i],
+                        ? 0 : $req->nilai_taksasi_bangunan[$i],
 
                     'tgl_taksasi'
                     => empty($req->tgl_taksasi_agunan[$i])
@@ -1024,7 +1034,7 @@ class MasterAO_Controller extends BaseController
 
                     'nilai_likuidasi'
                     => empty($req->nilai_likuidasi_agunan[$i])
-                        ? null : $req->nilai_likuidasi_agunan[$i],
+                        ? 0 : $req->nilai_likuidasi_agunan[$i],
 
                     'nilai_agunan_independen'
                     => empty($req->nilai_agunan_independen[$i])
@@ -1032,7 +1042,7 @@ class MasterAO_Controller extends BaseController
 
                     'perusahaan_penilai_independen'
                     => empty($req->perusahaan_penilai_independen[$i])
-                        ? null : $req->perusahaan_penilai_independen[$i]
+                        ? 0 : $req->perusahaan_penilai_independen[$i]
                 ];
             }
         }
@@ -1152,7 +1162,9 @@ class MasterAO_Controller extends BaseController
 
                     'lamp_sertifikat'
                     => empty($lamp_sertifikat_tan[$i])
-                        ? null : $lamp_sertifikat_tan[$i]
+                        ? null : $lamp_sertifikat_tan[$i],
+"created_at" => Carbon::parse(Carbon::now())->format('Y-m-d H:i:s'),
+"updated_at" => Carbon::parse(Carbon::now())->format('Y-m-d H:i:s')
                 ];
             }
         }
@@ -1955,6 +1967,192 @@ class MasterAO_Controller extends BaseController
                 'code'   => 200,
                 'status' => 'success',
                 'count'  => sizeof($data),
+                'data'   => $data
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                "code"    => 501,
+                "status"  => "error",
+                "message" => $e
+            ], 501);
+        }
+    }
+	
+	  public function updateAssign($id, Request $req)
+    {
+
+        $pic = $req->pic; // From PIC middleware
+        //dd($pic);
+        $mj = array();
+        $i = 0;
+        foreach ($pic as $val) {
+            $mj[] = $val['id_mj_pic'];
+            $i++;
+        }
+        $id_pic = array();
+        $i = 0;
+        foreach ($pic as $val) {
+            $id_pic[] = $val['id'];
+            $i++;
+        }
+        $arrr = array();
+        foreach ($pic as $val) {
+            $arrr[] = $val['id_cabang'];
+            $i++;
+        }
+        $area = array();
+        $i = 0;
+        foreach ($pic as $val) {
+            $area[] = $val['id_area'];
+            $i++;
+        }
+        $user_id = $req->auth->user_id;
+
+        $trans = TransAO::where('id_trans_so', $id)->first();
+
+        if ($trans === null) {
+            return response()->json([
+                "code" => 404,
+                "message" => "Data Transaksi Tidak Ditemukan",
+            ], 404);
+        }
+
+        $data = array(
+            "assign_to" => $req->input("assign_to"),
+            "assign_by" => $user_id
+        );
+
+
+        try {
+            $trans = TransAO::where('id_trans_so', $id)->update($data);
+            return response()->json([
+                'code'   => 200,
+                'status' => 'success',
+                'data'   => $data
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                "code"    => 501,
+                "status"  => "error",
+                "message" => $e
+            ], 501);
+        }
+    }
+	public function updateStatusPending($id, Request $req)
+    {
+
+        $pic = $req->pic; // From PIC middleware
+        //dd($pic);
+        $mj = array();
+        $i = 0;
+        foreach ($pic as $val) {
+            $mj[] = $val['id_mj_pic'];
+            $i++;
+        }
+        $id_pic = array();
+        $i = 0;
+        foreach ($pic as $val) {
+            $id_pic[] = $val['id'];
+            $i++;
+        }
+        $arrr = array();
+        foreach ($pic as $val) {
+            $arrr[] = $val['id_cabang'];
+            $i++;
+        }
+        $area = array();
+        $i = 0;
+        foreach ($pic as $val) {
+            $area[] = $val['id_area'];
+            $i++;
+        }
+        $user_id = $req->auth->user_id;
+
+        $trans = TransAO::where('id_trans_so', $id)->first();
+
+        if ($trans === null) {
+            return response()->json([
+                "code" => 404,
+                "message" => "Data Transaksi Tidak Ditemukan",
+            ], 404);
+        }
+
+        $data = array(
+            "status_return" => empty($req->input("status_return")) ? null : $req->input("status_return"),
+			"note_return" => empty($req->input("note_return")) ? null : $req->input("note_return"),
+            "tgl_pending" => empty($req->input('tgl_pending')) ? null : $req->input('tgl_pending')
+        );
+
+
+        try {
+            $trans = TransAO::where('id_trans_so', $id)->update($data);
+            return response()->json([
+                'code'   => 200,
+                'status' => 'success',
+                'data'   => $data
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                "code"    => 501,
+                "status"  => "error",
+                "message" => $e
+            ], 501);
+        }
+    }
+	
+	public function updateVerifikasihmCancelDebitur($id, Request $req)
+    {
+
+        $pic = $req->pic; // From PIC middleware
+        //dd($pic);
+        $mj = array();
+        $i = 0;
+        foreach ($pic as $val) {
+            $mj[] = $val['id_mj_pic'];
+            $i++;
+        }
+        $id_pic = array();
+        $i = 0;
+        foreach ($pic as $val) {
+            $id_pic[] = $val['id'];
+            $i++;
+        }
+        $arrr = array();
+        foreach ($pic as $val) {
+            $arrr[] = $val['id_cabang'];
+            $i++;
+        }
+        $area = array();
+        $i = 0;
+        foreach ($pic as $val) {
+            $area[] = $val['id_area'];
+            $i++;
+        }
+        $user_id = $req->auth->user_id;
+
+        $trans = TransAO::where('id_trans_so', $id)->first();
+
+        if ($trans === null) {
+            return response()->json([
+                "code" => 404,
+                "message" => "Data Transaksi Tidak Ditemukan",
+            ], 404);
+        }
+
+        $data = array(
+            "verifikasi_hm" => empty($req->input("verifikasi_hm")) ? 0 : $req->input("verifikasi_hm")
+        );
+		 $data2 = array(
+            "flg_cancel_debitur" => empty($req->input("flg_cancel_debitur")) ? 0 : $req->input("flg_cancel_debitur")
+        );
+
+
+        try {
+            $trans = TransAO::where('id_trans_so', $id)->update($data);
+			$transSO = TransSO::where('id_trans_so', $id)->update($data2);
+            return response()->json([
+                'code'   => 200,
+                'status' => 'success',
                 'data'   => $data
             ], 200);
         } catch (\Exception $e) {

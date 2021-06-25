@@ -23,7 +23,7 @@ class LogRingkasanAnalisa extends Model implements AuthenticatableContract, Auth
     protected $primaryKey = 'id';
 
     protected $fillable = [
-        'id', 'kuantitatif_ttl_pendapatan', 'kuantitatif_ttl_pengeluaran', 'kuantitatif_pendapatan_bersih', 'kuantitatif_angsuran', 'kuantitatif_ltv', 'kuantitatif_dsr', 'kuantitatif_idir', 'kuantitatif_hasil', 'kualitatif_analisa', 'kualitatif_strenght', 'kualitatif_weakness', 'kualitatif_opportunity', 'kualitatif_threatness'
+       'id','kuantitatif_ttl_pendapatan', 'kuantitatif_ttl_pengeluaran', 'kuantitatif_pendapatan_bersih', 'kuantitatif_angsuran', 'kuantitatif_ltv', 'kuantitatif_dsr', 'kuantitatif_idir', 'kuantitatif_hasil', 'kualitatif_analisa', 'kualitatif_strenght', 'kualitatif_weakness', 'kualitatif_opportunity', 'kualitatif_threatness'
     ];
 
     protected $casts = [

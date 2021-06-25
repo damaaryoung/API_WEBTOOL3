@@ -132,7 +132,7 @@ $target = Target_lending::paginate(10);
 //  ->where('trans_so.id',$id)
 // ->get();
 
-$target_lending = Target_lending::where('id',$id)->paginate(10);
+$target_lending = Target_lending::where('id',$id)->get();
  if (empty($target_lending)) {
             return response()->json([
                 'code'    => 404,

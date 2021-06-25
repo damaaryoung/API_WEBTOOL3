@@ -19,7 +19,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests;
 use Carbon\Carbon;
 use Image;
-use Illuminate\Support\Facades\DB;
+use DB;
 
 class KendaraanController extends BaseController
 {

@@ -31,14 +31,14 @@ class Anak extends Model implements AuthenticatableContract, AuthorizableContrac
     protected $fillable = [
         'nasabah_id', 'nama_anak', 'tgl_lahir_anak'
     ];
-//    protected $dateFormat = 'd/m/Y';
+    protected $dateFormat = 'd/m/Y';
 
 
     protected $casts = [
-        'tgl_lahir_anak' => 'date:d-m-Y'
-        //  'updated_at' => 'date:m-d-Y H:i:s'
+         'tgl_lahir_anak' => 'date:d-m-Y',
+          'updated_at' => 'date:m-d-Y H:i:s'
 
-    ];
+     ];
 
 
 

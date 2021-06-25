@@ -11,26 +11,27 @@ use DB;
 
 class KabupatenController extends BaseController
 {
-    public function __construct()
-    {
+    public function __construct() {
         $this->time_cache = config('app.cache_exp');
     }
 
-    public function index()
+    public function index() 
     {
         $data = array();
+$query = Kabupaten::get();
+      //  $query = Cache::remember('kab.index', $this->time_cache, function () use ($data) {
+        //    foreach(
+          //      Kabupaten::withCount(['prov as nama_provinsi' => function($sub) 
+             //   {
+              //      $sub->select('nama');
+             //   }])
+            //    ->where('flg_aktif', 1)->orderBy('nama', 'asc')->cursor() as $cursor
+          //  ){
+          //      $data[] = $cursor;
+          //  }
 
-        $query = Kabupaten::get();
-        // $query = Cache::remember('kab.index', $this->time_cache, function () use ($data) {
-        //     foreach (Kabupaten::withCount(['prov as nama_provinsi' => function ($sub) {
-        //         $sub->select('nama');
-        //     }])
-        //         ->where('flg_aktif', 1)->orderBy('nama', 'asc')->cursor() as $cursor) {
-        //         $data[] = $cursor;
-        //     }
-
-        //     return $data;
-        // });
+         //   return $data;
+      //  });
 
         if (empty($query)) {
             return response()->json([
@@ -56,8 +57,7 @@ class KabupatenController extends BaseController
         }
     }
 
-    public function store(Request $req)
-    {
+    public function store(Request $req) {
         $data = array(
             "nama"     => $req->input('nama'),
             "id_provinsi" => $req->input('id_provinsi')
@@ -79,7 +79,7 @@ class KabupatenController extends BaseController
             ], 422);
         }
 
-        if (!preg_match("/^[0-9]{1,}$/", $data['id_provinsi'])) {
+        if(!preg_match("/^[0-9]{1,}$/", $data['id_provinsi'])){
             return response()->json([
                 "code"    => 422,
                 "status"  => "not valid request",
@@ -105,14 +105,14 @@ class KabupatenController extends BaseController
         }
     }
 
-    public function show($IdOrName)
-    {
+    public function show($IdOrName) {
         // $res = array();
-        $query = Kabupaten::where('id', $IdOrName)->first();
+  $query = Kabupaten::where('id', $IdOrName)->first();
         // if(preg_match("/^[0-9]{1,}$/", $IdOrName)){
-        // $query = Kabupaten::withCount(['prov as nama_provinsi' => function ($sub) {
-        //     $sub->select('nama');
-        // }])->where('id', $IdOrName)->first();
+     //   $query = Kabupaten::withCount(['prov as nama_provinsi' => function($sub) 
+       // {
+         //   $sub->select('nama');
+        //}])->where('id', $IdOrName)->first();
         // }else{
         //     $query = Kabupaten::withCount(['prov as nama_provinsi' => function($sub) 
         //     {
@@ -143,8 +143,7 @@ class KabupatenController extends BaseController
         }
     }
 
-    public function update($id, Request $req)
-    {
+    public function update($id, Request $req) {
         $check = Kabupaten::where('id', $id)->first();
 
         if (empty($check)) {
@@ -159,11 +158,11 @@ class KabupatenController extends BaseController
         $provinsi  = empty($req->input('id_provinsi'))  ? $check->id_provinsi : $req->input('id_provinsi');
         $flg_aktif = empty($req->input('flg_aktif'))    ? $check->flg_aktif : ($req->input('flg_aktif') == 'false' ? 0 : 1);
 
-        if (!empty($provinsi) && !preg_match("/^[0-9]{1,}$/", $provinsi)) {
+        if(!empty($provinsi) && !preg_match("/^[0-9]{1,}$/", $provinsi)){
             return response()->json([
                 "code"    => 422,
                 "status"  => "not valid request",
-                "message" => ["id_provinsi" => ["id provinsi harus berupa angka"]]
+                "message" => [ "id_provinsi" => ["id provinsi harus berupa angka"]]
             ], 422);
         }
 
@@ -200,7 +199,7 @@ class KabupatenController extends BaseController
         }
     }
 
-    public function delete($id)
+    public function delete($id) 
     {
         Kabupaten::where('id', $id)->update(['flg_aktif' => 0]);
 
@@ -208,7 +207,7 @@ class KabupatenController extends BaseController
             return response()->json([
                 'code'    => 200,
                 'status'  => 'success',
-                'message' => 'Data dengan ID ' . $id . ', berhasil dihapus'
+                'message' => 'Data dengan ID '.$id.', berhasil dihapus'
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
@@ -220,8 +219,9 @@ class KabupatenController extends BaseController
     }
 
     public function trash()
-    {
-        $query = Kabupaten::withCount(['prov as nama_provinsi' => function ($sub) {
+    {    
+        $query = Kabupaten::withCount(['prov as nama_provinsi' => function($sub) 
+        {
             $sub->select('nama');
         }])->where('flg_aktif', 0)->orderBy('nama', 'asc')->get();
 
@@ -269,13 +269,12 @@ class KabupatenController extends BaseController
         }
     }
 
-    public function sector($id_prov)
+    public function sector($id_prov) 
     {
-        // $data = array();
-        $data = Kabupaten::select('id', 'nama', 'id_povinsi')
-            ->where('vw_master_kabupaten.id_povinsi', $id_prov)->get();
-        // $data = Kabupaten::select('id', 'nama', 'id_provinsi')->where('id_provinsi', $id_prov)->get();
+        $data = array();
 
+        $data = Kabupaten::select('id', 'nama', 'id_povinsi')
+            ->where('master_kabupaten.id_povinsi', $id_prov)->get();
 
         if (empty($data)) {
             return response()->json([
@@ -305,7 +304,7 @@ class KabupatenController extends BaseController
     {
         $column = array('id', 'nama', 'id_provinsi');
 
-        if ($param != 'filter' && $param != 'search') {
+        if($param != 'filter' && $param != 'search'){
             return response()->json([
                 'code'    => 412,
                 'status'  => 'not valid',
@@ -313,41 +312,43 @@ class KabupatenController extends BaseController
             ], 412);
         }
 
-        if (in_array($key, $column) == false) {
+        if (in_array($key, $column) == false)
+        {
             return response()->json([
                 'code'    => 412,
                 'status'  => 'not valid',
-                'message' => 'gunakan key yang valid diantara berikut: ' . implode(",", $column)
+                'message' => 'gunakan key yang valid diantara berikut: '.implode(",", $column)
             ], 412);
         }
 
-        if (in_array($orderBy, $column) == false) {
+        if (in_array($orderBy, $column) == false)
+        {
             return response()->json([
                 'code'    => 412,
                 'status'  => 'not valid',
-                'message' => 'gunakan order by yang valid diantara berikut: ' . implode(",", $column)
+                'message' => 'gunakan order by yang valid diantara berikut: '.implode(",", $column)
             ], 412);
         }
 
-        if ($param == 'search') {
+        if($param == 'search'){
             $operator   = "like";
             $func_value = "%{$value}%";
-        } else {
+        }else{
             $operator   = "=";
             $func_value = "{$value}";
         }
 
         $query = Kabupaten::where('flg_aktif', $status)->orderBy($orderBy, $orderVal);
 
-        if ($value == 'default') {
+        if($value == 'default'){
             $res = $query;
-        } else {
+        }else{
             $res = $query->where($key, $operator, $func_value);
         }
 
-        if ($limit == 'default') {
+        if($limit == 'default'){
             $result = $res->get();
-        } else {
+        }else{
             $result = $res->limit($limit)->get();
         }
 

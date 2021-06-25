@@ -17,7 +17,7 @@ use App\Models\Transaksi\TransAO;
 // use Illuminate\Http\Request;
 // use App\Http\Requests;
 // use Carbon\Carbon;
-use Illuminate\Support\Facades\DB;
+use DB;
 
 class KapBulController extends BaseController
 {
@@ -37,8 +37,8 @@ class KapBulController extends BaseController
         $data = array(
             'pemasukan' => array(
                 'debitur' => $check->pemasukan_cadebt,
-                'pasangan' => $check->pemasukan_pasangan,
-                'penjamin' => $check->pemasukan_penjamin,
+                'pasangan'=> $check->pemasukan_pasangan,
+                'penjamin'=> $check->pemasukan_penjamin,
                 'total'   => $check->total_pemasukan
             ),
             'pengeluaran' => array(
@@ -93,23 +93,23 @@ class KapBulController extends BaseController
 
         // KapBulanan
         $dataKapBulanan = array(
-            'pemasukan_cadebt'      => $req->input('pemasukan_debitur') ? $check->pemasukan_cadebt : $req->input('pemasukan_debitur'),
+            'pemasukan_cadebt'      => empty($req->input('pemasukan_debitur')) && $req->input('pemasukan_debitur') === 0 ? $check->pemasukan_cadebt : $req->input('pemasukan_debitur'),
 
-            'pemasukan_pasangan'    => $req->input('pemasukan_pasangan') ? $check->pemasukan_pasangan : $req->input('pemasukan_pasangan'),
+            'pemasukan_pasangan'    => empty($req->input('pemasukan_pasangan')) && $req->input('pemasukan_pasangan') === 0 ? $check->pemasukan_pasangan : $req->input('pemasukan_pasangan'),
 
-            'pemasukan_penjamin'    => $req->input('pemasukan_penjamin') ? $check->pemasukan_penjamin : $req->input('pemasukan_penjamin'),
+            'pemasukan_penjamin'    => empty($req->input('pemasukan_penjamin')) && $req->input('pemasukan_penjamin') === 0 ? $check->pemasukan_penjamin : $req->input('pemasukan_penjamin'),
 
-            'biaya_rumah_tangga'    => empty($req->input('biaya_rumah_tangga')) ? $check->biaya_rumah_tangga : $req->input('biaya_rumah_tangga'),
+            'biaya_rumah_tangga'    => empty($req->input('biaya_rumah_tangga')) && $req->input('biaya_rumah_tangga') === 0 ? $check->biaya_rumah_tangga : $req->input('biaya_rumah_tangga'),
 
-            'biaya_transport'       => empty($req->input('biaya_transport')) ? $check->biaya_transport : $req->input('biaya_transport'),
+            'biaya_transport'       => empty($req->input('biaya_transport')) && $req->input('biaya_transport') === 0 ? $check->biaya_transport : $req->input('biaya_transport'),
 
-            'biaya_pendidikan'      => empty($req->input('biaya_pendidikan')) ? $check->biaya_pendidikan : $req->input('biaya_pendidikan'),
+            'biaya_pendidikan'      => empty($req->input('biaya_pendidikan')) && $req->input('biaya_pendidikan') === 0 ? $check->biaya_pendidikan : $req->input('biaya_pendidikan'),
 
-            'telp_listr_air'        => empty($req->input('telp_listr_air')) ? $check->telp_listr_air : $req->input('telp_listr_air'),
+            'telp_listr_air'        => empty($req->input('telp_listr_air')) && $req->input('telp_listr_air') === 0 ? $check->telp_listr_air : $req->input('telp_listr_air'),
 
-            'angsuran'              => empty($req->input('angsuran')) ? $check->angsuran : $req->input('angsuran'),
+            'angsuran'              => empty($req->input('angsuran')) && $req->input('angsuran') === 0 ? $check->angsuran : $req->input('angsuran'),
 
-            'biaya_lain'            => empty($req->input('biaya_lain')) ? $check->biaya_lain : $req->input('biaya_lain')
+            'biaya_lain'            => empty($req->input('biaya_lain')) && $req->input('biaya_lain') === 0 ? $check->biaya_lain : $req->input('biaya_lain')
         );
 
         $total_KapBul = array(
@@ -118,7 +118,7 @@ class KapBulController extends BaseController
             'penghasilan_bersih' => $ttl1 - $ttl2,
             'ao_ca'              => empty($req->input('ao_ca') ? $check->ao_ca : $req->input('ao_ca'))
         );
-        //  dd($dataKapBulanan);
+
         $KapBUl = array_merge($dataKapBulanan, $total_KapBul);
 
         DB::connection('web')->beginTransaction();
@@ -131,7 +131,7 @@ class KapBulController extends BaseController
             return response()->json([
                 'code'   => 200,
                 'status' => 'success',
-                'message' => 'Update Kapasitas Bulanan Berhasil',
+                'message'=> 'Update Kapasitas Bulanan Berhasil',
                 'data'   => $KapBUl
             ], 200);
         } catch (\Exception $e) {

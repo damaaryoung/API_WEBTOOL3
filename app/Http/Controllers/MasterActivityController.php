@@ -41,14 +41,14 @@ class MasterActivityController extends BaseController
 {
     public function storeTargetApprovalPeriodik (Request $req) {
  $pic = $req->pic;
-
-     $data = array(
+  $data = array(
      "bulan" => $req->input("bulan"),
       "tahun" => $req->input("tahun"),
      "periode" => $req->input("periode"),
      "target_persen" => $req->input("target_persen"),
  "hk" => $req->input("hk"),
-     "tgl" => Carbon::parse($req->input("tgl"))->format('Y-m-d')
+     "tgl" => Carbon::parse($req->input("tgl"))->format('Y-m-d'),
+ "created" => Carbon::parse(Carbon::now())->format('Y-m-d H:i:s')
 
      );
 
@@ -92,7 +92,9 @@ TargetApproval::create($data);
      {
  $pic = $req->pic;
 
-   $data = TargetPeriodik::paginate(10);
+   $data = TargetApproval::select('periode','bulan','tahun','target_persen')
+->distinct('periode','bulan','tahun','target_persen')->orderBy('created', 'desc')
+->get();
           try {
             return response()->json([
                 'data' => $data
@@ -116,7 +118,8 @@ TargetApproval::create($data);
      "periode" => $req->input("periode"),
      "target_persen" => $req->input("target_persen"),
  "hk" => $req->input("hk"),
-     "tgl" => Carbon::parse($req->input("tgl"))->format('Y-m-d')
+     "tgl" => Carbon::parse($req->input("tgl"))->format('Y-m-d'),
+    "created" => Carbon::parse(Carbon::now())->format('Y-m-d H:i:s')
 
      );
 
@@ -161,7 +164,7 @@ TargetPeriodik::create($data);
  $pic = $req->pic;
 
    $data = TargetPeriodik::select('periode','bulan','tahun','target_persen')
-->distinct('periode','bulan','tahun','target_persen')
+->distinct('periode','bulan','tahun','target_persen')->orderBy('created', 'desc')
 ->get();
           try {
             return response()->json([

@@ -95,37 +95,46 @@ class KapBulController extends BaseController
         $inputKapBul = array(
 
             'pemasukan_cadebt'
-            => empty($req->input('pemasukan_debitur'))   ? $check->pemasukan_cadebt : $req->input('pemasukan_debitur'),
+            => empty($req->input('pemasukan_debitur')) && $req->input('pemasukan_debitur') === 0  ? $check->pemasukan_cadebt : $req->input('pemasukan_debitur'),
 
             'pemasukan_pasangan'
-            => empty($req->input('pemasukan_pasangan'))   ? $check->pemasukan_pasangan : $req->input('pemasukan_pasangan'),
+            => empty($req->input('pemasukan_pasangan')) && $req->input('pemasukan_pasangan') === 0  ? $check->pemasukan_pasangan : $req->input('pemasukan_pasangan'),
 
             'pemasukan_penjamin'
-            => empty($req->input('pemasukan_penjamin'))   ? $check->pemasukan_penjamin : $req->input('pemasukan_penjamin'),
+            => empty($req->input('pemasukan_penjamin')) && $req->input('pemasukan_penjamin') === 0  ? $check->pemasukan_penjamin : $req->input('pemasukan_penjamin'),
 
             'biaya_rumah_tangga'
-            => empty($req->input('biaya_rumah_tangga'))   ? $check->biaya_rumah_tangga : $req->input('biaya_rumah_tangga'),
+            => empty($req->input('biaya_rumah_tangga')) && $req->input('biaya_rumah_tangga') === 0  ? $check->biaya_rumah_tangga : $req->input('biaya_rumah_tangga'),
 
             'biaya_transport'
-            => empty($req->input('biaya_transport'))      ? $check->biaya_transport : $req->input('biaya_transport'),
+            => empty($req->input('biaya_transport'))   && $req->input('biaya_transport') === 0   ? $check->biaya_transport : $req->input('biaya_transport'),
 
             'biaya_pendidikan'
-            => empty($req->input('biaya_pendidikan'))     ? $check->biaya_pendidikan : $req->input('biaya_pendidikan'),
+            => empty($req->input('biaya_pendidikan'))   && $req->input('biaya_pendidikan') === 0  ? $check->biaya_pendidikan : $req->input('biaya_pendidikan'),
 
             'telp_listr_air'
-            => empty($req->input('telp_listr_air'))       ? $check->telp_listr_air : $req->input('telp_listr_air'),
+            => empty($req->input('telp_listr_air'))   && $req->input('telp_listr_air') === 0    ? $check->telp_listr_air : $req->input('telp_listr_air'),
 
             'angsuran'
-            => empty($req->input('angsuran'))             ? $check->angsuran : $req->input('angsuran'),
+            => empty($req->input('angsuran'))      && $req->input('angsuran') === 0       ? $check->angsuran : $req->input('angsuran'),
 
             'biaya_lain'
-            => empty($req->input('biaya_lain'))           ? $check->biaya_lain : $req->input('biaya_lain'),
+            => empty($req->input('biaya_lain'))    && $req->input('biaya_lain') === 0       ? $check->biaya_lain : $req->input('biaya_lain'),
         );
+
+ $total_KapBul = array(
+            'total_pemasukan'    => $ttl1 = array_sum(array_slice($inputKapBul, 0, 3)),
+            'total_pengeluaran'  => $ttl2 = array_sum(array_slice($inputKapBul, 3)),
+            'penghasilan_bersih' => $ttl1 - $ttl2,
+            'ao_ca'              => empty($req->input('ao_ca') ? $check->ao_ca : $req->input('ao_ca'))
+        );
+        //  dd($dataKapBulanan);
+        $KapBUl = array_merge( $inputKapBul, $total_KapBul);
 
         DB::connection('web')->beginTransaction();
 
         try {
-            KapBulanan::where('id', $id)->update($inputKapBul);
+            KapBulanan::where('id', $id)->update($KapBUl);
 
             DB::connection('web')->commit();
 
@@ -133,7 +142,7 @@ class KapBulController extends BaseController
                 'code'   => 200,
                 'status' => 'success',
                 'message' => 'Update Data Kapasitas Bulanan Berhasil',
-                'data'   => $inputKapBul
+                'data'   => $KapBUl
             ], 200);
         } catch (Exception $e) {
 

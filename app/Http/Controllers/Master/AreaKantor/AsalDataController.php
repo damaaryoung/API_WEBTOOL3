@@ -6,7 +6,6 @@ use Laravel\Lumen\Routing\Controller as BaseController;
 use App\Models\AreaKantor\AsalData;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
-use Cache;
 use DB;
 
 class AsalDataController extends BaseController
