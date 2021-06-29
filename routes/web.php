@@ -314,6 +314,7 @@ $router->group(['middleware' => ['jwt.auth', 'log'], 'prefix' => 'api'], functio
                  $router->get('/{id}',  ['subject' => 'Detail Trans_SO', 'uses' => 'SertifikatController@show']);
 	//	 $router->post('/filter',  ['subject' => 'Filter Trans_SO', 'uses' => 'SertifikatController@filter']);
   $router->get('filter/cari',  ['subject' => 'Filter Trans_SO', 'uses' => 'SertifikatController@filter']);
+  $router->get('filter1/cari/',  ['subject' => 'Filter Trans_SO', 'uses' => 'SertifikatController@filter1']);
 
   });
 

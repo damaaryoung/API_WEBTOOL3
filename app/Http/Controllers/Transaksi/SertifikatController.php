@@ -317,4 +317,59 @@ try {
 
 
 }
+
+
+public function filter1(Request $req) {
+
+
+    $nomor_so = $req->input('nomor_so');
+    $range_start = $req->input('range_start');
+    $range_end = $req->input('range_end');
+    $cabang    = $req->input('cabang');
+
+    
+    if ($nomor_so !== '' ) {
+        $filter = TransSO::select('trans_so.id','trans_so.nomor_so','mk_cabang.nama AS nama_cabang','calon_debitur.nama_lengkap','fasilitas_pinjaman.plafon','agunan_tanah.status AS status_sertifikat')->join('calon_debitur','trans_so.id_calon_debitur','=','calon_debitur.id')->join('fasilitas_pinjaman','trans_so.id_fasilitas_pinjaman','=','fasilitas_pinjaman.id')->join('mk_cabang','trans_so.id_cabang','=','mk_cabang.id')->join('trans_ao','trans_ao.id_trans_so','=','trans_so.id')->join('agunan_tanah','trans_ao.id_agunan_tanah','=','agunan_tanah.id')->where('trans_so.nomor_so','LIKE',"%{$nomor_so}")
+        //->orWhere('mk_cabang.nama','LIKE',"%{$nomor_so}%")
+        //->orWhere('calon_debitur.nama_lengkap','LIKE',"%{$nomor_so}%")
+        // ->orWhere('calon_debitur.nama_lengkap','LIKE','%{$nama}%')
+        //->orWhere('nama_cabang','LIKE','%{$cabang}%')
+        //->orWhere('status_sertifikat','LIKE','%{$status}%')
+        ->paginate(10)->appends($req->input());
+        
+    }
+    else{
+        $filter = TransSO::select('trans_so.id','trans_so.nomor_so','mk_cabang.nama AS nama_cabang','calon_debitur.nama_lengkap','fasilitas_pinjaman.plafon','agunan_tanah.status AS status_sertifikat')->join('calon_debitur','trans_so.id_calon_debitur','=','calon_debitur.id')->join('fasilitas_pinjaman','trans_so.id_fasilitas_pinjaman','=','fasilitas_pinjaman.id')->join('mk_cabang','trans_so.id_cabang','=','mk_cabang.id')->join('trans_ao','trans_ao.id_trans_so','=','trans_so.id')->join('agunan_tanah','trans_ao.id_agunan_tanah','=','agunan_tanah.id')->where('trans_so.nomor_so','LIKE',"%{$nomor_so}")
+        ->where('trans_so.id_cabang','=',"{$cabang}")
+        ->paginate(10)->appends($req->input());
+    } 
+
+    if (empty($filter)) {
+            return response()->json([
+                'code'    => 404,
+                'status'  => 'not found',
+                'message' => 'Data Sertifikat kosong'
+            ], 404);
+        }
+
+    try {
+            return response()->json([
+                // 'code'   => 200,
+                // 'status' => 'success',
+                // 'count'  => sizeof($cek_sertifikat),
+                'data'   => $filter
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                "code"    => 501,
+                "status"  => "error",
+                "message" => $e
+            ], 501);
+        }
+
+
+    }
+
+
+
 }
